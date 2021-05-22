@@ -13,11 +13,13 @@ runs:
       name: Install codecov-python
       working-directory: ${{ github.workspace }}
     - run: echo "Running coverage"
+      shell: bash
     - run: poetry run coverage run -m unittest
       shell: bash
       name: Run unit tests with coverage
       working-directory: ${{ github.workspace }}
     - run: echo "Uploading to codecov.io"
+      shell: bash
     - run: poetry run codecov
       shell: bash
       name: Upload coverage to codecov.io
