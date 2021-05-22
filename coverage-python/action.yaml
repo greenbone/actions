@@ -1,0 +1,19 @@
+
+name: "Python Codecov Action"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to upload coverage to codecov.io for Python package by using Poetry. Requires poetry to be installed"
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+    - run: poetry run install codecov
+      shell: bash
+      name: Install codecov-python
+    - run: poetry run coverage run -m unittest
+      shell: bash
+      name: Run unit tests with coverage
+    - run: poetry run codecov
+      shell: bash
+      name: Upload coverage to codecov.io
