@@ -12,14 +12,20 @@ branding:
 runs:
   using: "composite"
   steps:
+    - run: echo "Running black"
+      shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}
       shell: bash
       name: Check with black
       working-directory: ${{ github.workspace }}
+    - run: echo "Running pylint"
+      shell: bash
     - run: poetry run pylint ${{ inputs.packages }}
       shell: bash
       name: Check with pylint
       working-directory: ${{ github.workspace }}
+    - run: echo "Running pontos.version verify current"
+      shell: bash
     - run: poetry run python -m pontos.version verify current
       shell: bash
       name: Check version information
