@@ -2,6 +2,11 @@
 name: "Python Codecov Action"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to upload coverage to codecov.io for Python package by using Poetry. Requires poetry to be installed"
+inputs:
+  test-command:
+    description: "Command to run the tests"
+    required: true
+    default: "-m unittest"
 branding:
   icon: "package"
   color: "green"
@@ -12,7 +17,7 @@ runs:
       shell: bash
       name: Install codecov-python
       working-directory: ${{ github.workspace }}
-    - run: poetry run coverage run -m unittest
+    - run: poetry run coverage run ${{ inputs.test-command }}
       shell: bash
       name: Run unit tests with coverage
       working-directory: ${{ github.workspace }}
