@@ -1,0 +1,26 @@
+
+name: "Python Package Linting"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to lint Greenbone Python packages"
+inputs:
+  packages:
+    description: "Python packages to lint"
+    required: true
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+    - run: poetry run black --check --diff ${{ inputs.test.packages }}
+      shell: bash
+      name: Check with black
+      working-directory: ${{ github.workspace }}
+    - run: poetry run pylint ${{ inputs.test.packages }}
+      shell: bash
+      name: Check with pylint
+      working-directory: ${{ github.workspace }}
+    - run: poetry run python -m pontos.version verify current
+      shell: bash
+      name: Check version information
+      working-directory: ${{ github.workspace }}
