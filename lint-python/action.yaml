@@ -12,11 +12,11 @@ branding:
 runs:
   using: "composite"
   steps:
-    - run: poetry run black --check --diff ${{ inputs.test.packages }}
+    - run: poetry run black --check --diff ${{ inputs.packages }}
       shell: bash
       name: Check with black
       working-directory: ${{ github.workspace }}
-    - run: poetry run pylint ${{ inputs.test.packages }}
+    - run: poetry run pylint ${{ inputs.packages }}
       shell: bash
       name: Check with pylint
       working-directory: ${{ github.workspace }}
