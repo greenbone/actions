@@ -1,0 +1,28 @@
+
+name: "JavaScript Codecov Action"
+author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
+description: "An action to a Greenbone JavaScript module with coverage."
+inputs:
+  working_directory:
+    description: "directory to the javascript code"
+    default: ${{ github.workspace }}
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: 'composite'
+  steps:
+    - run: echo "Install dependencies with yarn"
+      shell: bash
+    - run: yarn install --prefer-offline
+      shell: bash
+      name: Install and update dependencies
+      working_directory: ${{ inputs.working_directory }}
+    - run: echo "Running yarn test with coverage"
+      shell: bash
+    - run: yarn test:coverage --reporters=default --reporters=jest-junit
+      shell: bash
+      name: Run tests with coverage
+      working_directory: ${{ inputs.working_directory }}
+      env:
+        JEST_JUNIT_OUTPUT_DIR: "${{ inputs.working_directory }}/reports"
