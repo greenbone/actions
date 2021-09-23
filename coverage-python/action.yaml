@@ -7,6 +7,9 @@ inputs:
     description: "Command to run the tests"
     required: true
     default: "-m unittest"
+  token:
+    description: "Token required for private repositories"
+    default: ${{ secrets.CODECOV_TOKEN }}
 branding:
   icon: "package"
   color: "green"
@@ -20,6 +23,10 @@ runs:
     - run: poetry run coverage run ${{ inputs.test-command }}
       shell: bash
       name: Run unit tests with coverage
+      working-directory: ${{ github.workspace }}
+    - run: export $CODECOV_TOKEN=${{ inputs.token }}
+      shell: bash
+      name: export codecoverage token
       working-directory: ${{ github.workspace }}
     - run: poetry run codecov
       shell: bash
