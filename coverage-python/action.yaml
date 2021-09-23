@@ -9,7 +9,6 @@ inputs:
     default: "-m unittest"
   token:
     description: "Token required for private repositories"
-    default: ${{ secrets.CODECOV_TOKEN }}
 branding:
   icon: "package"
   color: "green"
