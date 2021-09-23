@@ -23,7 +23,7 @@ runs:
       shell: bash
       name: Run unit tests with coverage
       working-directory: ${{ github.workspace }}
-    - run: export $CODECOV_TOKEN=${{ inputs.token }}
+    - run: export $CODECOV_TOKEN="${{ inputs.token }}"
       shell: bash
       name: export codecoverage token
       working-directory: ${{ github.workspace }}
