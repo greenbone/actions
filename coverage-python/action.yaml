@@ -31,5 +31,4 @@ runs:
       with:
         token: ${{ inputs.token }}
         fail_ci_if_error: true
-      working-directory: ${{ github.workspace }}
       name: Upload coverage to codecov.io
