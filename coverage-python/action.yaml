@@ -23,11 +23,13 @@ runs:
       shell: bash
       name: Run unit tests with coverage
       working-directory: ${{ github.workspace }}
-    - run: export CODECOV_TOKEN="${{ inputs.token }}"
+    - run:  poetry run coverage xml
       shell: bash
-      name: export codecoverage token
+      name: Create coverage XML report
       working-directory: ${{ github.workspace }}
-    - run: poetry run codecov
-      shell: bash
+    - uses: codecov/codecov-action@v2
+      with:
+        token: ${{ inputs.token }}
+        fail_ci_if_error: true
+      working-directory: ${{ github.workspace }}
       name: Upload coverage to codecov.io
-      working-directory: ${{ github.workspace }}
