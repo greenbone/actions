@@ -1,0 +1,24 @@
+
+name: "Find a version by referenced branch or tag"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to get the target branch or current tag name and use it as a version"
+branding:
+  icon: "package"
+  color: "green"
+
+inputs:
+  strip-tag-prefix:
+    description: "The tag prefix to strip i.e v1.2.3 -> 1.2.3 (default 'v')"
+    default: 'v'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        if [ -n "$GITHUB_BASE_REF" ];                              \
+        then echo "VERSION=${GITHUB_BASE_REF##refs/*/${{ inputs.strip-tag-prefix }}}" >> $GITHUB_ENV;  \
+        else echo "VERSION=${GITHUB_REF##refs/*/${{ inputs.strip-tag-prefix }}}" >> $GITHUB_ENV;       \
+        fi;
+      shell: bash
+      name: Set version in environment
