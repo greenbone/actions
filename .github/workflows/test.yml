@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  test-branch:
     runs-on: ubuntu-latest
     name: Test reference branch
     steps:
@@ -16,6 +16,31 @@ jobs:
         uses: actions/checkout@v2
       - name: Run test
         uses: ./reference-version
-      - name: Show output
+      - name: Checkout assert.sh
+        uses: actions/checkout@v2
+        with:
+          repository: torokmark/assert.sh
+      - name: Show & assert output
         run: |
           echo "Current Branch: ${{ env.VERSION }}"
+          source 'assert.sh'
+          assert_eq ${{ env.VERSION }} "main" "not equivalent!"
+  test-no-tag:
+    runs-on: ubuntu-latest
+    name: Test branch is not a tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run test
+        uses: ./reference-version
+        with:
+          strip-tag-prefix: m
+      - name: Checkout assert.sh
+        uses: actions/checkout@v2
+        with:
+          repository: torokmark/assert.sh
+      - name: Show & assert output
+        run: |
+          echo "Current Branch: ${{ env.VERSION }}"
+          source 'assert.sh'
+          assert_eq ${{ env.VERSION }} "main" "not equivalent!"

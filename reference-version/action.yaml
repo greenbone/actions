@@ -16,9 +16,20 @@ runs:
   using: "composite"
   steps:
     - run: |
-        if [ -n "$GITHUB_BASE_REF" ];                              \
-        then echo "VERSION=${GITHUB_BASE_REF##refs/*/${{ inputs.strip-tag-prefix }}}" >> $GITHUB_ENV;  \
-        else echo "VERSION=${GITHUB_REF##refs/*/${{ inputs.strip-tag-prefix }}}" >> $GITHUB_ENV;       \
+        if [ -n "$GITHUB_BASE_REF" ];
+        then
+          echo "REF=${GITHUB_BASE_REF}" >> $GITHUB_ENV;
+          echo "VERSION=${GITHUB_BASE_REF}" >> $GITHUB_ENV;
+        else
+          echo "REF=${GITHUB_REF}" >> $GITHUB_ENV;
+          echo "VERSION=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
         fi;
       shell: bash
       name: Set version in environment
+    - run: |
+        echo "${REF}"
+        if [[ "${REF}" == "refs/tags/"* ]];
+          then echo "VERSION=${VERSION##${{ inputs.strip-tag-prefix}}}" >> $GITHUB_ENV;
+        fi;
+      shell: bash
+      name: Remove the tag prefix
