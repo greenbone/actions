@@ -8331,7 +8331,7 @@ function wrappy (fn, cb) {
 
 const github = __nccwpck_require__(5438);
 
-const isPullRequest = () => !!github?.context?.payload?.pull_request;
+const isPullRequest = () => !!github.context.payload.pull_request;
 
 const isTag = (name) => name && name.startsWith("refs/tags");
 
@@ -8342,7 +8342,10 @@ const getBranchName = (name) => {
 
   const regexp = new RegExp("refs/heads/(?<branch>.*)");
   const match = regexp.exec(name);
-  return match?.groups?.branch || name;
+  if (match && match.groups && match.groups.branch) {
+    return match.groups.branch;
+  }
+  return name;
 };
 
 const getTagName = (name, stripTagPrefix = "") => {
@@ -8352,7 +8355,10 @@ const getTagName = (name, stripTagPrefix = "") => {
 
   const regexp = new RegExp(`refs/tags/${stripTagPrefix}(?<tag>.*)`);
   const match = regexp.exec(name);
-  return match?.groups?.tag || name;
+  if (match && match.groups && match.groups.tag) {
+    return match.groups.tag;
+  }
+  return name;
 };
 
 module.exports = {
