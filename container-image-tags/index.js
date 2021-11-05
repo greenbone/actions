@@ -5,6 +5,7 @@ const utils = require("./utils");
 async function run() {
   const targetBranch = utils.getBranchName(process.env.GITHUB_BASE_REF);
   const currentBranch = utils.getBranchName(process.env.GITHUB_REF);
+  const headBranch = utils.getBranchName(process.env.GITHUB_HEAD_REF);
   const imageName =
     core.getInput("image-name") || process.env.GITHUB_REPOSITORY;
   const stripTagPrefix = core.getInput("strip-tag-prefix") || "";
@@ -13,6 +14,7 @@ async function run() {
     imageName,
     targetBranch,
     currentBranch,
+    headBranch,
     stripTagPrefix,
   });
 

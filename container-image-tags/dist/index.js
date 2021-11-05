@@ -12,6 +12,7 @@ const createImageTags = ({
   imageName,
   currentBranch,
   targetBranch,
+  headBranch,
   stripTagPrefix,
   isPullRequest = utils.isPullRequest,
 }) => {
@@ -23,9 +24,7 @@ const createImageTags = ({
 
   if (isPullRequest()) {
     // pull request
-    imageTags.push(
-      createImageTag(imageName, `${targetBranch}-${currentBranch}`)
-    );
+    imageTags.push(createImageTag(imageName, `${targetBranch}-${headBranch}`));
   } else if (utils.isTag(currentBranch)) {
     // tag
     imageTags.push(
@@ -8547,6 +8546,7 @@ const utils = __nccwpck_require__(1252);
 async function run() {
   const targetBranch = utils.getBranchName(process.env.GITHUB_BASE_REF);
   const currentBranch = utils.getBranchName(process.env.GITHUB_REF);
+  const headBranch = utils.getBranchName(process.env.GITHUB_HEAD_REF);
   const imageName =
     core.getInput("image-name") || process.env.GITHUB_REPOSITORY;
   const stripTagPrefix = core.getInput("strip-tag-prefix") || "";
@@ -8555,6 +8555,7 @@ async function run() {
     imageName,
     targetBranch,
     currentBranch,
+    headBranch,
     stripTagPrefix,
   });
 

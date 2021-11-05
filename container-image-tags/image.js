@@ -6,6 +6,7 @@ const createImageTags = ({
   imageName,
   currentBranch,
   targetBranch,
+  headBranch,
   stripTagPrefix,
   isPullRequest = utils.isPullRequest,
 }) => {
@@ -17,9 +18,7 @@ const createImageTags = ({
 
   if (isPullRequest()) {
     // pull request
-    imageTags.push(
-      createImageTag(imageName, `${targetBranch}-${currentBranch}`)
-    );
+    imageTags.push(createImageTag(imageName, `${targetBranch}-${headBranch}`));
   } else if (utils.isTag(currentBranch)) {
     // tag
     imageTags.push(

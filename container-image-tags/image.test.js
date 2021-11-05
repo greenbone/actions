@@ -32,7 +32,7 @@ describe("createImageTags", () => {
   it("should create image tags for PRs targeting main branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "feature-x",
+      headBranch: "feature-x",
       targetBranch: "main",
       stripTagPrefix: "v",
       isPullRequest: () => true,
@@ -44,7 +44,7 @@ describe("createImageTags", () => {
   it("should create image tags for PRs targeting stable branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "feature-x",
+      headBranch: "feature-x",
       targetBranch: "stable",
       stripTagPrefix: "v",
       isPullRequest: () => true,
@@ -56,7 +56,7 @@ describe("createImageTags", () => {
   it("should create image tags for PRs targeting unstable branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "feature-x",
+      headBranch: "feature-x",
       targetBranch: "unstable",
       stripTagPrefix: "v",
       isPullRequest: () => true,
