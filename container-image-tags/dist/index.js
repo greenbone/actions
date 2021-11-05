@@ -8558,7 +8558,7 @@ async function run() {
     stripTagPrefix,
   });
 
-  core.setOutput("image-tags", imageTags.join(","));
+  core.setOutput("image-tags", imageTags);
 }
 
 run();
