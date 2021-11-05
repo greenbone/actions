@@ -58,8 +58,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: torokmark/assert.sh
-      - name: Show & assert output
+      - name: Show output
         run: |
           echo "Image tags: ${{ steps.container.outputs.image-tags }}"
+      - name: Assert output
+        if: github.event_name == 'pull_request'
+        run: |
           source 'assert.sh'
-          assert_eq ${{ steps.container.outputs.image-tags }} "greenbone/actions:unstable" "wrong container tag"
+          assert_contain ${{ steps.container.outputs.image-tags }} "greenbone/actions:unstable" "wrong container tag"
