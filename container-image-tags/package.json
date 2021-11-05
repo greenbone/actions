@@ -8,7 +8,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint *.js"
+    "lint": "eslint *.js",
+    "build": "ncc build index.js -o dist --source-map"
   },
   "keywords": [],
   "author": "Björn Ricks <bjoern.ricks@greenbone.net> (http://github.com/bjoernricks/)",
@@ -21,6 +22,7 @@
     "semi": true
   },
   "devDependencies": {
+    "@vercel/ncc": "^0.31.1",
     "eslint": "^8.1.0",
     "jest": "^27.3.1"
   }
