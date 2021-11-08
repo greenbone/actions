@@ -11,6 +11,13 @@ async function run() {
   const stripTagPrefix = core.getInput("strip-tag-prefix") || "";
   const registry = core.getInput("registry");
 
+  core.startGroup("env");
+  core.info(`GITHUB_BASE_REF: ${process.env.GITHUB_BASE_REF}`);
+  core.info(`GITHUB_REF: ${process.env.GITHUB_REF}`);
+  core.info(`GITHUB_HEAD_REF: ${process.env.GITHUB_HEAD_REF}`);
+  core.info(`GITHUB_REPOSITORY: ${process.env.GITHUB_REPOSITORY}`);
+  core.endGroup();
+
   const imageTags = image.createImageTags({
     imageName,
     targetBranch,
