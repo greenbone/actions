@@ -101,7 +101,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to main branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      targetBranch: "main",
+      currentBranch: "main",
       stripTagPrefix: "v",
       isPullRequest: () => false,
     });
@@ -112,7 +112,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to stable branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      targetBranch: "stable",
+      currentBranch: "stable",
       stripTagPrefix: "v",
       isPullRequest: () => false,
     });
@@ -123,7 +123,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to oldstable branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      targetBranch: "oldstable",
+      currentBranch: "oldstable",
       stripTagPrefix: "v",
       isPullRequest: () => false,
     });
@@ -134,7 +134,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to a branch with registry", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      targetBranch: "main",
+      currentBranch: "main",
       stripTagPrefix: "v",
       isPullRequest: () => false,
       registry: "ghcr.io",

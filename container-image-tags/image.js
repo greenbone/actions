@@ -3,6 +3,8 @@ const utils = require("./utils");
 const createImageTag = (name, tag, registry) =>
   registry ? `${registry}/${name}:${tag}` : `${name}:${tag}`;
 
+const convertBranchName = (name) => (name === "main" ? "unstable" : name);
+
 const createImageTags = ({
   imageName,
   currentBranch,
@@ -13,12 +15,8 @@ const createImageTags = ({
   isPullRequest = utils.isPullRequest,
 }) => {
   const imageTags = [];
-  if (targetBranch === "main") {
-    // use unstable as name for main
-    targetBranch = "unstable";
-  }
-
   if (isPullRequest()) {
+    targetBranch = convertBranchName(targetBranch);
     // pull request
     imageTags.push(
       createImageTag(imageName, `${targetBranch}-${headBranch}`, registry)
@@ -34,14 +32,15 @@ const createImageTags = ({
     );
   } else {
     // push into a branch
-    if (targetBranch == "stable") {
+    currentBranch = convertBranchName(currentBranch);
+    if (currentBranch == "stable") {
       // also tag stable as latest
       imageTags.push(
-        createImageTag(imageName, targetBranch, registry),
+        createImageTag(imageName, currentBranch, registry),
         createImageTag(imageName, "latest", registry)
       );
     } else {
-      imageTags.push(createImageTag(imageName, targetBranch, registry));
+      imageTags.push(createImageTag(imageName, currentBranch, registry));
     }
   }
   return imageTags.join(",");
