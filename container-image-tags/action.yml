@@ -10,6 +10,9 @@ inputs:
   image-name:
     description: "The image name to use. By default it is derived from the repository name."
     required: false
+  registry:
+    description: "A container registry to use for naming the container image tags"
+    required: false
 outputs:
   image-tags:
     description: "Tags to be used for container images."
