@@ -9,6 +9,8 @@ const utils = __nccwpck_require__(1252);
 const createImageTag = (name, tag, registry) =>
   registry ? `${registry}/${name}:${tag}` : `${name}:${tag}`;
 
+const convertBranchName = (name) => (name === "main" ? "unstable" : name);
+
 const createImageTags = ({
   imageName,
   currentBranch,
@@ -19,12 +21,8 @@ const createImageTags = ({
   isPullRequest = utils.isPullRequest,
 }) => {
   const imageTags = [];
-  if (targetBranch === "main") {
-    // use unstable as name for main
-    targetBranch = "unstable";
-  }
-
   if (isPullRequest()) {
+    targetBranch = convertBranchName(targetBranch);
     // pull request
     imageTags.push(
       createImageTag(imageName, `${targetBranch}-${headBranch}`, registry)
@@ -40,14 +38,12 @@ const createImageTags = ({
     );
   } else {
     // push into a branch
-    if (targetBranch == "stable") {
+    currentBranch = convertBranchName(currentBranch);
+    imageTags.push(createImageTag(imageName, currentBranch, registry));
+
+    if (currentBranch == "stable") {
       // also tag stable as latest
-      imageTags.push(
-        createImageTag(imageName, targetBranch, registry),
-        createImageTag(imageName, "latest", registry)
-      );
-    } else {
-      imageTags.push(createImageTag(imageName, targetBranch, registry));
+      imageTags.push(createImageTag(imageName, "latest", registry));
     }
   }
   return imageTags.join(",");
@@ -8559,6 +8555,13 @@ async function run() {
     core.getInput("image-name") || process.env.GITHUB_REPOSITORY;
   const stripTagPrefix = core.getInput("strip-tag-prefix") || "";
   const registry = core.getInput("registry");
+
+  core.startGroup("env");
+  core.info(`GITHUB_BASE_REF: ${process.env.GITHUB_BASE_REF}`);
+  core.info(`GITHUB_REF: ${process.env.GITHUB_REF}`);
+  core.info(`GITHUB_HEAD_REF: ${process.env.GITHUB_HEAD_REF}`);
+  core.info(`GITHUB_REPOSITORY: ${process.env.GITHUB_REPOSITORY}`);
+  core.endGroup();
 
   const imageTags = image.createImageTags({
     imageName,
