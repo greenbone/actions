@@ -10,7 +10,8 @@ The tag prefix to strip i.e v1.2.3 -> 1.2.3 (default 'v') if GitHub reference is
 a tag.
 
 ### `image-name`
-The image name to use. By default it is derived from the repository name.
+The image name to use. By default it is derived from the repository name using
+the schema (`<organization>/<repository>`).
 
 ### `registry`
 A container registry to use for naming the container image tags
