@@ -17,6 +17,7 @@ async function run() {
     currentBranch,
     headBranch,
     stripTagPrefix,
+    registry,
   });
 
   core.setOutput("image-tags", imageTags);

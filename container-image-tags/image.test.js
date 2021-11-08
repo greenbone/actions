@@ -5,6 +5,15 @@ describe("createImageTag", () => {
     expect(image.createImageTag("foo", "latest")).toEqual("foo:latest");
     expect(image.createImageTag("foo", "1.2.3")).toEqual("foo:1.2.3");
   });
+
+  it("should create an image tag with registry", () => {
+    expect(image.createImageTag("foo", "latest", "ghcr.io")).toEqual(
+      "ghcr.io/foo:latest"
+    );
+    expect(image.createImageTag("foo", "1.2.3", "ghcr.io")).toEqual(
+      "ghcr.io/foo:1.2.3"
+    );
+  });
 });
 
 describe("createImageTags", () => {
@@ -27,6 +36,17 @@ describe("createImageTags", () => {
     });
 
     expect(imageTags).toEqual("foo:1.2.3");
+  });
+
+  it("should create image tags for git tags with registry", () => {
+    const imageTags = image.createImageTags({
+      imageName: "foo",
+      currentBranch: "refs/tags/v1.2.3",
+      isPullRequest: () => false,
+      registry: "ghcr.io",
+    });
+
+    expect(imageTags).toEqual("ghcr.io/foo:v1.2.3");
   });
 
   it("should create image tags for PRs targeting main branch", () => {
@@ -65,6 +85,19 @@ describe("createImageTags", () => {
     expect(imageTags).toEqual("foo:unstable-feature-x");
   });
 
+  it("should create image tags for PRs targeting a branch with a registry", () => {
+    const imageTags = image.createImageTags({
+      imageName: "foo",
+      headBranch: "feature-x",
+      targetBranch: "main",
+      stripTagPrefix: "v",
+      isPullRequest: () => true,
+      registry: "ghcr.io",
+    });
+
+    expect(imageTags).toEqual("ghcr.io/foo:unstable-feature-x");
+  });
+
   it("should create image tags for pushes to main branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
@@ -96,5 +129,17 @@ describe("createImageTags", () => {
     });
 
     expect(imageTags).toEqual("foo:oldstable");
+  });
+
+  it("should create image tags for pushes to a branch with registry", () => {
+    const imageTags = image.createImageTags({
+      imageName: "foo",
+      targetBranch: "main",
+      stripTagPrefix: "v",
+      isPullRequest: () => false,
+      registry: "ghcr.io",
+    });
+
+    expect(imageTags).toEqual("ghcr.io/foo:unstable");
   });
 });

@@ -1,6 +1,7 @@
 const utils = require("./utils");
 
-const createImageTag = (name, tag) => `${name}:${tag}`;
+const createImageTag = (name, tag, registry) =>
+  registry ? `${registry}/${name}:${tag}` : `${name}:${tag}`;
 
 const createImageTags = ({
   imageName,
@@ -8,6 +9,7 @@ const createImageTags = ({
   targetBranch,
   headBranch,
   stripTagPrefix,
+  registry,
   isPullRequest = utils.isPullRequest,
 }) => {
   const imageTags = [];
@@ -18,22 +20,28 @@ const createImageTags = ({
 
   if (isPullRequest()) {
     // pull request
-    imageTags.push(createImageTag(imageName, `${targetBranch}-${headBranch}`));
+    imageTags.push(
+      createImageTag(imageName, `${targetBranch}-${headBranch}`, registry)
+    );
   } else if (utils.isTag(currentBranch)) {
     // tag
     imageTags.push(
-      createImageTag(imageName, utils.getTagName(currentBranch, stripTagPrefix))
+      createImageTag(
+        imageName,
+        utils.getTagName(currentBranch, stripTagPrefix),
+        registry
+      )
     );
   } else {
     // push into a branch
     if (targetBranch == "stable") {
       // also tag stable as latest
       imageTags.push(
-        createImageTag(imageName, targetBranch),
-        createImageTag(imageName, "latest")
+        createImageTag(imageName, targetBranch, registry),
+        createImageTag(imageName, "latest", registry)
       );
     } else {
-      imageTags.push(createImageTag(imageName, targetBranch));
+      imageTags.push(createImageTag(imageName, targetBranch, registry));
     }
   }
   return imageTags.join(",");
