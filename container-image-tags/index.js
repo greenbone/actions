@@ -9,6 +9,7 @@ async function run() {
   const imageName =
     core.getInput("image-name") || process.env.GITHUB_REPOSITORY;
   const stripTagPrefix = core.getInput("strip-tag-prefix") || "";
+  const registry = core.getInput("registry");
 
   const imageTags = image.createImageTags({
     imageName,
@@ -16,6 +17,7 @@ async function run() {
     currentBranch,
     headBranch,
     stripTagPrefix,
+    registry,
   });
 
   core.setOutput("image-tags", imageTags);
