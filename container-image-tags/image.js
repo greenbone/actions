@@ -33,14 +33,11 @@ const createImageTags = ({
   } else {
     // push into a branch
     currentBranch = convertBranchName(currentBranch);
+    imageTags.push(createImageTag(imageName, currentBranch, registry));
+
     if (currentBranch == "stable") {
       // also tag stable as latest
-      imageTags.push(
-        createImageTag(imageName, currentBranch, registry),
-        createImageTag(imageName, "latest", registry)
-      );
-    } else {
-      imageTags.push(createImageTag(imageName, currentBranch, registry));
+      imageTags.push(createImageTag(imageName, "latest", registry));
     }
   }
   return imageTags.join(",");
