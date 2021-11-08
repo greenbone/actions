@@ -66,3 +66,8 @@ jobs:
         run: |
           source 'assert.sh'
           assert_contain ${{ steps.container.outputs.image-tags }} "greenbone/actions:unstable" "wrong container tag"
+      - name: Assert output
+        if: github.event_name != 'pull_request'
+        run: |
+          source 'assert.sh'
+          assert_eq ${{ steps.container.outputs.image-tags }} "greenbone/actions:unstable" "wrong container tag"
