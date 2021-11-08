@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 jobs:
-  test-branch:
+  test-reference-version-branch:
     runs-on: ubuntu-latest
     name: Test reference branch
     steps:
@@ -25,7 +25,7 @@ jobs:
           echo "Current Branch: ${{ env.VERSION }}"
           source 'assert.sh'
           assert_eq ${{ env.VERSION }} "main" "not equivalent!"
-  test-no-tag:
+  test-reference-version-no-tag:
     runs-on: ubuntu-latest
     name: Test branch is not a tag
     steps:
@@ -44,3 +44,25 @@ jobs:
           echo "Current Branch: ${{ env.VERSION }}"
           source 'assert.sh'
           assert_eq ${{ env.VERSION }} "main" "not equivalent!"
+
+  test-container-image-tags-branch:
+    runs-on: ubuntu-latest
+    name: Test container image tags for branch
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run test
+        id: container
+        uses: ./container-image-tags
+      - name: Checkout assert.sh
+        uses: actions/checkout@v2
+        with:
+          repository: torokmark/assert.sh
+      - name: Show output
+        run: |
+          echo "Image tags: ${{ steps.container.outputs.image-tags }}"
+      - name: Assert output
+        if: github.event_name == 'pull_request'
+        run: |
+          source 'assert.sh'
+          assert_contain ${{ steps.container.outputs.image-tags }} "greenbone/actions:unstable" "wrong container tag"

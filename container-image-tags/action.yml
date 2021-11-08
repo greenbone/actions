@@ -1,0 +1,19 @@
+name: "Container Image Tags"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "Creates a tag string for using with docker build-push-action"
+
+inputs:
+  strip-tag-prefix:
+    description: "The tag prefix to strip i.e v1.2.3 -> 1.2.3 (default 'v')"
+    default: "v"
+    required: false
+  image-name:
+    description: "The image name to use. By default it is derived from the repository name."
+    required: false
+outputs:
+  image-tags:
+    description: "Tags to be used for container images."
+
+runs:
+  using: "node12"
+  main: "dist/index.js"

@@ -1,0 +1,29 @@
+{
+  "name": "container-image-tags",
+  "version": "1.0.0",
+  "description": "Creates a tag string for using with docker build-push-action",
+  "repository": {
+    "url": "https://github.com:greenbone/actions"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint *.js",
+    "build": "ncc build index.js -o dist --source-map"
+  },
+  "keywords": [],
+  "author": "Björn Ricks <bjoern.ricks@greenbone.net> (http://github.com/bjoernricks/)",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0"
+  },
+  "prettier": {
+    "semi": true
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.31.1",
+    "eslint": "^8.1.0",
+    "jest": "^27.3.1"
+  }
+}
