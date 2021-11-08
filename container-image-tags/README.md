@@ -19,8 +19,40 @@ A container registry to use for naming the container image tags
 
 ### `image-tags`
 
-A comma separated string for container image tag names that should be used for
-the image.
+A string containing the tag for a container image using the following default
+pattern `<image-name>:<target-branch>` or `<registry>/<image-name>:<target-branch>`
+if a registry is provided.
+
+Additional naming rules (hint: rules are shown without an input registry):
+
+* Pushes targeting `main` branch
+
+    `<image-name>:unstable`
+
+* Pull Request targeting `main` branch
+
+    `<image-name>:unstable-<pr-branch-name>`
+
+* Pushes targeting `stable` branch
+
+    `<image-name>:stable,<image-name>:latest`
+
+* Pull Request targeting `stable` branch
+
+    `<image-name>:stable-<pr-branch-name>`
+
+* Pushes targeting `oldstable` branch
+
+    `<image-name>:oldstable`
+
+* Pull Request targeting `oldstable` branch
+
+    `<image-name>:oldstable-<pr-branch-name>`
+
+* Pushes for tags
+
+    `<image-name>:<tag-name>`
+
 
 ## Build
 
