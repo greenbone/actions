@@ -13,6 +13,11 @@ describe("getBranchName", () => {
     expect(utils.getBranchName()).toEqual("");
     expect(utils.getBranchName(null)).toEqual("");
   });
+
+  it("should return the feature branch name, but without slash", () => {
+    expect(utils.getBranchName("<username>/my-new-cool-feature")).toEqual("<username>-my-new-cool-feature")
+    expect(utils.getBranchName("refs/heads/<username>/my-new-cool-feature")).toEqual("<username>-my-new-cool-feature")
+  })
 });
 
 describe("getTagName", () => {
