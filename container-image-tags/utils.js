@@ -12,9 +12,11 @@ const getBranchName = (name) => {
   const regexp = new RegExp("refs/heads/(?<branch>.*)");
   const match = regexp.exec(name);
   if (match && match.groups && match.groups.branch) {
-    return match.groups.branch;
+    // we must replace a / with something else (going with - for now)
+    // to avoid invalid docker image tag names
+    return match.groups.branch.replace(/\//, "-");
   }
-  return name;
+  return name.replace(/\//, "-");
 };
 
 const getTagName = (name, stripTagPrefix = "") => {
