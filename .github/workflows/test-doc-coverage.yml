@@ -1,0 +1,19 @@
+name: Test Actions
+
+on:
+  push:
+    tags: ["*"]
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-reference-version-branch:
+    runs-on: ubuntu-latest
+    container: greenbone/doxygen
+    name: Test reference branch
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run test
+        uses: ./doc-coverage-clang
