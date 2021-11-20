@@ -1,0 +1,22 @@
+name: Test Python Actions
+
+on:
+  push:
+    tags: ["*"]
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install-poetry:
+    runs-on: ubuntu-latest
+    name: Install poetry
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install poetry
+        uses: ./poetry
+        with:
+          version: ${{ matrix.python-version }}
+        continue-on-error: true
+      - run: poetry
