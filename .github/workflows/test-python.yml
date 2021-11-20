@@ -20,3 +20,29 @@ jobs:
           version: ${{ matrix.python-version }}
         continue-on-error: true
       - run: poetry
+
+  test-coverage:
+    runs-on: ubuntu-latest
+    name: Test Coverage Python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install poetry
+        uses: ./coverage-python
+        with:
+          version: ${{ matrix.python-version }}
+        continue-on-error: true
+      - run: poetry
+
+  test-linting:
+    runs-on: ubuntu-latest
+    name: Test Linting Python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install poetry
+        uses: ./lint-python
+        with:
+          version: ${{ matrix.python-version }}
+        continue-on-error: true
+      - run: poetry
