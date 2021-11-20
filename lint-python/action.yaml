@@ -12,6 +12,10 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Install poetry
+      uses: greebone/actions/poetry@v1
+      with:
+        version: ${{ inputs.version }}
     - run: echo "Running black"
       shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}
