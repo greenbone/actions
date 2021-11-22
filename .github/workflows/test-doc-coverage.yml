@@ -1,0 +1,20 @@
+name: Test Actions
+
+on:
+  push:
+    tags: ["*"]
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-doc-cov-clang:
+    runs-on: ubuntu-latest
+    container: greenbone/doxygen
+    name: Test doc coverage for c language
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run test
+        uses: ./doc-coverage-clang
+        continue-on-error: true
