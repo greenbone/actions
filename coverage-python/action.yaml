@@ -1,8 +1,11 @@
 
 name: "Python Codecov Action"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
-description: "An action to upload coverage to codecov.io for Python package by using Poetry. Requires poetry to be installed"
+description: "An action to upload coverage to codecov.io for Python package by using Poetry."
 inputs:
+  version:
+    description: "Python version that should be installed"
+    default: 3.9
   test-command:
     description: "Command to run the tests"
     required: true
@@ -15,6 +18,10 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Install poetry
+      uses: greenbone/actions/poetry@v1
+      with:
+        version: ${{ inputs.version }}
     - run: poetry run python -m pip install codecov
       shell: bash
       name: Install codecov-python
