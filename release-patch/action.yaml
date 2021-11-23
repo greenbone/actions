@@ -1,0 +1,71 @@
+name: "Pontos Release Patch version"
+author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
+description: "An action that creates a patch release [x.y.z -> x.y.z+1] for a clang or python project."
+
+inputs:
+  github-user:
+    description: "Github user name."
+    required: true
+  github-user-mail:
+    description: "Mail address for the given github user."
+    required: true
+  github-user-token:
+    description: "Token with write rights required to create the release."
+    required: true
+  gpg-key:
+    description: "GPG key, represented as a string. Required for signing assets of the release."
+    required: true
+  gpg-fingerprint:
+    description: "GPG fingerprint, represented as a string. Required for signing assets of the release."
+    required: true
+  gpg-passphrase:
+    description: "GPG passphrase, represented as a string. Required for signing assets of the release."
+    required: true
+  conventional-commits:
+    description: "Use conventional commits, or Changelog file."
+    default:
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+  - uses: actions/checkout@v2
+    with:
+      persist-credentials: false
+  - name: Set up Python
+    uses: actions/setup-python@v2
+    with:
+      python-version: 3.8
+  - name: Install pontos
+    run: |
+      apt-get update && apt-get --assume-yes install python3-venv
+      python3 -m venv .venv
+      . .venv/bin/activate
+      python -m pip install --upgrade pip
+      python -m pip install --upgrade pontos
+  - name: Set git name, mail and origin
+    run: |
+      git config --global user.name "${{ inputs.github-user }}"
+      git config --global user.email "${{ inputs.github-user-mail }}"
+      git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+  - name: Prepare patch release with pontos, store version
+    if: ${{ inputs.conventional-commits }} == true
+    run: |
+      . .venv/bin/activate
+      pontos-release prepare --patch
+      echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
+  - name: Release with pontos
+    run: |
+      . .venv/bin/activate
+      pontos-release release
+  - name: Import key from secrets
+    run: |
+      echo -e "${{ inputs.gpg-key }}" >> tmp.file
+      gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+      rm tmp.file
+  - name: Sign with pontos-release sign
+    run: |
+      echo "Signing assets for ${{env.VERSION}}"
+      . .venv/bin/activate
+      pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
