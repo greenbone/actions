@@ -9,20 +9,26 @@ GitHub Action for Greenbone projects
   uses: greenbone/actions/poetry@v1
   with:
     version: 3.9
+
 - name: Install python, poetry, project and run coverage
   uses: greenbone/actions/coverage-python@v1
   with:
     version: 3.9
+
 - name: Run coverage for javascript
   uses: greenbone/actions/coverage-js@v1
+
 - name: Install python, poetry, project and run lint
   uses: greenbone/actions/lint-python@v1
   with:
     version: 3.9
+
 - name: upload documentation coverage to codecov.io for C Lang repository
   uses: greenbone/actions/doc-coverage-clang@v1
+
 - name: Create a tag string for using with docker build-push-action
   uses: greenbone/actions/container-image-tags@v1
+
 - name: Run release actions
   uses: greenbone/actions/release@v1
   with:
