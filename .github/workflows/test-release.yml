@@ -39,3 +39,4 @@ jobs:
           gpg-passphrase: foo
           gpg-fingerprint: baz
           conventional-commits: false
+          strategy: calendar
