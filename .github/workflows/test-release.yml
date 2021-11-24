@@ -18,7 +18,7 @@ jobs:
         uses: ./release-patch
         with:
           github-user: foo
-          github-user-email: foo@bar.baz
+          github-user-mail: foo@bar.baz
           github-user-token: bar
           gpg-key: boo
           gpg-passphrase: foo

@@ -23,10 +23,11 @@ inputs:
     required: true
   conventional-commits:
     description: "Use conventional commits, or Changelog file."
-    default:
+    default: true
 branding:
   icon: "package"
   color: "green"
+
 runs:
   using: "composite"
   steps:
@@ -52,17 +53,27 @@ runs:
       git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
     shell: bash
   - name: Prepare patch release with pontos, store version
-    if: ${{ inputs.conventional-commits }} == true
+    # not supported
+    #if: ${{ inputs.conventional-commits }} == true
     run: |
       . .venv/bin/activate
-      pontos-release prepare --patch
+      if [[ "${{inputs.conventional-commits}}" != "" ]]; then
+        echo ${{inputs.conventional-commits}}
+        pontos-release prepare --patch
+      fi
       echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
     shell: bash
+    env:
+      GITHUB_USER: ${{ inputs.github-user }}
+      GITHUB_TOKEN: ${{ inputs.github-user-token }}
   - name: Release with pontos
     run: |
       . .venv/bin/activate
       pontos-release release
     shell: bash
+    env:
+      GITHUB_USER: ${{ inputs.github-user }}
+      GITHUB_TOKEN: ${{ inputs.github-user-token }}
   - name: Import key from secrets
     run: |
       echo -e "${{ inputs.gpg-key }}" >> tmp.file
@@ -75,3 +86,6 @@ runs:
       . .venv/bin/activate
       pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
     shell: bash
+    env:
+      GITHUB_USER: ${{ inputs.github-user }}
+      GITHUB_TOKEN: ${{ inputs.github-user-token }}
