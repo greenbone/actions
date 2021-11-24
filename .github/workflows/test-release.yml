@@ -8,7 +8,22 @@ on:
     branches: [main]
 
 jobs:
-  install-poetry:
+  release-patch-cc:
+    runs-on: ubuntu-latest
+    name: Test Release Patch CC
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run release patch actions
+        uses: ./release-patch
+        with:
+          github-user: foo
+          github-user-mail: foo@bar.baz
+          github-user-token: bar
+          gpg-key: boo
+          gpg-passphrase: foo
+          gpg-fingerprint: baz
+  release-patch:
     runs-on: ubuntu-latest
     name: Test Release Patch
     steps:
@@ -23,3 +38,4 @@ jobs:
           gpg-key: boo
           gpg-passphrase: foo
           gpg-fingerprint: baz
+          conventional-commits: false

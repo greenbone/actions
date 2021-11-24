@@ -57,8 +57,12 @@ runs:
     #if: ${{ inputs.conventional-commits }} == true
     run: |
       . .venv/bin/activate
-      if [[ "${{inputs.conventional-commits}}" != "" ]]; then
-        echo ${{inputs.conventional-commits}}
+      if [[ ${{inputs.conventional-commits}} == true ]];
+      then
+        echo -e "Prepare with conventional commits"
+        pontos-release prepare --patch -CC
+      else
+        echo -e "Prepare with Changelog"
         pontos-release prepare --patch
       fi
       echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
@@ -69,7 +73,14 @@ runs:
   - name: Release with pontos
     run: |
       . .venv/bin/activate
-      pontos-release release
+      if [[ ${{inputs.conventional-commits}} == true ]];
+      then
+        echo -e "Release with conventional commits"
+        pontos-release release -CC
+      else
+        echo -e "Release with Changelog"
+      fi
+        pontos-release release
     shell: bash
     env:
       GITHUB_USER: ${{ inputs.github-user }}
