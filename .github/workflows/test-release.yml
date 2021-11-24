@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run release patch actions
-        uses: ./release-patch
+        uses: ./release
         with:
           github-user: foo
           github-user-mail: foo@bar.baz
@@ -30,23 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run release patch actions
-        uses: ./release-patch
-        with:
-          github-user: foo
-          github-user-mail: foo@bar.baz
-          github-user-token: bar
-          gpg-key: boo
-          gpg-passphrase: foo
-          gpg-fingerprint: baz
-          conventional-commits: false
-  patch-test-secret-encrypted:
-    runs-on: ubuntu-latest
-    name: Test Release Patch
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Run release patch actions
-        uses: ./release-patch
+        uses: ./release
         with:
           github-user: ${{ secrets.GREENBONE_BOT }}
           github-user-mail: foo@bar.baz

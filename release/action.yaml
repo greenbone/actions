@@ -24,6 +24,13 @@ inputs:
   conventional-commits:
     description: "Use conventional commits, or Changelog file."
     default: true
+  strategy:
+    description: "What release strategy? ['patch', 'calendar'], default: patch"
+    default: "patch"
+  version:
+    description: "Python version that should be installed"
+    default: 3.9
+
 branding:
   icon: "package"
   color: "green"
@@ -37,7 +44,7 @@ runs:
   - name: Set up Python
     uses: actions/setup-python@v2
     with:
-      python-version: 3.8
+      python-version: ${{ inputs.version }}
   - name: Install pontos
     run: |
       apt-get update && apt-get --assume-yes install python3-venv
@@ -52,46 +59,54 @@ runs:
       git config --global user.email "${{ inputs.github-user-mail }}"
       git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
     shell: bash
-  - name: Prepare patch release with pontos, store version
-    # not supported
-    #if: ${{ inputs.conventional-commits }} == true
+  - name: Parse inputs
     run: |
-      . .venv/bin/activate
+      case ${{inputs.strategy}} in
+        calendar)
+          PREPARE_FLAGS="--${{ inputs.strategy }}"
+          ;;
+        patch)
+          PREPARE_FLAGS="--${{ inputs.strategy }}"
+          RELEASE_FLAGS="--${{ inputs.strategy }}"
+          ;;
+        *)
+          PREPARE_FLAGS="--patch"
+          RELEASE_FLAGS="--patch"
+          ;;
+      esac
+
       if [[ ${{inputs.conventional-commits}} == true ]];
       then
-        echo -e "Prepare with conventional commits"
-        pontos-release prepare --patch -CC
-      else
-        echo -e "Prepare with Changelog"
-        pontos-release prepare --patch
+        PREPARE_FLAGS="${PREPARE_FLAGS} -CC"
+        RELEASE_FLAGS="${RELEASE_FLAGS} -CC"
       fi
+      echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
+      echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
+    shell: bash
+  - name: Prepare release and store the version
+    run: |
+      . .venv/bin/activate
+      pontos-release prepare ${{ env.PREPARE_FLAGS }}
       echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
     shell: bash
     env:
       GITHUB_USER: ${{ inputs.github-user }}
       GITHUB_TOKEN: ${{ inputs.github-user-token }}
-  - name: Release with pontos
+  - name: Release
     run: |
       . .venv/bin/activate
-      if [[ ${{inputs.conventional-commits}} == true ]];
-      then
-        echo -e "Release with conventional commits"
-        pontos-release release -CC
-      else
-        echo -e "Release with Changelog"
-      fi
-        pontos-release release
+      pontos-release release ${{ env.RELEASE_FLAGS }}
     shell: bash
     env:
       GITHUB_USER: ${{ inputs.github-user }}
       GITHUB_TOKEN: ${{ inputs.github-user-token }}
-  - name: Import key from secrets
+  - name: Import gpg key from secrets
     run: |
       echo -e "${{ inputs.gpg-key }}" >> tmp.file
       gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
       rm tmp.file
     shell: bash
-  - name: Sign with pontos-release sign
+  - name: Sign assets for released version
     run: |
       echo "Signing assets for ${{env.VERSION}}"
       . .venv/bin/activate
