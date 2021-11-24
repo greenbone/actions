@@ -23,6 +23,7 @@ jobs:
           gpg-key: boo
           gpg-passphrase: foo
           gpg-fingerprint: baz
+        continue-on-error: true
   release-patch:
     runs-on: ubuntu-latest
     name: Test Release Calendar changelog
@@ -40,3 +41,4 @@ jobs:
           gpg-fingerprint: baz
           conventional-commits: false
           strategy: calendar
+        continue-on-error: true
