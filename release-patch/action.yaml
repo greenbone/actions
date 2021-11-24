@@ -44,28 +44,34 @@ runs:
       . .venv/bin/activate
       python -m pip install --upgrade pip
       python -m pip install --upgrade pontos
+    shell: bash
   - name: Set git name, mail and origin
     run: |
       git config --global user.name "${{ inputs.github-user }}"
       git config --global user.email "${{ inputs.github-user-mail }}"
       git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+    shell: bash
   - name: Prepare patch release with pontos, store version
     if: ${{ inputs.conventional-commits }} == true
     run: |
       . .venv/bin/activate
       pontos-release prepare --patch
       echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
+    shell: bash
   - name: Release with pontos
     run: |
       . .venv/bin/activate
       pontos-release release
+    shell: bash
   - name: Import key from secrets
     run: |
       echo -e "${{ inputs.gpg-key }}" >> tmp.file
       gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
       rm tmp.file
+    shell: bash
   - name: Sign with pontos-release sign
     run: |
       echo "Signing assets for ${{env.VERSION}}"
       . .venv/bin/activate
       pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
+    shell: bash
