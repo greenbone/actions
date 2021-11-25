@@ -54,7 +54,7 @@ runs:
     with:
       fetch-depth: ${{ env.FETCH_DEPTH }}
       persist-credentials: false
-      ref: ${{ inputs.branch }}
+      ref: ${{ inputs.ref }}
   - name: Set up Python
     uses: actions/setup-python@v2
     with:
