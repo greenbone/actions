@@ -30,6 +30,9 @@ inputs:
   version:
     description: "Python version that should be installed"
     default: 3.9
+  ref:
+    description: "Branch that should be released"
+    default: ''
 
 branding:
   icon: "package"
@@ -38,9 +41,20 @@ branding:
 runs:
   using: "composite"
   steps:
+  - name: Fetch-depth
+    run: |
+      if [[ ${{inputs.conventional-commits}} == true ]];
+      then
+        echo "FETCH_DEPTH=0" >> $GITHUB_ENV
+      else
+        echo "FETCH_DEPTH=-1" >> $GITHUB_ENV
+      fi
+    shell: bash
   - uses: actions/checkout@v2
     with:
+      fetch-depth: ${{ env.FETCH_DEPTH }}
       persist-credentials: false
+      ref: ${{ inputs.branch }}
   - name: Set up Python
     uses: actions/setup-python@v2
     with:

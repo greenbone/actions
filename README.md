@@ -40,7 +40,4 @@ GitHub Action for Greenbone projects
     gpg-fingerprint: baz
     conventional-commits: false
     strategy: calendar
-
 ```
-
-
