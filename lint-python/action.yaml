@@ -6,6 +6,9 @@ inputs:
   packages:
     description: "Python packages to lint"
     required: true
+  version:
+    description: "Python version that should be installed"
+    default: 3.9
 branding:
   icon: "package"
   color: "green"
