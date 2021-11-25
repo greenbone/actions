@@ -41,4 +41,5 @@ jobs:
           gpg-fingerprint: baz
           conventional-commits: false
           strategy: calendar
+          ref: v1
         continue-on-error: true
