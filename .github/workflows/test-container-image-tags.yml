@@ -1,4 +1,4 @@
-name: Test Actions
+name: Test Container Image Tags Actions
 
 on:
   push:

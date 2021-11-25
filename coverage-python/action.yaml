@@ -1,4 +1,3 @@
-
 name: "Python Codecov Action"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to upload coverage to codecov.io for Python package by using Poetry."

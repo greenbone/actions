@@ -1,0 +1,44 @@
+name: Test Release Actions
+
+on:
+  push:
+    tags: ["*"]
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  release-patch-cc:
+    runs-on: ubuntu-latest
+    name: Test Release Patch CC
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run release patch actions
+        uses: ./release
+        with:
+          github-user: foo
+          github-user-mail: foo@bar.baz
+          github-user-token: bar
+          gpg-key: boo
+          gpg-passphrase: foo
+          gpg-fingerprint: baz
+        continue-on-error: true
+  release-patch:
+    runs-on: ubuntu-latest
+    name: Test Release Calendar changelog
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run release patch actions
+        uses: ./release
+        with:
+          github-user: ${{ secrets.GREENBONE_BOT }}
+          github-user-mail: foo@bar.baz
+          github-user-token: bar
+          gpg-key: boo
+          gpg-passphrase: foo
+          gpg-fingerprint: baz
+          conventional-commits: false
+          strategy: calendar
+        continue-on-error: true
