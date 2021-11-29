@@ -1,6 +1,6 @@
 name: "Pontos Release Patch version"
 author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
-description: "An action that creates a patch release [x.y.z -> x.y.z+1] for a clang or python project."
+description: "An action that creates a patch release [x.y.z -> x.y.z+1] for a clang project."
 
 inputs:
   github-user:
@@ -27,9 +27,6 @@ inputs:
   strategy:
     description: "What release strategy? ['patch', 'calendar'], default: patch"
     default: "patch"
-  version:
-    description: "Python version that should be installed"
-    default: 3.9
   ref:
     description: "Branch that should be released"
     default: ''
@@ -58,7 +55,7 @@ runs:
   - name: Set up Python
     uses: actions/setup-python@v2
     with:
-      python-version: ${{ inputs.version }}
+      python-version: 3.9
   - name: Install pontos
     run: |
       apt-get update && apt-get --assume-yes install python3-venv
