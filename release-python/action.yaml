@@ -92,7 +92,7 @@ runs:
   - name: Prepare release and store the version
     run: |
       poetry run pontos-release prepare ${{ env.PREPARE_FLAGS }}
-      echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
+      echo "VERSION=$(poetry run pontos-version show)" >> $GITHUB_ENV
     shell: bash
     env:
       GITHUB_USER: ${{ inputs.github-user }}
