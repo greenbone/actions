@@ -1,6 +1,6 @@
 name: "Pontos Release Patch version"
 author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
-description: "An action that creates a patch release [x.y.z -> x.y.z+1] for a clang project."
+description: "An action that creates a release [x.y.z -> x.y.z+1] for a python project."
 
 inputs:
   github-user:
@@ -27,6 +27,9 @@ inputs:
   strategy:
     description: "What release strategy? ['patch', 'calendar'], default: patch"
     default: "patch"
+  version:
+    description: "Python version that should be installed"
+    default: 3.9
   ref:
     description: "Branch that should be released"
     default: ''
@@ -52,18 +55,10 @@ runs:
       fetch-depth: ${{ env.FETCH_DEPTH }}
       persist-credentials: false
       ref: ${{ inputs.ref }}
-  - name: Set up Python
-    uses: actions/setup-python@v2
+  - name: Set up Poetry, python and the project
+    uses: greenbone/actions/poetry@v1
     with:
-      python-version: 3.9
-  - name: Install pontos
-    run: |
-      apt-get update && apt-get --assume-yes install python3-venv
-      python3 -m venv .venv
-      . .venv/bin/activate
-      python -m pip install --upgrade pip
-      python -m pip install --upgrade pontos
-    shell: bash
+      version: ${{ inputs.version }}
   - name: Set git name, mail and origin
     run: |
       git config --global user.name "${{ inputs.github-user }}"
@@ -96,8 +91,7 @@ runs:
     shell: bash
   - name: Prepare release and store the version
     run: |
-      . .venv/bin/activate
-      pontos-release prepare ${{ env.PREPARE_FLAGS }}
+      poetry run pontos-release prepare ${{ env.PREPARE_FLAGS }}
       echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
     shell: bash
     env:
@@ -105,8 +99,7 @@ runs:
       GITHUB_TOKEN: ${{ inputs.github-user-token }}
   - name: Release
     run: |
-      . .venv/bin/activate
-      pontos-release release ${{ env.RELEASE_FLAGS }}
+      poetry run pontos-release release ${{ env.RELEASE_FLAGS }}
     shell: bash
     env:
       GITHUB_USER: ${{ inputs.github-user }}
@@ -120,8 +113,7 @@ runs:
   - name: Sign assets for released version
     run: |
       echo "Signing assets for ${{env.VERSION}}"
-      . .venv/bin/activate
-      pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
+      poetry run pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
     shell: bash
     env:
       GITHUB_USER: ${{ inputs.github-user }}

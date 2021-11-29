@@ -31,7 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run release patch actions
-        uses: ./release
+        uses: ./release-python
         with:
           github-user: ${{ secrets.GREENBONE_BOT }}
           github-user-mail: foo@bar.baz
