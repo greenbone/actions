@@ -1,0 +1,14 @@
+name: "Greenbone Pull Request Backport Action"
+description: "GitHub Action to backport Pull Requests"
+author: "Björn Ricks"
+inputs:
+  config:
+    description: "TOML config file to use"
+    default: "backport.toml"
+  token:
+    description: "GitHub Token for authentication"
+    required: true
+
+runs:
+  using: "docker"
+  image: "docker://ghcr.io/greenbone/backport-pull-request:unstable"

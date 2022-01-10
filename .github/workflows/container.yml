@@ -1,0 +1,39 @@
+name: Container Image Builds
+
+on:
+  push:
+    branches: [ main, "v*" ]
+      # only run if a file in backport-pull-request has changed
+      paths: ["backport-pull-request/**"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  images:
+    name: Build backport-pull-request image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Gather container image tags
+        id: container
+        uses: greenbone/actions/container-image-tags@v1
+        with:
+          registry: ghcr.io
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Container image
+        uses: docker/build-push-action@v2
+        with:
+          context: backport-pull-request
+          push: true
+          tags: ${{ steps.container.outputs.image-tags }}
+          file: .docker/backport-pull-request.Dockerfile
+          labels: |
+            org.opencontainers.image.vendor=Greenbone
+            org.opencontainers.image.revision=${{ github.sha }}
