@@ -50,7 +50,7 @@ workflow file of the backport action.
 
 ## TOML Configuration
 
-The TOML configuration specifies when a pull request and where it should be
+The TOML configuration specifies when and where a pull request should be
 backported. The backport configuration file requires at least a section
 ([a TOML table](https://toml.io/en/v1.0.0#table)) using the schema
 `[backport.<id>]` where `<id>` is a randomly chosen identifier (for example
