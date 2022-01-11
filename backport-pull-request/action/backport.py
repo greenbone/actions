@@ -124,6 +124,7 @@ and create a new pull reqest where the base is `{destination_branch}` and compar
             ) from None
 
     def run(self) -> int:
+        Console.debug(self.event)
 
         pull_request = self.event.pull_request
 
