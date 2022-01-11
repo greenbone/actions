@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: Backport Pull Request
-          uses: bjoernricks/pull-request-backport-action@main
+          uses: greenbone/actions/backport-pull-request@v1
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -35,7 +35,7 @@ workflow file of the backport action.
 
 ```yaml
         - name: Backport Pull Request
-          uses: bjoernricks/pull-request-backport-action@main
+          uses: greenbone/actions/backport-pull-request@v1
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
             config: pyproject.toml
