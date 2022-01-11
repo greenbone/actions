@@ -20,6 +20,7 @@ jobs:
         id: container
         uses: greenbone/actions/container-image-tags@v1
         with:
+          image-name: greenbone/backport-pull-request
           registry: ghcr.io
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
