@@ -3,8 +3,8 @@ name: Container Image Builds
 on:
   push:
     branches: [ main, "v*" ]
-      # only run if a file in backport-pull-request has changed
-      paths: ["backport-pull-request/**"]
+    # only run if a file in backport-pull-request has changed
+    paths: ["backport-pull-request/**"]
     tags: ["v*"]
   workflow_dispatch:
 
