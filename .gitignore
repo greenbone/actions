@@ -129,4 +129,7 @@ dmypy.json
 
 node_modules/
 .vscode
+
+# Jetbrains
 .idea/
+*.iml
