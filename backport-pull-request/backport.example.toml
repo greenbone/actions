@@ -1,0 +1,9 @@
+[backport.develop]
+label = "backport-to-main"
+source = "develop"
+destination = "main"
+
+[backport.main]
+label = "backport-to-staging"
+source = "main"
+destination = "staging"
