@@ -9,6 +9,7 @@ on:
     branches: [ main, 'feature/*' ]
     paths:
       - 'artifacts-download-trigger/**'
+  workflow_dispatch:
 
 jobs:
   wait:
@@ -29,6 +30,7 @@ jobs:
           name: artifact
           path: artifact
           download-artifacts: true
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA
   download-branch:
@@ -46,6 +48,7 @@ jobs:
           path: artifact
           branch: main
           download-artifacts: true
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA
   download-pr:
@@ -62,6 +65,7 @@ jobs:
           name: artifact
           path: artifact
           pr: ${{github.event.pull_request.number}}
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           download-artifacts: true
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA
@@ -76,6 +80,7 @@ jobs:
         with:
           workflow: artifacts-download-trigger-upload.yml
           download-artifacts: true
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
       - name: Test
         run: |
           cat artifact1/sha1 | grep $GITHUB_SHA
@@ -94,5 +99,6 @@ jobs:
           path: artifact
           workflow_conclusion: ''
           download-artifacts: true
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA

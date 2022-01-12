@@ -47,7 +47,7 @@ jobs:
       - name: Invoke echo 1 workflow using this action (do not wait for completion)
         uses: ./artifacts-download-trigger
         with:
-          workflow: Message Echo 1
+          workflow: artifacts-download-trigger Message Echo 1
           gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           inputs: '{"message": "blah blah"}'
           wait-for-completion: false
@@ -67,7 +67,7 @@ jobs:
       - name: Invoke echo 2 workflow using this action
         uses: ./artifacts-download-trigger
         with:
-          workflow: artifacts-download-trigger-echo-2.yaml
+          workflow: artifacts-download-trigger-echo2.yml
           gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           wait-for-completion: false
 
@@ -100,6 +100,7 @@ jobs:
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
         continue-on-error: true
+      - run: echo "worflow=${{ toJSON(steps.failing-workflow) }}"
       - uses: nick-invision/assert-action@v1
         with:
           expected: success
@@ -130,7 +131,7 @@ jobs:
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
         continue-on-error: true
-      - run: echo "worflow-conclusion=${{ steps.failing-workflow.outputs.workflow-conclusion }}"
+      - run: echo "worflow=${{ toJSON(steps.failing-workflow) }}"
       - uses: nick-invision/assert-action@v1
         with:
           expected: failure
@@ -178,18 +179,20 @@ jobs:
     #     token: ${{ secrets.PERSONAL_TOKEN }}
     #     ref: master
 
-  deploy:
-    needs: [echo-1-test, echo-2-test, long-running-test, failing-test, timeout-test]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Download dist
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: artifacts-download-trigger/dist
-      - name: Update repo with build
-        uses: mikeal/publish-to-github-action@master
-        env:
-          GITHUB_gh_token: ${{ secrets.BOT_PAT_TOKEN }}
+# This is not need until we have some releases to do
+#
+#  deploy:
+#    needs: [echo-1-test, echo-2-test, long-running-test, failing-test, timeout-test]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check out repository
+#        uses: actions/checkout@v2
+#      - name: Download dist
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: build
+#          path: artifacts-download-trigger/dist
+#      - name: Update repo with build
+#        uses: mikeal/publish-to-github-action@master
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BOT_PAT_TOKEN }}
