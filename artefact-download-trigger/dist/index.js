@@ -11480,7 +11480,7 @@ function download() {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const token = core.getInput("github_token", { required: true });
+            const token = core.getInput("gh_token", { required: true });
             const workflow = core.getInput("workflow", { required: true });
             const [owner, repo] = core.getInput("repo", { required: true }).split("/");
             const path = core.getInput("path", { required: true });
@@ -11821,7 +11821,7 @@ function toMilliseconds(timeWithUnit) {
 }
 function getArgs() {
     // Required inputs
-    const token = core.getInput('token');
+    const token = core.getInput('gh_token');
     const workflowRef = core.getInput('workflow');
     // Optional inputs, with defaults
     const ref = core.getInput('ref') || github.context.ref;

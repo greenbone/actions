@@ -7,7 +7,7 @@ import fs from 'fs'
 
 export async function download() {
   try {
-    const token = core.getInput("github_token", {required: true})
+    const token = core.getInput("gh_token", {required: true})
     const workflow = core.getInput("workflow", {required: true})
     const [owner, repo] = core.getInput("repo", {required: true}).split("/")
     const path = core.getInput("path", {required: true})

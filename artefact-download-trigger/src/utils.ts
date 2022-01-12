@@ -19,7 +19,7 @@ function toMilliseconds(timeWithUnit: string): number {
 
 export function getArgs() {
   // Required inputs
-  const token = core.getInput('token');
+  const token = core.getInput('gh_token');
   const workflowRef = core.getInput('workflow');
   // Optional inputs, with defaults
   const ref = core.getInput('ref')   || github.context.ref;
