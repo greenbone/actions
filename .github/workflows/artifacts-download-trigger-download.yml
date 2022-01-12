@@ -2,11 +2,11 @@ name: artifacts-download-trigger Download
 
 on:
   push:
-    branches: [ master, 'feature/*' ]
+    branches: [ main, 'feature/*' ]
     paths:
       - "artifacts-download-trigger"
   pull_request:
-    branches: [ master, 'feature/*' ]
+    branches: [ main, 'feature/*' ]
     paths:
       - "artifacts-download-trigger"
 
