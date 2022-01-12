@@ -1,4 +1,4 @@
-name: artefact-download-trigger Failing
+name: artifacts-download-trigger Failing
 
 on:
   workflow_dispatch:

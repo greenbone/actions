@@ -1,8 +1,14 @@
-name: Build & Test
+name: artifacts-download-trigger Build & Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 'feature/*' ]
+    paths:
+      - "artifacts-download-trigger"
+  pull_request:
+    branches: [ master, 'feature/*' ]
+    paths:
+      - "artifacts-download-trigger"
   workflow_dispatch:
 
 jobs:
@@ -60,7 +66,7 @@ jobs:
       - name: Invoke echo 2 workflow using this action
         uses: ./
         with:
-          workflow: artefact-download-trigger-echo-2.yaml
+          workflow: artifacts-download-trigger-echo-2.yaml
           token: ${{ secrets.PERSONAL_TOKEN }}
           wait-for-completion: false
 
@@ -88,7 +94,7 @@ jobs:
         id: long-running-workflow
         uses: ./
         with:
-          workflow: artefact-download-trigger-long-running.yml
+          workflow: artifacts-download-trigger-long-running.yml
           token: ${{ secrets.PERSONAL_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
@@ -118,7 +124,7 @@ jobs:
         id: failing-workflow
         uses: ./
         with:
-          workflow: artefact-download-trigger-failing.yml
+          workflow: artifacts-download-trigger-failing.yml
           token: ${{ secrets.PERSONAL_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
@@ -149,7 +155,7 @@ jobs:
         id: timeout-workflow
         uses: ./
         with:
-          workflow: artefact-download-trigger-timeout.yml
+          workflow: artifacts-download-trigger-timeout.yml
           token: ${{ secrets.PERSONAL_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 30s

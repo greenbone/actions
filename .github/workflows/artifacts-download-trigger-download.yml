@@ -1,10 +1,14 @@
-name: Download
+name: artifacts-download-trigger Download
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master, 'feature/*' ]
+    paths:
+      - "artifacts-download-trigger"
   pull_request:
+    branches: [ master, 'feature/*' ]
+    paths:
+      - "artifacts-download-trigger"
 
 jobs:
   wait:
@@ -21,7 +25,7 @@ jobs:
       - name: Download
         uses: ./
         with:
-          workflow: artefact-download-trigger-upload.yml
+          workflow: artifacts-download-trigger-upload.yml
           name: artifact
           path: artifact
       - name: Test
@@ -36,7 +40,7 @@ jobs:
       - name: Download
         uses: ./
         with:
-          workflow: artefact-download-trigger-upload.yml
+          workflow: artifacts-download-trigger-upload.yml
           name: artifact
           path: artifact
           branch: master
@@ -52,7 +56,7 @@ jobs:
       - name: Download
         uses: ./
         with:
-          workflow: artefact-download-trigger-upload.yml
+          workflow: artifacts-download-trigger-upload.yml
           name: artifact
           path: artifact
           pr: ${{github.event.pull_request.number}}
@@ -67,7 +71,7 @@ jobs:
       - name: Download
         uses: ./
         with:
-          workflow: artefact-download-trigger-upload.yml
+          workflow: artifacts-download-trigger-upload.yml
       - name: Test
         run: |
           cat artifact1/sha1 | grep $GITHUB_SHA
@@ -81,7 +85,7 @@ jobs:
       - name: Download
         uses: ./
         with:
-          workflow: artefact-download-trigger-upload.yml
+          workflow: artifacts-download-trigger-upload.yml
           name: artifact
           path: artifact
           workflow_conclusion: ''

@@ -1,10 +1,14 @@
-name: Upload
+name: artifacts-download-trigger Upload
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master, 'feature/*' ]
+    paths:
+      - "artifacts-download-trigger"
   pull_request:
+    branches: [ master, 'feature/*' ]
+    paths:
+      - "artifacts-download-trigger"
 
 jobs:
   upload:

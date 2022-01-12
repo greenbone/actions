@@ -1,11 +1,11 @@
-name: artefact-download-trigger Long running
+name: artifacts-download-trigger Timeout
 
 on:
   workflow_dispatch:
 
 jobs:
-  echo:
+  wait:
     runs-on: ubuntu-latest
     steps:
       - name: Sleep
-        run: sleep 10s
+        run: sleep 1200s
