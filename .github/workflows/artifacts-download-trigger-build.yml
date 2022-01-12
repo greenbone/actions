@@ -48,7 +48,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: Message Echo 1
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           inputs: '{"message": "blah blah"}'
           wait-for-completion: false
 
@@ -68,7 +68,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-echo-2.yaml
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           wait-for-completion: false
 
     # - name: Invoke echo 1 workflow by id
@@ -96,7 +96,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-long-running.yml
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
         continue-on-error: true
@@ -126,7 +126,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-failing.yml
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
         continue-on-error: true
@@ -157,7 +157,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-timeout.yml
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 30s
         continue-on-error: true
@@ -192,4 +192,4 @@ jobs:
       - name: Update repo with build
         uses: mikeal/publish-to-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_gh_token: ${{ secrets.BOT_PAT_TOKEN }}
