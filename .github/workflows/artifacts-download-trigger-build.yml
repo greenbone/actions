@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main, 'feature/*' ]
     paths:
-      - "artifacts-download-trigger"
+      - 'artifacts-download-trigger/**'
   pull_request:
     branches: [ main, 'feature/*' ]
     paths:
-      - "artifacts-download-trigger"
+      - 'artifacts-download-trigger/**'
   workflow_dispatch:
 
 jobs:
@@ -22,6 +22,7 @@ jobs:
           node-version: '12'
       - name: Build with ncc
         run: |
+          cd artifacts-download-trigger
           npm install -g yarn
           yarn install
           yarn run build
@@ -29,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: dist
+          path: artifacts-download-trigger/dist
 
   echo-1-test:
     needs: [build]
@@ -42,9 +43,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist
+          path: artifacts-download-trigger/dist
       - name: Invoke echo 1 workflow using this action (do not wait for completion)
-        uses: ./
+        uses: ./artifacts-download-trigger
         with:
           workflow: Message Echo 1
           token: ${{ secrets.PERSONAL_TOKEN }}
@@ -62,9 +63,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist
+          path: artifacts-download-trigger/dist
       - name: Invoke echo 2 workflow using this action
-        uses: ./
+        uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-echo-2.yaml
           token: ${{ secrets.PERSONAL_TOKEN }}
@@ -89,10 +90,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist
+          path: artifacts-download-trigger/dist
       - name: Invoke 'long-running' workflow and wait for result using this action
         id: long-running-workflow
-        uses: ./
+        uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-long-running.yml
           token: ${{ secrets.PERSONAL_TOKEN }}
@@ -111,7 +112,7 @@ jobs:
   failing-test:
     needs: [build]
     runs-on: ubuntu-latest
-    name: "failing-test [trigger+wait|by workflow filename|shoud report failure]"
+    name: "failing-test [trigger+wait|by workflow filename|should report failure]"
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -119,10 +120,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist
+          path: artifacts-download-trigger/dist
       - name: Invoke 'failing' workflow and wait for result using this action
         id: failing-workflow
-        uses: ./
+        uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-failing.yml
           token: ${{ secrets.PERSONAL_TOKEN }}
@@ -150,10 +151,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist
+          path: artifacts-download-trigger/dist
       - name: Invoke 'timeout' workflow and wait for result using this action
         id: timeout-workflow
-        uses: ./
+        uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-timeout.yml
           token: ${{ secrets.PERSONAL_TOKEN }}
@@ -187,7 +188,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: dist
+          path: artifacts-download-trigger/dist
       - name: Update repo with build
         uses: mikeal/publish-to-github-action@master
         env:
