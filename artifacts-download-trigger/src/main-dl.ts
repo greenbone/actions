@@ -164,5 +164,6 @@ export async function download() {
     } else if (error instanceof Error) {
       core.setFailed(error.message); // works, `e` narrowed to Error
     }
+    throw error
   }
 }

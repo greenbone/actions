@@ -28,6 +28,7 @@ jobs:
           workflow: artifacts-download-trigger-upload.yml
           name: artifact
           path: artifact
+          download-artifacts: true
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA
   download-branch:
@@ -44,6 +45,7 @@ jobs:
           name: artifact
           path: artifact
           branch: main
+          download-artifacts: true
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA
   download-pr:
@@ -60,6 +62,7 @@ jobs:
           name: artifact
           path: artifact
           pr: ${{github.event.pull_request.number}}
+          download-artifacts: true
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA
   download-multiple:
@@ -72,6 +75,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-upload.yml
+          download-artifacts: true
       - name: Test
         run: |
           cat artifact1/sha1 | grep $GITHUB_SHA
@@ -89,5 +93,6 @@ jobs:
           name: artifact
           path: artifact
           workflow_conclusion: ''
+          download-artifacts: true
       - name: Test
         run: cat artifact/sha | grep $GITHUB_SHA

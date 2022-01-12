@@ -44,6 +44,9 @@ export function getArgs() {
   const waitForCompletionTimeout = toMilliseconds(core.getInput('wait-for-completion-timeout'));
   const checkStatusInterval = toMilliseconds(core.getInput('wait-for-completion-interval'));
 
+  const downloadArtifactsStr = core.getInput('download-artifacts');
+  const downloadArtifacts = downloadArtifactsStr && downloadArtifactsStr === 'true';
+
   return {
     token,
     workflowRef,
@@ -56,7 +59,8 @@ export function getArgs() {
     displayWorkflowUrlInterval,
     checkStatusInterval,
     waitForCompletion,
-    waitForCompletionTimeout
+    waitForCompletionTimeout,
+    downloadArtifacts
   };
 }
 

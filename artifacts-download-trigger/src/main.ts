@@ -101,5 +101,6 @@ export async function trigger(): Promise<void> {
     } else if (error instanceof Error) {
       core.setFailed(error.message);
     }
+    throw error
   }
 }

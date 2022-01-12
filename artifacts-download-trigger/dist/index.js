@@ -11397,23 +11397,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const main_dl_1 = __nccwpck_require__(5665);
 const main_1 = __nccwpck_require__(399);
+const utils_1 = __nccwpck_require__(1314);
 const core = __importStar(__nccwpck_require__(2186));
+const workflow_handler_1 = __nccwpck_require__(971);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        core.debug("Test");
+        core.setOutput('result1', 'success'); // Reset Failure if any
+        const dl = utils_1.getArgs().downloadArtifacts;
         try {
-            yield main_dl_1.download();
+            core.debug(`Test DL: ${dl ? 'true' : 'false'}`);
+            if (dl) {
+                yield main_dl_1.download();
+            }
+            else {
+                throw 'next step';
+            }
         }
         catch (e) {
+            core.setOutput('result', 'success'); // Reset Failure if any
+            core.setOutput('workflow-conclusion', workflow_handler_1.WorkflowRunConclusion.SUCCESS);
             process.exitCode = 0; // Reset Failure if any
             try {
                 yield main_1.trigger();
-                yield main_dl_1.download();
+                if (dl) {
+                    yield main_dl_1.download();
+                }
             }
             catch (e) {
                 if (typeof e === "string") {
                     core.setFailed(e.toUpperCase());
                 }
                 else if (e instanceof Error) {
+                    console.log(e.stack);
                     core.setFailed(e.message);
                 }
             }
@@ -11623,6 +11639,7 @@ function download() {
             else if (error instanceof Error) {
                 core.setFailed(error.message); // works, `e` narrowed to Error
             }
+            throw error;
         }
     });
 }
@@ -11768,6 +11785,7 @@ function trigger() {
             else if (error instanceof Error) {
                 core.setFailed(error.message);
             }
+            throw error;
         }
     });
 }
@@ -11842,6 +11860,8 @@ function getArgs() {
     const waitForCompletion = waitForCompletionStr && waitForCompletionStr === 'true';
     const waitForCompletionTimeout = toMilliseconds(core.getInput('wait-for-completion-timeout'));
     const checkStatusInterval = toMilliseconds(core.getInput('wait-for-completion-interval'));
+    const downloadArtifactsStr = core.getInput('download-artifacts');
+    const downloadArtifacts = downloadArtifactsStr && downloadArtifactsStr === 'true';
     return {
         token,
         workflowRef,
@@ -11854,7 +11874,8 @@ function getArgs() {
         displayWorkflowUrlInterval,
         checkStatusInterval,
         waitForCompletion,
-        waitForCompletionTimeout
+        waitForCompletionTimeout,
+        downloadArtifacts
     };
 }
 exports.getArgs = getArgs;
@@ -11973,7 +11994,7 @@ class WorkflowHandler {
             try {
                 const workflowId = yield this.getWorkflowId();
                 this.triggerDate = Date.now();
-                const dispatchResp = yield this.octokit.actions.createWorkflowDispatch({
+                const dispatchResp = yield this.octokit.rest.actions.createWorkflowDispatch({
                     owner: this.owner,
                     repo: this.repo,
                     workflow_id: workflowId,
@@ -11997,7 +12018,7 @@ class WorkflowHandler {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const runId = yield this.getWorkflowRunId();
-                const response = yield this.octokit.actions.getWorkflowRun({
+                const response = yield this.octokit.rest.actions.getWorkflowRun({
                     owner: this.owner,
                     repo: this.repo,
                     run_id: runId
@@ -12019,7 +12040,7 @@ class WorkflowHandler {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const runId = yield this.getWorkflowRunId();
-                const response = yield this.octokit.actions.getWorkflowRunArtifacts({
+                const response = yield this.octokit.rest.actions.getWorkflowRunArtifacts({
                     owner: this.owner,
                     repo: this.repo,
                     run_id: runId
@@ -12045,7 +12066,7 @@ class WorkflowHandler {
             try {
                 core.debug('Get workflow run id');
                 const workflowId = yield this.getWorkflowId();
-                const response = yield this.octokit.actions.listWorkflowRuns({
+                const response = yield this.octokit.rest.actions.listWorkflowRuns({
                     owner: this.owner,
                     repo: this.repo,
                     workflow_id: workflowId,
@@ -12085,7 +12106,7 @@ class WorkflowHandler {
                 return this.workflowId;
             }
             try {
-                const workflowsResp = yield this.octokit.actions.listRepoWorkflows({
+                const workflowsResp = yield this.octokit.rest.actions.listRepoWorkflows({
                     owner: this.owner,
                     repo: this.repo
                 });
