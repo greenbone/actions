@@ -11402,12 +11402,10 @@ const core = __importStar(__nccwpck_require__(2186));
 const workflow_handler_1 = __nccwpck_require__(971);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        core.debug("Test");
-        core.setOutput('result1', 'success'); // Reset Failure if any
-        const dl = utils_1.getArgs().downloadArtifacts;
+        const args = utils_1.getArgs();
         try {
-            core.debug(`Test DL: ${dl ? 'true' : 'false'}`);
-            if (dl) {
+            core.debug(`Test DL: ${args.downloadArtifacts ? 'true' : 'false'}`);
+            if (args.downloadArtifacts && !args.forceTrigger) {
                 yield main_dl_1.download();
             }
             else {
@@ -11416,11 +11414,11 @@ function run() {
         }
         catch (e) {
             core.setOutput('result', 'success'); // Reset Failure if any
-            core.setOutput('workflow-conclusion', workflow_handler_1.WorkflowRunConclusion.SUCCESS);
+            core.setOutput('workflow-conclusion', workflow_handler_1.WorkflowRunConclusion.SUCCESS); // Reset Failure if any
             process.exitCode = 0; // Reset Failure if any
             try {
                 yield main_1.trigger();
-                if (dl) {
+                if (args.downloadArtifacts) {
                     yield main_dl_1.download();
                 }
             }
@@ -11862,6 +11860,8 @@ function getArgs() {
     const checkStatusInterval = toMilliseconds(core.getInput('wait-for-completion-interval'));
     const downloadArtifactsStr = core.getInput('download-artifacts');
     const downloadArtifacts = downloadArtifactsStr && downloadArtifactsStr === 'true';
+    const forceTriggerStr = core.getInput('force-trigger');
+    const forceTrigger = forceTriggerStr && forceTriggerStr === 'true';
     return {
         token,
         workflowRef,
@@ -11875,7 +11875,8 @@ function getArgs() {
         checkStatusInterval,
         waitForCompletion,
         waitForCompletionTimeout,
-        downloadArtifacts
+        downloadArtifacts,
+        forceTrigger
     };
 }
 exports.getArgs = getArgs;

@@ -46,6 +46,8 @@ export function getArgs() {
 
   const downloadArtifactsStr = core.getInput('download-artifacts');
   const downloadArtifacts = downloadArtifactsStr && downloadArtifactsStr === 'true';
+  const forceTriggerStr = core.getInput('force-trigger');
+  const forceTrigger = forceTriggerStr && forceTriggerStr === 'true';
 
   return {
     token,
@@ -60,7 +62,8 @@ export function getArgs() {
     checkStatusInterval,
     waitForCompletion,
     waitForCompletionTimeout,
-    downloadArtifacts
+    downloadArtifacts,
+    forceTrigger
   };
 }
 

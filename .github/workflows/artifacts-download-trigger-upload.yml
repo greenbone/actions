@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main, 'feature/*' ]
     paths:
-      - "artifacts-download-trigger"
+      - 'artifacts-download-trigger/**'
   pull_request:
     branches: [ main, 'feature/*' ]
     paths:
-      - "artifacts-download-trigger"
+      - 'artifacts-download-trigger/**'
   workflow_dispatch:
 jobs:
   upload:

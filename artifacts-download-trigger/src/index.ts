@@ -5,23 +5,21 @@ import * as core from "@actions/core";
 import {WorkflowRunConclusion} from "./workflow-handler";
 
 async function run(): Promise<void> {
-  core.debug("Test")
-  core.setOutput('result1', 'success') // Reset Failure if any
-  const dl = getArgs().downloadArtifacts;
+  const args = getArgs();
   try {
-    core.debug(`Test DL: ${dl?'true':'false'}`)
-    if (dl) {
-    await download()
+    core.debug(`Test DL: ${args.downloadArtifacts ? 'true' : 'false'}`)
+    if (args.downloadArtifacts && !args.forceTrigger) {
+      await download()
     } else {
       throw 'next step'
     }
   } catch (e) {
     core.setOutput('result', 'success') // Reset Failure if any
-    core.setOutput('workflow-conclusion', WorkflowRunConclusion.SUCCESS);
+    core.setOutput('workflow-conclusion', WorkflowRunConclusion.SUCCESS); // Reset Failure if any
     process.exitCode = 0 // Reset Failure if any
     try {
       await trigger()
-      if (dl) {
+      if (args.downloadArtifacts) {
         await download()
       }
     } catch (e) {
