@@ -7,20 +7,20 @@ import fs from 'fs'
 
 export async function download() {
   try {
-    const token = core.getInput("gh_token", {required: true})
+    const token = core.getInput("gh-token", {required: true})
     const workflow = core.getInput("workflow", {required: true})
     const [owner, repo] = core.getInput("repo", {required: true}).split("/")
     const path = core.getInput("path", {required: true})
     const name = core.getInput("name")
-    let workflowConclusion = core.getInput("workflow_conclusion")
+    let workflowConclusion = core.getInput("workflow-conclusion")
     let pr = Number(core.getInput("pr"))
     let commit = core.getInput("commit")
     let branch = core.getInput("branch")
     let event = core.getInput("event")
-    let runID = Number(core.getInput("run_id"))
-    let runNumber = Number(core.getInput("run_number"))
-    let checkArtifacts = core.getInput("check_artifacts")
-    let searchArtifacts = core.getInput("search_artifacts")
+    let runID = Number(core.getInput("run-id"))
+    let runNumber = Number(core.getInput("run-number"))
+    let checkArtifacts = core.getInput("check-artifacts")
+    let searchArtifacts = core.getInput("search-artifacts")
 
     const client = github.getOctokit(token)
 
@@ -125,7 +125,7 @@ export async function download() {
       })
     }
 
-    if (artifacts.length == 0){
+    if (artifacts.length == 0) {
       throw new Error("no artifacts found")
     }
 

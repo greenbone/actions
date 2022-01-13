@@ -8,10 +8,10 @@ enum TimeUnit {
 }
 
 function toMilliseconds(timeWithUnit: string): number {
-  const unitStr = timeWithUnit.substr(timeWithUnit.length-1);
+  const unitStr = timeWithUnit.substr(timeWithUnit.length - 1);
   const unit = TimeUnit[unitStr.toUpperCase() as keyof typeof TimeUnit];
   if (!unit) {
-    throw new Error('Unknown time unit '+unitStr);
+    throw new Error('Unknown time unit ' + unitStr);
   }
   const time = parseFloat(timeWithUnit);
   return time * unit;
@@ -19,10 +19,10 @@ function toMilliseconds(timeWithUnit: string): number {
 
 export function getArgs() {
   // Required inputs
-  const token = core.getInput('gh_token');
+  const token = core.getInput('gh-token');
   const workflowRef = core.getInput('workflow');
   // Optional inputs, with defaults
-  const ref = core.getInput('ref')   || github.context.ref;
+  const ref = core.getInput('ref') || github.context.ref;
   const [owner, repo] = core.getInput('repo')
     ? core.getInput('repo').split('/')
     : [github.context.repo.owner, github.context.repo.repo];
@@ -30,7 +30,7 @@ export function getArgs() {
   // Decode inputs, this MUST be a valid JSON string
   let inputs = {};
   const inputsJson = core.getInput('inputs');
-  if(inputsJson) {
+  if (inputsJson) {
     inputs = JSON.parse(inputsJson);
   }
 
@@ -77,7 +77,7 @@ export function isTimedOut(start: number, waitForCompletionTimeout: number) {
 
 export function formatDuration(duration: number) {
   const durationSeconds = duration / 1000;
-  const hours   = Math.floor(durationSeconds / 3600);
+  const hours = Math.floor(durationSeconds / 3600);
   const minutes = Math.floor((durationSeconds - (hours * 3600)) / 60);
   const seconds = durationSeconds - (hours * 3600) - (minutes * 60);
 
@@ -85,8 +85,14 @@ export function formatDuration(duration: number) {
   let minutesStr = minutes + '';
   let secondsStr = seconds + '';
 
-  if (hours   < 10) {hoursStr   = "0"+hoursStr;}
-  if (minutes < 10) {minutesStr = "0"+minutesStr;}
-  if (seconds < 10) {secondsStr = "0"+secondsStr;}
-  return hoursStr+'h '+minutesStr+'m '+secondsStr+'s';
+  if (hours < 10) {
+    hoursStr = "0" + hoursStr;
+  }
+  if (minutes < 10) {
+    minutesStr = "0" + minutesStr;
+  }
+  if (seconds < 10) {
+    secondsStr = "0" + secondsStr;
+  }
+  return hoursStr + 'h ' + minutesStr + 'm ' + secondsStr + 's';
 }

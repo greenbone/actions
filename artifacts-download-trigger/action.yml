@@ -5,7 +5,7 @@ branding:
   icon: download
   color: blue
 inputs:
-  workflow_conclusion:
+  workflow-conclusion:
     description: |
       Wanted status or conclusion to search for in recent runs
       https://docs.github.com/en/free-pro-team@latest/rest/reference/actions#list-workflow-runs
@@ -27,10 +27,10 @@ inputs:
   event:
     description: Event type
     required: false
-  run_id:
+  run-id:
     description: Workflow run id
     required: false
-  run_number:
+  run-number:
     description: Workflow run number
     required: false
   name:
@@ -40,16 +40,16 @@ inputs:
     description: Where to unpack the artifact
     required: false
     default: "./"
-  check_artifacts:
+  check-artifacts:
     description: Check workflow run whether it has an artifact
     required: false
-  search_artifacts:
+  search-artifacts:
     description: Search workflow runs for artifact with specified name
     required: false
   workflow:
     description: 'Name or ID of workflow to run'
     required: true
-  gh_token:
+  gh-token:
     description: 'GitHub token with repo write access, can NOT use secrets.GITHUB_TOKEN, see readme'
     required: true
   inputs:

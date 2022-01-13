@@ -11494,20 +11494,20 @@ function download() {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const token = core.getInput("gh_token", { required: true });
+            const token = core.getInput("gh-token", { required: true });
             const workflow = core.getInput("workflow", { required: true });
             const [owner, repo] = core.getInput("repo", { required: true }).split("/");
             const path = core.getInput("path", { required: true });
             const name = core.getInput("name");
-            let workflowConclusion = core.getInput("workflow_conclusion");
+            let workflowConclusion = core.getInput("workflow-conclusion");
             let pr = Number(core.getInput("pr"));
             let commit = core.getInput("commit");
             let branch = core.getInput("branch");
             let event = core.getInput("event");
-            let runID = Number(core.getInput("run_id"));
-            let runNumber = Number(core.getInput("run_number"));
-            let checkArtifacts = core.getInput("check_artifacts");
-            let searchArtifacts = core.getInput("search_artifacts");
+            let runID = Number(core.getInput("run-id"));
+            let runNumber = Number(core.getInput("run-number"));
+            let checkArtifacts = core.getInput("check-artifacts");
+            let searchArtifacts = core.getInput("search-artifacts");
             const client = github.getOctokit(token);
             console.log("==> Workflow:", workflow);
             console.log("==> Repo:", owner + "/" + repo);
@@ -11837,7 +11837,7 @@ function toMilliseconds(timeWithUnit) {
 }
 function getArgs() {
     // Required inputs
-    const token = core.getInput('gh_token');
+    const token = core.getInput('gh-token');
     const workflowRef = core.getInput('workflow');
     // Optional inputs, with defaults
     const ref = core.getInput('ref') || github.context.ref;

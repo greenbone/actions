@@ -6,9 +6,8 @@
 // ----------------------------------------------------------------------------
 
 import * as core from '@actions/core'
-import { formatDuration, getArgs, isTimedOut, sleep } from './utils';
-import { WorkflowHandler, WorkflowRunConclusion, WorkflowRunResult, WorkflowRunStatus } from './workflow-handler';
-
+import {formatDuration, getArgs, isTimedOut, sleep} from './utils';
+import {WorkflowHandler, WorkflowRunConclusion, WorkflowRunResult, WorkflowRunStatus} from './workflow-handler';
 
 
 async function getFollowUrl(workflowHandler: WorkflowHandler, interval: number, timeout: number) {
@@ -19,7 +18,7 @@ async function getFollowUrl(workflowHandler: WorkflowHandler, interval: number, 
     try {
       const result = await workflowHandler.getWorkflowRunStatus();
       url = result.url;
-    } catch(e) {
+    } catch (e) {
       if (typeof e === "string") {
         core.debug(`Failed to get workflow url: ${e.toUpperCase()}`);
       } else if (e instanceof Error) {
@@ -40,7 +39,7 @@ async function waitForCompletionOrTimeout(workflowHandler: WorkflowHandler, chec
       result = await workflowHandler.getWorkflowRunStatus();
       status = result.status;
       core.debug(`Workflow is running for ${formatDuration(Date.now() - start)}. Current status=${status}`)
-    } catch(e) {
+    } catch (e) {
       if (typeof e === "string") {
         core.warning(`Failed to get workflow status: ${e.toUpperCase()}`);
       } else if (e instanceof Error) {
@@ -48,7 +47,7 @@ async function waitForCompletionOrTimeout(workflowHandler: WorkflowHandler, chec
       }
     }
   } while (status !== WorkflowRunStatus.COMPLETED && !isTimedOut(start, waitForCompletionTimeout));
-  return { result, start }
+  return {result, start}
 }
 
 function computeConclusion(start: number, waitForCompletionTimeout: number, result?: WorkflowRunResult) {
@@ -62,7 +61,7 @@ function computeConclusion(start: number, waitForCompletionTimeout: number, resu
   const conclusion = result?.conclusion;
   core.setOutput('workflow-conclusion', conclusion);
 
-  if (conclusion === WorkflowRunConclusion.FAILURE)   throw new Error('Workflow run has failed');
+  if (conclusion === WorkflowRunConclusion.FAILURE) throw new Error('Workflow run has failed');
   if (conclusion === WorkflowRunConclusion.CANCELLED) throw new Error('Workflow run was cancelled');
   if (conclusion === WorkflowRunConclusion.TIMED_OUT) throw new Error('Workflow run has failed due to timeout');
 }
@@ -90,7 +89,10 @@ export async function trigger(): Promise<void> {
     }
 
     core.info(`Waiting for workflow completion`);
-    const { result, start } = await waitForCompletionOrTimeout(workflowHandler, args.checkStatusInterval, args.waitForCompletionTimeout);
+    const {
+      result,
+      start
+    } = await waitForCompletionOrTimeout(workflowHandler, args.checkStatusInterval, args.waitForCompletionTimeout);
 
     core.setOutput('workflow-url', result?.url);
     computeConclusion(start, args.waitForCompletionTimeout, result);

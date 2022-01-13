@@ -14,6 +14,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: "Build the artifacts-download-trigger action"
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -33,7 +34,7 @@ jobs:
           path: artifacts-download-trigger/dist
 
   echo-1-test:
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     name: "echo-1-test [trigger|by workflow name]"
     steps:
@@ -48,12 +49,12 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger Message Echo 1
-          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           inputs: '{"message": "blah blah"}'
           wait-for-completion: false
 
   echo-2-test:
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     name: "echo-2-test [trigger|by workflow filename]"
     steps:
@@ -68,19 +69,11 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-echo2.yml
-          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion: false
 
-    # - name: Invoke echo 1 workflow by id
-    #   uses: ./
-    #   with:
-    #     workflow: '1854247'
-    #     token: ${{ secrets.PERSONAL_TOKEN }}
-    #     inputs: '{"message": "Mango jam"}'
-    #     wait-for-completion: false
-
   long-running-test:
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     name: "long-running-test [trigger+wait|by workflow filename|shoud succeed]"
     steps:
@@ -96,7 +89,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-long-running.yml
-          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
         continue-on-error: true
@@ -111,7 +104,7 @@ jobs:
           actual: ${{ steps.long-running-workflow.outcome }}
 
   failing-test:
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     name: "failing-test [trigger+wait|by workflow filename|should report failure]"
     steps:
@@ -127,7 +120,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-failing.yml
-          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
         continue-on-error: true
@@ -142,7 +135,7 @@ jobs:
           actual: ${{ steps.failing-workflow.outcome }}
 
   timeout-test:
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     name: "timeout-test [trigger+wait|by workflow filename|shoud report timed_out]"
     steps:
@@ -158,7 +151,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-timeout.yml
-          gh_token: ${{ secrets.BOT_PAT_TOKEN }}
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 30s
         continue-on-error: true
@@ -170,29 +163,3 @@ jobs:
         with:
           expected: failure
           actual: ${{ steps.timeout-workflow.outcome }}
-
-    # - name: Invoke external workflow using this action
-    #   uses: ./
-    #   with:
-    #     workflow: Deploy To Kubernetes
-    #     repo: benc-uk/dapr-store
-    #     token: ${{ secrets.PERSONAL_TOKEN }}
-    #     ref: master
-
-# This is not need until we have some releases to do
-#
-#  deploy:
-#    needs: [echo-1-test, echo-2-test, long-running-test, failing-test, timeout-test]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Check out repository
-#        uses: actions/checkout@v2
-#      - name: Download dist
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: build
-#          path: artifacts-download-trigger/dist
-#      - name: Update repo with build
-#        uses: mikeal/publish-to-github-action@master
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.BOT_PAT_TOKEN }}

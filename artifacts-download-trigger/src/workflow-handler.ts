@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { debug } from './debug';
+import {debug} from './debug';
 
 export enum WorkflowRunStatus {
   QUEUED = 'queued',
@@ -181,11 +181,11 @@ export class WorkflowHandler {
 
       // Locate workflow either by name or id
       const workflowFind = workflows.find((workflow: any) => workflow.name === this.workflowRef || workflow.id.toString() === this.workflowRef);
-      if(!workflowFind) throw (new Error(`Unable to find workflow '${this.workflowRef}' in ${this.owner}/${this.repo} 😥`));
+      if (!workflowFind) throw (new Error(`Unable to find workflow '${this.workflowRef}' in ${this.owner}/${this.repo} 😥`));
       core.debug(`Workflow id is: ${workflowFind.id}`);
       this.workflowId = workflowFind.id as number;
       return this.workflowId;
-    } catch(error) {
+    } catch (error) {
       debug('List workflows error', error);
       throw error;
     }
