@@ -13,13 +13,19 @@ on:
           Use minor (0.x.0) for new actions.
         type: string
         required: true
+      branch:
+        description: |
+          Specify the branch to push to.
+          Default will be `v1`
+        type: string
+        default: v1
 
 jobs:
   merge-to-v1-branch:
     name: Create release by rebasing master to v1 and create a new tag
     runs-on: 'ubuntu-latest'
     steps:
-      - name: Checkout pheme-report-formats
+      - name: Checkout actions
         uses: actions/checkout@v2
         with:
           depth: 0
@@ -30,8 +36,8 @@ jobs:
           git remote set-url origin https://${{ secrets.GREENBONE_BOT_TOKEN }}@github.com/${{ github.repository }}
       - name: Checkout v1 branch and merge
         run: |
-          git checkout v1
+          git fetch
+          git checkout ${{ github.event.inputs.branch }}
           git merge --ff-only main
           git tag ${{ github.event.inputs.tag }}
-          git push --tags
-          git push
+          git push --follow-tags ${{ github.event.inputs.branch }}
