@@ -39,5 +39,7 @@ jobs:
           git fetch
           git checkout ${{ github.event.inputs.branch }}
           git merge --ff-only main
+      - name: Generate new tag, push tag and branch
+        run: |
           git tag ${{ github.event.inputs.tag }}
           git push --follow-tags ${{ github.event.inputs.branch }}
