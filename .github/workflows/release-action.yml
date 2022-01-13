@@ -19,7 +19,7 @@ jobs:
     name: Create release by rebasing master to v1 and create a new tag
     runs-on: 'ubuntu-latest'
     steps:
-      - name: Checkout pheme-report-formats
+      - name: Checkout actions
         uses: actions/checkout@v2
         with:
           depth: 0
@@ -30,6 +30,7 @@ jobs:
           git remote set-url origin https://${{ secrets.GREENBONE_BOT_TOKEN }}@github.com/${{ github.repository }}
       - name: Checkout v1 branch and merge
         run: |
+          git fetch
           git checkout v1
           git merge --ff-only main
           git tag ${{ github.event.inputs.tag }}
