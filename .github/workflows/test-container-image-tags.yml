@@ -4,8 +4,10 @@ on:
   push:
     tags: ["*"]
     branches: [main]
+    paths: [ "reference-version/**", "container-image-tags/**", ".github/workflows/test-container-image-tags.yml" ]
   pull_request:
     branches: [main]
+    paths: [ "reference-version/**", "container-image-tags/**", ".github/workflows/test-container-image-tags.yml" ]
 
 jobs:
   test-reference-version-branch:

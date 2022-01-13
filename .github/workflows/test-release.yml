@@ -2,10 +2,11 @@ name: Test Release Actions
 
 on:
   push:
-    tags: ["*"]
-    branches: [main]
+    tags: [ "*" ]
+    branches: [ main ]
+    paths: [ "release/**","release-python/**", ".github/workflows/test-release.yml" ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   release-patch-cc:

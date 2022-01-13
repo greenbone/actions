@@ -4,8 +4,10 @@ on:
   push:
     tags: ["*"]
     branches: [main]
+    paths: [ "doc-coverage-clang/**", ".github/workflows/test-doc-coverage.yml" ]
   pull_request:
     branches: [main]
+    paths: ["doc-coverage-clang/**", ".github/workflows/test-doc-coverage.yml"]
 
 jobs:
   test-doc-cov-clang:

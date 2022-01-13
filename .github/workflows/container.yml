@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main, "v*" ]
     # only run if a file in backport-pull-request has changed
-    paths: ["backport-pull-request/**"]
+    paths: [ "backport-pull-request/**", ".github/workflows/container.yml" ]
     tags: ["v*"]
   workflow_dispatch:
 
