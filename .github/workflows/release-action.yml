@@ -13,6 +13,12 @@ on:
           Use minor (0.x.0) for new actions.
         type: string
         required: true
+      branch:
+        description: |
+          Specify the branch to push to.
+          Default will be `v1`
+        type: string
+        default: v1
 
 jobs:
   merge-to-v1-branch:
@@ -31,8 +37,7 @@ jobs:
       - name: Checkout v1 branch and merge
         run: |
           git fetch
-          git checkout v1
+          git checkout ${{ github.event.inputs.branch }}
           git merge --ff-only main
           git tag ${{ github.event.inputs.tag }}
-          git push --tags
-          git push
+          git push --follow-tags ${{ github.event.inputs.branch }}
