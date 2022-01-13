@@ -1,0 +1,76 @@
+*   11425ee : Merge remote-tracking branch 'pcgeek86/main' into main
+|\  
+| * 3208510 : Added documentation about support for outputs 📄
+| * 4c5eef8 : Update RELEASES.md
+| * 60c8c08 : v4: Added new output declaration in action.yml
+| * 2bba427 : Update action.yml
+* |   cb015dc : Merge remote-tracking branch 'LDaneliukas/github_workspacee' into main
+|\ \  
+| * | 2088b42 : Set the correct default workspace for the repo
+| * | aeee02d : Fix typo
+| * | 7ebe7c2 : remove workspace volume from example
+| * | d28725e : Mount the workspace and set as default workdir
+| |/  
+* | ef9d6a4 : Fix for multiline env vars in INPUT_RUN
+* | 4835be1 : Update example with env in step
+* | 0e2542d : Forward ENV to the sub-container
+|/  
+*   3e77f18 : Merge pull request #18 from rlancer/main
+|\  
+| * e6b2dcf : Updated docs
+|/  
+*   358af5c : Merge pull request #17 from lextira/bugfix/remove-command-file
+|\  
+| * fe7c510 : use bash "shell parameter expansion"
+|/  
+* 43383a6 : docs: example with latest docker build action
+* a808c54 : docs: update to v3
+* 3b7e5e2 : Update RELEASES.md
+*   4f65fab : Merge pull request #12 from rossettistone/docker-upgrade
+|\  
+| * 7485e8f : Upgrade to more recent image of Docker
+|/  
+*   29813b1 : Merge pull request #8 from mdpye/patch-1
+|\  
+| * 3de7aa4 : fix: typo in required field of action metadata
+|/  
+* 4d955dc : feat: upgrade to v2
+*   e7a9a2b : Merge pull request #7 from addnab/tests
+|\  
+| * 8279676 : test: add container network test
+| * a34de16 : test: adding volume mount test
+| * f9c1c28 : test: test docker version
+| * f451fad : fix: check if network exists
+| * 6321bad : fix: remove unused workflow
+| * 4b731f3 : tests: setup tests
+|/  
+* 6f0804d : docs: using github variables instead of env
+* e10bcda : Update README.md
+* 702ff8e : Update README.md
+*   e483287 : Merge pull request #3 from heyman/docker-networks
+|\  
+| * c0e88e3 : Remove whitespace change
+| * 3cf4359 : Remove debug logging
+| * a42f5ac : Revert "Use env variable for docker network id, instead of github action input"
+| * 23e2be8 : Use env variable for docker network id, instead of github action input
+| * faad629 : Connect container to github job docker network
+| * 8bce4aa : Add docker_network input
+| * f3a2d18 : Debug
+|/  
+* 27808d9 : Update README.md
+* 56a9143 : Update README.md
+* 68f0bc9 : docs: options (fixes #1)
+* 1cd63ec : fix: exposing docker socket for DinD
+* 32e3e5a : Update README.md
+* e8d1c67 : fix login
+* fca40d5 : override entrypoint
+* 1d5aead : docs for privately owned image
+* cff4df7 : run on specific shell
+* 1e284f1 : fix run variable name
+* 07b07c8 : update README
+* 9ad56b3 : multiline support
+* 81b4f22 : fix: no need args
+* 7ff049b : fix command
+* d43480b : add bash dependency
+* 7444b2b : setup docker run action
+* b5d56dc : Initial commit
