@@ -28,7 +28,7 @@ jobs:
       - name: Checkout actions
         uses: actions/checkout@v2
         with:
-          depth: 0
+          fetch-depth: 0
       - name: Set git name, mail and origin
         run: |
           git config --global user.name "${{ secrets.GREENBONE_BOT }}"
@@ -36,7 +36,6 @@ jobs:
           git remote set-url origin https://${{ secrets.GREENBONE_BOT_TOKEN }}@github.com/${{ github.repository }}
       - name: Checkout v1 branch and merge
         run: |
-          git fetch
           git checkout ${{ github.event.inputs.branch }}
           git merge --ff-only main
       - name: Generate new tag, push tag and branch
