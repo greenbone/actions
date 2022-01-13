@@ -1,0 +1,44 @@
+name: Trigger release of a new action
+# We will push the action to the correct branch
+# and can use it afterwards with the `@v1` tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: | 
+          Enter the version for the release tag.
+          Must be larger than last tag.
+          Use patch (0.0.x) for bug fixes.
+          Use minor (0.x.0) for new actions.
+        type: string
+        required: true
+      branch:
+        description: |
+          Specify the branch to push to.
+          Default will be `v1`
+        type: string
+        default: v1
+
+jobs:
+  merge-to-v1-branch:
+    name: Create release by rebasing master to v1 and create a new tag
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set git name, mail and origin
+        run: |
+          git config --global user.name "${{ secrets.GREENBONE_BOT }}"
+          git config --global user.email "${{ secrets.GREENBONE_BOT_MAIL }}"
+          git remote set-url origin https://${{ secrets.GREENBONE_BOT_TOKEN }}@github.com/${{ github.repository }}
+      - name: Checkout v1 branch and merge
+        run: |
+          git checkout ${{ github.event.inputs.branch }}
+          git merge --ff-only main
+      - name: Generate new tag, push tag and branch
+        run: |
+          git tag ${{ github.event.inputs.tag }}
+          git push --follow-tags ${{ github.event.inputs.branch }}
