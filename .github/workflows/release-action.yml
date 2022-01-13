@@ -41,4 +41,4 @@ jobs:
       - name: Generate new tag, push tag and branch
         run: |
           git tag ${{ github.event.inputs.tag }}
-          git push --follow-tags origin ${{ github.event.inputs.branch }}
+          git push --follow-tags
