@@ -7,6 +7,7 @@ on:
     paths: [ "release/**","release-python/**", ".github/workflows/test-release.yml" ]
   pull_request:
     branches: [ main ]
+    paths: [ "release/**","release-python/**", ".github/workflows/test-release.yml" ]
 
 jobs:
   release-patch-cc:
