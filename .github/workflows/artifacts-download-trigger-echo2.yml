@@ -1,0 +1,16 @@
+name: artifacts-download-trigger Message Echo 2
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "Message to echo"
+        required: false
+        default: "this is echo 2"
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo message
+        run: echo '${{ github.event.inputs.message }}'
