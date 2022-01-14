@@ -3,10 +3,10 @@ name: Test Container Image Tags Actions
 on:
   push:
     tags: [ '*' ]
-    branches: [ '*' ]
+    branches: [ main ]
     paths: [ "reference-version/**", "container-image-tags/**", ".github/workflows/test-container-image-tags.yml" ]
   pull_request:
-    branches: [ '*' ]
+    branches: [ main ]
     paths: [ "reference-version/**", "container-image-tags/**", ".github/workflows/test-container-image-tags.yml" ]
   workflow_dispatch:
 
@@ -48,27 +48,6 @@ jobs:
           source 'assert.sh'
           assert_eq ${{ env.VERSION }} "main" "not equivalent!"
 
-  build-container-image-tags-action-dist:
-    runs-on: ubuntu-latest
-    name: Test container image tags for branch
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '12'
-      - name: Build with ncc
-        run: |
-          cd container-image-tags
-          yarn install
-          yarn run build
-      - name: Archive dist
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: container-image-tags/dist
-          retention-days: 1
-
   test-container-image-tags-branch:
     runs-on: ubuntu-latest
     name: Test container image tags for branch
@@ -95,25 +74,3 @@ jobs:
         run: |
           source 'assert.sh'
           assert_eq ${{ steps.container.outputs.image-tags }} "greenbone/actions:unstable" "wrong container tag"
-
-  build-dist:
-    needs: [ build-container-image-tags-action-dist, test-container-image-tags-branch ]
-    runs-on: ubuntu-latest
-    if: github.ref  && github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
-    name: "Commit dist of this action to the repo"
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Download dist
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: container-image-tags/dist
-      - name: Commit dist file of this action
-        run: |
-          git config --global user.name "${{ secrets.GREENBONE_BOT }}"
-          git config --global user.email "${{ secrets.GREENBONE_BOT_MAIL }}"
-          git add container-image-tags/dist/* || true
-          git commit -m "New build of container-image-tags/dist/*" || true
-          remote_repo="https://${GITHUB_ACTOR}:${{secrets.GREENBONE_BOT_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
-          git push "${remote_repo}" HEAD:${GITHUB_REF} || true
