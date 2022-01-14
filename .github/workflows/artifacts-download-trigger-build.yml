@@ -167,6 +167,7 @@ jobs:
 
   build-dist:
     needs: [ build, timeout-test, failing-test, long-running-test, echo-2-test, echo-1-test ]
+    if: github.ref  && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     name: "Commit dist of this action to the repo"
     steps:
@@ -183,4 +184,5 @@ jobs:
           git config --global user.email "${{ secrets.GREENBONE_BOT_MAIL }}"
           git add artifacts-download-trigger/dist/index.js || true
           git commit -m "New build of artifacts-download-trigger/dist/index.js" || true
-          git push || true
+          remote_repo="https://${GITHUB_ACTOR}:${{secrets.GREENBONE_BOT_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
+          git push "${remote_repo}" HEAD:${GITHUB_REF} || true
