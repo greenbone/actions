@@ -32,6 +32,7 @@ jobs:
         with:
           name: build
           path: artifacts-download-trigger/dist
+          retention-days: 1
 
   echo-1-test:
     needs: [ build ]

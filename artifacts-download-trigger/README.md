@@ -1,6 +1,6 @@
 # artifacts-download-trigger
 
-This action is used to trigger workflows and download artifacts form the workflow.
+This action is used to trigger workflows and download artifacts form another workflow.
 
 # How to use?
 
