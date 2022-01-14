@@ -2,11 +2,9 @@ name: artifacts-download-trigger Build & Test
 
 on:
   push:
-    branches: [ '*' ]
     paths:
       - 'artifacts-download-trigger/**'
   pull_request:
-    branches: [ '*' ]
     paths:
       - 'artifacts-download-trigger/**'
   workflow_dispatch:
