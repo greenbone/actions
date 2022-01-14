@@ -101,7 +101,7 @@ jobs:
           workflow: artifacts-download-trigger-upload.yml
           name: artifact
           path: artifact
-          workflow_conclusion: ''
+          workflow-conclusion: ''
           download-artifacts: true
           force-trigger: true
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
