@@ -2,11 +2,11 @@ name: artifacts-download-trigger Build & Test
 
 on:
   push:
-    branches: [ main, 'feature/*' ]
+    branches: [ '*' ]
     paths:
       - 'artifacts-download-trigger/**'
   pull_request:
-    branches: [ main, 'feature/*' ]
+    branches: [ '*' ]
     paths:
       - 'artifacts-download-trigger/**'
   workflow_dispatch:
@@ -167,7 +167,7 @@ jobs:
 
   build-dist:
     needs: [ build, timeout-test, failing-test, long-running-test, echo-2-test, echo-1-test ]
-    if: github.ref  && github.event_name != 'pull_request'
+    if: github.ref  && github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     name: "Commit dist of this action to the repo"
     steps:

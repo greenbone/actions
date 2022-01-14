@@ -2,11 +2,11 @@ name: Test Container Image Tags Actions
 
 on:
   push:
-    tags: ["*"]
-    branches: [main]
+    tags: [ '*' ]
+    branches: [ '*' ]
     paths: [ "reference-version/**", "container-image-tags/**", ".github/workflows/test-container-image-tags.yml" ]
   pull_request:
-    branches: [main]
+    branches: [ '*' ]
     paths: [ "reference-version/**", "container-image-tags/**", ".github/workflows/test-container-image-tags.yml" ]
   workflow_dispatch:
 
@@ -99,7 +99,7 @@ jobs:
   build-dist:
     needs: [ build-container-image-tags-action-dist, test-container-image-tags-branch ]
     runs-on: ubuntu-latest
-    if: github.ref  && github.event_name != 'pull_request'
+    if: github.ref  && github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
     name: "Commit dist of this action to the repo"
     steps:
       - name: Check out repository
