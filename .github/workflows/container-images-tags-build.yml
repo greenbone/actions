@@ -2,9 +2,11 @@ name: Build Container Image Tags Actions
 
 on:
   push:
+    branches-ignore:
+      - main
     paths: [ "container-image-tags/**", ".github/workflows/container-image-tags-build.yml" ]
   workflow_dispatch:
-  
+
 jobs:
   build-container-image-tags-action-dist:
     runs-on: ubuntu-latest
