@@ -133,5 +133,3 @@ node_modules/
 # Jetbrains
 .idea/
 *.iml
-
-!/docker-run/githistory.log

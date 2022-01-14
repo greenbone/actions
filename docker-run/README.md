@@ -84,4 +84,4 @@ the [Contexts documentation](https://docs.github.com/en/actions/learn-github-act
 
 # Fork
 
-This is a Fork of addnab/docker-run-action with some modifications
+This is a Fork of [addnab/docker-run-action](https://github.com/addnab/docker-run-action) with some modifications
