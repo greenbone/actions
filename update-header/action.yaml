@@ -16,8 +16,8 @@ inputs:
     description: "Python version that should be installed"
     default: 3.9
   target:
-    description: "Branch that should be released"
-    default: ''
+    description: "Branch that should be released. Default: main"
+    default: 'main'
   directories:
     description: "Specify the directories that should be updated"
   exclude-file:

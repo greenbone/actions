@@ -40,4 +40,13 @@ GitHub Action for Greenbone projects
     gpg-fingerprint: baz
     conventional-commits: false
     strategy: calendar
+
+- name: Run update header
+  uses: greenbone/actions/update-header@v1
+  with:
+    github-user: ${{ secrets.GREENBONE_BOT }}
+    github-user-mail: foo@bar.baz
+    github-user-token: bar
+    directories: foo tests
+    target: main
 ```
