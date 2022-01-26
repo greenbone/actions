@@ -1,0 +1,70 @@
+name: "Update File headers to the new year"
+author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
+description: "An action that updates header year in all files of given directories."
+
+inputs:
+  github-user:
+    description: "Github user name."
+    required: true
+  github-user-mail:
+    description: "Mail address for the given github user."
+    required: true
+  github-user-token:
+    description: "Token with write rights required to create the release."
+    required: true
+  version:
+    description: "Python version that should be installed"
+    default: 3.9
+  target:
+    description: "Branch that should be released"
+    default: ''
+  directories:
+    description: "Specify the directories that should be updated"
+  exclude-file:
+    description: "Specify the file, that contains files to ignore"
+    default: .pontos-header-ignore
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+  - uses: actions/checkout@v2
+    with:
+      fetch-depth: ${{ env.FETCH_DEPTH }}
+      ref: ${{ inputs.target }}
+  - name: Set up Poetry, python and the project
+    uses: greenbone/actions/poetry@v1
+    with:
+      version: ${{ inputs.version }}
+  - name: Install pontos
+    run: |
+      apt-get update && apt-get --assume-yes install python3-venv
+      python3 -m venv .venv
+      . .venv/bin/activate
+      python -m pip install --upgrade pip
+      python -m pip install --upgrade pontos
+    shell: bash
+  - name: Set git name, mail and origin
+    run: |
+      git config --global user.name "${{ inputs.github-user }}"
+      git config --global user.email "${{ inputs.github-user-mail }}"
+      git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+    shell: bash
+  - name: Update header files
+    run: |
+      . .venv/bin/activate
+      echo "HEAD=update-header-$(date +"%Y")" >> $GITHUB_ENV
+      git checkout -b bot/${{ env.HEAD }}
+      pontos-update-header -d ${{ inputs.directories }}
+      git add -u
+      git commit -m "Update header to ${{ env.YEAR }}"
+      git push --set-upstream origin bot/${{ env.HEAD }}
+      pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} 'Update header year to $(date +"%Y")'
+    shell: bash
+    env:
+      GITHUB_USER: ${{ inputs.github-user }}
+      GITHUB_TOKEN: ${{ inputs.github-user-token }}
+
