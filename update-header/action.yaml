@@ -15,14 +15,18 @@ inputs:
   version:
     description: "Python version that should be installed"
     default: 3.9
+    required: false
   target:
     description: "Branch that should be released. Default: main"
     default: 'main'
+    required: false
   directories:
     description: "Specify the directories that should be updated"
+    required: true
   exclude-file:
     description: "Specify the file, that contains files to ignore"
     default: .pontos-header-ignore
+    required: false
 
 branding:
   icon: "package"
@@ -53,18 +57,24 @@ runs:
       git config --global user.email "${{ inputs.github-user-mail }}"
       git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
     shell: bash
-  - name: Update header files
+  - name: Store Branch name
+    shell: bash
     run: |
-      . .venv/bin/activate
       echo "HEAD=update-header-$(date +"%Y")" >> $GITHUB_ENV
+      echo "YEAR=$(date +"%Y")" >> $GITHUB_ENV
+  - name: Run commands to update headers
+    run: |
       git checkout -b bot/${{ env.HEAD }}
+      . .venv/bin/activate
       pontos-update-header -d ${{ inputs.directories }}
+    shell: bash
+  - name: Run git commands for PR
+    run: |
       git add -u
       git commit -m "Update header to ${{ env.YEAR }}"
       git push --set-upstream origin bot/${{ env.HEAD }}
-      pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} 'Update header year to $(date +"%Y")'
+      . .venv/bin/activate
+      pontos-github pr ${{ github.repository }} bot/${{ env.HEAD }} ${{ inputs.target }} 'Update header year to ${{ env.YEAR }}'
     shell: bash
     env:
-      GITHUB_USER: ${{ inputs.github-user }}
       GITHUB_TOKEN: ${{ inputs.github-user-token }}
-
