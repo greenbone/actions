@@ -21,7 +21,7 @@ inputs:
     default: 'main'
     required: false
   directories:
-    description: "Specify the directories that should be updated"
+    description: "Specify the directories that should be updated, seperated by space e.g. 'foo bar baz'"
     required: true
   exclude-file:
     description: "Specify the file, that contains files to ignore"
