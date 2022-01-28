@@ -11,4 +11,4 @@ inputs:
 
 runs:
   using: "docker"
-  image: "docker://ghcr.io/greenbone/backport-pull-request:main"
+  image: "docker://ghcr.io/greenbone/backport-pull-request:v1"
