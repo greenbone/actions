@@ -60,11 +60,11 @@ runs:
   - name: Store Branch name
     shell: bash
     run: |
-      echo "HEAD=update-header-$(date +"%Y")" >> $GITHUB_ENV
+      echo "HEAD=devops/update-header-$(date +"%Y")" >> $GITHUB_ENV
       echo "YEAR=$(date +"%Y")" >> $GITHUB_ENV
   - name: Run commands to update headers
     run: |
-      git checkout -b bot/${{ env.HEAD }}
+      git checkout -b ${{ env.HEAD }}
       . .venv/bin/activate
       pontos-update-header -d ${{ inputs.directories }}
     shell: bash
@@ -72,9 +72,15 @@ runs:
     run: |
       git add -u
       git commit -m "Update header to ${{ env.YEAR }}"
-      git push --set-upstream origin bot/${{ env.HEAD }}
+      git push --set-upstream origin ${{ env.HEAD }}
       . .venv/bin/activate
-      pontos-github pr ${{ github.repository }} bot/${{ env.HEAD }} ${{ inputs.target }} 'Update header year to ${{ env.YEAR }}'
+      pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} \
+        'Update year to ${{ env.YEAR }} in copyright header' \
+        --body "**What**:\n\nUpdate year to ${{ env.YEAR }} in \
+        copyright header in all relevant files\n\n**Why**:* Files \
+        should be up-to-date and we don't want to do it manually \
+        in all projects\n\n**How**:\n\n* Automated process \
+        with pontos and GitHub Actions"
     shell: bash
     env:
       GITHUB_TOKEN: ${{ inputs.github-user-token }}
