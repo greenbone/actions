@@ -8,8 +8,14 @@ async function run(): Promise<void> {
   const args = getArgs();
   try {
     core.debug(`Test DL: ${args.downloadArtifacts ? 'true' : 'false'}`)
-    if (args.downloadArtifacts && !args.forceTrigger) {
-      await download()
+    if ((args.downloadArtifacts||args.downloadArtifactsNoTrigger) && !args.forceTrigger) {
+      try {
+        await download()
+      }catch (e) {
+        if (!args.downloadArtifactsNoTrigger || args.forceTrigger){
+          throw 'next step'
+        }
+      }
     } else {
       throw 'next step'
     }

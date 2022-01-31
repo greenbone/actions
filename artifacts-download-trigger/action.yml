@@ -86,6 +86,10 @@ inputs:
     description: 'Should the Artifact be downloaded?'
     required: false
     default: 'false'
+  download-artifacts-no-trigger:
+    description: 'Should the Artifact be downloaded, but not triggered?'
+    required: false
+    default: 'false'
   force-trigger:
     description: 'Should the workflow trigger be forced?'
     required: false

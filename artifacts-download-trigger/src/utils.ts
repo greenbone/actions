@@ -46,6 +46,8 @@ export function getArgs() {
 
   const downloadArtifactsStr = core.getInput('download-artifacts');
   const downloadArtifacts = downloadArtifactsStr && downloadArtifactsStr === 'true';
+  const downloadArtifactsNoTriggerStr = core.getInput('download-artifacts-no-trigger');
+  const downloadArtifactsNoTrigger = downloadArtifactsNoTriggerStr && downloadArtifactsNoTriggerStr === 'true';
   const forceTriggerStr = core.getInput('force-trigger');
   const forceTrigger = forceTriggerStr && forceTriggerStr === 'true';
 
@@ -63,6 +65,7 @@ export function getArgs() {
     waitForCompletion,
     waitForCompletionTimeout,
     downloadArtifacts,
+    downloadArtifactsNoTrigger,
     forceTrigger
   };
 }
