@@ -11405,8 +11405,15 @@ function run() {
         const args = utils_1.getArgs();
         try {
             core.debug(`Test DL: ${args.downloadArtifacts ? 'true' : 'false'}`);
-            if (args.downloadArtifacts && !args.forceTrigger) {
-                yield main_dl_1.download();
+            if ((args.downloadArtifacts || args.downloadArtifactsNoTrigger) && !args.forceTrigger) {
+                try {
+                    yield main_dl_1.download();
+                }
+                catch (e) {
+                    if (!args.downloadArtifactsNoTrigger || args.forceTrigger) {
+                        throw 'next step';
+                    }
+                }
             }
             else {
                 throw 'next step';
@@ -11860,6 +11867,8 @@ function getArgs() {
     const checkStatusInterval = toMilliseconds(core.getInput('wait-for-completion-interval'));
     const downloadArtifactsStr = core.getInput('download-artifacts');
     const downloadArtifacts = downloadArtifactsStr && downloadArtifactsStr === 'true';
+    const downloadArtifactsNoTriggerStr = core.getInput('download-artifacts-no-trigger');
+    const downloadArtifactsNoTrigger = downloadArtifactsNoTriggerStr && downloadArtifactsNoTriggerStr === 'true';
     const forceTriggerStr = core.getInput('force-trigger');
     const forceTrigger = forceTriggerStr && forceTriggerStr === 'true';
     return {
@@ -11876,6 +11885,7 @@ function getArgs() {
         waitForCompletion,
         waitForCompletionTimeout,
         downloadArtifacts,
+        downloadArtifactsNoTrigger,
         forceTrigger
     };
 }
