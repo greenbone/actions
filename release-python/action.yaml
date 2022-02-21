@@ -73,18 +73,16 @@ runs:
           ;;
         patch)
           PREPARE_FLAGS="--${{ inputs.strategy }}"
-          RELEASE_FLAGS="--${{ inputs.strategy }}"
           ;;
         *)
           PREPARE_FLAGS="--patch"
-          RELEASE_FLAGS="--patch"
           ;;
       esac
 
       if [[ ${{inputs.conventional-commits}} == true ]];
       then
         PREPARE_FLAGS="${PREPARE_FLAGS} -CC"
-        RELEASE_FLAGS="${RELEASE_FLAGS} -CC"
+        RELEASE_FLAGS="-CC"
       fi
       echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
       echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
