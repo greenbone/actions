@@ -47,7 +47,7 @@ runs:
       then
         echo "FETCH_DEPTH=0" >> $GITHUB_ENV
       else
-        echo "FETCH_DEPTH=-1" >> $GITHUB_ENV
+        echo "FETCH_DEPTH=1" >> $GITHUB_ENV
       fi
     shell: bash
   - uses: actions/checkout@v2
