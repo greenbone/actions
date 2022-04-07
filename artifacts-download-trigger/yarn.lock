@@ -9,15 +9,15 @@
   dependencies:
     "@actions/http-client" "^1.0.11"
 
-"@actions/github@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.npmjs.org/@actions/github/-/github-5.0.0.tgz"
-  integrity sha512-QvE9eAAfEsS+yOOk0cylLBIO/d6WyWIOvsxxzdrPFaud39G6BOkUwScXZn1iBzQzHyu9SBkkLSWlohDWdsasAQ==
+"@actions/github@5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@actions/github/-/github-5.0.1.tgz#5fdbe371d9a592038668be95d12421361585fba1"
+  integrity sha512-JZGyPM9ektb8NVTTI/2gfJ9DL7Rk98tQ7OVyTlgTuaQroariRBsOnzjy0I2EarX4xUZpK88YyO503fhmjFdyAg==
   dependencies:
     "@actions/http-client" "^1.0.11"
-    "@octokit/core" "^3.4.0"
-    "@octokit/plugin-paginate-rest" "^2.13.3"
-    "@octokit/plugin-rest-endpoint-methods" "^5.1.1"
+    "@octokit/core" "^3.6.0"
+    "@octokit/plugin-paginate-rest" "^2.17.0"
+    "@octokit/plugin-rest-endpoint-methods" "^5.13.0"
 
 "@actions/http-client@^1.0.11":
   version "1.0.11"
@@ -83,14 +83,14 @@
   dependencies:
     "@octokit/types" "^6.0.3"
 
-"@octokit/core@^3.4.0":
-  version "3.5.1"
-  resolved "https://registry.npmjs.org/@octokit/core/-/core-3.5.1.tgz"
-  integrity sha512-omncwpLVxMP+GLpLPgeGJBF6IWJFjXDS5flY5VbppePYX9XehevbDykRH9PdCdvqt9TS5AOTiDide7h0qrkHjw==
+"@octokit/core@^3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@octokit/core/-/core-3.6.0.tgz#3376cb9f3008d9b3d110370d90e0a1fcd5fe6085"
+  integrity sha512-7RKRKuA4xTjMhY+eG3jthb3hlZCsOwg3rztWh75Xc+ShDWOfDDATWbeZpAHBNRpm4Tv9WgBMOy1zEJYXG6NJ7Q==
   dependencies:
     "@octokit/auth-token" "^2.4.4"
     "@octokit/graphql" "^4.5.8"
-    "@octokit/request" "^5.6.0"
+    "@octokit/request" "^5.6.3"
     "@octokit/request-error" "^2.0.5"
     "@octokit/types" "^6.0.3"
     before-after-hook "^2.2.0"
@@ -119,16 +119,16 @@
   resolved "https://registry.npmjs.org/@octokit/openapi-types/-/openapi-types-11.2.0.tgz"
   integrity sha512-PBsVO+15KSlGmiI8QAzaqvsNlZlrDlyAJYcrXBCvVUxCp7VnXjkwPoFHgjEJXx3WF9BAwkA6nfCUA7i9sODzKA==
 
-"@octokit/plugin-paginate-rest@^2.13.3":
+"@octokit/plugin-paginate-rest@^2.17.0":
   version "2.17.0"
-  resolved "https://registry.npmjs.org/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-2.17.0.tgz"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-2.17.0.tgz#32e9c7cab2a374421d3d0de239102287d791bce7"
   integrity sha512-tzMbrbnam2Mt4AhuyCHvpRkS0oZ5MvwwcQPYGtMv4tUa5kkzG58SVB0fcsLulOZQeRnOgdkZWkRUiyBlh0Bkyw==
   dependencies:
     "@octokit/types" "^6.34.0"
 
-"@octokit/plugin-rest-endpoint-methods@^5.1.1":
+"@octokit/plugin-rest-endpoint-methods@^5.13.0":
   version "5.13.0"
-  resolved "https://registry.npmjs.org/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-5.13.0.tgz"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-5.13.0.tgz#8c46109021a3412233f6f50d28786f8e552427ba"
   integrity sha512-uJjMTkN1KaOIgNtUPMtIXDOjx6dGYysdIFhgA52x4xSadQCz3b/zJexvITDVpANnfKPW/+E0xkOvLntqMYpviA==
   dependencies:
     "@octokit/types" "^6.34.0"
@@ -155,6 +155,18 @@
     node-fetch "^2.6.1"
     universal-user-agent "^6.0.0"
 
+"@octokit/request@^5.6.3":
+  version "5.6.3"
+  resolved "https://registry.yarnpkg.com/@octokit/request/-/request-5.6.3.tgz#19a022515a5bba965ac06c9d1334514eb50c48b0"
+  integrity sha512-bFJl0I1KVc9jYTe9tdGGpAMPy32dLBXXo1dS/YwSCTL/2nd9XeHsY616RE3HPXDVk+a+dBuzyz5YdlXwcDTr2A==
+  dependencies:
+    "@octokit/endpoint" "^6.0.1"
+    "@octokit/request-error" "^2.1.0"
+    "@octokit/types" "^6.16.1"
+    is-plain-object "^5.0.0"
+    node-fetch "^2.6.7"
+    universal-user-agent "^6.0.0"
+
 "@octokit/types@^6.0.3", "@octokit/types@^6.16.1", "@octokit/types@^6.34.0":
   version "6.34.0"
   resolved "https://registry.npmjs.org/@octokit/types/-/types-6.34.0.tgz"
@@ -162,10 +174,10 @@
   dependencies:
     "@octokit/openapi-types" "^11.2.0"
 
-"@types/adm-zip@^0.4.34":
-  version "0.4.34"
-  resolved "https://registry.npmjs.org/@types/adm-zip/-/adm-zip-0.4.34.tgz"
-  integrity sha512-8ToYLLAYhkRfcmmljrKi22gT2pqu7hGMDtORP1emwIEGmgUTZOsaDjzWFzW5N2frcFRz/50CWt4zA1CxJ73pmQ==
+"@types/adm-zip@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@types/adm-zip/-/adm-zip-0.5.0.tgz#94c90a837ce02e256c7c665a6a1eb295906333c1"
+  integrity sha512-FCJBJq9ODsQZUNURo5ILAQueuA8WJhRvuihS3ke2iI25mJlfV2LK8jG2Qj2z2AWg8U0FtWWqBHVRetceLskSaw==
   dependencies:
     "@types/node" "*"
 
@@ -174,10 +186,15 @@
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.9.tgz"
   integrity sha512-qcUXuemtEu+E5wZSJHNxUXeCZhAfXKQ41D+duX+VYPde7xyEVZci+/oXKJL13tnRs9lR2pr4fod59GT6/X1/yQ==
 
-"@types/node@*", "@types/node@^16.11.19":
+"@types/node@*":
   version "16.11.19"
   resolved "https://registry.npmjs.org/@types/node/-/node-16.11.19.tgz"
   integrity sha512-BPAcfDPoHlRQNKktbsbnpACGdypPFBuX4xQlsWDE7B8XXcfII+SpOLay3/qZmCLb39kV5S1RTYwXdkx2lwLYng==
+
+"@types/node@^16.11.26":
+  version "16.11.26"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.26.tgz#63d204d136c9916fb4dcd1b50f9740fe86884e47"
+  integrity sha512-GZ7bu5A6+4DtG7q9GsoHXy3ALcgeIHP4NnL0Vv2wu0uUB/yQex26v0tf6/na1mm0+bS9Uw+0DFex7aaKr2qawQ==
 
 "@typescript-eslint/eslint-plugin@5.9.1":
   version "5.9.1"
@@ -259,10 +276,10 @@
     "@typescript-eslint/types" "5.9.1"
     eslint-visitor-keys "^3.0.0"
 
-"@vercel/ncc@0.33.1":
-  version "0.33.1"
-  resolved "https://registry.npmjs.org/@vercel/ncc/-/ncc-0.33.1.tgz"
-  integrity sha512-Mlsps/P0PLZwsCFtSol23FGqT3FhBGb4B1AuGQ52JTAtXhak+b0Fh/4T55r0/SVQPeRiX9pNItOEHwakGPmZYA==
+"@vercel/ncc@0.33.3":
+  version "0.33.3"
+  resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.33.3.tgz#aacc6b3ea9f7b175e0c9a18c9b97e4005a2f4fcc"
+  integrity sha512-JGZ11QV+/ZcfudW2Cz2JVp54/pJNXbsuWRgSh2ZmmZdQBKXqBtIGrwI1Wyx8nlbzAiEFe7FHi4K1zX4//jxTnQ==
 
 acorn-jsx@^5.3.1:
   version "5.3.2"
@@ -578,10 +595,10 @@ file-entry-cache@^6.0.1:
   dependencies:
     flat-cache "^3.0.4"
 
-filesize@^8.0.6:
-  version "8.0.6"
-  resolved "https://registry.npmjs.org/filesize/-/filesize-8.0.6.tgz"
-  integrity sha512-sHvRqTiwdmcuzqet7iVwsbwF6UrV3wIgDf2SHNdY1Hgl8PC45HZg/0xtdw6U2izIV4lccnrY9ftl6wZFNdjYMg==
+filesize@^8.0.7:
+  version "8.0.7"
+  resolved "https://registry.yarnpkg.com/filesize/-/filesize-8.0.7.tgz#695e70d80f4e47012c132d57a059e80c6b580bd8"
+  integrity sha512-pjmC+bkIF8XI7fWaH8KxHcZL3DPybs1roSKP4rKDvy20tAWwIObE4+JIseG2byfGKhud5ZnM4YSGKBz7Sh0ndQ==
 
 fill-range@^7.0.1:
   version "7.0.1"
@@ -793,7 +810,7 @@ natural-compare@^1.4.0:
   resolved "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-node-fetch@^2.6.1:
+node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
