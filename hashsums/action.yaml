@@ -1,0 +1,25 @@
+name: "Generate a hashsums file"
+description: "Generate a file containing hashsums for all files of a directory"
+inputs:
+  hash:
+    description: "Which hashsum program to use. Default is sha256sum."
+    default: sha256sum
+  directory:
+    description: "Directory to create the hashsums for."
+    required: true
+  filename:
+    description: "Name of the generated hashsums file. Default is sha256sums."
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+    - name: "Create hashsums file"
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.filename }}" ]; then
+          ${{ github.action_path }}/hashsums.sh ${{ inputs.hash }} ${{ inputs.directory }} ${{ inputs.filename }}
+        else
+          ${{ github.action_path }}/hashsums.sh ${{ inputs.hash }} ${{ inputs.directory }} ${{ inputs.directory }}/sha256sums
+        fi

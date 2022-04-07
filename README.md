@@ -49,4 +49,9 @@ GitHub Action for Greenbone projects
     github-user-token: bar
     directories: foo tests
     target: main
+
+- name: Create a sha256sums file for the foo directory
+  uses: greenbone/actions/hashsums@v1
+  with:
+    directory: ./foo
 ```

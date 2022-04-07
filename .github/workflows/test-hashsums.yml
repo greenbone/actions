@@ -1,0 +1,39 @@
+name: Test Python Actions
+
+on:
+  push:
+    tags: ["*"]
+    branches: [main]
+    paths: ["hashsums/**", ".github/workflows/test-hashsums.yml"]
+  pull_request:
+    branches: [main]
+    paths: ["hashsums/**", ".github/workflows/test-hashsums.yml"]
+
+jobs:
+  test-creating-sha256sums-file:
+    runs-on: ubuntu-latest
+    name: Test creating sha256sums file
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create a sha256sums file
+        uses: ./hashsums
+        with:
+          directory: ./hashsums
+          filename: foosums
+      - name: Check foosums content
+        run: |
+          if [ $(wc -l foosums | cut -d' ' -f1) -ne 2 ]; then
+            echo "::error::The foosums file should contain two entries"
+            exit 1
+          fi
+      - name: Create a default hashsums file
+        uses: ./hashsums
+        with:
+          directory: ./hashsums
+      - name: Check sha256sums content
+        run: |
+          if [ $(wc -l ./hashsums/sha256sums | cut -d' ' -f1) -ne 2 ]; then
+            echo "::error::The sha256sums file should contain two entries"
+            exit 1
+          fi
