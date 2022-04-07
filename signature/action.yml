@@ -1,0 +1,41 @@
+name: "Sign files with GPG"
+description: "Action to create a GPG signature for arbitrary files"
+branding:
+  icon: "package"
+  color: "green"
+inputs:
+  gpg-key:
+    description: "The GPG private key to use for signing the file, represented as a string."
+    required: true
+  gpg-passphrase:
+    description: "Password for the GPG key"
+    required: true
+  gpg-fingerprint:
+    description: "GPG fingerprint, key ID or username for the passed GPG key"
+    required: true
+  file:
+    description: "File path to create a signature for"
+    required: true
+  signature-file:
+    description: "File path of the signature. Default is $file.asc"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Print GPG version information
+      shell: bash
+      run: gpg --version
+    - name: "Add the GPG key to the local environment"
+      shell: bash
+      run: |
+        echo -e "${{ inputs.gpg-key }}" >> tmp.file
+        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+        rm tmp.file
+    - name: "Create a GPG signature"
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.signature-file }}"]; then
+          gpg --pinentry-mode loopback --local-user ${{ inputs.gpg-fingerprint }} --yes --detach-sign --passphrase ${{ inputs.gpg-passphrase }} --armor ${{ inputs.file }}
+        else
+          gpg --pinentry-mode loopback --local-user ${{ inputs.gpg-fingerprint }} --yes --detach-sign --passphrase ${{ inputs.gpg-passphrase }} --armor --output ${{ inputs.signature-file }} ${{ inputs.file }}
+        fi

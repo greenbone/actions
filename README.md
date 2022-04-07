@@ -54,4 +54,12 @@ GitHub Action for Greenbone projects
   uses: greenbone/actions/hashsums@v1
   with:
     directory: ./foo
+
+- name: Create a GPG signature
+  uses: greenbone/actions/signature@v1
+  with:
+    gpg-key: ${{ secrets.GPG_KEY }}
+    gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+    gpg-fingerprint: ${{ secrets.GPG_FINGERPRINT }}
+    file: ./foo/bar
 ```
