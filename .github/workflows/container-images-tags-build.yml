@@ -30,7 +30,7 @@ jobs:
           retention-days: 1
 
   build-dist:
-    needs: [ build-container-image-tags-action-dist, test-container-image-tags-branch ]
+    needs: [ build-container-image-tags-action-dist]
     runs-on: ubuntu-latest
     if: github.ref  && github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
     name: "Commit dist of this action to the repo"
