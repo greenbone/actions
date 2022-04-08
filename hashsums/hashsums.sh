@@ -9,8 +9,10 @@ build_hash_for_files() {
     for f in $2/*; do
         if [ -d "$f" ]; then
             build_hash_for_files "$1" "$f" "$3" || return $?
-        else
+        elif [ -e "$f" ]; then
             $1 $f >> $3 || return $?
+        else
+            continue
         fi
     done
     return 0
