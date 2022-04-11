@@ -166,12 +166,18 @@ export class WorkflowHandler {
     if (this.workflowId) {
       return this.workflowId;
     }
+
+    core.debug(`Determine workflowId. WorkflowRef is: ${this.workflowRef}`)
+
     if (WorkflowHandler.isFilename(this.workflowRef)) {
       this.workflowId = this.workflowRef;
       core.debug(`Workflow id is: ${this.workflowRef}`);
       return this.workflowId;
     }
+
     try {
+      core.debug("Requesting workflow list")
+
       const workflowsResp = await this.octokit.rest.actions.listRepoWorkflows({
         owner: this.owner,
         repo: this.repo
@@ -182,7 +188,9 @@ export class WorkflowHandler {
       // Locate workflow either by name or id
       const workflowFind = workflows.find((workflow: any) => workflow.name === this.workflowRef || workflow.id.toString() === this.workflowRef);
       if (!workflowFind) throw (new Error(`Unable to find workflow '${this.workflowRef}' in ${this.owner}/${this.repo} 😥`));
+
       core.debug(`Workflow id is: ${workflowFind.id}`);
+
       this.workflowId = workflowFind.id as number;
       return this.workflowId;
     } catch (error) {

@@ -75,8 +75,8 @@ export async function trigger(): Promise<void> {
     const workflowHandler = new WorkflowHandler(args.token, args.workflowRef, args.owner, args.repo, args.ref);
 
     // Trigger workflow run
+    core.info(`Trigger Workflow 🚀`);
     await workflowHandler.triggerWorkflow(args.inputs);
-    core.info(`Workflow triggered 🚀`);
 
     if (args.displayWorkflowUrl) {
       const url = await getFollowUrl(workflowHandler, args.displayWorkflowUrlInterval, args.displayWorkflowUrlTimeout)
