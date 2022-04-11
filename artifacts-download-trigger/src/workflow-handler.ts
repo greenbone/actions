@@ -134,7 +134,8 @@ export class WorkflowHandler {
         owner: this.owner,
         repo: this.repo,
         workflow_id: workflowId,
-        event: 'workflow_dispatch'
+        // todo: until the ES problems done, we need the live data
+      /*       event: 'workflow_dispatch'*/
       });
       debug('List Workflow Runs', response);
 
