@@ -142,6 +142,7 @@ export class WorkflowHandler {
       debug('List Workflow Runs', response);
 
       const runs = response.data.workflow_runs
+        .filter((r: any) => r.event === "workflow_dispatch")
         .filter((r: any) => new Date(r.created_at).setMilliseconds(0) >= this.triggerDate);
       debug(`Filtered Workflow Runs (after trigger date: ${new Date(this.triggerDate).toISOString()})`, runs.map((r: any) => ({
         id: r.id,
