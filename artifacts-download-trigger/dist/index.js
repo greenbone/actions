@@ -12107,7 +12107,6 @@ class WorkflowHandler {
                     owner: this.owner,
                     repo: this.repo,
                     workflow_id: workflowId,
-                    event: 'workflow_dispatch'
                 });
                 debug_1.debug('List Workflow Runs', response);
                 const runs = response.data.workflow_runs

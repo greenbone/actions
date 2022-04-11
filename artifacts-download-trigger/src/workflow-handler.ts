@@ -134,7 +134,10 @@ export class WorkflowHandler {
         owner: this.owner,
         repo: this.repo,
         workflow_id: workflowId,
-        event: 'workflow_dispatch'
+        // currently the API is broken due to some backend issues at GitHub
+        // we have been advised to remove the event filter until the backend
+        // has rebuild some elastic search db indexes
+        // event: 'workflow_dispatch',
       });
       debug('List Workflow Runs', response);
 
