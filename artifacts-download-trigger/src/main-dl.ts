@@ -4,6 +4,7 @@ import AdmZip from 'adm-zip'
 import filesize from 'filesize'
 import pathname from 'path'
 import fs from 'fs'
+import {debug} from './debug';
 
 export async function download() {
   try {
@@ -64,11 +65,19 @@ export async function download() {
           owner: owner,
           repo: repo,
           workflow_id: workflow,
-          branch: branch,
-          event: event,
+        // currently the API is broken due to some backend issues at GitHub
+        // we have been advised to remove the event filter until the backend
+        // has rebuild some elastic search db indexes
+        //  branch: branch,
+        //  event: event,
         }
       )) {
-        for (const run of runs.data) {
+        // currently the API is broken due to some backend issues at GitHub
+        // we have been advised to remove the event filter until the backend
+        // has rebuild some elastic search db indexes
+        const run2 = runs.data.filter((r: any) => r.event === event).filter((r: any) => r.head_branch === branch)
+        debug('Filtered WorkflowRuns', run2);
+        for (const run of run2) {
           if (commit && run.head_sha != commit) {
             continue
           }
