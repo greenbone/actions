@@ -11523,6 +11523,7 @@ const adm_zip_1 = __importDefault(__nccwpck_require__(6761));
 const filesize_1 = __importDefault(__nccwpck_require__(5060));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
+const debug_1 = __nccwpck_require__(1417);
 function download() {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -11573,11 +11574,14 @@ function download() {
                         owner: owner,
                         repo: repo,
                         workflow_id: workflow,
-                        branch: branch,
-                        event: event,
                     })), _c; _c = yield _b.next(), !_c.done;) {
                         const runs = _c.value;
-                        for (const run of runs.data) {
+                        // currently the API is broken due to some backend issues at GitHub
+                        // we have been advised to remove the event filter until the backend
+                        // has rebuild some elastic search db indexes
+                        const run2 = runs.data.filter((r) => r.event === event).filter((r) => r.head_branch === branch);
+                        debug_1.debug('Filtered WorkflowRuns', run2);
+                        for (const run of run2) {
                             if (commit && run.head_sha != commit) {
                                 continue;
                             }
