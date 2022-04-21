@@ -1,8 +1,11 @@
 # Mattermost notify
 
-- Send a Mattermost message into a channel
+- Sends workflow status messages to a Mattermost channel.
 
 ## Examples
+
+- Create a yml file under /.github/workflows.
+- Add under "workflows:" the workflows you want to receive a status message about.
 
 #### Use Case
 
