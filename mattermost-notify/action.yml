@@ -1,0 +1,59 @@
+name: "Send mattermost message"
+description: "Send a mattermost message"
+inputs:
+  WORKFLOW_NAME:
+    description: "Worklow name"
+    required: true
+  REPOSITORY_NAME:
+    description: "Repository name"
+    required: true
+  CONCLUSION:
+    description: "Workflow status"
+    required: true
+  BRANCH:
+    description: "Branch name"
+    required: true
+  WORKFLOW_URL:
+    description: "Workflow url"
+    required: true
+  REPOSITORY_URL:
+    description: "Repository url"
+    required: true
+  MATTERMOST_WEBHOOK_URL:
+    description: "Mattermost webhook url"
+    required: true
+  MATTERMOST_CHANNEL:
+    description: "Mattermost channel"
+    required: true
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create the Mattermost Message
+      shell: bash
+      run: |
+        if [ "${{ inputs.CONCLUSION }}" == 'success' ]; then
+          text_head=':white_check_mark: '
+        else
+          text_head=':x: '
+        fi
+        text_body='Status: %s
+        \n\n| Workflow | [%s](%s)  |
+        |--- | --- |
+        | Repository | [%s](%s) |
+        | Branch | %s |'
+
+        text="#### $text_head$text_body"
+        json="$(printf 'payload={"channel": "%s", "text":"%s"}' "${{ inputs.MATTERMOST_CHANNEL }}" "$text")"
+        msg="$(printf "$json" \
+          "${{ inputs.CONCLUSION }}" \
+          "${{ inputs.WORKFLOW_NAME }}" \
+          "${{ inputs.WORKFLOW_URL }}" \
+          "${{ inputs.REPOSITORY_NAME }}" \
+          "${{ inputs.REPOSITORY_URL }}" \
+          "${{ inputs.BRANCH }}" \
+          )"
+        curl -i -X POST --data-urlencode "$msg" "${{ inputs.MATTERMOST_WEBHOOK_URL }}"
