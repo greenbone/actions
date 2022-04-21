@@ -3,20 +3,28 @@ description: "Send a mattermost message"
 inputs:
   WORKFLOW_NAME:
     description: "Worklow name"
+    required: true
   REPOSITORY_NAME:
     description: "Repository name"
+    required: true
   CONCLUSION:
     description: "Workflow status"
+    required: true
   BRANCH:
     description: "Branch name"
+    required: true
   WORKFLOW_URL:
     description: "Workflow url"
+    required: true
   REPOSITORY_URL:
     description: "Repository url"
+    required: true
   MATTERMOST_WEBHOOK_URL:
     description: "Mattermost webhook url"
+    required: true
   MATTERMOST_CHANNEL:
     description: "Mattermost channel"
+    required: true
 branding:
   icon: "package"
   color: "green"
@@ -33,9 +41,8 @@ runs:
           text_head=':x: '
         fi
         text_body='Status: %s
-        \n\n| Info | Result |
+        \n\n| Workflow | [%s](%s)  |
         |--- | --- |
-        | Workflow | [%s](%s) |
         | Repository | [%s](%s) |
         | Branch | %s |'
 
