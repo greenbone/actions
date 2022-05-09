@@ -52,8 +52,8 @@ runs:
           "$(echo "${{ inputs.CONCLUSION }}" | sed 's@[\\n\\r]@ @g')" \
           "$(echo "${{ inputs.WORKFLOW_NAME }}" | sed 's@[\\n\\r]@ @g')" \
           "$(echo "${{ inputs.WORKFLOW_URL }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.inputs.REPOSITORY_NAME }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.inputs.REPOSITORY_URL }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.inputs.BRANCH }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.REPOSITORY_NAME }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.REPOSITORY_URL }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.BRANCH }}" | sed 's@[\\n\\r]@ @g')" \
           )"
         curl -i -X POST --data-urlencode "$msg" "${{ inputs.MATTERMOST_WEBHOOK_URL }}"
