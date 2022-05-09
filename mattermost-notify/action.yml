@@ -49,11 +49,11 @@ runs:
         text="#### $text_head$text_body"
         json="$(printf 'payload={"channel": "%s", "text":"%s"}' "${{ inputs.MATTERMOST_CHANNEL }}" "$text")"
         msg="$(printf "$json" \
-          "${{ inputs.CONCLUSION }}" \
-          "${{ inputs.WORKFLOW_NAME }}" \
-          "${{ inputs.WORKFLOW_URL }}" \
-          "${{ inputs.REPOSITORY_NAME }}" \
-          "${{ inputs.REPOSITORY_URL }}" \
-          "${{ inputs.BRANCH }}" \
+          "$(echo "${{ inputs.CONCLUSION }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.WORKFLOW_NAME }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.WORKFLOW_URL }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.inputs.REPOSITORY_NAME }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.inputs.REPOSITORY_URL }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo "${{ inputs.inputs.BRANCH }}" | sed 's@[\\n\\r]@ @g')" \
           )"
         curl -i -X POST --data-urlencode "$msg" "${{ inputs.MATTERMOST_WEBHOOK_URL }}"
