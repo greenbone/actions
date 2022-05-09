@@ -49,11 +49,11 @@ runs:
         text="#### $text_head$text_body"
         json="$(printf 'payload={"channel": "%s", "text":"%s"}' "${{ inputs.MATTERMOST_CHANNEL }}" "$text")"
         msg="$(printf "$json" \
-          "$(echo "${{ inputs.CONCLUSION }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.WORKFLOW_NAME }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.WORKFLOW_URL }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.REPOSITORY_NAME }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.REPOSITORY_URL }}" | sed 's@[\\n\\r]@ @g')" \
-          "$(echo "${{ inputs.BRANCH }}" | sed 's@[\\n\\r]@ @g')" \
+          "$(echo -e "${{ inputs.CONCLUSION }}" | head -1)" \
+          "$(echo -e "${{ inputs.WORKFLOW_NAME }}" | head -1)" \
+          "$(echo -e "${{ inputs.WORKFLOW_URL }}" | head -1)" \
+          "$(echo -e "${{ inputs.REPOSITORY_NAME }}" | head -1)" \
+          "$(echo -e "${{ inputs.REPOSITORY_URL }}" | head -1)" \
+          "$(echo -e "${{ inputs.BRANCH }}" | head -1)" \
           )"
         curl -i -X POST --data-urlencode "$msg" "${{ inputs.MATTERMOST_WEBHOOK_URL }}"
