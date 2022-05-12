@@ -1,24 +1,6 @@
 name: "Send mattermost message"
 description: "Send a mattermost message"
 inputs:
-  WORKFLOW_NAME:
-    description: "Worklow name"
-    required: true
-  REPOSITORY_NAME:
-    description: "Repository name"
-    required: true
-  CONCLUSION:
-    description: "Workflow status"
-    required: true
-  BRANCH:
-    description: "Branch name"
-    required: true
-  WORKFLOW_URL:
-    description: "Workflow url"
-    required: true
-  REPOSITORY_URL:
-    description: "Repository url"
-    required: true
   MATTERMOST_WEBHOOK_URL:
     description: "Mattermost webhook url"
     required: true
@@ -32,28 +14,15 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade mattermost-notify
+      shell: bash
     - name: Create the Mattermost Message
       shell: bash
       run: |
-        if [ "${{ inputs.CONCLUSION }}" == 'success' ]; then
-          text_head=':white_check_mark: '
-        else
-          text_head=':x: '
-        fi
-        text_body='Status: %s
-        \n\n| Workflow | [%s](%s)  |
-        |--- | --- |
-        | Repository | [%s](%s) |
-        | Branch | %s |'
-
-        text="#### $text_head$text_body"
-        json="$(printf 'payload={"channel": "%s", "text":"%s"}' "${{ inputs.MATTERMOST_CHANNEL }}" "$text")"
-        msg="$(printf "$json" \
-          "${{ inputs.CONCLUSION }}" \
-          "${{ inputs.WORKFLOW_NAME }}" \
-          "${{ inputs.WORKFLOW_URL }}" \
-          "${{ inputs.REPOSITORY_NAME }}" \
-          "${{ inputs.REPOSITORY_URL }}" \
-          "${{ inputs.BRANCH }}" \
-          )"
-        curl -i -X POST --data-urlencode "$msg" "${{ inputs.MATTERMOST_WEBHOOK_URL }}"
+        mnotify-git ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }}
