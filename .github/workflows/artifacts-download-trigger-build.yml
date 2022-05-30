@@ -40,7 +40,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Download dist
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: artifacts-download-trigger/dist
@@ -60,7 +60,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Download dist
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: artifacts-download-trigger/dist
@@ -79,7 +79,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Download dist
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: artifacts-download-trigger/dist
@@ -110,7 +110,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Download dist
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: artifacts-download-trigger/dist
@@ -141,7 +141,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Download dist
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: artifacts-download-trigger/dist
@@ -172,7 +172,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Download dist
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: artifacts-download-trigger/dist
