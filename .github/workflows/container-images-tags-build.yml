@@ -13,7 +13,7 @@ jobs:
     name: Test container image tags for branch
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: actions/setup-node@v2
         with:
           node-version: '12'
@@ -36,7 +36,7 @@ jobs:
     name: "Commit dist of this action to the repo"
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Download dist
         uses: actions/download-artifact@v2
         with:

@@ -17,7 +17,7 @@ jobs:
   smoke-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run docker action and set output for testing
         uses: ./docker-run
         id: run-docker
@@ -38,7 +38,7 @@ jobs:
   volume-mount-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Create File to be mounted
         run: echo "some text" > someFile
       - name: Run docker action with mounted workspace
@@ -71,7 +71,7 @@ jobs:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run docker action and test network connection
         uses: ./docker-run
         with:
