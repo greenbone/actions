@@ -27,7 +27,7 @@ jobs:
             echo "::set-output name=docker-version::$(echo $DOCKER_VERSION)"
 
       - name: Test the output
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           script: |
             const dockerVersion = '${{ steps.run-docker.outputs.docker-version }}';
@@ -50,7 +50,7 @@ jobs:
           run: |
             echo "::set-output name=file-contents::`cat /work/someFile`"
       - name: Check if file contents match
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           script: |
             const fileContents = '${{ steps.run-docker.outputs.file-contents }}';
