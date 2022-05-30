@@ -23,7 +23,7 @@ jobs:
           yarn install
           yarn run build
       - name: Archive dist
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build
           path: container-image-tags/dist
