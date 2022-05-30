@@ -16,11 +16,11 @@ jobs:
     name: Test reference branch
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run test
         uses: ./reference-version
       - name: Checkout assert.sh
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: torokmark/assert.sh
       - name: Show & assert output
@@ -33,13 +33,13 @@ jobs:
     name: Test branch is not a tag
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run test
         uses: ./reference-version
         with:
           strip-tag-prefix: m
       - name: Checkout assert.sh
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: torokmark/assert.sh
       - name: Show & assert output
@@ -53,12 +53,12 @@ jobs:
     name: Test container image tags for branch
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run test
         id: container
         uses: ./container-image-tags
       - name: Checkout assert.sh
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: torokmark/assert.sh
       - name: Show output
