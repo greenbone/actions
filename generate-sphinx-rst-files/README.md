@@ -6,9 +6,9 @@
 
 | Argument | Description |
 | --- | --- |
-| doc-dir | Doc folder folder |
-| source-dir | Source code folder |
-| output-dir | Rst files output folder |
+| doc-dir | Doc folder path |
+| source-dir | Source code folder path |
+| output-dir | Rst files output folder path |
 | pip-sphinx-modules | Space separated list of pip modules to install, empty use pyproject.toml |
 | unwanted-rst | Space separated list of rst files to remove |
 | version | Update sphinx conf.py release version |
