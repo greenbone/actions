@@ -24,6 +24,7 @@ inputs:
   branch:
     description: Branch name
     required: false
+    default: "main"
   event:
     description: Event type
     required: false
