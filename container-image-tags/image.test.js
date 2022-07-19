@@ -1,4 +1,14 @@
 const image = require("./image");
+const utils = require("./utils");
+
+jest.mock("./utils", () => {
+  const originalModule = jest.requireActual("./utils");
+
+  //Mock the default export and named export 'foo'
+  return {
+    ...originalModule,
+  };
+});
 
 describe("createImageTag", () => {
   it("should create an image tag", () => {
@@ -17,32 +27,39 @@ describe("createImageTag", () => {
 });
 
 describe("createImageTags", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   it("should create image tags for git tags", () => {
+    utils.isPullRequest = jest.fn(() => false);
+
     const imageTags = image.createImageTags({
       imageName: "foo",
       currentBranch: "refs/tags/v1.2.3",
-      isPullRequest: () => false,
     });
 
     expect(imageTags).toEqual("foo:v1.2.3");
   });
 
   it("should create stripped image tags for git tags", () => {
+    utils.isPullRequest = jest.fn(() => false);
+
     const imageTags = image.createImageTags({
       imageName: "foo",
       currentBranch: "refs/tags/v1.2.3",
       stripTagPrefix: "v",
-      isPullRequest: () => false,
     });
 
     expect(imageTags).toEqual("foo:1.2.3");
   });
 
   it("should create image tags for git tags with registry", () => {
+    utils.isPullRequest = jest.fn(() => false);
+
     const imageTags = image.createImageTags({
       imageName: "foo",
       currentBranch: "refs/tags/v1.2.3",
-      isPullRequest: () => false,
       registry: "ghcr.io",
     });
 
@@ -50,48 +67,52 @@ describe("createImageTags", () => {
   });
 
   it("should create image tags for PRs targeting main branch", () => {
+    utils.isPullRequest = jest.fn(() => true);
+
     const imageTags = image.createImageTags({
       imageName: "foo",
       headBranch: "feature-x",
       targetBranch: "main",
       stripTagPrefix: "v",
-      isPullRequest: () => true,
     });
 
     expect(imageTags).toEqual("foo:unstable-feature-x");
   });
 
   it("should create image tags for PRs targeting stable branch", () => {
+    utils.isPullRequest = jest.fn(() => true);
+
     const imageTags = image.createImageTags({
       imageName: "foo",
       headBranch: "feature-x",
       targetBranch: "stable",
       stripTagPrefix: "v",
-      isPullRequest: () => true,
     });
 
     expect(imageTags).toEqual("foo:stable-feature-x");
   });
 
   it("should create image tags for PRs targeting unstable branch", () => {
+    utils.isPullRequest = jest.fn(() => true);
+
     const imageTags = image.createImageTags({
       imageName: "foo",
       headBranch: "feature-x",
       targetBranch: "unstable",
       stripTagPrefix: "v",
-      isPullRequest: () => true,
     });
 
     expect(imageTags).toEqual("foo:unstable-feature-x");
   });
 
   it("should create image tags for PRs targeting a branch with a registry", () => {
+    utils.isPullRequest = jest.fn(() => true);
+
     const imageTags = image.createImageTags({
       imageName: "foo",
       headBranch: "feature-x",
       targetBranch: "main",
       stripTagPrefix: "v",
-      isPullRequest: () => true,
       registry: "ghcr.io",
     });
 
@@ -103,7 +124,6 @@ describe("createImageTags", () => {
       imageName: "foo",
       currentBranch: "main",
       stripTagPrefix: "v",
-      isPullRequest: () => false,
     });
 
     expect(imageTags).toEqual("foo:unstable");
@@ -114,7 +134,6 @@ describe("createImageTags", () => {
       imageName: "foo",
       currentBranch: "stable",
       stripTagPrefix: "v",
-      isPullRequest: () => false,
     });
 
     expect(imageTags).toEqual("foo:stable,foo:latest");
@@ -125,7 +144,6 @@ describe("createImageTags", () => {
       imageName: "foo",
       currentBranch: "oldstable",
       stripTagPrefix: "v",
-      isPullRequest: () => false,
     });
 
     expect(imageTags).toEqual("foo:oldstable");
@@ -136,7 +154,6 @@ describe("createImageTags", () => {
       imageName: "foo",
       currentBranch: "main",
       stripTagPrefix: "v",
-      isPullRequest: () => false,
       registry: "ghcr.io",
     });
 
