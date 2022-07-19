@@ -13,32 +13,32 @@ const convertBranchName = (name) => (name === "main" ? "unstable" : name);
 
 const createImageTags = ({
   imageName,
-  currentBranch,
-  targetBranch,
-  headBranch,
+  currentRef,
+  baseRef,
+  headRef,
   stripTagPrefix,
   registry,
-  isPullRequest = utils.isPullRequest,
 }) => {
   const imageTags = [];
-  if (isPullRequest()) {
-    targetBranch = convertBranchName(targetBranch);
+  if (utils.isPullRequest()) {
+    const targetBranch = convertBranchName(utils.getBranchName(baseRef));
+    const headBranch = utils.getBranchName(headRef);
     // pull request
     imageTags.push(
       createImageTag(imageName, `${targetBranch}-${headBranch}`, registry)
     );
-  } else if (utils.isTag(currentBranch)) {
+  } else if (utils.isTag(currentRef)) {
     // tag
     imageTags.push(
       createImageTag(
         imageName,
-        utils.getTagName(currentBranch, stripTagPrefix),
+        utils.getTagName(currentRef, stripTagPrefix),
         registry
       )
     );
   } else {
     // push into a branch
-    currentBranch = convertBranchName(currentBranch);
+    const currentBranch = convertBranchName(utils.getBranchName(currentRef));
     imageTags.push(createImageTag(imageName, currentBranch, registry));
 
     if (currentBranch == "stable") {
@@ -8572,30 +8572,34 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const core = __nccwpck_require__(2186);
+const github = __nccwpck_require__(5438);
 const image = __nccwpck_require__(1856);
-const utils = __nccwpck_require__(1252);
 
 async function run() {
-  const targetBranch = utils.getBranchName(process.env.GITHUB_BASE_REF);
-  const currentBranch = utils.getBranchName(process.env.GITHUB_REF);
-  const headBranch = utils.getBranchName(process.env.GITHUB_HEAD_REF);
+  const baseRef = process.env.GITHUB_BASE_REF;
+  const currentRef = process.env.GITHUB_REF;
+  const headRef = process.env.GITHUB_HEAD_REF;
   const imageName =
     core.getInput("image-name") || process.env.GITHUB_REPOSITORY;
   const stripTagPrefix = core.getInput("strip-tag-prefix") || "";
   const registry = core.getInput("registry");
 
   core.startGroup("env");
-  core.info(`GITHUB_BASE_REF: ${process.env.GITHUB_BASE_REF}`);
-  core.info(`GITHUB_REF: ${process.env.GITHUB_REF}`);
-  core.info(`GITHUB_HEAD_REF: ${process.env.GITHUB_HEAD_REF}`);
+  core.info(`GITHUB_BASE_REF: ${baseRef}`);
+  core.info(`GITHUB_REF: ${currentRef}`);
+  core.info(`GITHUB_HEAD_REF: ${headRef}`);
   core.info(`GITHUB_REPOSITORY: ${process.env.GITHUB_REPOSITORY}`);
   core.endGroup();
 
+  if (core.isDebug()) {
+    core.debug(`github: ${github}`);
+  }
+
   const imageTags = image.createImageTags({
     imageName,
-    targetBranch,
-    currentBranch,
-    headBranch,
+    baseRef,
+    currentRef,
+    headRef,
     stripTagPrefix,
     registry,
   });
