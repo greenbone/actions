@@ -1,4 +1,5 @@
 const core = require("@actions/core");
+const github = require("@actions/github");
 const image = require("./image");
 const utils = require("./utils");
 
@@ -17,6 +18,10 @@ async function run() {
   core.info(`GITHUB_HEAD_REF: ${process.env.GITHUB_HEAD_REF}`);
   core.info(`GITHUB_REPOSITORY: ${process.env.GITHUB_REPOSITORY}`);
   core.endGroup();
+
+  if (core.isDebug()) {
+    core.debug(`github: ${github}`);
+  }
 
   const imageTags = image.createImageTags({
     imageName,
