@@ -21,7 +21,7 @@ const createImageTags = ({
   isPullRequest = utils.isPullRequest,
 }) => {
   const imageTags = [];
-  if (isPullRequest()) {
+  if (utils.isPullRequest()) {
     targetBranch = convertBranchName(targetBranch);
     // pull request
     imageTags.push(
