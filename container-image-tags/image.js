@@ -7,31 +7,32 @@ const convertBranchName = (name) => (name === "main" ? "unstable" : name);
 
 const createImageTags = ({
   imageName,
-  currentBranch,
-  targetBranch,
-  headBranch,
+  currentRef,
+  baseRef,
+  headRef,
   stripTagPrefix,
   registry,
 }) => {
   const imageTags = [];
   if (utils.isPullRequest()) {
-    targetBranch = convertBranchName(targetBranch);
+    const targetBranch = convertBranchName(utils.getBranchName(baseRef));
+    const headBranch = utils.getBranchName(headRef);
     // pull request
     imageTags.push(
       createImageTag(imageName, `${targetBranch}-${headBranch}`, registry)
     );
-  } else if (utils.isTag(currentBranch)) {
+  } else if (utils.isTag(currentRef)) {
     // tag
     imageTags.push(
       createImageTag(
         imageName,
-        utils.getTagName(currentBranch, stripTagPrefix),
+        utils.getTagName(currentRef, stripTagPrefix),
         registry
       )
     );
   } else {
     // push into a branch
-    currentBranch = convertBranchName(currentBranch);
+    const currentBranch = convertBranchName(utils.getBranchName(currentRef));
     imageTags.push(createImageTag(imageName, currentBranch, registry));
 
     if (currentBranch == "stable") {

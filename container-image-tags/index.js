@@ -1,21 +1,20 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const image = require("./image");
-const utils = require("./utils");
 
 async function run() {
-  const targetBranch = utils.getBranchName(process.env.GITHUB_BASE_REF);
-  const currentBranch = utils.getBranchName(process.env.GITHUB_REF);
-  const headBranch = utils.getBranchName(process.env.GITHUB_HEAD_REF);
+  const baseRef = process.env.GITHUB_BASE_REF;
+  const currentRef = process.env.GITHUB_REF;
+  const headRef = process.env.GITHUB_HEAD_REF;
   const imageName =
     core.getInput("image-name") || process.env.GITHUB_REPOSITORY;
   const stripTagPrefix = core.getInput("strip-tag-prefix") || "";
   const registry = core.getInput("registry");
 
   core.startGroup("env");
-  core.info(`GITHUB_BASE_REF: ${process.env.GITHUB_BASE_REF}`);
-  core.info(`GITHUB_REF: ${process.env.GITHUB_REF}`);
-  core.info(`GITHUB_HEAD_REF: ${process.env.GITHUB_HEAD_REF}`);
+  core.info(`GITHUB_BASE_REF: ${baseRef}`);
+  core.info(`GITHUB_REF: ${currentRef}`);
+  core.info(`GITHUB_HEAD_REF: ${headRef}`);
   core.info(`GITHUB_REPOSITORY: ${process.env.GITHUB_REPOSITORY}`);
   core.endGroup();
 
@@ -25,9 +24,9 @@ async function run() {
 
   const imageTags = image.createImageTags({
     imageName,
-    targetBranch,
-    currentBranch,
-    headBranch,
+    baseRef,
+    currentRef,
+    headRef,
     stripTagPrefix,
     registry,
   });

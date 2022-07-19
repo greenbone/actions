@@ -36,7 +36,7 @@ describe("createImageTags", () => {
 
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "refs/tags/v1.2.3",
+      currentRef: "refs/tags/v1.2.3",
     });
 
     expect(imageTags).toEqual("foo:v1.2.3");
@@ -47,7 +47,7 @@ describe("createImageTags", () => {
 
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "refs/tags/v1.2.3",
+      currentRef: "refs/tags/v1.2.3",
       stripTagPrefix: "v",
     });
 
@@ -59,7 +59,7 @@ describe("createImageTags", () => {
 
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "refs/tags/v1.2.3",
+      currentRef: "refs/tags/v1.2.3",
       registry: "ghcr.io",
     });
 
@@ -71,8 +71,8 @@ describe("createImageTags", () => {
 
     const imageTags = image.createImageTags({
       imageName: "foo",
-      headBranch: "feature-x",
-      targetBranch: "main",
+      headRef: "feature-x",
+      baseRef: "main",
       stripTagPrefix: "v",
     });
 
@@ -84,8 +84,8 @@ describe("createImageTags", () => {
 
     const imageTags = image.createImageTags({
       imageName: "foo",
-      headBranch: "feature-x",
-      targetBranch: "stable",
+      headRef: "feature-x",
+      baseRef: "stable",
       stripTagPrefix: "v",
     });
 
@@ -97,8 +97,8 @@ describe("createImageTags", () => {
 
     const imageTags = image.createImageTags({
       imageName: "foo",
-      headBranch: "feature-x",
-      targetBranch: "unstable",
+      headRef: "feature-x",
+      baseRef: "unstable",
       stripTagPrefix: "v",
     });
 
@@ -110,8 +110,8 @@ describe("createImageTags", () => {
 
     const imageTags = image.createImageTags({
       imageName: "foo",
-      headBranch: "feature-x",
-      targetBranch: "main",
+      headRef: "feature-x",
+      baseRef: "main",
       stripTagPrefix: "v",
       registry: "ghcr.io",
     });
@@ -122,7 +122,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to main branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "main",
+      currentRef: "refs/heads/main",
       stripTagPrefix: "v",
     });
 
@@ -132,7 +132,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to stable branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "stable",
+      currentRef: "refs/heads/stable",
       stripTagPrefix: "v",
     });
 
@@ -142,7 +142,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to oldstable branch", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "oldstable",
+      currentRef: "refs/heads/oldstable",
       stripTagPrefix: "v",
     });
 
@@ -152,7 +152,7 @@ describe("createImageTags", () => {
   it("should create image tags for pushes to a branch with registry", () => {
     const imageTags = image.createImageTags({
       imageName: "foo",
-      currentBranch: "main",
+      currentRef: "refs/heads/main",
       stripTagPrefix: "v",
       registry: "ghcr.io",
     });
