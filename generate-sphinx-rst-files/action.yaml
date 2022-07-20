@@ -1,0 +1,59 @@
+name: "Generate sphinx rst files"
+description: "Generate sphinx rst files"
+inputs:
+  doc-dir:
+    description: "Doc folder path."
+    default: docs
+  source-dir:
+    description: "Source code path"
+    default: src
+  output-dir:
+    description: "Rst files output path"
+  pip-sphinx-modules:
+    description: "Space separated list of pip modules to install, empty use pyproject.toml"
+  unwanted-rst:
+    description: "Space separated list of rst files to remove"
+  version:
+    description: "Update sphinx conf.py release version"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Install sphinx"
+      if: inputs.pip-sphinx-modules
+      shell: bash
+      run: |
+        python -m pip install --upgrade Sphinx "${{ inputs.pip-sphinx-modules }}"
+    - name: Install Poetry
+      if: ${{ !inputs.pip-sphinx-modules }}
+      uses: greenbone/actions/poetry@v1
+      with:
+        version: 3.9
+    - name: "Generate sphinx rst files"
+      shell: bash
+      run: |
+       cd "${{ inputs.doc-dir }}"
+       rm -rf "${{ inputs.output-dir }}"
+       if [ "${{ inputs.pip-sphinx-modules }}" ]; then
+         sphinx-apidoc -o "${{ inputs.output-dir }}" "${{ inputs.source-dir }}"
+       else
+         poetry run sphinx-apidoc -o "${{ inputs.output-dir }}" "${{ inputs.source-dir }}"
+       fi
+    - name: "Remove unwanted rst files"
+      if: inputs.unwanted-rst
+      shell: bash
+      run: |
+        readarray -td' ' unwanted_rst <<<"${{ inputs.unwanted-rst }}"
+        cd "${{ inputs.doc-dir }}/${{ inputs.output-dir }}"
+        for rst in "${unwanted_rst[@]}"; do
+          rm -f "$rst"
+        done
+    - name: "Update sphinx conf.py release version"
+      if: inputs.version
+      shell: bash
+      run: |
+        sed -i "/^release = /c\release = \'${{ inputs.version }}\'" "${{ inputs.doc-dir }}/conf.py"
