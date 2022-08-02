@@ -1,0 +1,56 @@
+name: Workflow Dispatcher
+description: Trigger and chain GitHub Actions workflows with workflow_dispatch events and wait for result.
+author: Josef Fröhle <github@josef-froehle.de>
+branding:
+  icon: play
+  color: green
+inputs:
+  gh-token:
+    description: 'GitHub token with repo write access, can NOT use secrets.GITHUB_TOKEN, see readme'
+    required: true
+  workflow:
+    description: 'Name or ID of workflow to run'
+    required: true
+  repo:
+    description: Repository name with owner (like actions/checkout)
+    required: false
+    default: ${{github.repository}}
+  inputs:
+    description: 'Inputs to pass to the workflow, must be a JSON string. All values must be strings (even if used as boolean or number)'
+    required: false
+  ref:
+    description: 'The reference of the workflow run. The reference can be a branch, tag, or a commit SHA. Alternativ you can use also commit or branch.'
+    required: false
+  commit:
+    description: Commit hash (alternative to ref or branch)
+    required: false
+  branch:
+    description: Branch name (alternative to ref or commit)
+    required: false
+  display-workflow-run-url:
+    description: 'Get the URL of the triggered workflow and display it in logs (useful to follow the progress of the triggered workflow)'
+    required: false
+    default: 'true'
+  display-workflow-run-url-interval:
+    description: 'The time to wait (+unit) between two polls to get the URL of the workflow run'
+    required: false
+    default: 1m
+  display-workflow-run-url-timeout:
+    description: 'Maximum amount of time (+unit) to wait for the URL of the workflow run. If the timeout is reached, it is just ignored'
+    required: false
+    default: 10m
+  wait-for-completion:
+    description: 'Block until the triggered workflow has finished'
+    required: false
+    default: 'true'
+  wait-for-completion-timeout:
+    description: 'Maximum amount of time (+unit) to wait to mark workflow as timed out'
+    required: false
+    default: 1h
+  wait-for-completion-interval:
+    description: 'Time to wait (+unit) between two polls to get run status'
+    required: false
+    default: 1m
+runs:
+  using: node12
+  main: index.js

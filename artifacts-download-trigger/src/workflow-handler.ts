@@ -47,7 +47,7 @@ export class WorkflowHandler {
   private triggerDate = 0;
 
   constructor(token: string,
-              private workflowRef: string,
+              private workflowRef: string|number,
               private owner: string,
               private repo: string,
               private ref: string) {
@@ -72,6 +72,7 @@ export class WorkflowHandler {
         debug('Workflow Dispatch error', error.toUpperCase());
       } else if (error instanceof Error) {
         debug('Workflow Dispatch error', error.message);
+        debug('Workflow Dispatch error stack', error);
       }
 
       throw error;
@@ -203,7 +204,10 @@ export class WorkflowHandler {
     }
   }
 
-  private static isFilename(workflowRef: string) {
-    return /.+\.ya?ml$/.test(workflowRef);
+  private static isFilename(workflowRef: any) {
+    if (typeof workflowRef === "string" || workflowRef instanceof String) {
+      return /.+\.ya?ml$/.test(workflowRef as string);
+    }
+    return false;
   }
 }

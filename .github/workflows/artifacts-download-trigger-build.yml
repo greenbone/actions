@@ -25,11 +25,12 @@ jobs:
           npm install -g yarn
           yarn install
           yarn run build
+          rm -rf node_modules/
       - name: Archive dist
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: artifacts-download-trigger/dist
+          path: artifacts-download-trigger
           retention-days: 1
 
   echo-1-test:
@@ -43,11 +44,33 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: artifacts-download-trigger/dist
+          path: artifacts-download-trigger
       - name: Invoke echo 1 workflow using this action (do not wait for completion)
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger Message Echo 1
+          branch: ${{ github.ref_name }}
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+          inputs: '{"message": "blah blah"}'
+          wait-for-completion: false
+
+  echo-1-test-single:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    name: "echo-1-test-single [trigger|by workflow name]"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Download dist
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: artifacts-download-trigger
+      - name: Invoke echo 1 workflow using this action (do not wait for completion)
+        uses: ./artifacts-download-trigger/bin/trigger
+        with:
+          workflow: artifacts-download-trigger Message Echo 1
+          branch: ${{ github.ref_name }}
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           inputs: '{"message": "blah blah"}'
           wait-for-completion: false
@@ -63,11 +86,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: artifacts-download-trigger/dist
+          path: artifacts-download-trigger
       - name: Invoke echo 2 workflow using this action
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-echo2.yml
+          branch: ${{ github.ref_name }}
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion: false
 
@@ -88,6 +112,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-long-running.yml
+          branch: ${{ github.ref_name }}
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
@@ -119,6 +144,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-failing.yml
+          branch: ${{ github.ref_name }}
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 5m
@@ -150,6 +176,7 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-timeout.yml
+          branch: ${{ github.ref_name }}
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           wait-for-completion-interval: 10s
           wait-for-completion-timeout: 30s
@@ -164,7 +191,7 @@ jobs:
           actual: ${{ steps.timeout-workflow.outcome }}
 
   build-dist:
-    needs: [ build, timeout-test, failing-test, long-running-test, echo-2-test, echo-1-test ]
+    needs: [ build, timeout-test, failing-test, long-running-test, echo-2-test, echo-1-test, echo-1-test-single ]
     if: github.ref  && github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     name: "Commit dist of this action to the repo"
@@ -175,12 +202,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: artifacts-download-trigger/dist
+          path: artifacts-download-trigger
       - name: Commit dist file of this action
         run: |
           git config --global user.name "${{ secrets.GREENBONE_BOT }}"
           git config --global user.email "${{ secrets.GREENBONE_BOT_MAIL }}"
           git add artifacts-download-trigger/dist/index.js || true
-          git commit -m "New build of artifacts-download-trigger/dist/index.js" || true
+          git add artifacts-download-trigger/bin/ || true
+          git commit -m "New build of artifacts-download-trigger" || true
           remote_repo="https://${GITHUB_ACTOR}:${{secrets.GREENBONE_BOT_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
           git push "${remote_repo}" HEAD:${GITHUB_REF} || true

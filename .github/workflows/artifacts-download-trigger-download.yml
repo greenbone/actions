@@ -27,13 +27,36 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-upload.yml
-          name: artifact
+          branch: ${{ github.ref_name }}
+          artifact-name: artifact
           path: artifact
-          download-artifacts: true
-          force-trigger: true
+          download-artifacts: 'true'
+          force-trigger: 'true'
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
       - name: Test
-        run: cat artifact/sha | grep $GITHUB_SHA
+        run: |
+          cat artifact/sha
+          echo $GITHUB_SHA
+          cat artifact/sha | grep $GITHUB_SHA
+  download-latest-single:
+    runs-on: ubuntu-latest
+    needs: [wait, download-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download
+        uses: ./artifacts-download-trigger/bin/downloader
+        with:
+          workflow: artifacts-download-trigger-upload.yml
+          branch: ${{ github.ref_name }}
+          artifact-name: artifact
+          path: artifact
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+      - name: Test
+        run: |
+          cat artifact/sha
+          echo $GITHUB_SHA
+          cat artifact/sha | grep $GITHUB_SHA
   download-branch:
     runs-on: ubuntu-latest
     needs: [ wait, download-latest ]
@@ -45,18 +68,21 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-upload.yml
-          name: artifact
+          artifact-name: artifact
           path: artifact
           branch: main
-          download-artifacts: true
-          force-trigger: true
+          download-artifacts: 'true'
+          force-trigger: 'false'
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
       - name: Test
-        run: cat artifact/sha | grep $GITHUB_SHA
+        run: |
+          cat artifact/sha
+          echo $GITHUB_SHA
+          cat artifact/sha | grep $GITHUB_SHA
   download-pr:
     runs-on: ubuntu-latest
     needs: [ wait, download-latest ]
-    if: github.ref != 'refs/heads/main'
+    if: github.ref != 'refs/heads/main' && github.event.pull_request.number > 0
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -64,14 +90,17 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-upload.yml
-          name: artifact
+          artifact-name: artifact
           path: artifact
           pr: ${{github.event.pull_request.number}}
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          download-artifacts: true
-          force-trigger: true
+          download-artifacts: 'true'
+          force-trigger: 'false'
       - name: Test
-        run: cat artifact/sha | grep $GITHUB_SHA
+        run: |
+          cat artifact/sha
+          echo $GITHUB_SHA
+          cat artifact/sha | grep $GITHUB_SHA
   download-multiple:
     runs-on: ubuntu-latest
     needs: [ wait, download-latest ]
@@ -82,11 +111,15 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-upload.yml
-          download-artifacts: true
-          force-trigger: true
+          branch: ${{ github.ref_name }}
+          download-artifacts: 'true'
+          force-trigger: 'false'
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
       - name: Test
         run: |
+          cat artifact1/sha1
+          cat artifact2/sha2
+          echo $GITHUB_SHA
           cat artifact1/sha1 | grep $GITHUB_SHA
           cat artifact2/sha2 | grep $GITHUB_SHA
   download-conclusion:
@@ -99,11 +132,15 @@ jobs:
         uses: ./artifacts-download-trigger
         with:
           workflow: artifacts-download-trigger-upload.yml
-          name: artifact
+          branch: ${{ github.ref_name }}
+          artifact-name: artifact
           path: artifact
           workflow-conclusion: ''
-          download-artifacts: true
-          force-trigger: true
+          download-artifacts: 'true'
+          force-trigger: 'true'
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
       - name: Test
-        run: cat artifact/sha | grep $GITHUB_SHA
+        run: |
+          cat artifact/sha
+          echo $GITHUB_SHA
+          cat artifact/sha | grep $GITHUB_SHA

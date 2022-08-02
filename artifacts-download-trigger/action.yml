@@ -2,8 +2,8 @@ name: Workflow Dispatch and wait to download artifact
 description: Trigger and chain GitHub Actions workflows with workflow_dispatch events and wait for result to download and extract an artifact associated with given workflow and commit
 author: Josef Fröhle <github@josef-froehle.de>
 branding:
-  icon: download
-  color: blue
+  icon: truck
+  color: green
 inputs:
   workflow-conclusion:
     description: |
@@ -24,7 +24,6 @@ inputs:
   branch:
     description: Branch name
     required: false
-    default: "main"
   event:
     description: Event type
     required: false
@@ -34,7 +33,7 @@ inputs:
   run-number:
     description: Workflow run number
     required: false
-  name:
+  artifact-name:
     description: Artifact name (download all artifacts if not specified)
     required: false
   path:

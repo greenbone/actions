@@ -1,3 +1,8 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Greenbone Networks GmbH - Josef Fröhle, 2022
+// Licensed under the MIT License.
+// ----------------------------------------------------------------------------
+
 import * as core from '@actions/core'
 
 export function debug(title: string, content: any) {

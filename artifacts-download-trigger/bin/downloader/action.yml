@@ -1,0 +1,57 @@
+name: artifact downloader
+description: downloader and extract an artifact associated with given workflow and commit
+author: Josef Fröhle <github@josef-froehle.de>
+branding:
+  icon: download
+  color: green
+inputs:
+  gh-token:
+    description: 'GitHub token with repo write access, can NOT use secrets.GITHUB_TOKEN, see readme'
+    required: true
+  workflow:
+    description: 'Name or ID of workflow to run'
+    required: true
+  workflow-conclusion:
+    description: |
+      Wanted status or conclusion to search for in recent runs
+      https://docs.github.com/en/free-pro-team@latest/rest/reference/actions#list-workflow-runs
+    required: false
+    default: success
+  repo:
+    description: Repository name with owner (like actions/checkout)
+    required: false
+    default: ${{github.repository}}
+  pr:
+    description: Pull request number
+    required: false
+  commit:
+    description: Commit hash
+    required: false
+  branch:
+    description: Branch name
+    required: false
+  event:
+    description: Event type
+    required: false
+  run-id:
+    description: Workflow run id
+    required: false
+  run-number:
+    description: Workflow run number
+    required: false
+  artifact-name:
+    description: Artifact name (download all artifacts if not specified)
+    required: false
+  path:
+    description: Where to unpack the artifact (default current working directory)
+    required: false
+    default: "./"
+  check-artifacts:
+    description: Check workflow run whether it has an artifact
+    required: false
+  search-artifacts:
+    description: Search workflow runs for artifact with specified name
+    required: false
+runs:
+  using: node12
+  main: index.js

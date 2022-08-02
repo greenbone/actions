@@ -1,10 +1,10 @@
 {
   "name": "artifacts-download-trigger",
-  "version": "1.0.0",
+  "version": "1.0.10",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/index.ts -o dist",
+    "build": "ncc build src/run_dl_trigger_dl.ts -s -o dist && ncc build src/run_dl.ts -s -o bin/downloader && ncc build src/run_trigger.ts -s -o bin/trigger",
     "lint": "eslint src/"
   },
   "keywords": [
@@ -16,17 +16,17 @@
   "author": "Josef Fröhle <github@josef-froehle.de>",
   "license": "MIT",
   "devDependencies": {
-    "@actions/core": "1.6.0",
-    "@actions/github": "5.0.0",
-    "@octokit/types": "^6.34.0",
-    "@types/adm-zip": "^0.4.34",
-    "@types/node": "^16.11.19",
-    "@typescript-eslint/eslint-plugin": "5.9.1",
-    "@typescript-eslint/parser": "5.9.1",
-    "@vercel/ncc": "0.33.1",
+    "@actions/core": "1.9.0",
+    "@actions/github": "5.0.3",
+    "@octokit/types": "^6.41.0",
+    "@types/adm-zip": "^0.5.0",
+    "@types/node": "^16.11.46",
+    "@typescript-eslint/eslint-plugin": "5.31.0",
+    "@typescript-eslint/parser": "5.31.0",
+    "@vercel/ncc": "0.34.0",
     "adm-zip": "^0.5.9",
-    "eslint": "8.6.0",
-    "filesize": "^8.0.6",
+    "eslint": "8.20.0",
+    "filesize": "^9.0.11",
     "typescript": "^3.9.10"
   }
 }

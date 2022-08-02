@@ -12169,7 +12169,7 @@ exports.download = download;
 
 /***/ }),
 
-/***/ 6209:
+/***/ 223:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -12208,205 +12208,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
-const trigger_1 = __nccwpck_require__(7547);
 const downloader_1 = __nccwpck_require__(9099);
-const utils_1 = __nccwpck_require__(1314);
-const workflow_handler_1 = __nccwpck_require__(971);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const args = utils_1.getArgs(true);
         try {
-            core.debug(`Test DL: ${args.downloadArtifacts ? "true" : "false"}`);
-            if ((args.downloadArtifacts || args.downloadArtifactsNoTrigger) && !args.forceTrigger) {
-                try {
-                    yield downloader_1.download();
-                }
-                catch (e) {
-                    if (!args.downloadArtifactsNoTrigger || args.forceTrigger) {
-                        throw "next step";
-                    }
-                }
-            }
-            else {
-                throw "next step";
-            }
+            yield downloader_1.download();
         }
         catch (e) {
-            core.info(`Test DL: ${args.downloadArtifacts ? "true" : "false"}`);
-            core.setOutput("result", "success"); // Reset Failure if any
-            core.setOutput("workflow-conclusion", workflow_handler_1.WorkflowRunConclusion.SUCCESS); // Reset Failure if any
-            process.exitCode = 0; // Reset Failure if any
-            try {
-                core.info(`trigger()`);
-                yield trigger_1.trigger();
-                if (args.downloadArtifacts) {
-                    core.info(`download()`);
-                    yield downloader_1.download();
-                }
+            if (typeof e === "string") {
+                core.setFailed(e.toUpperCase());
             }
-            catch (e) {
-                if (typeof e === "string") {
-                    core.setFailed(e.toUpperCase());
-                }
-                else if (e instanceof Error) {
-                    console.log(e.stack);
-                    core.setFailed(e.message);
-                }
+            else if (e instanceof Error) {
+                console.log(e.stack);
+                core.setFailed(e.message);
             }
         }
     });
 }
 run();
-
-
-/***/ }),
-
-/***/ 7547:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-// ----------------------------------------------------------------------------
-// Copyright (c) Greenbone Networks GmbH - Josef Fröhle, 2022
-// Copyright (c) Ben Coleman, 2020
-// Licensed under the MIT License.
-//
-// Workflow Dispatch Action - Main task code
-// ----------------------------------------------------------------------------
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.trigger = void 0;
-const core = __importStar(__nccwpck_require__(2186));
-const utils_1 = __nccwpck_require__(1314);
-const debug_1 = __nccwpck_require__(1417);
-const workflow_handler_1 = __nccwpck_require__(971);
-function getFollowUrl(workflowHandler, interval, timeout) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const start = Date.now();
-        let url;
-        do {
-            yield utils_1.sleep(interval);
-            try {
-                const result = yield workflowHandler.getWorkflowRunStatus();
-                url = result.url;
-            }
-            catch (e) {
-                if (typeof e === "string") {
-                    core.debug(`Failed to get workflow url: ${e.toUpperCase()}`);
-                }
-                else if (e instanceof Error) {
-                    core.debug(`Failed to get workflow url: ${e.message}`);
-                }
-            }
-        } while (!url && !utils_1.isTimedOut(start, timeout));
-        return url;
-    });
-}
-function waitForCompletionOrTimeout(workflowHandler, checkStatusInterval, waitForCompletionTimeout) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const start = Date.now();
-        let status;
-        let result;
-        do {
-            yield utils_1.sleep(checkStatusInterval);
-            try {
-                result = yield workflowHandler.getWorkflowRunStatus();
-                status = result.status;
-                core.debug(`Workflow is running for ${utils_1.formatDuration(Date.now() - start)}. Current status=${status}`);
-            }
-            catch (e) {
-                if (typeof e === "string") {
-                    core.warning(`Failed to get workflow status: ${e.toUpperCase()}`);
-                }
-                else if (e instanceof Error) {
-                    core.warning(`Failed to get workflow status: ${e.message}`);
-                }
-            }
-        } while (status !== workflow_handler_1.WorkflowRunStatus.COMPLETED && !utils_1.isTimedOut(start, waitForCompletionTimeout));
-        return { result, start };
-    });
-}
-function computeConclusion(start, waitForCompletionTimeout, result) {
-    if (utils_1.isTimedOut(start, waitForCompletionTimeout)) {
-        core.info(`Workflow wait timed out`);
-        core.setOutput('workflow-conclusion', workflow_handler_1.WorkflowRunConclusion.TIMED_OUT);
-        throw new Error('Workflow run has failed due to timeout');
-    }
-    core.info(`Workflow completed with conclusion=${result === null || result === void 0 ? void 0 : result.conclusion}`);
-    const conclusion = result === null || result === void 0 ? void 0 : result.conclusion;
-    core.setOutput('workflow-conclusion', conclusion);
-    if (conclusion === workflow_handler_1.WorkflowRunConclusion.FAILURE)
-        throw new Error('Workflow run has failed');
-    if (conclusion === workflow_handler_1.WorkflowRunConclusion.CANCELLED)
-        throw new Error('Workflow run was cancelled');
-    if (conclusion === workflow_handler_1.WorkflowRunConclusion.TIMED_OUT)
-        throw new Error('Workflow run has failed due to timeout');
-}
-//
-// Main task function (async wrapper)
-//
-function trigger() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const args = utils_1.getArgs(false);
-            debug_1.debug("trigger args", args);
-            const workflowHandler = new workflow_handler_1.WorkflowHandler(args.token, args.workflowRef, args.owner, args.repo, args.branch || args.ref);
-            debug_1.debug("trigger workflowHandler", workflowHandler);
-            // Trigger workflow run
-            core.info(`Trigger Workflow 🚀`);
-            yield workflowHandler.triggerWorkflow(args.inputs);
-            if (args.displayWorkflowUrl) {
-                const url = yield getFollowUrl(workflowHandler, args.displayWorkflowUrlInterval, args.displayWorkflowUrlTimeout);
-                core.info(`You can follow the running workflow here: ${url}`);
-                core.setOutput('workflow-url', url);
-            }
-            if (!args.waitForCompletion) {
-                return;
-            }
-            core.info(`Waiting for workflow completion`);
-            const { result, start } = yield waitForCompletionOrTimeout(workflowHandler, args.checkStatusInterval, args.waitForCompletionTimeout);
-            core.setOutput('workflow-url', result === null || result === void 0 ? void 0 : result.url);
-            computeConclusion(start, args.waitForCompletionTimeout, result);
-        }
-        catch (error) {
-            if (typeof error === "string") {
-                core.setFailed(error.toUpperCase());
-            }
-            else if (error instanceof Error) {
-                core.setFailed(error.message);
-            }
-            throw error;
-        }
-    });
-}
-exports.trigger = trigger;
 
 
 /***/ }),
@@ -12602,236 +12421,6 @@ exports.formatDuration = formatDuration;
 
 /***/ }),
 
-/***/ 971:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.WorkflowHandler = exports.WorkflowRunConclusion = exports.WorkflowRunStatus = void 0;
-const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const debug_1 = __nccwpck_require__(1417);
-var WorkflowRunStatus;
-(function (WorkflowRunStatus) {
-    WorkflowRunStatus["QUEUED"] = "queued";
-    WorkflowRunStatus["IN_PROGRESS"] = "in_progress";
-    WorkflowRunStatus["COMPLETED"] = "completed";
-})(WorkflowRunStatus = exports.WorkflowRunStatus || (exports.WorkflowRunStatus = {}));
-const ofStatus = (status) => {
-    if (!status) {
-        return WorkflowRunStatus.QUEUED;
-    }
-    const key = status.toUpperCase();
-    return WorkflowRunStatus[key];
-};
-var WorkflowRunConclusion;
-(function (WorkflowRunConclusion) {
-    WorkflowRunConclusion["SUCCESS"] = "success";
-    WorkflowRunConclusion["FAILURE"] = "failure";
-    WorkflowRunConclusion["CANCELLED"] = "cancelled";
-    WorkflowRunConclusion["SKIPPED"] = "skipped";
-    WorkflowRunConclusion["NEUTRAL"] = "neutral";
-    WorkflowRunConclusion["TIMED_OUT"] = "timed_out";
-    WorkflowRunConclusion["ACTION_REQUIRED"] = "action_required";
-})(WorkflowRunConclusion = exports.WorkflowRunConclusion || (exports.WorkflowRunConclusion = {}));
-const ofConclusion = (conclusion) => {
-    if (!conclusion) {
-        return WorkflowRunConclusion.NEUTRAL;
-    }
-    const key = conclusion.toUpperCase();
-    return WorkflowRunConclusion[key];
-};
-class WorkflowHandler {
-    constructor(token, workflowRef, owner, repo, ref) {
-        this.workflowRef = workflowRef;
-        this.owner = owner;
-        this.repo = repo;
-        this.ref = ref;
-        this.triggerDate = 0;
-        // Get octokit client for making API calls
-        this.octokit = github.getOctokit(token);
-    }
-    triggerWorkflow(inputs) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const workflowId = yield this.getWorkflowId();
-                this.triggerDate = Date.now();
-                const dispatchResp = yield this.octokit.rest.actions.createWorkflowDispatch({
-                    owner: this.owner,
-                    repo: this.repo,
-                    workflow_id: workflowId,
-                    ref: this.ref,
-                    inputs
-                });
-                debug_1.debug('Workflow Dispatch', dispatchResp);
-            }
-            catch (error) {
-                if (typeof error === "string") {
-                    debug_1.debug('Workflow Dispatch error', error.toUpperCase());
-                }
-                else if (error instanceof Error) {
-                    debug_1.debug('Workflow Dispatch error', error.message);
-                    debug_1.debug('Workflow Dispatch error stack', error);
-                }
-                throw error;
-            }
-        });
-    }
-    getWorkflowRunStatus() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const runId = yield this.getWorkflowRunId();
-                const response = yield this.octokit.rest.actions.getWorkflowRun({
-                    owner: this.owner,
-                    repo: this.repo,
-                    run_id: runId
-                });
-                debug_1.debug('Workflow Run status', response);
-                return {
-                    url: response.data.html_url,
-                    status: ofStatus(response.data.status),
-                    conclusion: ofConclusion(response.data.conclusion)
-                };
-            }
-            catch (error) {
-                debug_1.debug('Workflow Run status error', error);
-                throw error;
-            }
-        });
-    }
-    getWorkflowRunArtifacts() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const runId = yield this.getWorkflowRunId();
-                const response = yield this.octokit.rest.actions.getWorkflowRunArtifacts({
-                    owner: this.owner,
-                    repo: this.repo,
-                    run_id: runId
-                });
-                debug_1.debug('Workflow Run artifacts', response);
-                return {
-                    url: response.data.html_url,
-                    status: ofStatus(response.data.status),
-                    conclusion: ofConclusion(response.data.conclusion)
-                };
-            }
-            catch (error) {
-                debug_1.debug('Workflow Run artifacts error', error);
-                throw error;
-            }
-        });
-    }
-    getWorkflowRunId() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.workflowRunId) {
-                return this.workflowRunId;
-            }
-            try {
-                core.debug('Get workflow run id');
-                const workflowId = yield this.getWorkflowId();
-                const response = yield this.octokit.rest.actions.listWorkflowRuns({
-                    owner: this.owner,
-                    repo: this.repo,
-                    workflow_id: workflowId,
-                });
-                debug_1.debug('List Workflow Runs', response);
-                const runs = response.data.workflow_runs
-                    .filter((r) => r.event === "workflow_dispatch")
-                    .filter((r) => new Date(r.created_at).setMilliseconds(0) >= this.triggerDate);
-                debug_1.debug(`Filtered Workflow Runs (after trigger date: ${new Date(this.triggerDate).toISOString()})`, runs.map((r) => ({
-                    id: r.id,
-                    name: r.name,
-                    created_at: r.creatd_at,
-                    triggerDate: new Date(this.triggerDate).toISOString(),
-                    created_at_ts: new Date(r.created_at).valueOf(),
-                    triggerDateTs: this.triggerDate
-                })));
-                if (runs.length == 0) {
-                    throw new Error('Run not found');
-                }
-                this.workflowRunId = runs[0].id;
-                return this.workflowRunId;
-            }
-            catch (error) {
-                debug_1.debug('Get workflow run id error', error);
-                throw error;
-            }
-        });
-    }
-    getWorkflowId() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.workflowId) {
-                return this.workflowId;
-            }
-            core.debug(`Determine workflowId. WorkflowRef is: ${this.workflowRef}`);
-            if (WorkflowHandler.isFilename(this.workflowRef)) {
-                this.workflowId = this.workflowRef;
-                core.debug(`Workflow id is: ${this.workflowRef}`);
-                return this.workflowId;
-            }
-            try {
-                core.debug("Requesting workflow list");
-                const workflowsResp = yield this.octokit.rest.actions.listRepoWorkflows({
-                    owner: this.owner,
-                    repo: this.repo
-                });
-                const workflows = workflowsResp.data.workflows;
-                debug_1.debug(`List Workflows`, workflows);
-                // Locate workflow either by name or id
-                const workflowFind = workflows.find((workflow) => workflow.name === this.workflowRef || workflow.id.toString() === this.workflowRef);
-                if (!workflowFind)
-                    throw (new Error(`Unable to find workflow '${this.workflowRef}' in ${this.owner}/${this.repo} 😥`));
-                core.debug(`Workflow id is: ${workflowFind.id}`);
-                this.workflowId = workflowFind.id;
-                return this.workflowId;
-            }
-            catch (error) {
-                debug_1.debug('List workflows error', error);
-                throw error;
-            }
-        });
-    }
-    static isFilename(workflowRef) {
-        if (typeof workflowRef === "string" || workflowRef instanceof String) {
-            return /.+\.ya?ml$/.test(workflowRef);
-        }
-        return false;
-    }
-}
-exports.WorkflowHandler = WorkflowHandler;
-
-
-/***/ }),
-
 /***/ 2877:
 /***/ ((module) => {
 
@@ -13018,7 +12607,7 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(6209);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(223);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()
