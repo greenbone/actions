@@ -18,7 +18,7 @@ inputs:
     required: false
     default: success
   repo:
-    description: Repository name with owner (like actions/checkout)
+    description: Repository name with owner ( <organisation/owner>/<repository>)
     required: false
     default: ${{github.repository}}
   pr:
