@@ -52,5 +52,5 @@ inputs:
     required: false
     default: 1m
 runs:
-  using: node12
+  using: node16
   main: index.js
