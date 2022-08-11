@@ -1,0 +1,55 @@
+name: Python
+
+on: [push]
+
+jobs:
+  build:
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '[ci]') == false
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: dschep/install-pipenv-action@v1
+    - name: Install dependencies
+      run: |
+        pipenv install --dev
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        pipenv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        pipenv run flake8 . --count --exit-zero --max-complexity=10 --statistics
+    - name: Test with pytest
+      run: pipenv run pytest
+    - name: Force disable "include administrators" branch protection
+      uses: benjefferies/branch-protection-bot@master
+      if: always()
+      with:
+        access_token: ${{ secrets.ACCESS_TOKEN }}
+        enforce_admins: false
+    - name: Test empty commit
+      run: |
+        git config --global user.email "bot@echosoft.uk"
+        git config --global user.name "Branch Protection Bot"
+        git commit --allow-empty -m "[ci] Testing commit to master works with temporary branch protection disable"
+        git checkout -b master-to-be
+        git push https://benjefferies:${{ secrets.ACCESS_TOKEN }}@github.com/benjefferies/branch-protection-bot.git master-to-be:master
+    - name: Toggle "include administrators" branch protection
+      uses: benjefferies/branch-protection-bot@master
+      if: always()
+      with:
+        access_token: ${{ secrets.ACCESS_TOKEN }}
+    - name: Force enable "include administrators" branch protection
+      uses: benjefferies/branch-protection-bot@master
+      if: always()
+      with:
+        access_token: ${{ secrets.ACCESS_TOKEN }}
+        enforce_admins: true
