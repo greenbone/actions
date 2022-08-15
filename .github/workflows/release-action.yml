@@ -38,8 +38,20 @@ jobs:
         run: |
           git checkout ${{ github.event.inputs.branch }}
           git merge --ff-only main
+      - uses: greenbone/actions/branch-protection@main
+        timeout-minutes: 2
+        with:
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+          branch: v1
+          enforce_admins: 'false'
       - name: Generate new tag, push tag and branch
         run: |
           git tag v${{ github.event.inputs.tag }}
           git push
           git push --tags
+      - uses: greenbone/actions/branch-protection@main
+        timeout-minutes: 2
+        with:
+          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+          branch: v1
+          enforce_admins: 'true'
