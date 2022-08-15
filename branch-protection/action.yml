@@ -1,0 +1,29 @@
+name: Change temporary branch protection
+description: For some Workflows you can't wait for additional workflows to end before the merge can be done - this allows you to overjump the restictions.
+author: Josef Fröhle <github@josef-froehle.de>
+branding:
+  icon: download
+  color: blue
+inputs:
+  repo:
+    description: 'Repository name with owner (like actions/checkout)'
+    required: false
+    default: ${{github.repository}}
+  gh-token:
+    description: 'GitHub token with repo write access, can NOT use secrets.GITHUB_TOKEN, see readme'
+    required: true
+  branch:
+    description: 'Branch name'
+    required: false
+    default: 'main'
+  retries:
+    description: 'Number of times to retry before exiting'
+    required: false
+    default: 5
+  enforce_admins:
+    description: 'Flag to explicitly enable or disable "Include administrators" needs be string'
+    required: false
+    default: 'true'
+runs:
+  using: node12
+  main: dist/index.js
