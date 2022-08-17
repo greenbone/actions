@@ -42,7 +42,7 @@ jobs:
         timeout-minutes: 2
         with:
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          branch: v1
+          branch: ${{ github.event.inputs.branch }}
           enforce_admins: 'false'
       - name: Generate new tag, push tag and branch
         run: |
@@ -53,5 +53,5 @@ jobs:
         timeout-minutes: 2
         with:
           gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          branch: v1
+          branch: ${{ github.event.inputs.branch }}
           enforce_admins: 'true'
