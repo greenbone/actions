@@ -15,6 +15,6 @@ jobs:
       - name: Create ssh known hosts file
         uses: greenbone/actions/set_ssh_known_hosts@v1
         with:
-          ssh_known_hosts: ${{ secrets.KEYS }
+          known_hosts: ${{ secrets.KEYS }
 ```
 
