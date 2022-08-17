@@ -1,0 +1,19 @@
+name: "Set ssh authorized keys"
+description: "Generate the ssh authorized keys file"
+inputs:
+  ssh_authorized_key:
+    description: "SSH authorized key text string"
+    required: true
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+    - name: "Create ssh authorized key file"
+      shell: bash
+      run: |
+        mkdir -p "$HOME/.ssh" || true
+        chmod 0700 "$HOME/.ssh"
+        echo -e "${{ inputs.ssh_authorized_key }}" > "$HOME/.ssh/known_hosts"
+        chmod 0600 "$HOME/.ssh/known_hosts"
