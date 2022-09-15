@@ -22,7 +22,7 @@
     "semi": true
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.31.1",
+    "@vercel/ncc": "^0.34.0",
     "eslint": "^8.1.0",
     "jest": "^27.3.1"
   }
