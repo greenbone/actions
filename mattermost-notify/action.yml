@@ -7,6 +7,9 @@ inputs:
   MATTERMOST_CHANNEL:
     description: "Mattermost channel"
     required: true
+  MATTERMOST_HIGHLIGHT:
+    description: "highlight users in channel"
+    required: false
 branding:
   icon: "package"
   color: "green"
@@ -25,4 +28,9 @@ runs:
     - name: Create the Mattermost Message
       shell: bash
       run: |
-        mnotify-git ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }}
+        if [ "${{ inputs.MATTERMOST_HIGHLIGHT }}" ] ; then
+          mnotify-git ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }} \
+            --highlight ${{ inputs.MATTERMOST_HIGHLIGHT }}
+        else
+          mnotify-git ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }}
+        fi
