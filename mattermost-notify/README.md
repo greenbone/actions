@@ -30,12 +30,7 @@ jobs:
     steps:
       - uses: greenbone/actions/mattermost-notify@v1
         with:
-            WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
-            REPOSITORY_NAME: ${{ github.event.workflow_run.head_repository.full_name }}
-            CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-            BRANCH: ${{ github.event.workflow_run.head_branch }}
-            WORKFLOW_URL: ${{ github.event.workflow_run.html_url }}
-            REPOSITORY_URL: ${{ github.event.workflow_run.head_repository.html_url }}
             MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
             MATTERMOST_CHANNEL: ${{ secrets.MATTERMOST_CHANNEL }}
+            MATTERMOST_HIGHLIGHT: USER1 USER2
 ```
