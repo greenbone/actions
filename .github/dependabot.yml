@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "npm"
-    directory: "/container-image-tags/yarn.lock"
+    directory: "/container-image-tags/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
@@ -14,7 +14,7 @@ updates:
       - dependency-type: direct
       - dependency-type: indirect
   - package-ecosystem: "npm"
-    directory: "/artifacts-download-trigger/yarn.lock"
+    directory: "/artifacts-download-trigger/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
