@@ -16,7 +16,7 @@
   "author": "Josef Fröhle <github@josef-froehle.de>",
   "license": "MIT",
   "devDependencies": {
-    "@actions/core": "1.6.0",
+    "@actions/core": "1.9.1",
     "@actions/github": "5.0.0",
     "@octokit/types": "^6.34.0",
     "@types/adm-zip": "^0.4.34",
