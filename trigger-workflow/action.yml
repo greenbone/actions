@@ -1,0 +1,29 @@
+name: "Greenbone Pull Request Backport Action"
+description: "GitHub Action to create workflow dispatch events for a repository"
+author: "Björn Ricks"
+inputs:
+  repository:
+    description: "Repository of the workflow to trigger"
+    required: true
+  token:
+    description: "GitHub Token for authentication"
+    required: true
+  workflow:
+    description: "Workflow to trigger. Either a workflow ID or path. For example `ci.yml`."
+    required: true
+  ref:
+    description: "The git reference for the workflow. The reference can be a branch or tag name."
+    required: true
+    default: "main"
+  wait-for-completion-timeout:
+    description: "Maximum amount of time in seconds to wait to for workflow to finish. Set to empty string or false to not wait for the workflow."
+    required: false
+    default: 3600
+  wait-for-completion-interval:
+    description: "Time to wait  between two polls to get run status in seconds."
+    required: false
+    default: 60
+
+runs:
+  using: "docker"
+  image: "docker://ghcr.io/greenbone/trigger-workflow-action:unstable"
