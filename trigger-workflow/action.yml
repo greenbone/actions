@@ -9,7 +9,7 @@ inputs:
     description: "GitHub Token for authentication"
     required: true
   workflow:
-    description: "Workflow to trigger. Either a workflow ID or path. For example `ci.yml`."
+    description: "Workflow to trigger. Either a workflow ID or file path. For example `ci.yml`."
     required: true
   ref:
     description: "The git reference for the workflow. The reference can be a branch or tag name."
