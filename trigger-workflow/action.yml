@@ -15,6 +15,9 @@ inputs:
     description: "The git reference for the workflow. The reference can be a branch or tag name."
     required: true
     default: "main"
+  inputs:
+    description: "Inputs to pass to the workflow, must be a JSON string. All values must be strings (even if used as boolean or number)."
+    required: false
   wait-for-completion-timeout:
     description: "Maximum amount of time in seconds to wait to for workflow to finish. Set to empty string or false to not wait for the workflow."
     required: false

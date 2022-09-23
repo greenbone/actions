@@ -21,7 +21,7 @@ import sys
 import time
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from typing import Iterable, Optional
+from typing import Dict, Iterable, Optional
 
 import httpx
 from dateutil import parser as dateparser
@@ -90,6 +90,7 @@ class Trigger:
         repository: Optional[str] = None,
         timeout: Optional[str] = None,
         interval: Optional[str] = None,
+        inputs: Optional[Dict[str, str]] = None,
     ) -> None:
         token = token or ActionIO.input("token")
 
@@ -102,6 +103,8 @@ class Trigger:
 
         interval = interval or ActionIO.input("wait-for-completion-interval")
         self.interval = parse_int(interval)
+
+        self.inputs = inputs or ActionIO.input("inputs")
 
         self.trigger_date = date_now()
         self.timeout_date = (
@@ -231,7 +234,7 @@ class Trigger:
 
         try:
             self.api.create_workflow_dispatch(
-                self.repository, self.workflow, ref=self.ref
+                self.repository, self.workflow, ref=self.ref, inputs=self.inputs
             )
         except httpx.HTTPStatusError as e:
             raise TriggerError(
