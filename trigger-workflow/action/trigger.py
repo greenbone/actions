@@ -16,31 +16,30 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import os
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from time import time
-from typing import Dict, List, Optional, Union
+from typing import Iterable, Optional
 
 import httpx
 from dateutil import parser as dateparser
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
-from pontos.github.api import GitHubRESTApi
+from pontos.github.api import JSON, JSON_OBJECT, GitHubRESTApi
 
 WAIT_FOR_COMPLETION_TIMEOUT = 60 * 60 * 60  # one hour
 WAIT_FOR_COMPLETION_INTERVAL = 60 * 60  # one minute
-
-JSON_OBJECT = Dict[str, Union[str, int, bool]]  # pylint: disable=invalid-name
-JSON = Union[List[JSON_OBJECT], JSON_OBJECT]
+WAIT_FOR_STARTUP_INTERVAL = 10  # 10 seconds
 
 
-def filter_workflow_dispatch(run: JSON_OBJECT) -> bool:
+def is_workflow_dispatch(run: JSON_OBJECT) -> bool:
     event = run.get("event")
     return event == "workflow_dispatch"
 
 
-def filter_newer_runs(run: JSON_OBJECT, date: datetime) -> bool:
+def is_newer_run(run: JSON_OBJECT, date: datetime) -> bool:
     iso_time: str = run.get("created_at")
     run_time = dateparser.isoparse(iso_time)
     return run_time > date
@@ -49,7 +48,7 @@ def filter_newer_runs(run: JSON_OBJECT, date: datetime) -> bool:
 def parse_int(value: str):
     try:
         return int(value)
-    except ValueError:
+    except (ValueError, TypeError):
         return None
 
 
@@ -105,17 +104,29 @@ class Trigger:
         self.interval = parse_int(interval)
 
         self.trigger_date = date_now()
-        self.timeout_date = self.trigger_date + timedelta(seconds=self.timeout)
+        self.timeout_date = (
+            self.trigger_date + timedelta(seconds=self.timeout)
+            if self.timeout
+            else None
+        )
+
+        self.is_debug = os.environ.get("RUNNER_DEBUG") == "1"
+
         self.api = GitHubRESTApi(token)
 
-    def get_workflow_runs_fallback(self) -> JSON:
+    def get_workflow_runs_fallback(self) -> Iterable[JSON_OBJECT]:
+        # get all workflow runs and filter manually
         runs = self.api.get_workflow_runs(self.repository, self.workflow)
-        return [run for run in runs if filter_workflow_dispatch(run)]
+        return [run for run in runs if is_workflow_dispatch(run)]
 
-    def get_new_workflow_run(self) -> JSON_OBJECT:
+    def get_new_workflow_run(self) -> Optional[JSON_OBJECT]:
         runs = self.api.get_workflow_runs(
             self.repository, self.workflow, event="workflow_dispatch"
         )
+
+        if self.is_debug:
+            Console.debug(f"Available workflow runs: {json_dump(runs)}")
+
         if not runs:
             # in the past the backend at GitHub had issues with the event filter
             # we have been advised to remove the event filter until the backend
@@ -123,36 +134,79 @@ class Trigger:
             # behavior as a fallback
             runs = self.get_workflow_runs_fallback()
 
-        runs = [
-            run for run in runs if filter_newer_runs(run, self.trigger_date)
-        ]
+        # add some time margin to mitigate system time differences
+        trigger_date = self.trigger_date - timedelta(minutes=5)
 
-        Console.debug(f"Filtered workflow runs: {json.dumps(runs, indent=2)}")
+        runs = [run for run in runs if is_newer_run(run, trigger_date)]
+
+        if self.is_debug:
+            Console.debug(f"Filtered workflow runs: {json_dump(runs)}")
 
         if not runs:
-            raise TriggerError("Could not find workflow run.")
+            return None
 
         if len(runs) > 1:
             Console.warning(
                 "Found more then one workflow run. Using the first one."
             )
 
+        # currently the workflows are sorted by creation date while the first
+        # one is the newest. Thus if there are more then one runs found let us
+        # pick the newest one
         return runs[0]
 
-    def wait_for_completion(self):
+    def wait_for_completion(self) -> Optional[JSON_OBJECT]:
         if not self.timeout:
+            Console.log(
+                "Not waiting for workflow run completion. No timeout set."
+            )
             return
 
-        try:
-            run = self.get_new_workflow_run()
-        except httpx.HTTPStatusError as e:
-            raise TriggerError(
-                "Could not determine workflow run. Response was: "
-                f"{e.response.status_code}\n{json_dump(e.response.json())}."
-            ) from None
+        Console.log("Waiting for workflow run completion.")
+
+        for _ in range(6):
+            try:
+                time.sleep(WAIT_FOR_STARTUP_INTERVAL)
+                run = self.get_new_workflow_run()
+                if run:
+                    break
+            except httpx.HTTPStatusError as e:
+                raise TriggerError(
+                    "Could not determine workflow run. Response was: "
+                    f"{e.response.status_code}\n{json_dump(e.response.json())}."
+                ) from None
+
+        if not run:
+            raise TriggerError("Could not find workflow run.")
+
+        Console.log(
+            f"Found workflow run {run.get('id')} {run.get('html_url')}."
+        )
 
         while True:
+            if self.is_debug:
+                Console.debug(
+                    f"Checking status of workflow run\n{json_dump(run)}"
+                )
+
+            try:
+                status = WorkflowRunStatus(run["status"])
+            except KeyError:
+                Console.warning(
+                    "Wait for workflow completion. Ignoring unknown status for "
+                    f"workflow run:\n{json_dump(run)}"
+                )
+
+            if status == WorkflowRunStatus.COMPLETED:
+                break
+
+            if date_now() > self.timeout_date:
+                raise TriggerError(
+                    f"Workflow run {run.get('id')} run timed out."
+                )
+
             time.sleep(self.interval)
+
             try:
                 run = self.api.get_workflow_run(self.repository, run["id"])
             except httpx.HTTPStatusError as e:
@@ -161,25 +215,20 @@ class Trigger:
                     f"{e.response.status_code}\n{json_dump(e.response.json())}."
                 ) from None
 
-            try:
-                status = WorkflowRunStatus(run["status"])
-            except KeyError:
-                Console.warning(
-                    "Wait for workflow completion. Ignoring unknown status for "
-                    f"workflow run: {json_dump(run)}"
-                )
+        conclusion = run.get("conclusion")
+        if conclusion != WorkflowRunStatus.SUCCESS.value:
+            raise TriggerError(
+                f"Workflow run failed with conclusion {conclusion}"
+            )
 
-            if status == WorkflowRunStatus.COMPLETED:
-                break
+        Console.log(f"Workflow run {run.get('id')} completed successfully ✅.")
 
-            if date_now() > self.timeout_date:
-                break
-
-    def run(self) -> None:
+    def trigger_workflow(self) -> None:
         Console.log(
-            f"Trigger Workflow '{self.workflow}' in repo {self.repository}' "
-            f"using ref {self.ref} 🚀."
+            f"Trigger Workflow '{self.workflow}' in repo '{self.repository}' "
+            f"using ref '{self.ref}' 🚀."
         )
+
         try:
             self.api.create_workflow_dispatch(
                 self.repository, self.workflow, ref=self.ref
@@ -190,6 +239,8 @@ class Trigger:
                 f"{e.response.status_code}\n{json_dump(e.response.json())}."
             ) from None
 
+    def run(self) -> None:
+        self.trigger_workflow()
         self.wait_for_completion()
 
 
@@ -199,7 +250,7 @@ def main():
         trigger.run()
         sys.exit(0)
     except TriggerError as e:
-        Console.error(str(e))
+        Console.error(f"{e} ❌.")
         sys.exit(1)
 
 
