@@ -96,7 +96,7 @@ class Trigger:
 
         self.workflow = workflow or ActionIO.input("workflow")
         self.ref = ref or ActionIO.input("ref")
-        self.repository = repository or GitHubEnvironment.repository
+        self.repository = repository or ActionIO.input("repository")
 
         timeout = timeout or ActionIO.input("wait-for-completion-timeout")
         self.timeout = parse_int(timeout)
