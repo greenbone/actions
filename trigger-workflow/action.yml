@@ -29,4 +29,4 @@ inputs:
 
 runs:
   using: "docker"
-  image: "docker://ghcr.io/greenbone/trigger-workflow-action:unstable"
+  image: "docker://ghcr.io/greenbone/trigger-workflow-action:main"
