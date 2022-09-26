@@ -10,6 +10,11 @@ on:
       - "trigger-workflow/**"
       - ".github/workflows/trigger-workflow-action-container.yml"
     tags: ["v*"]
+  pull_request:
+    # only run if a file in trigger-workflow has changed
+    paths:
+      - "trigger-workflow/**"
+      - ".github/workflows/trigger-workflow-action-container.yml"
   workflow_dispatch:
 
 jobs:
