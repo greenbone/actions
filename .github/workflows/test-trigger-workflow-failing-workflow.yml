@@ -1,4 +1,4 @@
-name: Failing To Be Triggered Test Workflow
+name: To Be Triggered Failing Test Workflow
 
 on:
   workflow_dispatch:
