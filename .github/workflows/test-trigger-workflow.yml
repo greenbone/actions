@@ -1,0 +1,65 @@
+name: Testing the Trigger Workflow Action
+
+on:
+  push:
+    branches:
+      - main
+      - "v*"
+  pull_request:
+
+jobs:
+  test-timeout:
+    runs-on: ubuntu-latest
+    name: Trigger long running workflow with timeout
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run release patch actions
+        uses: ./trigger-workflow
+        with:
+          repository: greenbone/actions
+          workflow: "test-trigger-workflow-long-running-workflow.yml"
+          ref: ${{ env.GITHUB_REF_NAME }}
+          wait-for-completion-timeout: 10
+          wait-for-completion-interval: 10
+      - name: Fail if not failed
+        if: ${{ success() }}
+        run: |
+          echo "::error ::Previous job should have timed out"
+          exit 1
+
+  test-success:
+    runs-on: ubuntu-latest
+    name: Trigger workflow successfully
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run release patch actions
+        uses: ./trigger-workflow
+        with:
+          repository: greenbone/actions
+          workflow: "test-trigger-workflow-test-workflow.yml"
+          ref: ${{ env.GITHUB_REF_NAME }}
+          wait-for-completion-interval: 10
+
+  test-failing-workflow:
+    runs-on: ubuntu-latest
+    name: Trigger failing workflow successfully
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run release patch actions
+        id: test
+        uses: ./trigger-workflow
+        with:
+          repository: greenbone/actions
+          workflow: "test-trigger-workflow-failing-workflow.yml"
+          ref: ${{ env.GITHUB_REF_NAME }}
+      - name: Fail if no failed
+        if: ${{ success() }}
+        run: |
+          echo "::error ::Previous job should have failed"
+          exit 1
+      - name: Ignore failure
+        if: ${{ failure() && steps.test.conclusion == 'failure' }}
+        run: exit 0

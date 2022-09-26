@@ -1,0 +1,11 @@
+name: To be Triggered Test Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep
+        run: sleep 60s
