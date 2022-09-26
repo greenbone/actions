@@ -93,10 +93,20 @@ class Trigger:
         inputs: Optional[Dict[str, str]] = None,
     ) -> None:
         token = token or ActionIO.input("token")
+        if not token:
+            raise TriggerError("Missing token.")
 
         self.workflow = workflow or ActionIO.input("workflow")
+        if not self.workflow:
+            raise TriggerError("Missing workflow.")
+
         self.ref = ref or ActionIO.input("ref")
+        if not self.ref:
+            raise TriggerError("Missing ref.")
+
         self.repository = repository or ActionIO.input("repository")
+        if not self.repository:
+            raise TriggerError("Missing repository.")
 
         timeout = timeout or ActionIO.input("wait-for-completion-timeout")
         self.timeout = parse_int(timeout)
