@@ -1,0 +1,11 @@
+name: Long Running To Be Triggered Test Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  wait:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep
+        run: sleep 1200s
