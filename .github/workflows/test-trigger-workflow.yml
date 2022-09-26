@@ -24,6 +24,8 @@ jobs:
           fi;
         shell: bash
       - name: Trigger Another Workflow
+        continue-on-error: true
+        id: test
         uses: ./trigger-workflow
         with:
           token: ${{ github.token }}
@@ -33,9 +35,9 @@ jobs:
           wait-for-completion-timeout: 10
           wait-for-completion-interval: 10
       - name: Fail if not failed
-        if: ${{ success() }}
+        if: ${{ success() && steps.test.outcome != 'failure' }}
         run: |
-          echo "::error ::Previous job should have timed out"
+          echo "::error ::Previous job should have timed out. Conclusion was ${{ steps.test.conclusion }}"
           exit 1
 
   test-success:
@@ -79,17 +81,15 @@ jobs:
         shell: bash
       - name: Trigger Another Workflow
         id: test
+        continue-on-error: true
         uses: ./trigger-workflow
         with:
           token: ${{ github.token }}
           repository: greenbone/actions
           workflow: "test-trigger-workflow-failing-workflow.yml"
           ref: ${{ env.REF }}
-      - name: Fail if no failed
-        if: ${{ success() }}
+      - name: Fail if not failed
+        if: ${{ success() && steps.test.outcome != 'failure' }}
         run: |
-          echo "::error ::Previous job should have failed"
+          echo "::error ::Previous job should have failed. Conclusion was ${{ steps.test.conclusion }}"
           exit 1
-      - name: Ignore failure
-        if: ${{ failure() && steps.test.conclusion == 'failure' }}
-        run: exit 0
