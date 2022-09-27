@@ -1,0 +1,65 @@
+name: Testing the Download Artifact Action
+
+on:
+  push:
+    branches:
+      - main
+      - "v*"
+  pull_request:
+
+jobs:
+  test-download-artifacts:
+    runs-on: ubuntu-latest
+    name: Test Artifact Downloading
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Determine Branch
+        run: |
+          if [ -n "$GITHUB_HEAD_REF" ];
+          then
+            echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV;
+          else
+            echo "BRANCH=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
+          fi;
+        shell: bash
+      - name: Trigger Artifact Uploading
+        uses: ./trigger-workflow
+        with:
+          token: ${{ github.token }}
+          repository: greenbone/actions
+          workflow: "test-download-artifacts-test-workflow.yml"
+          ref: ${{ env.BRANCH }}
+      - name: Download Artifact
+        uses: ./download-artifact
+        with:
+          token: ${{ github.token }}
+          repository: greenbone/actions
+          workflow: "test-download-artifacts-test-workflow.yml"
+          branch: ${{ env.BRANCH }}
+          name: artifact
+      - name: Download Artifacts
+        uses: ./download-artifact
+        with:
+          token: ${{ github.token }}
+          repository: greenbone/actions
+          workflow: "test-download-artifacts-test-workflow.yml"
+          branch: ${{ env.BRANCH }}
+      - name: Ignore missing workflow
+        uses: ./download-artifact
+        with:
+          token: ${{ github.token }}
+          repository: greenbone/actions
+          workflow: "foo-bar.yml"
+          branch: ${{ env.BRANCH }}
+          name: artifact
+          allow-not-found: true
+      - name: Ignore missing artifact
+        uses: ./download-artifact
+        with:
+          token: ${{ github.token }}
+          repository: greenbone/actions
+          workflow: "test-download-artifacts-test-workflow.yml"
+          branch: ${{ env.BRANCH }}
+          name: foo
+          allow-not-found: true
