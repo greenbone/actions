@@ -3,10 +3,10 @@ name: artifacts-download-trigger Build & Test
 on:
   push:
     paths:
-      - 'artifacts-download-trigger/**'
+      - "artifacts-download-trigger/**"
   pull_request:
     paths:
-      - 'artifacts-download-trigger/**'
+      - "artifacts-download-trigger/**"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '12'
+          node-version: "12"
       - name: Build with ncc
         run: |
           cd artifacts-download-trigger
@@ -32,139 +32,16 @@ jobs:
           path: artifacts-download-trigger/dist
           retention-days: 1
 
-  echo-1-test:
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    name: "echo-1-test [trigger|by workflow name]"
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Download dist
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: artifacts-download-trigger/dist
-      - name: Invoke echo 1 workflow using this action (do not wait for completion)
-        uses: ./artifacts-download-trigger
-        with:
-          workflow: artifacts-download-trigger Message Echo 1
-          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          inputs: '{"message": "blah blah"}'
-          wait-for-completion: false
-
-  echo-2-test:
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    name: "echo-2-test [trigger|by workflow filename]"
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Download dist
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: artifacts-download-trigger/dist
-      - name: Invoke echo 2 workflow using this action
-        uses: ./artifacts-download-trigger
-        with:
-          workflow: artifacts-download-trigger-echo2.yml
-          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          wait-for-completion: false
-
-  long-running-test:
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    name: "long-running-test [trigger+wait|by workflow filename|shoud succeed]"
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Download dist
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: artifacts-download-trigger/dist
-      - name: Invoke 'long-running' workflow and wait for result using this action
-        id: long-running-workflow
-        uses: ./artifacts-download-trigger
-        with:
-          workflow: artifacts-download-trigger-long-running.yml
-          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          wait-for-completion-interval: 10s
-          wait-for-completion-timeout: 5m
-        continue-on-error: true
-      - run: echo "worflow=${{ toJSON(steps.failing-workflow) }}"
-      - uses: nick-invision/assert-action@v1
-        with:
-          expected: success
-          actual: ${{ steps.long-running-workflow.outputs.workflow-conclusion }}
-      - uses: nick-invision/assert-action@v1
-        with:
-          expected: success
-          actual: ${{ steps.long-running-workflow.outcome }}
-
-  failing-test:
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    name: "failing-test [trigger+wait|by workflow filename|should report failure]"
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Download dist
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: artifacts-download-trigger/dist
-      - name: Invoke 'failing' workflow and wait for result using this action
-        id: failing-workflow
-        uses: ./artifacts-download-trigger
-        with:
-          workflow: artifacts-download-trigger-failing.yml
-          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          wait-for-completion-interval: 10s
-          wait-for-completion-timeout: 5m
-        continue-on-error: true
-      - run: echo "worflow=${{ toJSON(steps.failing-workflow) }}"
-      - uses: nick-invision/assert-action@v1
-        with:
-          expected: failure
-          actual: ${{ steps.failing-workflow.outputs.workflow-conclusion }}
-      - uses: nick-invision/assert-action@v1
-        with:
-          expected: failure
-          actual: ${{ steps.failing-workflow.outcome }}
-
-  timeout-test:
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    name: "timeout-test [trigger+wait|by workflow filename|shoud report timed_out]"
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Download dist
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: artifacts-download-trigger/dist
-      - name: Invoke 'timeout' workflow and wait for result using this action
-        id: timeout-workflow
-        uses: ./artifacts-download-trigger
-        with:
-          workflow: artifacts-download-trigger-timeout.yml
-          gh-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          wait-for-completion-interval: 10s
-          wait-for-completion-timeout: 30s
-        continue-on-error: true
-      - uses: nick-invision/assert-action@v1
-        with:
-          expected: timed_out
-          actual: ${{ steps.timeout-workflow.outputs.workflow-conclusion }}
-      - uses: nick-invision/assert-action@v1
-        with:
-          expected: failure
-          actual: ${{ steps.timeout-workflow.outcome }}
-
   build-dist:
-    needs: [ build, timeout-test, failing-test, long-running-test, echo-2-test, echo-1-test ]
+    needs:
+      [
+        build,
+        timeout-test,
+        failing-test,
+        long-running-test,
+        echo-2-test,
+        echo-1-test,
+      ]
     if: github.ref  && github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     name: "Commit dist of this action to the repo"
