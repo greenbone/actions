@@ -25,6 +25,11 @@ inputs:
     description: "Path where to store the downloaded artifacts."
     required: true
     default: "."
+outputs:
+  downloaded-artifacts:
+    description: List of downloaded artifact names as JSON array string
+  total-downloaded-artifacts:
+    description: Number of downloaded artifacts
 
 runs:
   using: "docker"

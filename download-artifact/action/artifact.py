@@ -159,7 +159,11 @@ class DownloadArtifacts:
 
         return runs[0]
 
-    def download_artifacts(self, artifacts: Iterable[JSON_OBJECT]) -> None:
+    def download_artifacts(
+        self, artifacts: Iterable[JSON_OBJECT]
+    ) -> Iterable[str]:
+        artifact_names = []
+
         with temp_directory() as temp_dir:
             for artifact in artifacts:
                 artifact_id = artifact["id"]
@@ -167,6 +171,8 @@ class DownloadArtifacts:
 
                 if self.name and self.name != artifact_name:
                     continue
+
+                artifact_names.append(artifact_name)
 
                 print(
                     f"Downloading artifact '{artifact_name}' with ID "
@@ -206,6 +212,8 @@ class DownloadArtifacts:
 
                     zipfile.extract(zipinfo, destination_dir)
                     adjust_permissions(file_path)
+
+        return artifact_names
 
     def run(self) -> None:
         if self.name:
@@ -254,7 +262,12 @@ class DownloadArtifacts:
                     f"branch '{self.branch}'."
                 )
 
-        self.download_artifacts(artifacts)
+        downloaded_artifacts = self.download_artifacts(artifacts)
+
+        ActionIO.output(
+            "downloaded-artifacts", json.dumps(downloaded_artifacts)
+        )
+        ActionIO.output("total-downloaded-artifacts", len(downloaded_artifacts))
 
         Console.log("Downloading artifacts completed successfully ✅.")
 
