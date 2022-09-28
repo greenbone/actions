@@ -34,7 +34,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: greenbone/download-artifact-action
+          images: ghcr.io/greenbone/download-artifact-action
           labels: |
             org.opencontainers.image.vendor=Greenbone
             org.opencontainers.image.base.name=python:3.9-slim
