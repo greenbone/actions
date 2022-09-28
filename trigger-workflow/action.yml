@@ -1,4 +1,4 @@
-name: "Greenbone Pull Request Backport Action"
+name: "Greenbone Trigger Workflow Run Action"
 description: "GitHub Action to create workflow dispatch events for a repository"
 author: "Björn Ricks"
 inputs:
