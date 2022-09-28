@@ -22,6 +22,26 @@ autohooks-plugin-isort = ">=22.8.0"
 [tool.poetry.scripts]
 backport-pull-request = 'action.backport:main'
 
+[tool.black]
+line-length = 80
+target-version = ['py39', 'py310']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
