@@ -26,9 +26,6 @@ GitHub Actions for Greenbone projects
 - name: upload documentation coverage to codecov.io for C Lang repository
   uses: greenbone/actions/doc-coverage-clang@v1
 
-- name: Create a tag string for using with docker build-push-action
-  uses: greenbone/actions/container-image-tags@v1
-
 - name: Run release actions
   uses: greenbone/actions/release@v1
   with:
