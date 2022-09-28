@@ -17,17 +17,14 @@
 
 import sys
 
-from requests.models import HTTPError
-
-
+import httpx
 from pontos.git import Git, GitError
-from pontos.github.actions.core import Console, ActionIO
+from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.actions.event import GitHubEvent
 from pontos.github.api import GitHubRESTApi
 
 from action.config import Config
-
 
 DEFAULT_CONFIG_FILE = "backport.toml"
 
@@ -43,7 +40,9 @@ class Backport:
         self.event = GitHubEvent(self.env.event_path)
         self.api = GitHubRESTApi(self.token, self.env.api_url)
 
-    def backport_branch_name(self, pull_request: str, destination_branch: str) -> str:
+    def backport_branch_name(
+        self, pull_request: str, destination_branch: str
+    ) -> str:
         return f"backport/{destination_branch}/pr-{pull_request}"
 
     def backport_branch_exists(self, branch_name: str) -> bool:
@@ -92,7 +91,7 @@ Afterwards fix the conflicts, push the changes via
 git push origin
 ```
 
-and create a new pull reqest where the base is `{destination_branch}` and compare `{new_branch}`.
+and create a new pull request where the base is `{destination_branch}` and compare `{new_branch}`.
 """
             self.api.add_pull_request_comment(
                 self.env.repository, pull_request, comment
@@ -117,7 +116,7 @@ and create a new pull reqest where the base is `{destination_branch}` and compar
                 title=title,
                 body=body,
             )
-        except HTTPError as e:
+        except httpx.HTTPStatusError as e:
             Console.log(f"Error response was {e.response.json()}")
             raise BackportError(
                 f"Could not create pull request. Error was {e}"
@@ -153,7 +152,9 @@ and create a new pull reqest where the base is `{destination_branch}` and compar
 
         config_path = self.env.workspace / config_file
         if not config_path.is_file():
-            Console.warning(f"No {config_file} file found for backport configuration.")
+            Console.warning(
+                f"No {config_file} file found for backport configuration."
+            )
             return 1
 
         config = Config(config_path)
