@@ -169,7 +169,7 @@ class DownloadArtifacts:
                     continue
 
                 print(
-                    f"Downloading artifact {artifact_name} with ID "
+                    f"Downloading artifact '{artifact_name}' with ID "
                     f"{artifact_id}",
                     end=" ",
                 )
@@ -193,7 +193,8 @@ class DownloadArtifacts:
                 print(" done.")
 
                 Console.log(
-                    f"Extracting artifact {artifact_name} to {destination_dir}."
+                    f"Extracting artifact '{artifact_name}' to "
+                    f"'{destination_dir}'."
                 )
 
                 zipfile = ZipFile(temp_file)
@@ -207,11 +208,18 @@ class DownloadArtifacts:
                     adjust_permissions(file_path)
 
     def run(self) -> None:
-        Console.log(
-            f"Download artifacts of workflow '{self.workflow}' in repo "
-            f"'{self.repository}' using branch '{self.branch}' to "
-            f"'{self.download_path}' 🚀."
-        )
+        if self.name:
+            Console.log(
+                f"Download '{self.name}' artifact of workflow '{self.workflow}'"
+                f" in repo '{self.repository}' using branch '{self.branch}' to "
+                f"'{self.download_path}' 🚀."
+            )
+        else:
+            Console.log(
+                f"Download artifacts of workflow '{self.workflow}' in repo "
+                f"'{self.repository}' using branch '{self.branch}' to "
+                f"'{self.download_path}' 🚀."
+            )
 
         run = self.get_newest_workflow_run()
 
