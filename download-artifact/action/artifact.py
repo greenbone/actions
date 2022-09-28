@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import os
+import stat
 import sys
 import tempfile
 from contextlib import contextmanager
@@ -60,6 +62,20 @@ def temp_directory() -> Generator[Path, None, None]:
         yield dir_path
     finally:
         temp_dir.cleanup()
+
+
+def adjust_permissions(file_path: Path) -> None:
+    stat_result = os.stat(file_path)
+    os.chmod(
+        file_path,
+        stat_result.st_mode
+        | stat.S_IWUSR
+        | stat.S_IRUSR
+        | stat.S_IWGRP
+        | stat.S_IRGRP
+        | stat.S_IWOTH
+        | stat.S_IROTH,
+    )
 
 
 class DownloadArtifactsError(Exception):
@@ -166,6 +182,7 @@ class DownloadArtifacts:
                     destination_dir: Path = self.download_path / artifact_name
 
                 destination_dir.mkdir(parents=True, exist_ok=True)
+                adjust_permissions(destination_dir)
 
                 with self.api.download_repository_artifact(
                     self.repository, artifact_id, temp_file
@@ -180,7 +197,14 @@ class DownloadArtifacts:
                 )
 
                 zipfile = ZipFile(temp_file)
-                zipfile.extractall(destination_dir)
+                for zipinfo in zipfile.infolist():
+                    file_path = destination_dir / zipinfo.filename
+
+                    if self.is_debug:
+                        Console.debug(f"Extracting '{file_path}'")
+
+                    zipfile.extract(zipinfo, destination_dir)
+                    adjust_permissions(file_path)
 
     def run(self) -> None:
         Console.log(
