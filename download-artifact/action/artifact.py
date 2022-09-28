@@ -130,6 +130,9 @@ class DownloadArtifacts:
                 status=WorkflowRunStatus.SUCCESS.value,
             )
         except httpx.HTTPStatusError as e:
+            if self.allow_not_found and e.response.status_code == 404:
+                return None
+
             raise DownloadArtifactsError(f"Could not find workflow. {e}") from e
 
         if self.is_debug:
