@@ -16,18 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import os
 import sys
 import time
 from datetime import datetime, timedelta, timezone
-from enum import Enum
 from typing import Dict, Iterable, Optional
 
 import httpx
 from dateutil import parser as dateparser
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
-from pontos.github.api import JSON, JSON_OBJECT, GitHubRESTApi
+from pontos.github.api import (
+    JSON,
+    JSON_OBJECT,
+    GitHubRESTApi,
+    WorkflowRunStatus,
+)
 
 WAIT_FOR_COMPLETION_TIMEOUT = 60 * 60 * 60  # one hour
 WAIT_FOR_COMPLETION_INTERVAL = 60 * 60  # one minute
@@ -58,22 +61,6 @@ def json_dump(value: JSON) -> str:
 
 def date_now() -> datetime:
     return datetime.now(timezone.utc)  # current time in UTC
-
-
-class WorkflowRunStatus(Enum):
-    ACTION_REQUIRED = "action_required"
-    CANCELLED = "cancelled"
-    COMPLETED = "completed"
-    FAILURE = "failure"
-    IN_PROGRESS = "in_progress"
-    NEUTRAL = "neutral"
-    QUEUED = "queued"
-    REQUESTED = "requested"
-    SKIPPED = "skipped"
-    STALE = "stale"
-    SUCCESS = "success"
-    TIMED_OUT = "timed_out"
-    WAITING = "waiting"
 
 
 class TriggerError(Exception):
@@ -123,7 +110,7 @@ class Trigger:
             else None
         )
 
-        self.is_debug = os.environ.get("RUNNER_DEBUG") == "1"
+        self.is_debug = GitHubEnvironment().is_debug
 
         self.api = GitHubRESTApi(token)
 
