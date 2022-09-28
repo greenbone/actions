@@ -1,6 +1,6 @@
 # Greenbone GitHub Actions
 
-GitHub Action for Greenbone projects
+GitHub Actions for Greenbone projects
 
 ## Usage
 
