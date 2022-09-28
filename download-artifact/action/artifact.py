@@ -16,11 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import os
 import sys
 import tempfile
 from contextlib import contextmanager
-from enum import Enum
 from pathlib import Path
 from typing import Generator, Iterable, Optional
 from zipfile import ZipFile
@@ -28,7 +26,13 @@ from zipfile import ZipFile
 import httpx
 from dateutil import parser as dateparser
 from pontos.github.actions.core import ActionIO, Console
-from pontos.github.api import JSON, JSON_OBJECT, GitHubRESTApi
+from pontos.github.actions.env import GitHubEnvironment
+from pontos.github.api import (
+    JSON,
+    JSON_OBJECT,
+    GitHubRESTApi,
+    WorkflowRunStatus,
+)
 
 
 def is_event(run: JSON_OBJECT, events: Iterable[str]) -> bool:
@@ -56,22 +60,6 @@ def temp_directory() -> Generator[Path, None, None]:
         yield dir_path
     finally:
         temp_dir.cleanup()
-
-
-class WorkflowRunStatus(Enum):
-    ACTION_REQUIRED = "action_required"
-    CANCELLED = "cancelled"
-    COMPLETED = "completed"
-    FAILURE = "failure"
-    IN_PROGRESS = "in_progress"
-    NEUTRAL = "neutral"
-    QUEUED = "queued"
-    REQUESTED = "requested"
-    SKIPPED = "skipped"
-    STALE = "stale"
-    SUCCESS = "success"
-    TIMED_OUT = "timed_out"
-    WAITING = "waiting"
 
 
 class DownloadArtifactsError(Exception):
@@ -117,7 +105,7 @@ class DownloadArtifacts:
         allow_not_found = allow_not_found or ActionIO.input("allow-not-found")
         self.allow_not_found = allow_not_found == "true"
 
-        self.is_debug = os.environ.get("RUNNER_DEBUG") == "1"
+        self.is_debug = GitHubEnvironment().is_debug
 
         self.api = GitHubRESTApi(token)
 
