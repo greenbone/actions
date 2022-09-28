@@ -1,0 +1,31 @@
+name: "Greenbone Download Artifact Action"
+description: "GitHub Action to download artifacts of a workflow run"
+author: "Björn Ricks"
+inputs:
+  token:
+    description: "GitHub Token for authentication"
+    required: true
+  repository:
+    description: "Repository to download the artifacts from"
+    required: true
+  workflow:
+    description: "Workflow to download the artifacts from. Either a workflow ID or file path. For example `ci.yml`."
+    required: true
+  branch:
+    description: "The git branch for the workflow to download the artifacts from."
+    required: true
+    default: "main"
+  name:
+    description: "Artifact name to be downloaded. If not set, all artifacts will be downloaded."
+    required: false
+  allow-not-found:
+    description: "Set to 'true' to not fail if workflow or artifact could not be found."
+    default: "false"
+  path:
+    description: "Path where to store the downloaded artifacts."
+    required: true
+    default: "."
+
+runs:
+  using: "docker"
+  image: "docker://ghcr.io/greenbone/download-artifact-action:main"

@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "download-artifact-action"
+version = "1.0.0"
+description = "A GitHub Action to download artifacts of a workflow run"
+authors = ["Björn Ricks <bjoern.ricks@greenbone.net>"]
+license = "GPLv3+"
+packages = [
+    { include = "action" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pontos = ">=22.9.3"
+python-dateutil = "^2.8.2"
+
+[tool.poetry.dev-dependencies]
+autohooks-plugin-pylint = ">=22.8.0"
+autohooks-plugin-isort = ">=22.8.0"
+autohooks-plugin-black = ">=22.8.0"
+
+[tool.poetry.scripts]
+download-artifact = 'action.artifact:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+target-version = ['py39', 'py310']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
+
+[tool.autohooks]
+mode = "poetry"
+pre-commit = ['autohooks.plugins.black', 'autohooks.plugins.isort', 'autohooks.plugins.pylint']
