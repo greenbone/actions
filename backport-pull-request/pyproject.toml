@@ -10,15 +10,14 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-tomli = "<2.0"
-pontos = "^22.1.0"
+tomli = ">=1.0"
+pontos = ">=22.1.0"
 
 [tool.poetry.dev-dependencies]
-black = "^21.7b0"
-autohooks = "^21.7.0"
-pylint = "^2.12.2"
-autohooks-plugin-pylint = "^21.6.0"
-autohooks-plugin-black = "^21.12.0"
+autohooks = ">=21.7.0"
+autohooks-plugin-pylint = ">=21.6.0"
+autohooks-plugin-black = ">=21.12.0"
+autohooks-plugin-isort = ">=22.8.0"
 
 [tool.poetry.scripts]
 backport-pull-request = 'action.backport:main'
