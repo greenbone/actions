@@ -1,13 +1,19 @@
-name: Backport Action Container Image Builds
+name: Backport Pull Request Action Container Image Builds
 
 on:
   push:
-    branches: [main, "v*"]
+    branches:
+      - main,
+      - "v*"
     # only run if a file in backport-pull-request has changed
     paths:
       - "backport-pull-request/**"
       - ".github/workflows/backport-action-container.yml"
     tags: ["v*"]
+  pull_request:
+    paths:
+      - "backport-pull-request/**"
+      - ".github/workflows/backport-action-container.yml"
   workflow_dispatch:
 
 jobs:
@@ -29,7 +35,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: greenbone/backport-pull-request
+          images: ghcr.io/greenbone/backport-pull-request-action
           labels: |
             org.opencontainers.image.vendor=Greenbone
             org.opencontainers.image.base.name=debian/stable-slim
