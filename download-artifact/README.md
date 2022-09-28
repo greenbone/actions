@@ -2,7 +2,12 @@
 
 GitHub Action to download artifacts of a workflow run.
 
-To run this action you need to add the following code to your workflow file
+For finding a corresponding workflow run currently only workflow runs with
+an event of `schedule` and `workflow_dispatch` are considered. The action
+loads workflow runs with these events and downloads the artifact(s) from the
+newest run.
+
+To use this action you need to add the following code to your workflow file
 (for example `.github/workflows/artifacts.yml`):
 
 ```yml
