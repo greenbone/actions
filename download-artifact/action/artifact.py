@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import os
+import stat
 import sys
 import tempfile
 from contextlib import contextmanager
@@ -60,6 +62,20 @@ def temp_directory() -> Generator[Path, None, None]:
         yield dir_path
     finally:
         temp_dir.cleanup()
+
+
+def adjust_permissions(file_path: Path) -> None:
+    stat_result = os.stat(file_path)
+    os.chmod(
+        file_path,
+        stat_result.st_mode
+        | stat.S_IWUSR
+        | stat.S_IRUSR
+        | stat.S_IWGRP
+        | stat.S_IRGRP
+        | stat.S_IWOTH
+        | stat.S_IROTH,
+    )
 
 
 class DownloadArtifactsError(Exception):
@@ -143,7 +159,11 @@ class DownloadArtifacts:
 
         return runs[0]
 
-    def download_artifacts(self, artifacts: Iterable[JSON_OBJECT]) -> None:
+    def download_artifacts(
+        self, artifacts: Iterable[JSON_OBJECT]
+    ) -> Iterable[str]:
+        artifact_names = []
+
         with temp_directory() as temp_dir:
             for artifact in artifacts:
                 artifact_id = artifact["id"]
@@ -152,8 +172,10 @@ class DownloadArtifacts:
                 if self.name and self.name != artifact_name:
                     continue
 
+                artifact_names.append(artifact_name)
+
                 print(
-                    f"Downloading artifact {artifact_name} with ID "
+                    f"Downloading artifact '{artifact_name}' with ID "
                     f"{artifact_id}",
                     end=" ",
                 )
@@ -166,6 +188,7 @@ class DownloadArtifacts:
                     destination_dir: Path = self.download_path / artifact_name
 
                 destination_dir.mkdir(parents=True, exist_ok=True)
+                adjust_permissions(destination_dir)
 
                 with self.api.download_repository_artifact(
                     self.repository, artifact_id, temp_file
@@ -176,18 +199,35 @@ class DownloadArtifacts:
                 print(" done.")
 
                 Console.log(
-                    f"Extracting artifact {artifact_name} to {destination_dir}."
+                    f"Extracting artifact '{artifact_name}' to "
+                    f"'{destination_dir}'."
                 )
 
                 zipfile = ZipFile(temp_file)
-                zipfile.extractall(destination_dir)
+                for zipinfo in zipfile.infolist():
+                    file_path = destination_dir / zipinfo.filename
+
+                    if self.is_debug:
+                        Console.debug(f"Extracting '{file_path}'")
+
+                    zipfile.extract(zipinfo, destination_dir)
+                    adjust_permissions(file_path)
+
+        return artifact_names
 
     def run(self) -> None:
-        Console.log(
-            f"Download artifacts of workflow '{self.workflow}' in repo "
-            f"'{self.repository}' using branch '{self.branch}' to "
-            f"'{self.download_path}' 🚀."
-        )
+        if self.name:
+            Console.log(
+                f"Download '{self.name}' artifact of workflow '{self.workflow}'"
+                f" in repo '{self.repository}' using branch '{self.branch}' to "
+                f"'{self.download_path}' 🚀."
+            )
+        else:
+            Console.log(
+                f"Download artifacts of workflow '{self.workflow}' in repo "
+                f"'{self.repository}' using branch '{self.branch}' to "
+                f"'{self.download_path}' 🚀."
+            )
 
         run = self.get_newest_workflow_run()
 
@@ -222,7 +262,12 @@ class DownloadArtifacts:
                     f"branch '{self.branch}'."
                 )
 
-        self.download_artifacts(artifacts)
+        downloaded_artifacts = self.download_artifacts(artifacts)
+
+        ActionIO.output(
+            "downloaded-artifacts", json.dumps(downloaded_artifacts)
+        )
+        ActionIO.output("total-downloaded-artifacts", len(downloaded_artifacts))
 
         Console.log("Downloading artifacts completed successfully ✅.")
 

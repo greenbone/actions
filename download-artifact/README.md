@@ -81,3 +81,8 @@ parameter is `tmp`, the directory structure will look like this:
   tmp/
     ... contents of artifact-a
 ```
+
+| Output Variable            | Description                                            |
+| -------------------------- | ------------------------------------------------------ |
+| downloaded-artifacts       | List of downloaded artifact names as JSON array string |
+| total-downloaded-artifacts | Number of downloaded artifacts                         |
