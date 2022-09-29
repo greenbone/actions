@@ -56,6 +56,7 @@ jobs:
 | name            | Name of the artifact to be downloaded. If not set all artifacts will be downloaded.        | Optional                                          |
 | allow-not-found | Set to `true` to not fail if workflow or artifact can not be found.                        | Optional                                          |
 | user            | User ID for ownership of the downloaded artifacts.                                         | Optional                                          |
+| Group           | Group ID for ownership of the downloaded artifacts.                                        | Optional                                          |
 
 The name input parameter mimics the [actions/download-artifact@v3](https://github.com/actions/download-artifact/tree/v3#download-all-artifacts)
 behavior:
