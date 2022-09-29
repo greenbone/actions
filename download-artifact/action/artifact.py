@@ -81,6 +81,7 @@ class DownloadArtifacts:
         path: Optional[str] = None,
         allow_not_found: Optional[str] = None,
         user: Union[str, int] = None,
+        group: Union[str, int] = None,
     ) -> None:
         env = GitHubEnvironment()
 
@@ -112,6 +113,13 @@ class DownloadArtifacts:
         try:
             # try to convert to int for a user id
             self.user = int(self.user)
+        except (ValueError, TypeError):
+            pass
+
+        self.group = group or ActionIO.input("group")
+        try:
+            # try to convert to int for a group id
+            self.group = int(self.group)
         except (ValueError, TypeError):
             pass
 
@@ -160,6 +168,7 @@ class DownloadArtifacts:
 
     def adjust_permissions(self, file_path: Path) -> None:
         try:
+            # should be made configurable via a input variable
             stat_result = os.stat(file_path)
             os.chmod(
                 file_path,
@@ -183,6 +192,15 @@ class DownloadArtifacts:
                 Console.warning(
                     f"Could not change owner of '{file_path}' to user "
                     f"'{self.user}'. Error was {e}."
+                )
+
+        if self.group:
+            try:
+                shutil.chown(file_path, None, self.group)
+            except (OSError, LookupError) as e:
+                Console.warning(
+                    f"Could not change owner of '{file_path}' to group "
+                    f"'{self.group}'. Error was {e}."
                 )
 
     def download_artifacts(
