@@ -37,8 +37,6 @@ from pontos.github.api import (
     WorkflowRunStatus,
 )
 
-DEFAULT_USER = 1001
-
 
 def is_event(run: JSON_OBJECT, events: Iterable[str]) -> bool:
     event = run.get("event")
@@ -106,7 +104,7 @@ class DownloadArtifacts:
         if not download_path:
             raise DownloadArtifactsError("Missing path.")
 
-        self.user = user or ActionIO.input("user") or DEFAULT_USER
+        self.user = user or ActionIO.input("user")
 
         self.download_path = Path(download_path)
 
@@ -168,13 +166,15 @@ class DownloadArtifacts:
             Console.warning(
                 f"Could not change permissions of '{file_path}'. Error was {e}."
             )
-        try:
-            shutil.chown(file_path, self.user)
-        except OSError as e:
-            Console.warning(
-                f"Could not change owner of '{file_path}' to user "
-                f"'{self.user}'. Error was {e}."
-            )
+
+        if self.user:
+            try:
+                shutil.chown(file_path, self.user)
+            except OSError as e:
+                Console.warning(
+                    f"Could not change owner of '{file_path}' to user "
+                    f"'{self.user}'. Error was {e}."
+                )
 
     def download_artifacts(
         self, artifacts: Iterable[JSON_OBJECT]
