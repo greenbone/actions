@@ -109,6 +109,11 @@ class DownloadArtifacts:
             raise DownloadArtifactsError("Missing path.")
 
         self.user = user or ActionIO.input("user")
+        try:
+            # try to convert to int for a user id
+            self.user = int(self.user)
+        except (ValueError, TypeError):
+            pass
 
         self.download_path = Path(download_path)
 
@@ -174,7 +179,7 @@ class DownloadArtifacts:
         if self.user:
             try:
                 shutil.chown(file_path, self.user)
-            except OSError as e:
+            except (OSError, LookupError) as e:
                 Console.warning(
                     f"Could not change owner of '{file_path}' to user "
                     f"'{self.user}'. Error was {e}."
