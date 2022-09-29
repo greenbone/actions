@@ -2,10 +2,10 @@
 
 GitHub Action to download artifacts of a workflow run.
 
-For finding a corresponding workflow run currently only workflow runs with
-an event of `schedule` and `workflow_dispatch` are considered. The action
-loads workflow runs with these events and downloads the artifact(s) from the
-newest run.
+For finding a corresponding workflow run currently only successfully finished
+workflow runs with an event of `schedule` and `workflow_dispatch` are
+considered. The action loads workflow runs with these events and downloads the
+artifact(s) from the newest run.
 
 To use this action you need to add the following code to your workflow file
 (for example `.github/workflows/artifacts.yml`):
@@ -46,15 +46,16 @@ jobs:
 
 ## Action Configuration
 
-| Input Variable  | Description                                                                                |                                  |
-| --------------- | ------------------------------------------------------------------------------------------ | -------------------------------- |
-| token           | Token required to create the backport pull request                                         | Required                         |
-| repository      | Repository of the workflow to trigger                                                      | Required                         |
-| workflow        | Workflow to trigger. Either a workflow ID or file name, for example `ci.yml`.              | Required                         |
-| branch          | The git branch for the workflow.                                                           | Default: `main`                  |
-| name            | Name of the artifact to be downloaded. If not set all artifacts will be downloaded.        | Optional                         |
-| allow-not-found | Set to `true` to not fail if workflow or artifact can not be found.                        | Optional                         |
-| path            | Destination path for the to be downloaded artifact of parent directory if name is not set. | Default: `.` (Current directory) |
+| Input Variable  | Description                                                                                |                                                   |
+| --------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| token           | Token required to create the backport pull request                                         | Required                                          |
+| workflow        | Workflow to trigger. Either a workflow ID or file name, for example `ci.yml`.              | Required                                          |
+| repository      | Repository of the workflow to trigger                                                      | Default: `GITHUB_REPOSITORY` (current repository) |
+| branch          | The git branch for the workflow.                                                           | Default: `main`                                   |
+| path            | Destination path for the to be downloaded artifact of parent directory if name is not set. | Default: `.` (Current directory)                  |
+| name            | Name of the artifact to be downloaded. If not set all artifacts will be downloaded.        | Optional                                          |
+| allow-not-found | Set to `true` to not fail if workflow or artifact can not be found.                        | Optional                                          |
+| user            | User ID for ownership of the downloaded artifacts.                                         | Optional                                          |
 
 The name input parameter mimics the [actions/download-artifact@v3](https://github.com/actions/download-artifact/tree/v3#download-all-artifacts)
 behavior:

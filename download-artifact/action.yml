@@ -6,8 +6,8 @@ inputs:
     description: "GitHub Token for authentication"
     required: true
   repository:
-    description: "Repository to download the artifacts from"
-    required: true
+    description: "Repository to download the artifacts from. Defaults to the current repository."
+    required: false
   workflow:
     description: "Workflow to download the artifacts from. Either a workflow ID or file path. For example `ci.yml`."
     required: true
@@ -25,6 +25,9 @@ inputs:
     description: "Path where to store the downloaded artifacts."
     required: true
     default: "."
+  user:
+    description: "User ID for ownership of the downloaded artifacts."
+    required: false
 outputs:
   downloaded-artifacts:
     description: List of downloaded artifact names as JSON array string

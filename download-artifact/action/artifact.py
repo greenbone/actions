@@ -37,8 +37,6 @@ from pontos.github.api import (
     WorkflowRunStatus,
 )
 
-DEFAULT_USER = 1001
-
 
 def is_event(run: JSON_OBJECT, events: Iterable[str]) -> bool:
     event = run.get("event")
@@ -84,6 +82,8 @@ class DownloadArtifacts:
         allow_not_found: Optional[str] = None,
         user: Union[str, int] = None,
     ) -> None:
+        env = GitHubEnvironment()
+
         token = token or ActionIO.input("token")
         if not token:
             raise DownloadArtifactsError("Missing token.")
@@ -96,7 +96,9 @@ class DownloadArtifacts:
         if not self.branch:
             raise DownloadArtifactsError("Missing branch.")
 
-        self.repository = repository or ActionIO.input("repository")
+        self.repository = (
+            repository or ActionIO.input("repository") or env.repository
+        )
         if not self.repository:
             raise DownloadArtifactsError("Missing repository.")
 
@@ -106,14 +108,14 @@ class DownloadArtifacts:
         if not download_path:
             raise DownloadArtifactsError("Missing path.")
 
-        self.user = user or ActionIO.input("user") or DEFAULT_USER
+        self.user = user or ActionIO.input("user")
 
         self.download_path = Path(download_path)
 
         allow_not_found = allow_not_found or ActionIO.input("allow-not-found")
         self.allow_not_found = allow_not_found == "true"
 
-        self.is_debug = GitHubEnvironment().is_debug
+        self.is_debug = env.is_debug
 
         self.api = GitHubRESTApi(token)
 
@@ -168,13 +170,15 @@ class DownloadArtifacts:
             Console.warning(
                 f"Could not change permissions of '{file_path}'. Error was {e}."
             )
-        try:
-            shutil.chown(file_path, self.user)
-        except OSError as e:
-            Console.warning(
-                f"Could not change owner of '{file_path}' to user "
-                f"'{self.user}'. Error was {e}."
-            )
+
+        if self.user:
+            try:
+                shutil.chown(file_path, self.user)
+            except OSError as e:
+                Console.warning(
+                    f"Could not change owner of '{file_path}' to user "
+                    f"'{self.user}'. Error was {e}."
+                )
 
     def download_artifacts(
         self, artifacts: Iterable[JSON_OBJECT]
