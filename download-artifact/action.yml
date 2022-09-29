@@ -28,6 +28,9 @@ inputs:
   user:
     description: "User ID for ownership of the downloaded artifacts."
     required: false
+  group:
+    description: "Group ID for ownership of the downloaded artifacts."
+    required: false
 outputs:
   downloaded-artifacts:
     description: List of downloaded artifact names as JSON array string
