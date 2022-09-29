@@ -17,12 +17,13 @@
 
 import json
 import os
+import shutil
 import stat
 import sys
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator, Iterable, Optional
+from typing import Generator, Iterable, Optional, Union
 from zipfile import ZipFile
 
 import httpx
@@ -35,6 +36,8 @@ from pontos.github.api import (
     GitHubRESTApi,
     WorkflowRunStatus,
 )
+
+DEFAULT_USER = 1001
 
 
 def is_event(run: JSON_OBJECT, events: Iterable[str]) -> bool:
@@ -64,20 +67,6 @@ def temp_directory() -> Generator[Path, None, None]:
         temp_dir.cleanup()
 
 
-def adjust_permissions(file_path: Path) -> None:
-    stat_result = os.stat(file_path)
-    os.chmod(
-        file_path,
-        stat_result.st_mode
-        | stat.S_IWUSR
-        | stat.S_IRUSR
-        | stat.S_IWGRP
-        | stat.S_IRGRP
-        | stat.S_IWOTH
-        | stat.S_IROTH,
-    )
-
-
 class DownloadArtifactsError(Exception):
     pass
 
@@ -93,6 +82,7 @@ class DownloadArtifacts:
         name: Optional[str] = None,
         path: Optional[str] = None,
         allow_not_found: Optional[str] = None,
+        user: Union[str, int] = None,
     ) -> None:
         token = token or ActionIO.input("token")
         if not token:
@@ -115,6 +105,8 @@ class DownloadArtifacts:
         download_path = path or ActionIO.input("path")
         if not download_path:
             raise DownloadArtifactsError("Missing path.")
+
+        self.user = user or ActionIO.input("user") or DEFAULT_USER
 
         self.download_path = Path(download_path)
 
@@ -159,6 +151,31 @@ class DownloadArtifacts:
 
         return runs[0]
 
+    def adjust_permissions(self, file_path: Path) -> None:
+        try:
+            stat_result = os.stat(file_path)
+            os.chmod(
+                file_path,
+                stat_result.st_mode
+                | stat.S_IWUSR
+                | stat.S_IRUSR
+                | stat.S_IWGRP
+                | stat.S_IRGRP
+                | stat.S_IWOTH
+                | stat.S_IROTH,
+            )
+        except OSError as e:
+            Console.warning(
+                f"Could not change permissions of '{file_path}'. Error was {e}."
+            )
+        try:
+            shutil.chown(file_path, self.user)
+        except OSError as e:
+            Console.warning(
+                f"Could not change owner of '{file_path}' to user "
+                f"'{self.user}'. Error was {e}."
+            )
+
     def download_artifacts(
         self, artifacts: Iterable[JSON_OBJECT]
     ) -> Iterable[str]:
@@ -174,12 +191,6 @@ class DownloadArtifacts:
 
                 artifact_names.append(artifact_name)
 
-                print(
-                    f"Downloading artifact '{artifact_name}' with ID "
-                    f"{artifact_id}",
-                    end=" ",
-                )
-
                 temp_file = temp_dir / f"{artifact_name}.zip"
 
                 if self.name:
@@ -188,7 +199,13 @@ class DownloadArtifacts:
                     destination_dir: Path = self.download_path / artifact_name
 
                 destination_dir.mkdir(parents=True, exist_ok=True)
-                adjust_permissions(destination_dir)
+                self.adjust_permissions(destination_dir)
+
+                print(
+                    f"Downloading artifact '{artifact_name}' with ID "
+                    f"{artifact_id}",
+                    end=" ",
+                )
 
                 with self.api.download_repository_artifact(
                     self.repository, artifact_id, temp_file
@@ -211,7 +228,7 @@ class DownloadArtifacts:
                         Console.debug(f"Extracting '{file_path}'")
 
                     zipfile.extract(zipinfo, destination_dir)
-                    adjust_permissions(file_path)
+                    self.adjust_permissions(file_path)
 
         return artifact_names
 
