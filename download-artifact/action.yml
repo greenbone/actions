@@ -25,6 +25,9 @@ inputs:
     description: "Path where to store the downloaded artifacts."
     required: true
     default: "."
+  user:
+    description: "User ID for ownership of the downloaded artifacts."
+    required: false
 outputs:
   downloaded-artifacts:
     description: List of downloaded artifact names as JSON array string
