@@ -179,9 +179,7 @@ class Trigger:
         if not run:
             raise TriggerError("Could not find workflow run.")
 
-        Console.log(
-            f"Found workflow run {run.get('id')} {run.get('html_url')}."
-        )
+        Console.log(f"Found workflow run {run.get('id')} {run.get('html_url')}")
 
         while True:
             if self.is_debug:
