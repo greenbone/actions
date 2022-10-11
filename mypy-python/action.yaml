@@ -1,6 +1,6 @@
 name: "Python Mypy Action"
 author: "Tom Ricciuti <tom.ricciuti@greenbone.net>"
-description: "An action to lint Greenbone Python packages"
+description: "An action that verifies python type hints by using mypy"
 inputs:
   packages:
     description: "Python packages to check with mypy"
