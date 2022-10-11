@@ -1,0 +1,26 @@
+name: "Python Mypy Action"
+author: "Tom Ricciuti <tom.ricciuti@greenbone.net>"
+description: "An action to lint Greenbone Python packages"
+inputs:
+  packages:
+    description: "Python packages to lint"
+    required: true
+  version:
+    description: "Python version that should be installed"
+    default: 3.9
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+    - name: Install poetry
+      uses: greenbone/actions/poetry@v1
+      with:
+        version: ${{ inputs.version }}
+    - run: echo "Running mypy"
+      shell: bash
+    - run: poetry run mypy ${{ github.workspace }}
+      shell: bash
+      name: Check with mypy
+      working-directory: ${{ github.workspace }}
