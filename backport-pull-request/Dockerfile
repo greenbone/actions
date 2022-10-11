@@ -4,7 +4,7 @@ FROM python:3.9-slim
 
 RUN apt-get update && \
     apt-get install --no-install-recommends --no-install-suggests -y \
-    git \
+    git && \
     apt-get remove --purge --auto-remove -y && \
     rm -rf /var/lib/apt/lists/*
 
