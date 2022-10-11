@@ -3,7 +3,7 @@ author: "Tom Ricciuti <tom.ricciuti@greenbone.net>"
 description: "An action to lint Greenbone Python packages"
 inputs:
   packages:
-    description: "Python packages to lint"
+    description: "Python packages to check with mypy"
     required: true
   version:
     description: "Python version that should be installed"
