@@ -26,14 +26,14 @@ jobs:
       - name: Trigger Artifact Uploading
         uses: ./trigger-workflow
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
           ref: ${{ env.BRANCH }}
       - name: Download Artifact
         uses: ./download-artifact
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
           branch: ${{ env.BRANCH }}
@@ -41,14 +41,14 @@ jobs:
       - name: Download Artifacts
         uses: ./download-artifact
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
           branch: ${{ env.BRANCH }}
       - name: Ignore missing workflow
         uses: ./download-artifact
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "foo-bar.yml"
           branch: ${{ env.BRANCH }}
@@ -57,7 +57,7 @@ jobs:
       - name: Ignore missing artifact
         uses: ./download-artifact
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
           branch: ${{ env.BRANCH }}

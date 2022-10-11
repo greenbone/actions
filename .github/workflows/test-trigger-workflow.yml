@@ -28,7 +28,7 @@ jobs:
         id: test
         uses: ./trigger-workflow
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-trigger-workflow-long-running-workflow.yml"
           ref: ${{ env.REF }}
@@ -58,7 +58,7 @@ jobs:
       - name: Trigger Another Workflow
         uses: ./trigger-workflow
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-trigger-workflow-test-workflow.yml"
           ref: ${{ env.REF }}
@@ -84,7 +84,7 @@ jobs:
         continue-on-error: true
         uses: ./trigger-workflow
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-trigger-workflow-failing-workflow.yml"
           ref: ${{ env.REF }}
