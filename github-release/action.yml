@@ -1,0 +1,73 @@
+name: "Create github release"
+description: "Create a github release"
+inputs:
+  github-user:
+    description: "Github user name."
+    required: true
+  github-user-mail:
+    description: "Mail address for the given github user."
+    required: true
+  github-user-token:
+    description: "Token with write rights required to create the release."
+    required: true
+  tag-name:
+    description: "Tag name to use with release."
+    required: true
+  create-tag:
+    description: "Create the Tag."
+    required: false
+    default: 'false'
+  release-name:
+    description: "Release name."
+    required: true
+  draft:
+    description: "Create a draft release."
+    required: false
+    default: 'false'
+  prerelease:
+    description: "Create a prerelease."
+    required: false
+    default: 'false'
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    - name: Install Pontos
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade pontos
+    - name: Create Tag
+      if: inputs.create-tag == 'true'
+      shell: bash
+      env:
+        GITHUB_USER: ${{ inputs.github-user }}
+        GITHUB_TOKEN: ${{ inputs.github-user-token }}
+      run: |
+        pontos-github tag create "$GITHUB_REPOSITORY" "${{ inputs.tag-name }}" \
+          "${{ inputs.github-user }}" '' "$GITHUB_SHA" "${{ inputs.github-user-mail }}"
+    - name: Create Release
+      shell: bash
+      env:
+        GITHUB_USER: ${{ inputs.github-user }}
+        GITHUB_TOKEN: ${{ inputs.github-user-token }}
+      run: |
+        flags=''
+        if [ "${{ inputs.prerelease }}" == 'true' ]; then
+          flags+=' --prerelease'
+        fi
+        if [ "${{ inputs.draft }}" == 'true' ]; then
+          flags+=' --draft'
+        fi
+        
+        pontos-github release create "$GITHUB_REPOSITORY" \
+          "${{ inputs.tag-name }}" "${{ inputs.release-name }}" \
+          $flags
