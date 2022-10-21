@@ -12,7 +12,7 @@ jobs:
       - self-hosted
       - self-hosted-generic
     steps:
-      - uses: greenbone/actions/github-release@v1
+      - uses: greenbone/actions/github-release@v2
         with:
           release-name:
           tag-name:
