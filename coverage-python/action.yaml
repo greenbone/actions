@@ -18,7 +18,7 @@ runs:
   using: "composite"
   steps:
     - name: Install poetry
-      uses: greenbone/actions/poetry@v1
+      uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
     - run: poetry run python -m pip install codecov
@@ -29,7 +29,7 @@ runs:
       shell: bash
       name: Run unit tests with coverage
       working-directory: ${{ github.workspace }}
-    - run:  poetry run coverage xml
+    - run: poetry run coverage xml
       shell: bash
       name: Create coverage XML report
       working-directory: ${{ github.workspace }}

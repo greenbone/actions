@@ -18,7 +18,7 @@ inputs:
     required: false
   target:
     description: "Branch that should be released. Default: main"
-    default: 'main'
+    default: "main"
     required: false
   directories:
     description: "Specify the directories that should be updated, seperated by space e.g. 'foo bar baz'"
@@ -35,52 +35,52 @@ branding:
 runs:
   using: "composite"
   steps:
-  - uses: actions/checkout@v2
-    with:
-      fetch-depth: ${{ env.FETCH_DEPTH }}
-      ref: ${{ inputs.target }}
-  - name: Set up Poetry, python and the project
-    uses: greenbone/actions/poetry@v1
-    with:
-      version: ${{ inputs.version }}
-  - name: Install pontos
-    run: |
-      apt-get update && apt-get --assume-yes install python3-venv
-      python3 -m venv .venv
-      . .venv/bin/activate
-      python -m pip install --upgrade pip
-      python -m pip install --upgrade pontos
-    shell: bash
-  - name: Set git name, mail and origin
-    run: |
-      git config --global user.name "${{ inputs.github-user }}"
-      git config --global user.email "${{ inputs.github-user-mail }}"
-      git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
-    shell: bash
-  - name: Store Branch name
-    shell: bash
-    run: |
-      echo "HEAD=devops/update-header-$(date +"%Y")" >> $GITHUB_ENV
-      echo "YEAR=$(date +"%Y")" >> $GITHUB_ENV
-  - name: Run commands to update headers
-    run: |
-      git checkout -b ${{ env.HEAD }}
-      . .venv/bin/activate
-      pontos-update-header -d ${{ inputs.directories }}
-    shell: bash
-  - name: Run git commands for PR
-    run: |
-      git add -u
-      git commit -m "Update header to ${{ env.YEAR }}"
-      git push --set-upstream origin ${{ env.HEAD }}
-      . .venv/bin/activate
-      pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} \
-        'Update year to ${{ env.YEAR }} in copyright header' \
-        --body "**What**:\n\nUpdate year to ${{ env.YEAR }} in \
-        copyright header in all relevant files\n\n**Why**:* Files \
-        should be up-to-date and we don't want to do it manually \
-        in all projects\n\n**How**:\n\n* Automated process \
-        with pontos and GitHub Actions"
-    shell: bash
-    env:
-      GITHUB_TOKEN: ${{ inputs.github-user-token }}
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: ${{ env.FETCH_DEPTH }}
+        ref: ${{ inputs.target }}
+    - name: Set up Poetry, python and the project
+      uses: greenbone/actions/poetry@v2
+      with:
+        version: ${{ inputs.version }}
+    - name: Install pontos
+      run: |
+        apt-get update && apt-get --assume-yes install python3-venv
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade pontos
+      shell: bash
+    - name: Set git name, mail and origin
+      run: |
+        git config --global user.name "${{ inputs.github-user }}"
+        git config --global user.email "${{ inputs.github-user-mail }}"
+        git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+      shell: bash
+    - name: Store Branch name
+      shell: bash
+      run: |
+        echo "HEAD=devops/update-header-$(date +"%Y")" >> $GITHUB_ENV
+        echo "YEAR=$(date +"%Y")" >> $GITHUB_ENV
+    - name: Run commands to update headers
+      run: |
+        git checkout -b ${{ env.HEAD }}
+        . .venv/bin/activate
+        pontos-update-header -d ${{ inputs.directories }}
+      shell: bash
+    - name: Run git commands for PR
+      run: |
+        git add -u
+        git commit -m "Update header to ${{ env.YEAR }}"
+        git push --set-upstream origin ${{ env.HEAD }}
+        . .venv/bin/activate
+        pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} \
+          'Update year to ${{ env.YEAR }} in copyright header' \
+          --body "**What**:\n\nUpdate year to ${{ env.YEAR }} in \
+          copyright header in all relevant files\n\n**Why**:* Files \
+          should be up-to-date and we don't want to do it manually \
+          in all projects\n\n**How**:\n\n* Automated process \
+          with pontos and GitHub Actions"
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-user-token }}

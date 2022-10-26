@@ -1,4 +1,3 @@
-
 name: "Python Package Linting"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to lint Greenbone Python packages"
@@ -16,7 +15,7 @@ runs:
   using: "composite"
   steps:
     - name: Install poetry
-      uses: greenbone/actions/poetry@v1
+      uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
     - run: echo "Running black"

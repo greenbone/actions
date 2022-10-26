@@ -15,7 +15,7 @@ runs:
   using: "composite"
   steps:
     - name: Install poetry
-      uses: greenbone/actions/poetry@main
+      uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
     - run: echo "Running mypy"
