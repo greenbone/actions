@@ -12,6 +12,26 @@ updates:
     directory: "/release/action.yml"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/release-python/action.yml"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/coverage-python/action.yml"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/lint-python/action.yml"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/mypy-python/action.yml"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/mattermost-notify/action.yml"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: pip
     directory: "/trigger-workflow/"
     schedule:
