@@ -4,6 +4,14 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/poetry/action.yml"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/release/action.yml"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: pip
     directory: "/trigger-workflow/"
     schedule:
