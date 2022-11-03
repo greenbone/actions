@@ -27,3 +27,4 @@ runs:
       shell: bash
     - name: Run Testing
       run: npm run test:ci
+      shell: bash
