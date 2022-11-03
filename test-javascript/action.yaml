@@ -1,0 +1,29 @@
+
+name: "JavaScript Build & Test"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
+description: "An action to build and test Greenbone JavaScript Projects"
+inputs:
+  version:
+    description: "Node version that should be installed"
+    default: "16.x"
+  token:
+    description: "Token with GitHub Packages read rights required to install."
+    required: true
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+    - run: echo "Install project"
+      shell: bash
+    - name: Install Project
+      uses: greenbone/actions/install-javascript@v2
+      with:
+        version: ${{ inputs.version }}
+        token: ${{ inputs.token }}
+    - name: Build ...
+      run: npm run build
+      shell: bash
+    - name: Run Testing
+      run: npm run test:ci
