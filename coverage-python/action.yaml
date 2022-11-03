@@ -33,7 +33,7 @@ runs:
       shell: bash
       name: Create coverage XML report
       working-directory: ${{ github.workspace }}
-    - uses: codecov/codecov-action@v2
+    - uses: codecov/codecov-action@v3
       with:
         token: ${{ inputs.token }}
         fail_ci_if_error: true
