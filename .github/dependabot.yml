@@ -1,5 +1,6 @@
 version: 2
 updates:
+    # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -32,6 +33,20 @@ updates:
     directory: "/mattermost-notify/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/install-javascript/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/lint-javascript/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/test-javascript/"
+    schedule:
+      interval: "weekly"
+
+    # PIP
   - package-ecosystem: pip
     directory: "/trigger-workflow/"
     schedule:
