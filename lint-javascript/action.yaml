@@ -27,3 +27,4 @@ runs:
       shell: bash
     - name: Run formatting
       run: npm run pretty:check
+      shell: bash
