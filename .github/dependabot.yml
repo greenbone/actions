@@ -5,31 +5,31 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/poetry/action.yml"
+    directory: "/poetry/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/release/action.yml"
+    directory: "/release/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/release-python/action.yml"
+    directory: "/release-python/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/coverage-python/action.yml"
+    directory: "/coverage-python/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/lint-python/action.yml"
+    directory: "/lint-python/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/mypy-python/action.yml"
+    directory: "/mypy-python/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/mattermost-notify/action.yml"
+    directory: "/mattermost-notify/"
     schedule:
       interval: "weekly"
   - package-ecosystem: pip
