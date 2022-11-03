@@ -47,13 +47,13 @@ runs:
         echo "FETCH_DEPTH=-1" >> $GITHUB_ENV
       fi
     shell: bash
-  - uses: actions/checkout@v2
+  - uses: actions/checkout@v3
     with:
       fetch-depth: ${{ env.FETCH_DEPTH }}
       persist-credentials: false
       ref: ${{ inputs.ref }}
   - name: Set up Python
-    uses: actions/setup-python@v2
+    uses: actions/setup-python@v4
     with:
       python-version: 3.9
   - name: Install pontos
