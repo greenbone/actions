@@ -1,4 +1,4 @@
-name: "JavaScript Installer"
+name: "JavaScript Installer [npm]"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action to install Greenbone JavaScript Projects"
 inputs:
