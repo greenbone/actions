@@ -1,7 +1,7 @@
 
-name: "JavaScript Build & Test"
+name: "JavaScript Build & Test [npm]"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
-description: "An action to build and test Greenbone JavaScript Projects"
+description: "An action to build and test Greenbone JavaScript Projects [npm]"
 inputs:
   version:
     description: "Node version that should be installed"
@@ -20,7 +20,7 @@ branding:
 runs:
   using: "composite"
   steps:
-    - run: echo "Install project"
+    - run: echo "Install project [npm]"
       shell: bash
     - name: Install Project
       uses: greenbone/actions/install-javascript@v2

@@ -25,18 +25,18 @@ GitHub Actions for Greenbone projects
 ### JavaScript
 
 ```yml
-- name: Install JavaScript and the project
-  uses: greenbone/actions/install-javascript@v2
+- name: Install JavaScript and the project [npm]
+  uses: greenbone/actions/install-npm@v2
 with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
-- name: Install and check Lint and Format in JavaScript Projects
-  uses: greenbone/actions/lint-javascript@v2
+- name: Install and check Lint and Format in JavaScript Projects [npm]
+  uses: greenbone/actions/lint-npm@v2
 with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
-- name: Install, Build and Test JavaScript Projects
-  uses: greenbone/actions/test-javascript@v2
+- name: Install, Build and Test JavaScript Projects [npm]
+  uses: greenbone/actions/test-npm@v2
 with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}

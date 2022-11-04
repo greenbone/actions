@@ -1,5 +1,5 @@
 
-name: "JavaScript Linting"
+name: "JavaScript Linting [npm]"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action to check linting and formatting Greenbone JavaScript Projects"
 inputs:
@@ -20,7 +20,7 @@ branding:
 runs:
   using: "composite"
   steps:
-    - run: echo "Install project"
+    - run: echo "Install project [npm]"
       shell: bash
     - name: Install Project
       uses: greenbone/actions/install-javascript@v2
