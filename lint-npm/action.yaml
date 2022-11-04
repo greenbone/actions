@@ -9,6 +9,7 @@ inputs:
   token:
     description: "Token with GitHub Packages read rights required to install."
     required: true
+    default: ${{ github.token }}
   cache-key:
     description: "Set the key to find the cached node modules"
     required: true
