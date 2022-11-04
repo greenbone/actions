@@ -9,9 +9,14 @@ inputs:
   token:
     description: "Token with GitHub Packages read rights required to install."
     required: true
+  cache-key:
+    description: "Set the key to find the cached node modules"
+    required: true
+    default: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 branding:
   icon: "package"
   color: "green"
+
 runs:
   using: "composite"
   steps:
@@ -22,6 +27,7 @@ runs:
       with:
         version: ${{ inputs.version }}
         token: ${{ inputs.token }}
+        cache-key: ${{ inputs.cache-key }}
     - name: Run linting
       run: npm run lint
       shell: bash

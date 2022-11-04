@@ -8,10 +8,14 @@ inputs:
   token:
     description: "Token with GitHub Packages read rights required to install."
     required: true
-  
+  cache-key:
+    description: "Set the key to find the cached node modules"
+    required: true
+    default: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 branding:
   icon: "package"
   color: "green"
+
 runs:
   using: "composite"
   steps:
@@ -27,7 +31,7 @@ runs:
       with:
         # npm cache files are stored in `~/.npm` on Linux/macOS
         path: ~/.npm
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ inputs.cache-key }}
     - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
       name: List the state of node modules
       shell: bash
