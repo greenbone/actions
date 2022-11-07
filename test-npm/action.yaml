@@ -24,7 +24,7 @@ runs:
     - run: echo "Install project [npm]"
       shell: bash
     - name: Install Project
-      uses: greenbone/actions/install-javascript@v2
+      uses: greenbone/actions/install-npm@v2
       with:
         version: ${{ inputs.version }}
         token: ${{ inputs.token }}

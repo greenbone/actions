@@ -34,7 +34,7 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
-    directory: "/install-javascript/"
+    directory: "/install-npm/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
