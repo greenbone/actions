@@ -1,5 +1,5 @@
 name: "Pontos Release Patch version"
-author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action that creates a patch release [x.y.z -> x.y.z+1] for a clang project."
 
 inputs:

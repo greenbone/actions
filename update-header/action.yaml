@@ -1,5 +1,5 @@
 name: "Update File headers to the new year"
-author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action that updates header year in all files of given directories."
 
 inputs:

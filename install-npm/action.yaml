@@ -12,7 +12,7 @@ inputs:
   cache-key:
     description: "Set the key to find the cached node modules"
     required: true
-    default: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+    default: ${{ runner.os }}-build-cache-node-modules-${{ hashFiles('**/package-lock.json') }}
 branding:
   icon: "package"
   color: "green"
