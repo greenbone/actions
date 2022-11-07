@@ -1,6 +1,6 @@
 
 name: "JavaScript Codecov Action"
-author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action to a Greenbone JavaScript module with coverage."
 inputs:
   working_directory:

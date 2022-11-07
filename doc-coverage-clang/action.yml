@@ -1,5 +1,5 @@
 name: 'Build XML documentation and upload coverage'
-author: "Jaspar Löchte <jaspar.loechte@greenbone.net>"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: 'An action to upload documentation coverage to codecov.io for C Lang repository. Requires to run with the greenbone/doxygen docker image.'
 branding:
   icon: "package"
