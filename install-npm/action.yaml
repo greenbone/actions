@@ -24,7 +24,6 @@ runs:
       shell: bash
     - uses: actions/checkout@v3
     - name: Cache node modules
-      shell: bash
       id: cache-npm
       uses: actions/cache@v3
       env:
