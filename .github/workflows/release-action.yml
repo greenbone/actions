@@ -16,9 +16,9 @@ on:
       branch:
         description: |
           Specify the branch to push to.
-          Default will be `v1`
+          Default will be `v2`
         type: string
-        default: v1
+        default: v2
 
 jobs:
   merge-to-v1-branch:
@@ -37,7 +37,7 @@ jobs:
       - name: Checkout v1 branch and merge
         run: |
           git checkout ${{ github.event.inputs.branch }}
-          git merge --ff-only main
+          git merge main
       - uses: greenbone/actions/branch-protection@main
         timeout-minutes: 2
         with:
