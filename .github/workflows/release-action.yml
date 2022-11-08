@@ -21,8 +21,8 @@ on:
         default: v2
 
 jobs:
-  merge-to-v1-branch:
-    name: Create release by rebasing main to ${{ github.event.inputs.branch }} and create a new tag
+  merge-main-to-release-branch:
+    name: Create release by merging main to ${{ github.event.inputs.branch }} and create a new tag
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout actions
