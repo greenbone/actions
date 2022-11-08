@@ -38,7 +38,7 @@ jobs:
       - name: Checkout ${{ github.event.inputs.branch }} branch and merge
         run: |
           git checkout ${{ github.event.inputs.branch }}
-          git merge main -m "Merge main into ${{ inputs.branch }} for the new tag v${{ github.event.inputs.tag }}"
+          git merge main -m "Merge main into ${{ github.event.inputs.branch }} for the new tag v${{ github.event.inputs.tag }}"
       - name: Generate new tag, push tag and branch
         run: |
           git tag v${{ github.event.inputs.tag }}
