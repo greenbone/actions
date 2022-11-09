@@ -1,10 +1,15 @@
+![Greenbone Logo](https://www.greenbone.net/wp-content/uploads/gb_new-logo_horizontal_rgb_small.png)
+
 # Greenbone GitHub Actions
 
-GitHub Actions for Greenbone projects
+Repository that contains a collection of GitHub Actions for Greenbone projects
 
-## Usage
+## Language specific CI actions
+
+We offer several actions for linting, formatting, building and testing packages/modules/projects in different programming languages
 
 ### Python
+
 ```yml
 - name: Install python and poetry and the project
   uses: greenbone/actions/poetry@v2
@@ -44,16 +49,33 @@ with:
   uses: greenbone/actions/coverage-js@v2
 ```
 
-### Others
+### GoLang
+
+```yml
+- name: Check Lint and Format in GoLang Projects
+  uses: greenbone/actions/lint-golang@v2
+with:
+    version: 3.9
+    generate: go generate # mocks, docs, etc
+    golangci-lint: v1.50 # specify golangci-lint version
+```
+
+### CLang
 
 ```yml
 - name: upload documentation coverage to codecov.io for C Lang repository
   uses: greenbone/actions/doc-coverage-clang@v2
+```
 
+## Other useful actions
+
+Release a project in C or JavaScript
+
+```yml
 - name: Run release actions
   uses: greenbone/actions/release@v2
   with:
-    github-user: ${{ secrets.GREENBONE_BOT }}
+    github-user: ${{ secrets.FOO_BAR }}
     github-user-mail: foo@bar.baz
     github-user-token: bar
     gpg-key: boo
@@ -61,7 +83,28 @@ with:
     gpg-fingerprint: baz
     conventional-commits: false
     strategy: calendar
+```
 
+Release a Python project
+
+```yml
+- name: Release with release action
+  uses: greenbone/actions/release-python@v2
+  with:
+    version: 3.9 # python version
+    conventional-commits: true
+    github-user: ${{ secrets.FOO_BAR }}
+    github-user-mail: foo@bar.baz
+    github-user-token: bar
+    gpg-key: boo
+    gpg-passphrase: foo
+    gpg-fingerprint: baz
+    strategy: calendar
+```
+
+Update licence header supporting many different filetypes
+
+```yml
 - name: Run update header
   uses: greenbone/actions/update-header@v2
   with:
@@ -70,7 +113,11 @@ with:
     github-user-token: bar
     directories: foo tests
     target: main
+```
 
+SHA256 file or GPG signature generation
+
+```yml
 - name: Create a sha256sums file for the foo directory
   uses: greenbone/actions/hashsums@v2
   with:
@@ -84,3 +131,21 @@ with:
     gpg-fingerprint: ${{ secrets.BAR_BAZ }}
     file: ./foo/bar
 ```
+
+## Support
+
+For any question on the usage of python-gvm please use the
+[Greenbone Community Portal](https://community.greenbone.net/c/gmp). If you
+found a problem with the software, please
+[create an issue](https://github.com/greenbone/gvm-tools/issues)
+on GitHub.
+
+## Maintainer
+
+This project is maintained by [Greenbone Networks GmbH](https://www.greenbone.net/).
+
+## License
+
+Copyright (C) 2020-2022 [Greenbone Networks GmbH](https://www.greenbone.net/)
+
+Licensed under the [GNU General Public License v3.0 or later](LICENSE).
