@@ -1,0 +1,34 @@
+name: "GoLang Linting"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
+description: "An action to check linting and formatting Greenbone GoLang Projects"
+inputs:
+  version:
+    description: "Golang version that should be installed"
+    default: "1.18"
+  generate:
+    description: "Specify a command, used to generate additional code or documentation, that should get linted"
+    default: "go generate"
+  golangci-lint-version:
+    description: "Specify the golangci-lint version (vX.YY, e.g. v1.50)"
+    default: "v1.50"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo "Checkout Repository"
+      shell: bash
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v3
+      with:
+        go-version: ${{ inputs.version }}
+    - name: Generate code
+      shell: bash
+      run: ${{ inputs.generate }}
+    - name: Use the linter
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: ${{ inputs.golangci-lint-version }}
