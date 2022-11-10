@@ -19,8 +19,6 @@ branding:
 runs:
   using: "composite"
   steps:
-    - run: echo "Checkout Repository"
-      shell: bash
     - uses: actions/checkout@v3
     - uses: actions/setup-go@v3
       with:

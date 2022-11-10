@@ -135,9 +135,9 @@ SHA256 file or GPG signature generation
 ## Support
 
 For any question on the usage of python-gvm please use the
-[Greenbone Community Portal](https://community.greenbone.net/c/gmp). If you
+[Greenbone Community Forum](https://forum.greenbone.net/). If you
 found a problem with the software, please
-[create an issue](https://github.com/greenbone/gvm-tools/issues)
+[create an issue](https://github.com/greenbone/actions/issues)
 on GitHub.
 
 ## Maintainer
