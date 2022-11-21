@@ -16,7 +16,7 @@ runs:
   using: "composite"
   steps:
     - name: Install poetry
-      uses: greenbone/actions/poetry@v1
+      uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
     - run: echo "Running black"
