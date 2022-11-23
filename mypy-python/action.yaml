@@ -20,7 +20,7 @@ runs:
         version: ${{ inputs.version }}
     - run: echo "Running mypy"
       shell: bash
-    - run: poetry run mypy ${{ github.workspace }}
+    - run: poetry run mypy ${{ inputs.packages }}
       shell: bash
       name: Check with mypy
       working-directory: ${{ github.workspace }}
