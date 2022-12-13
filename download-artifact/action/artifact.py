@@ -23,7 +23,7 @@ import sys
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator, Iterable, Optional, Union
+from typing import Generator, Iterable, List, Optional, Union
 from zipfile import ZipFile
 
 import httpx
@@ -39,6 +39,9 @@ from pontos.github.api import (
 
 
 def is_event(run: JSON_OBJECT, events: Iterable[str]) -> bool:
+    """
+    Return True if workflow run event is one of the events
+    """
     event = run.get("event")
     return event in events
 
@@ -50,6 +53,17 @@ def created_at(run: JSON_OBJECT):
 
 def json_dump(value: JSON) -> str:
     return json.dumps(value, indent=2)
+
+
+def parse_list(value: str) -> List[str]:
+    """
+    Parse a csv line into a list of strings.
+
+    Spaces are stripped and removed.
+    """
+    values = value.split(",")
+    values = (value.strip() for value in values)
+    return [value for value in values if value]
 
 
 @contextmanager
@@ -75,6 +89,7 @@ class DownloadArtifacts:
         *,
         token: Optional[str] = None,
         workflow: Optional[str] = None,
+        workflow_events: Optional[str] = None,
         repository: Optional[str] = None,
         branch: Optional[str] = None,
         name: Optional[str] = None,
@@ -92,6 +107,12 @@ class DownloadArtifacts:
         self.workflow = workflow or ActionIO.input("workflow")
         if not self.workflow:
             raise DownloadArtifactsError("Missing workflow.")
+
+        workflow_events = workflow_events or ActionIO.input("workflow-events")
+        if not workflow_events:
+            self.workflow_events = ["schedule", "workflow_dispatch"]
+        else:
+            self.workflow_events = parse_list(workflow_events)
 
         self.branch = branch or ActionIO.input("branch")
         if not self.branch:
@@ -149,14 +170,14 @@ class DownloadArtifacts:
         if self.is_debug:
             Console.debug(f"Available workflow runs: {json_dump(runs)}")
 
-        runs = [
-            run
-            for run in runs
-            if is_event(run, ["schedule", "workflow_dispatch"])
-        ]
+        if self.workflow_events:
+            runs = [run for run in runs if is_event(run, self.workflow_events)]
 
         if self.is_debug:
-            Console.debug(f"Filtered workflow runs: {json_dump(runs)}")
+            Console.debug(
+                f"Workflow runs for events {self.workflow_events}: "
+                f"{json_dump(runs)}"
+            )
 
         if not runs:
             return None

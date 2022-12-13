@@ -11,6 +11,10 @@ inputs:
   workflow:
     description: "Workflow to download the artifacts from. Either a workflow ID or file path. For example `ci.yml`."
     required: true
+  workflow-events:
+    description: "Consider only workflow runs triggered by the specified events. Default: schedule, workflow_dispatch"
+    default: "schedule, workflow_dispatch"
+    required: false
   branch:
     description: "The git branch for the workflow to download the artifacts from."
     required: true

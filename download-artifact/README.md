@@ -50,13 +50,14 @@ jobs:
 | --------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------- |
 | token           | Token required to create the backport pull request                                         | Required                                          |
 | workflow        | Workflow to trigger. Either a workflow ID or file name, for example `ci.yml`.              | Required                                          |
+| workflow-events | Consider only workflow runs triggered by the specified events.                             | Default: `schedule, workflow_dispatch`            |
 | repository      | Repository of the workflow to trigger                                                      | Default: `GITHUB_REPOSITORY` (current repository) |
 | branch          | The git branch for the workflow.                                                           | Default: `main`                                   |
 | path            | Destination path for the to be downloaded artifact of parent directory if name is not set. | Default: `.` (Current directory)                  |
 | name            | Name of the artifact to be downloaded. If not set all artifacts will be downloaded.        | Optional                                          |
 | allow-not-found | Set to `true` to not fail if workflow or artifact can not be found.                        | Optional                                          |
 | user            | User ID for ownership of the downloaded artifacts.                                         | Optional                                          |
-| Group           | Group ID for ownership of the downloaded artifacts.                                        | Optional                                          |
+| group           | Group ID for ownership of the downloaded artifacts.                                        | Optional                                          |
 
 The name input parameter mimics the [actions/download-artifact@v3](https://github.com/actions/download-artifact/tree/v3#download-all-artifacts)
 behavior:
