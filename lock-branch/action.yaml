@@ -47,6 +47,7 @@ runs:
     shell: bash
   - name: Prepare release and store the version
     run: |
+      . .venv/bin/activate
       pontos-github-script ./pontos/scripts/github/lock-branch.py ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.LOCK_OPT }}
     shell: bash
     env:
