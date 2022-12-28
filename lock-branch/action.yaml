@@ -7,14 +7,17 @@ inputs:
     description: "Github user token, that is legitimated to set the lock."
     required: true
   lock:
-    description: "Lock or unlock (Options: lock, unlock)? default: lock"
+    description: "Lock or unlock (Options: lock, unlock)? Default: lock"
     default: "lock"
+    required: true
   repository:
     description: "What repository branch should be locked? Defaults to the executing repository."
     default: ${{ github.repository }}
+    required: true
   branch:
-    description: "Branch that should be locked"
+    description: "Branch that should be locked. Default: main"
     default: 'main'
+    required: true
 
 branding:
   icon: "package"
