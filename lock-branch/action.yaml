@@ -38,10 +38,10 @@ runs:
     shell: bash
   - name: lock/unlock?
     run: |
-      if [[ ${{inputs.lock}} == lock ]];
+      if [[ "${{inputs.lock}}" == "lock" ]];
       then
         echo "LOCK_OPT=--lock" >> $GITHUB_ENV
-      elif [[ ${{inputs.lock}} == unlock ]];
+      elif [[ "${{inputs.lock}}" == "unlock" ]];
       then
         echo "LOCK_OPT=--no-lock" >> $GITHUB_ENV
       else
