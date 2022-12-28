@@ -1,0 +1,53 @@
+name: "Lock branch action"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
+description: "An action that locks the target branch and prevents pushing on it."
+
+inputs:
+  github-token:
+    description: "Github user token, that is legitimated to set the lock."
+    required: true
+  lock:
+    description: "Lock or unlock (Options: lock, unlock)? default: lock"
+    default: "lock"
+  repository:
+    description: "What repository branch should be locked? Defaults to the executing repository."
+    default: ${{ github.repository }}
+  branch:
+    description: "Branch that should be locked"
+    default: 'main'
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+  - name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: 3.9
+  - name: Install pontos
+    run: |
+      apt-get update && apt-get --assume-yes install python3-venv wget
+      python3 -m venv .venv
+      . .venv/bin/activate
+      python -m pip install --upgrade pip
+      python -m pip install --upgrade pontos
+      wget https://github.com/greenbone/pontos/blob/main/scripts/github/lock-branch.py -o ~/lock-branch.py
+    shell: bash
+  - name: lock/unlock?
+    run: |
+      if [[ ${{inputs.lock}} == lock ]];
+      then
+        echo "LOCK_OPT=--lock" >> $GITHUB_ENV
+      elif [[ ${{inputs.lock}} == unlock ]];
+        echo "LOCK_OPT=--no-lock" >> $GITHUB_ENV
+      fi
+    shell: bash
+  - name: Prepare release and store the version
+    run: |
+      pontos-github-script ./pontos/scripts/github/lock-branch.py ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.LOCK_OPT }}
+    shell: bash
+    env:
+      GITHUB_TOKEN: ${{ inputs.github-token }}
