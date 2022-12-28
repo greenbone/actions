@@ -42,9 +42,13 @@ runs:
       then
         echo "LOCK_OPT=--lock" >> $GITHUB_ENV
       elif [[ ${{inputs.lock}} == unlock ]];
+      then
+        echo "LOCK_OPT=--no-lock" >> $GITHUB_ENV
+      else
         echo "LOCK_OPT=--no-lock" >> $GITHUB_ENV
       fi
     shell: bash
+    # in case of blubber input let the branch be unlocked!
   - name: Prepare release and store the version
     run: |
       . .venv/bin/activate
