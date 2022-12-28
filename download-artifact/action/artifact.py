@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import asyncio
 import json
 import os
 import shutil
@@ -22,37 +23,28 @@ import stat
 import sys
 import tempfile
 from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
-from typing import Generator, Iterable, List, Optional, Union
+from types import TracebackType
+from typing import Generator, Iterable, List, NoReturn, Optional, Type, Union
 from zipfile import ZipFile
 
 import httpx
-from dateutil import parser as dateparser
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
-from pontos.github.api import (
-    JSON,
-    JSON_OBJECT,
-    GitHubRESTApi,
-    WorkflowRunStatus,
-)
+from pontos.github.api import GitHubAsyncRESTApi
+from pontos.github.models import Artifact, WorkflowRun, WorkflowRunStatus
 
 
-def is_event(run: JSON_OBJECT, events: Iterable[str]) -> bool:
+def is_event(run: WorkflowRun, events: Iterable[str]) -> bool:
     """
     Return True if workflow run event is one of the events
     """
-    event = run.get("event")
-    return event in events
+    return run.event.value in events
 
 
-def created_at(run: JSON_OBJECT):
-    iso_time: str = run.get("created_at")
-    return dateparser.isoparse(iso_time)
-
-
-def json_dump(value: JSON) -> str:
-    return json.dumps(value, indent=2)
+def created_at(run: WorkflowRun) -> datetime:
+    return run.created_at
 
 
 def parse_list(value: str) -> List[str]:
@@ -64,6 +56,13 @@ def parse_list(value: str) -> List[str]:
     values = value.split(",")
     values = (value.strip() for value in values)
     return [value for value in values if value]
+
+
+def parse_int(value: str) -> Optional[int]:
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return None
 
 
 @contextmanager
@@ -130,19 +129,8 @@ class DownloadArtifacts:
         if not download_path:
             raise DownloadArtifactsError("Missing path.")
 
-        self.user = user or ActionIO.input("user")
-        try:
-            # try to convert to int for a user id
-            self.user = int(self.user)
-        except (ValueError, TypeError):
-            pass
-
-        self.group = group or ActionIO.input("group")
-        try:
-            # try to convert to int for a group id
-            self.group = int(self.group)
-        except (ValueError, TypeError):
-            pass
+        self.user = parse_int(user or ActionIO.input("user"))
+        self.group = parse_int(group or ActionIO.input("group"))
 
         self.download_path = Path(download_path)
 
@@ -151,16 +139,21 @@ class DownloadArtifacts:
 
         self.is_debug = env.is_debug
 
-        self.api = GitHubRESTApi(token)
+        self.api = GitHubAsyncRESTApi(token)
 
-    def get_newest_workflow_run(self) -> Optional[JSON_OBJECT]:
+    async def get_newest_workflow_run(self) -> Optional[WorkflowRun]:
         try:
-            runs = self.api.get_workflow_runs(
-                self.repository,
-                self.workflow,
-                branch=self.branch,
-                status=WorkflowRunStatus.SUCCESS.value,
-            )
+            runs = [
+                run
+                async for run in self.api.workflows.get_workflow_runs(
+                    self.repository,
+                    self.workflow,
+                    branch=self.branch,
+                    status=WorkflowRunStatus.SUCCESS,
+                )
+                if not self.workflow_events
+                or is_event(run, self.workflow_events)
+            ]
         except httpx.HTTPStatusError as e:
             if self.allow_not_found and e.response.status_code == 404:
                 return None
@@ -168,15 +161,8 @@ class DownloadArtifacts:
             raise DownloadArtifactsError(f"Could not find workflow. {e}") from e
 
         if self.is_debug:
-            Console.debug(f"Available workflow runs: {json_dump(runs)}")
-
-        if self.workflow_events:
-            runs = [run for run in runs if is_event(run, self.workflow_events)]
-
-        if self.is_debug:
             Console.debug(
-                f"Workflow runs for events {self.workflow_events}: "
-                f"{json_dump(runs)}"
+                f"Workflow runs for events {self.workflow_events}: {runs}"
             )
 
         if not runs:
@@ -224,47 +210,47 @@ class DownloadArtifacts:
                     f"'{self.group}'. Error was {e}."
                 )
 
-    def download_artifacts(
-        self, artifacts: Iterable[JSON_OBJECT]
-    ) -> Iterable[str]:
-        artifact_names = []
+    async def download_artifact(self, artifact: Artifact) -> Optional[Artifact]:
+        if self.name and self.name != artifact.name:
+            Console.log(
+                f"Skipping artifact '{artifact.name} with ID {artifact.id}' "
+                f"because it does not match {self.name}."
+            )
+            return None
 
         with temp_directory() as temp_dir:
-            for artifact in artifacts:
-                artifact_id = artifact["id"]
-                artifact_name = artifact["name"]
+            temp_file = temp_dir / f"{artifact.name}.zip"
 
-                if self.name and self.name != artifact_name:
-                    continue
+            if self.name:
+                destination_dir = self.download_path
+            else:
+                destination_dir = self.download_path / artifact.name
 
-                artifact_names.append(artifact_name)
+            destination_dir.mkdir(parents=True, exist_ok=True)
+            self.adjust_permissions(destination_dir)
 
-                temp_file = temp_dir / f"{artifact_name}.zip"
+            print(
+                f"Downloading artifact '{artifact.name}' with ID "
+                f"{artifact.id}",
+                end=" ",
+            )
 
-                if self.name:
-                    destination_dir: Path = self.download_path
-                else:
-                    destination_dir: Path = self.download_path / artifact_name
-
-                destination_dir.mkdir(parents=True, exist_ok=True)
-                self.adjust_permissions(destination_dir)
-
-                print(
-                    f"Downloading artifact '{artifact_name}' with ID "
-                    f"{artifact_id}",
-                    end=" ",
-                )
-
-                with self.api.download_repository_artifact(
-                    self.repository, artifact_id, temp_file
-                ) as progress_iterator:
-                    for _ in progress_iterator:
-                        print(".", end="")
-
-                print(" done.")
+            with temp_file.open("w", encoding="utf8") as f:
+                try:
+                    async with self.api.artifacts.download(
+                        self.repository, artifact.id
+                    ) as download:
+                        async for content, _ in download:
+                            f.write(content)
+                            print(".", end="")
+                except httpx.HTTPStatusError as e:
+                    raise DownloadArtifactsError(
+                        f"Failed to download '{artifact.name}' with ID "
+                        f"{artifact.id}"
+                    ) from e
 
                 Console.log(
-                    f"Extracting artifact '{artifact_name}' to "
+                    f"Extracting artifact '{artifact.name}' to "
                     f"'{destination_dir}'."
                 )
 
@@ -278,9 +264,9 @@ class DownloadArtifacts:
                     zipfile.extract(zipinfo, destination_dir)
                     self.adjust_permissions(file_path)
 
-        return artifact_names
+            return artifact
 
-    def run(self) -> None:
+    async def run(self) -> None:
         if self.name:
             Console.log(
                 f"Download '{self.name}' artifact of workflow '{self.workflow}'"
@@ -294,7 +280,7 @@ class DownloadArtifacts:
                 f"'{self.download_path}' 🚀."
             )
 
-        run = self.get_newest_workflow_run()
+        run = await self.get_newest_workflow_run()
 
         if not run:
             if self.allow_not_found:
@@ -303,18 +289,25 @@ class DownloadArtifacts:
             else:
                 raise DownloadArtifactsError("No workflow run found.")
 
-        Console.log(
-            f"Using workflow run with ID {run['id']} {run.get('html_url')}"
-        )
+        Console.log(f"Using workflow run with ID {run.id} {run.html_url}")
 
         try:
-            artifacts = self.api.get_workflow_run_artifacts(
-                self.repository, run["id"]
-            )
+            tasks = [
+                asyncio.create_task(self.download_artifact(artifact))
+                async for artifact in self.api.artifacts.get_workflow_run_artifacts(
+                    self.repository, run.id
+                )
+            ]
         except httpx.HTTPStatusError as e:
             raise DownloadArtifactsError(
                 f"Could not find workflow run artifacts. {e}"
             ) from e
+
+        artifacts = []
+        for task in asyncio.as_completed(tasks):
+            artifact = await task
+            if artifact:
+                artifacts.append(artifact.name)
 
         if not artifacts:
             if self.allow_not_found:
@@ -322,25 +315,33 @@ class DownloadArtifacts:
                 return
             else:
                 raise DownloadArtifactsError(
-                    f"No artifact found for workflow run '{run['id']}' in repo "
+                    f"No artifact found for workflow run '{run.id}' in repo "
                     f"'{self.repository}' for workflow '{self.workflow}' and "
                     f"branch '{self.branch}'."
                 )
 
-        downloaded_artifacts = self.download_artifacts(artifacts)
-
-        ActionIO.output(
-            "downloaded-artifacts", json.dumps(downloaded_artifacts)
-        )
-        ActionIO.output("total-downloaded-artifacts", len(downloaded_artifacts))
+        ActionIO.output("downloaded-artifacts", json.dumps(artifacts))
+        ActionIO.output("total-downloaded-artifacts", len(artifacts))
 
         Console.log("Downloading artifacts completed successfully ✅.")
 
+    async def __aenter__(self) -> "DownloadArtifacts":
+        await self.api.__aenter__()
+        return self
 
-def main():
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Optional[bool]:
+        return await self.api.__aexit__(exc_type, exc_value, traceback)
+
+
+async def main() -> NoReturn:
     try:
-        download = DownloadArtifacts()
-        download.run()
+        async with DownloadArtifacts() as download:
+            await download.run()
         sys.exit(0)
     except DownloadArtifactsError as e:
         Console.error(f"{e} ❌.")
@@ -348,4 +349,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
