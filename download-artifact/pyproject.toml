@@ -10,8 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pontos = ">=22.9.6"
-python-dateutil = "^2.8.2"
+pontos = ">=22.12.2"
 
 [tool.poetry.dev-dependencies]
 autohooks-plugin-pylint = ">=22.8.0"

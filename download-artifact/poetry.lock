@@ -315,7 +315,7 @@ test = ["appdirs (==1.4.4)", "pytest (>=7.2)", "pytest-cov (>=4)", "pytest-mock 
 
 [[package]]
 name = "pontos"
-version = "22.12.0"
+version = "22.12.2"
 description = "Common utilities and tools maintained by Greenbone Networks"
 category = "main"
 optional = false
@@ -325,6 +325,7 @@ python-versions = ">=3.7,<4.0"
 colorful = ">=0.5.4,<0.6.0"
 httpx = {version = ">=0.23.0,<0.24.0", extras = ["http2"]}
 packaging = ">=20.3"
+python-dateutil = ">=2.8.2,<3.0.0"
 rich = ">=12.4.4,<13.0.0"
 tomlkit = ">=0.5.11"
 
@@ -595,8 +596,8 @@ platformdirs = [
     {file = "platformdirs-2.6.0.tar.gz", hash = "sha256:b46ffafa316e6b83b47489d240ce17173f123a9b9c83282141c3daf26ad9ac2e"},
 ]
 pontos = [
-    {file = "pontos-22.12.0-py3-none-any.whl", hash = "sha256:360eb2eeeb4d6dde34ad5763f87df191a78b0cbbf433ff7a14dca72f630a9bd4"},
-    {file = "pontos-22.12.0.tar.gz", hash = "sha256:80df7c831eed3c5bc7864fe2f2cc010f610673e2de53099bc4d4efe5450f8b2d"},
+    {file = "pontos-22.12.2-py3-none-any.whl", hash = "sha256:a11659dfaf0a1428f65e6f1c788a13a02e15683af3c22a1263bba5cfffa005be"},
+    {file = "pontos-22.12.2.tar.gz", hash = "sha256:2621e537df9f38f35c4c7696b826a6db25acc80675f2c0228a80c9b23160f05f"},
 ]
 pygments = [
     {file = "Pygments-2.13.0-py3-none-any.whl", hash = "sha256:f643f331ab57ba3c9d89212ee4a2dabc6e94f117cf4eefde99a0574720d14c42"},
