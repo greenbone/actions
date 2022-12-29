@@ -7,8 +7,8 @@ inputs:
     description: "Github user token, that is legitimated to set the lock."
     required: true
   lock:
-    description: "Lock or unlock (Options: lock, unlock)? Default: lock"
-    default: "lock"
+    description: "Lock or unlock (Options: true, false)? Default: true"
+    default: "true"
     required: true
   repository:
     description: "What repository branch should be locked? Defaults to the executing repository."
@@ -41,10 +41,10 @@ runs:
     shell: bash
   - name: lock/unlock?
     run: |
-      if [[ "${{inputs.lock}}" == "lock" ]];
+      if [[ "${{inputs.lock}}" == "true" ]];
       then
         echo "LOCK_OPT=--lock" >> $GITHUB_ENV
-      elif [[ "${{inputs.lock}}" == "unlock" ]];
+      elif [[ "${{inputs.lock}}" == "false" ]];
       then
         echo "LOCK_OPT=--no-lock" >> $GITHUB_ENV
       else
