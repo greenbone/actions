@@ -40,7 +40,7 @@ def is_newer_run(run: WorkflowRun, date: datetime) -> bool:
     return run.created_at > date
 
 
-def parse_int(value: str) -> int | None:
+def parse_int(value: str) -> Optional[int]:
     try:
         return int(value)
     except (ValueError, TypeError):
