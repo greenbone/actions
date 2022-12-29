@@ -253,6 +253,8 @@ class DownloadArtifacts:
                     f"'{destination_dir}'."
                 )
 
+                f.flush()
+
                 zipfile = ZipFile(temp_file)
                 for zipinfo in zipfile.infolist():
                     file_path = destination_dir / zipinfo.filename
