@@ -1,0 +1,61 @@
+name: "Lock branch action"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
+description: "An action that locks the target branch and prevents pushing on it."
+
+inputs:
+  github-token:
+    description: "Github user token, that is legitimated to set the lock."
+    required: true
+  lock:
+    description: "Lock or unlock (Options: true, false)? Default: true"
+    default: "true"
+    required: true
+  repository:
+    description: "What repository branch should be locked? Defaults to the executing repository."
+    default: ${{ github.repository }}
+    required: true
+  branch:
+    description: "Branch that should be locked. Default: main"
+    default: 'main'
+    required: true
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+  - name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: 3.9
+  - name: Install pontos
+    run: |
+      apt-get update && apt-get --assume-yes install python3-venv wget
+      python3 -m venv .venv
+      . .venv/bin/activate
+      python -m pip install --upgrade pip
+      python -m pip install --upgrade pontos
+      wget https://github.com/greenbone/pontos/raw/main/scripts/github/lock-branch.py -O ~/lock-branch.py
+    shell: bash
+  - name: lock/unlock?
+    run: |
+      if [[ "${{inputs.lock}}" == "true" ]];
+      then
+        echo "LOCK_OPT=--lock" >> $GITHUB_ENV
+      elif [[ "${{inputs.lock}}" == "false" ]];
+      then
+        echo "LOCK_OPT=--no-lock" >> $GITHUB_ENV
+      else
+        echo "LOCK_OPT=--no-lock" >> $GITHUB_ENV
+      fi
+    shell: bash
+    # in case of blubber input let the branch be unlocked!
+  - name: Prepare release and store the version
+    run: |
+      . .venv/bin/activate
+      pontos-github-script ~/lock-branch.py ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.LOCK_OPT }}
+    shell: bash
+    env:
+      GITHUB_TOKEN: ${{ inputs.github-token }}
