@@ -149,6 +149,7 @@ class DownloadArtifacts:
                     self.workflow,
                     branch=self.branch,
                     status=WorkflowRunStatus.SUCCESS,
+                    exclude_pull_requests=True,
                 )
                 if not self.workflow_events
                 or is_event(run, self.workflow_events)
