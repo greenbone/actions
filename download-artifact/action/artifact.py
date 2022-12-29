@@ -234,7 +234,7 @@ class DownloadArtifacts:
                 end=" ",
             )
 
-            with temp_file.open("wb", encoding="utf8") as f:
+            with temp_file.open("wb") as f:
                 try:
                     async with self.api.artifacts.download(
                         self.repository, artifact.id
