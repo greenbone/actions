@@ -249,6 +249,9 @@ class DownloadArtifacts:
                         f"Failed to download '{artifact.name}' with ID "
                         f"{artifact.id}"
                     ) from e
+                finally:
+                    # add a newline to the print output
+                    print()
 
                 Console.log(
                     f"Extracting artifact '{artifact.name}' to "
