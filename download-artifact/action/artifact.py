@@ -25,8 +25,7 @@ import tempfile
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from types import TracebackType
-from typing import Generator, Iterable, List, NoReturn, Optional, Type, Union
+from typing import Generator, Iterable, List, NoReturn, Optional, Union
 from zipfile import ZipFile
 
 import httpx
@@ -280,68 +279,56 @@ class DownloadArtifacts:
                 f"'{self.download_path}' 🚀."
             )
 
-        run = await self.get_newest_workflow_run()
+        async with self.api:
+            run = await self.get_newest_workflow_run()
 
-        if not run:
-            if self.allow_not_found:
-                Console.log("No workflow run found.")
-                return
-            else:
-                raise DownloadArtifactsError("No workflow run found.")
+            if not run:
+                if self.allow_not_found:
+                    Console.log("No workflow run found.")
+                    return
+                else:
+                    raise DownloadArtifactsError("No workflow run found.")
 
-        Console.log(f"Using workflow run with ID {run.id} {run.html_url}")
+            Console.log(f"Using workflow run with ID {run.id} {run.html_url}")
 
-        try:
-            tasks = [
-                asyncio.create_task(self.download_artifact(artifact))
-                async for artifact in self.api.artifacts.get_workflow_run_artifacts(
-                    self.repository, run.id
-                )
-            ]
-        except httpx.HTTPStatusError as e:
-            raise DownloadArtifactsError(
-                f"Could not find workflow run artifacts. {e}"
-            ) from e
-
-        artifacts = []
-        for task in asyncio.as_completed(tasks):
-            artifact = await task
-            if artifact:
-                artifacts.append(artifact.name)
-
-        if not artifacts:
-            if self.allow_not_found:
-                Console.log("No artifact found.")
-                return
-            else:
+            try:
+                tasks = [
+                    asyncio.create_task(self.download_artifact(artifact))
+                    async for artifact in self.api.artifacts.get_workflow_run_artifacts(
+                        self.repository, run.id
+                    )
+                ]
+            except httpx.HTTPStatusError as e:
                 raise DownloadArtifactsError(
-                    f"No artifact found for workflow run '{run.id}' in repo "
-                    f"'{self.repository}' for workflow '{self.workflow}' and "
-                    f"branch '{self.branch}'."
-                )
+                    f"Could not find workflow run artifacts. {e}"
+                ) from e
+
+            artifacts = []
+            for task in asyncio.as_completed(tasks):
+                artifact = await task
+                if artifact:
+                    artifacts.append(artifact.name)
+
+            if not artifacts:
+                if self.allow_not_found:
+                    Console.log("No artifact found.")
+                    return
+                else:
+                    raise DownloadArtifactsError(
+                        f"No artifact found for workflow run '{run.id}' in "
+                        f"repo '{self.repository}' for workflow "
+                        f"'{self.workflow}' and branch '{self.branch}'."
+                    )
 
         ActionIO.output("downloaded-artifacts", json.dumps(artifacts))
         ActionIO.output("total-downloaded-artifacts", len(artifacts))
 
         Console.log("Downloading artifacts completed successfully ✅.")
 
-    async def __aenter__(self) -> "DownloadArtifacts":
-        await self.api.__aenter__()
-        return self
 
-    async def __aexit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
-    ) -> Optional[bool]:
-        return await self.api.__aexit__(exc_type, exc_value, traceback)
-
-
-async def main() -> NoReturn:
+def main() -> NoReturn:
     try:
-        async with DownloadArtifacts() as download:
-            await download.run()
+        asyncio.run(DownloadArtifacts().run())
         sys.exit(0)
     except DownloadArtifactsError as e:
         Console.error(f"{e} ❌.")
@@ -349,4 +336,4 @@ async def main() -> NoReturn:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

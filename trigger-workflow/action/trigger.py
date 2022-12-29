@@ -19,8 +19,7 @@ import asyncio
 import json
 import sys
 from datetime import datetime, timedelta, timezone
-from types import TracebackType
-from typing import Dict, Iterable, Optional, Type
+from typing import Dict, Iterable, NoReturn, Optional
 
 import httpx
 from pontos.github.actions.core import ActionIO, Console
@@ -228,26 +227,14 @@ class Trigger:
             ) from None
 
     async def run(self) -> None:
-        await self.trigger_workflow()
-        await self.wait_for_completion()
-
-    async def __aenter__(self) -> "Trigger":
-        await self.api.__aenter__()
-        return self
-
-    async def __aexit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
-    ) -> Optional[bool]:
-        return await self.api.__aexit__(exc_type, exc_value, traceback)
+        async with self.api:
+            await self.trigger_workflow()
+            await self.wait_for_completion()
 
 
-async def main() -> None:
+def main() -> NoReturn:
     try:
-        async with Trigger() as trigger:
-            trigger.run()
+        asyncio.run(Trigger().run())
         sys.exit(0)
     except TriggerError as e:
         Console.error(f"{e} ❌.")
@@ -255,4 +242,4 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
