@@ -37,7 +37,7 @@ runs:
       . .venv/bin/activate
       python -m pip install --upgrade pip
       python -m pip install --upgrade pontos
-      wget https://github.com/greenbone/pontos/blob/main/scripts/github/lock-branch.py -o ~/lock-branch.py
+      wget https://github.com/greenbone/pontos/raw/main/scripts/github/lock-branch.py -O ~/lock-branch.py
     shell: bash
   - name: lock/unlock?
     run: |
