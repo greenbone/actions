@@ -161,8 +161,9 @@ class DownloadArtifacts:
             raise DownloadArtifactsError(f"Could not find workflow. {e}") from e
 
         if self.is_debug:
+            urls = "\n".join([run.html_url for run in runs])
             Console.debug(
-                f"Workflow runs for events {self.workflow_events}: {runs}"
+                f"Workflow runs for events {self.workflow_events}:\n{urls}"
             )
 
         if not runs:
