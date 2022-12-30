@@ -87,14 +87,14 @@ with:
 - name: allow admin bypassing protection on <target> branch on <repository>
     uses: greenbone/actions/admin-bypass@v2
     with:
-      lock: "true"
+      allow: "true"
       github-token: ${{ token }}
       branch: <target>
       repository: <repository>
 - name: disable admin bypassing protection on <target> branch on <repository>
     uses: greenbone/actions/admin-bypass@v2
     with:
-      lock: "false"
+      allow: "false"
       github-token: ${{ token }}
       branch: <target>
       repository: <repository>
