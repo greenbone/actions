@@ -67,7 +67,41 @@ with:
   uses: greenbone/actions/doc-coverage-clang@v2
 ```
 
+## Branch protection
+
+```yml
+- name: lock <target> branch on <repository>
+    uses: greenbone/actions/lock-branch@v2
+    with:
+      lock: "true"
+      github-token: ${{ token }}
+      branch: <target>
+      repository: <repository>
+- name: unlock <target> branch on <repository>
+    uses: greenbone/actions/lock-branch@v2
+    with:
+      lock: "false"
+      github-token: ${{ token }}
+      branch: <target>
+      repository: <repository>
+- name: allow admin bypassing protection on <target> branch on <repository>
+    uses: greenbone/actions/admin-bypass@v2
+    with:
+      lock: "true"
+      github-token: ${{ token }}
+      branch: <target>
+      repository: <repository>
+- name: disable admin bypassing protection on <target> branch on <repository>
+    uses: greenbone/actions/admin-bypass@v2
+    with:
+      lock: "false"
+      github-token: ${{ token }}
+      branch: <target>
+      repository: <repository>
+```
+
 ## Other useful actions
+
 
 Release a project in C or JavaScript
 
