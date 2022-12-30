@@ -149,6 +149,7 @@ class DownloadArtifacts:
                     self.workflow,
                     branch=self.branch,
                     status=WorkflowRunStatus.SUCCESS,
+                    exclude_pull_requests=True,
                 )
                 if not self.workflow_events
                 or is_event(run, self.workflow_events)
@@ -160,8 +161,9 @@ class DownloadArtifacts:
             raise DownloadArtifactsError(f"Could not find workflow. {e}") from e
 
         if self.is_debug:
+            urls = "\n".join([run.html_url for run in runs])
             Console.debug(
-                f"Workflow runs for events {self.workflow_events}: {runs}"
+                f"Workflow runs for events {self.workflow_events}:\n{urls}"
             )
 
         if not runs:
@@ -247,6 +249,9 @@ class DownloadArtifacts:
                         f"Failed to download '{artifact.name}' with ID "
                         f"{artifact.id}"
                     ) from e
+                finally:
+                    # add a newline to the print output
+                    print()
 
                 Console.log(
                     f"Extracting artifact '{artifact.name}' to "
