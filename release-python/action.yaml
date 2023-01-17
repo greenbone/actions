@@ -93,15 +93,14 @@ runs:
         gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
         rm tmp.file
       shell: bash
-    - name: Prepare release and store the version
+    - name: Prepare release
       run: |
         poetry run pontos-release prepare ${{ env.PREPARE_FLAGS }}
-        echo "VERSION=$(poetry run pontos-version show)" >> $GITHUB_ENV
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: Release
+    - name: Create release
       run: |
         poetry run pontos-release release ${{ env.RELEASE_FLAGS }}
       shell: bash
@@ -110,8 +109,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
     - name: Sign assets for released version
       run: |
-        echo "Signing assets for ${{env.VERSION}}"
-        poetry run pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
+        poetry run pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }}
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
