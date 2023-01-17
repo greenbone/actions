@@ -87,6 +87,12 @@ runs:
         echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
         echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
       shell: bash
+    - name: Import gpg key from secrets
+      run: |
+        echo -e "${{ inputs.gpg-key }}" >> tmp.file
+        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+        rm tmp.file
+      shell: bash
     - name: Prepare release and store the version
       run: |
         poetry run pontos-release prepare ${{ env.PREPARE_FLAGS }}
@@ -102,12 +108,6 @@ runs:
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: Import gpg key from secrets
-      run: |
-        echo -e "${{ inputs.gpg-key }}" >> tmp.file
-        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
-        rm tmp.file
-      shell: bash
     - name: Sign assets for released version
       run: |
         echo "Signing assets for ${{env.VERSION}}"
