@@ -29,7 +29,7 @@ inputs:
     default: "patch"
   version:
     description: "Python version that should be installed"
-    default: 3.9
+    default: "3.10"
   ref:
     description: "Branch that should be released"
     default: ""
@@ -107,9 +107,14 @@ runs:
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
+    - name: Get release version
+      shell: bash
+      run: |
+        VERSION=$(poetry run pontos-version show)
+        echo "$VERSION" >> $GITHUB_ENV
     - name: Sign assets for released version
       run: |
-        poetry run pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }}
+        poetry run pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
