@@ -111,7 +111,7 @@ runs:
       shell: bash
       run: |
         VERSION=$(poetry run pontos-version show)
-        echo "$VERSION" >> $GITHUB_ENV
+        echo '"$VERSION"' >> $GITHUB_ENV
     - name: Sign assets for released version
       run: |
         poetry run pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
