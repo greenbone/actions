@@ -23,7 +23,7 @@ inputs:
     required: true
   conventional-commits:
     description: "Use conventional commits, or Changelog file."
-    default: true
+    default: "true"
   strategy:
     description: "What release strategy? ['patch', 'calendar'], default: patch"
     default: "patch"
@@ -92,6 +92,12 @@ runs:
       echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
       echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
     shell: bash
+  - name: disable admin bypassing protection on ${{ inputs.ref}} branch
+    uses: greenbone/actions/admin-bypass@v2
+    with:
+      allow: "true"
+      github-token: ${{ inputs.github-user-token }}
+      branch: ${{ inputs.ref}}
   - name: Prepare release and store the version
     run: |
       . .venv/bin/activate
@@ -109,6 +115,12 @@ runs:
     env:
       GITHUB_USER: ${{ inputs.github-user }}
       GITHUB_TOKEN: ${{ inputs.github-user-token }}
+  - name: allow admin bypassing protection on ${{ inputs.ref}} branch
+    uses: greenbone/actions/admin-bypass@v2
+    with:
+      allow: "false"
+      github-token: ${{ inputs.github-user-token }}
+      branch: ${{ inputs.ref}}
   - name: Import gpg key from secrets
     run: |
       echo -e "${{ inputs.gpg-key }}" >> tmp.file
