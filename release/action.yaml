@@ -1,6 +1,6 @@
 name: "Pontos Release Patch version"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
-description: "An action that creates a patch release [x.y.z -> x.y.z+1] for a clang project."
+description: "An action that creates a release [x.y.z -> x.y.z+1] for a project."
 
 inputs:
   github-user:
@@ -23,13 +23,16 @@ inputs:
     required: true
   conventional-commits:
     description: "Use conventional commits, or Changelog file."
-    default: true
+    default: "true"
   strategy:
     description: "What release strategy? ['patch', 'calendar'], default: patch"
     default: "patch"
+  python-version:
+    description: "Python version that should be installed"
+    default: "3.10"
   ref:
     description: "Branch that should be released"
-    default: ''
+    default: ""
 
 branding:
   icon: "package"
@@ -38,89 +41,106 @@ branding:
 runs:
   using: "composite"
   steps:
-  - name: Fetch-depth
-    run: |
-      if [[ ${{inputs.conventional-commits}} == true ]];
-      then
-        echo "FETCH_DEPTH=0" >> $GITHUB_ENV
-      else
-        echo "FETCH_DEPTH=-1" >> $GITHUB_ENV
-      fi
-    shell: bash
-  - uses: actions/checkout@v3
-    with:
-      fetch-depth: ${{ env.FETCH_DEPTH }}
-      persist-credentials: false
-      ref: ${{ inputs.ref }}
-  - name: Set up Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: 3.9
-  - name: Install pontos
-    run: |
-      apt-get update && apt-get --assume-yes install python3-venv
-      python3 -m venv .venv
-      . .venv/bin/activate
-      python -m pip install --upgrade pip
-      python -m pip install --upgrade pontos
-    shell: bash
-  - name: Set git name, mail and origin
-    run: |
-      git config --global user.name "${{ inputs.github-user }}"
-      git config --global user.email "${{ inputs.github-user-mail }}"
-      git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
-    shell: bash
-  - name: Parse inputs
-    run: |
-      case ${{inputs.strategy}} in
-        calendar)
-          PREPARE_FLAGS="--${{ inputs.strategy }}"
-          ;;
-        patch)
-          PREPARE_FLAGS="--${{ inputs.strategy }}"
-          ;;
-        *)
-          PREPARE_FLAGS="--patch"
-          ;;
-      esac
+    - name: Fetch-depth
+      run: |
+        if [[ ${{inputs.conventional-commits}} == true ]];
+        then
+          echo "FETCH_DEPTH=0" >> $GITHUB_ENV
+        else
+          echo "FETCH_DEPTH=1" >> $GITHUB_ENV
+        fi
+      shell: bash
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: ${{ env.FETCH_DEPTH }}
+        persist-credentials: false
+        ref: ${{ inputs.ref }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install pontos
+      run: |
+        apt-get update && apt-get --assume-yes install python3-venv
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade pontos
+      shell: bash
+    - name: Set git name, mail and origin
+      run: |
+        git config --global user.name "${{ inputs.github-user }}"
+        git config --global user.email "${{ inputs.github-user-mail }}"
+        git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+      shell: bash
+    - name: Parse inputs
+      run: |
+        case ${{inputs.strategy}} in
+          calendar)
+            PREPARE_FLAGS="--${{ inputs.strategy }}"
+            ;;
+          patch)
+            PREPARE_FLAGS="--${{ inputs.strategy }}"
+            ;;
+          *)
+            PREPARE_FLAGS="--patch"
+            ;;
+        esac
 
-      if [[ ${{inputs.conventional-commits}} == true ]];
-      then
-        PREPARE_FLAGS="${PREPARE_FLAGS} -CC"
-        RELEASE_FLAGS="-CC"
-      fi
-      echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
-      echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
-    shell: bash
-  - name: Prepare release and store the version
-    run: |
-      . .venv/bin/activate
-      pontos-release prepare ${{ env.PREPARE_FLAGS }}
-      echo "VERSION=$(pontos-version show)" >> $GITHUB_ENV
-    shell: bash
-    env:
-      GITHUB_USER: ${{ inputs.github-user }}
-      GITHUB_TOKEN: ${{ inputs.github-user-token }}
-  - name: Release
-    run: |
-      . .venv/bin/activate
-      pontos-release release ${{ env.RELEASE_FLAGS }}
-    shell: bash
-    env:
-      GITHUB_USER: ${{ inputs.github-user }}
-      GITHUB_TOKEN: ${{ inputs.github-user-token }}
-  - name: Import gpg key from secrets
-    run: |
-      echo -e "${{ inputs.gpg-key }}" >> tmp.file
-      gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
-      rm tmp.file
-    shell: bash
-  - name: Sign assets for released version
-    run: |
-      echo "Signing assets for ${{env.VERSION}}"
-      . .venv/bin/activate
-      pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
-    shell: bash
-    env:
-      GITHUB_USER: ${{ inputs.github-user }}
-      GITHUB_TOKEN: ${{ inputs.github-user-token }}
+        if [[ ${{inputs.conventional-commits}} == true ]];
+        then
+          PREPARE_FLAGS="${PREPARE_FLAGS} -CC"
+          RELEASE_FLAGS="-CC"
+        fi
+        echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
+        echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: allow admin users bypassing protection on ${{ inputs.ref}} branch
+      uses: greenbone/actions/admin-bypass@v2
+      with:
+        allow: "true"
+        github-token: ${{ inputs.github-user-token }}
+        branch: ${{ inputs.ref}}
+    - name: Prepare release
+      run: |
+        . .venv/bin/activate
+        pontos-release prepare ${{ env.PREPARE_FLAGS }}
+      shell: bash
+      env:
+        GITHUB_USER: ${{ inputs.github-user }}
+        GITHUB_TOKEN: ${{ inputs.github-user-token }}
+    - name: Get release version
+      shell: bash
+      run: |
+        . .venv/bin/activate
+        VERSION=$(pontos-version show)
+        echo '"$VERSION"' >> $GITHUB_ENV
+    - name: Create release
+      run: |
+        . .venv/bin/activate
+        pontos-release release ${{ env.RELEASE_FLAGS }}
+      shell: bash
+      env:
+        GITHUB_USER: ${{ inputs.github-user }}
+        GITHUB_TOKEN: ${{ inputs.github-user-token }}
+    - name: disable bypassing protection on ${{ inputs.ref}} branch for admin users
+      uses: greenbone/actions/admin-bypass@v2
+      with:
+        allow: "false"
+        github-token: ${{ inputs.github-user-token }}
+        branch: ${{ inputs.ref}}
+    - name: Import gpg key from secrets
+      run: |
+        echo -e "${{ inputs.gpg-key }}" >> tmp.file
+        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+        rm tmp.file
+      shell: bash
+    - name: Sign assets for released version
+      run: |
+        echo "Signing assets for ${{env.VERSION}}"
+        . .venv/bin/activate
+        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
+      shell: bash
+      env:
+        GITHUB_USER: ${{ inputs.github-user }}
+        GITHUB_TOKEN: ${{ inputs.github-user-token }}

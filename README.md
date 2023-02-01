@@ -32,17 +32,17 @@ We offer several actions for linting, formatting, building and testing packages/
 ```yml
 - name: Install JavaScript and the project [npm]
   uses: greenbone/actions/install-npm@v2
-with:
+  with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
 - name: Install and check Lint and Format in JavaScript Projects [npm]
   uses: greenbone/actions/lint-npm@v2
-with:
+  with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
 - name: Install, Build and Test JavaScript Projects [npm]
   uses: greenbone/actions/test-npm@v2
-with:
+  with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
 - name: Run coverage for javascript
@@ -54,7 +54,7 @@ with:
 ```yml
 - name: Check Lint and Format in GoLang Projects
   uses: greenbone/actions/lint-golang@v2
-with:
+  with:
     version: 3.9
     generate: go generate # mocks, docs, etc
     golangci-lint: v1.50 # specify golangci-lint version
@@ -71,37 +71,36 @@ with:
 
 ```yml
 - name: lock <target> branch on <repository>
-    uses: greenbone/actions/lock-branch@v2
-    with:
-      lock: "true"
-      github-token: ${{ token }}
-      branch: <target>
-      repository: <repository>
+  uses: greenbone/actions/lock-branch@v2
+  with:
+    lock: "true"
+    github-token: ${{ token }}
+    branch: <target>
+    repository: <repository>
 - name: unlock <target> branch on <repository>
-    uses: greenbone/actions/lock-branch@v2
-    with:
-      lock: "false"
-      github-token: ${{ token }}
-      branch: <target>
-      repository: <repository>
-- name: allow admin bypassing protection on <target> branch on <repository>
-    uses: greenbone/actions/admin-bypass@v2
-    with:
-      allow: "true"
-      github-token: ${{ token }}
-      branch: <target>
-      repository: <repository>
-- name: disable admin bypassing protection on <target> branch on <repository>
-    uses: greenbone/actions/admin-bypass@v2
-    with:
-      allow: "false"
-      github-token: ${{ token }}
-      branch: <target>
-      repository: <repository>
+  uses: greenbone/actions/lock-branch@v2
+  with:
+    lock: "false"
+    github-token: ${{ token }}
+    branch: <target>
+    repository: <repository>
+- name: allow admin users bypassing protection on <target> branch on <repository>
+  uses: greenbone/actions/admin-bypass@v2
+  with:
+    allow: "true"
+    github-token: ${{ token }}
+    branch: <target>
+    repository: <repository>
+- name: disable bypassing protection on <target> branch on <repository> for admin users
+  uses: greenbone/actions/admin-bypass@v2
+  with:
+    allow: "false"
+    github-token: ${{ token }}
+    branch: <target>
+    repository: <repository>
 ```
 
 ## Other useful actions
-
 
 Release a project in C or JavaScript
 

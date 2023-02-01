@@ -23,7 +23,7 @@ inputs:
     required: true
   conventional-commits:
     description: "Use conventional commits, or Changelog file."
-    default: true
+    default: "true"
   strategy:
     description: "What release strategy? ['patch', 'calendar'], default: patch"
     default: "patch"
@@ -87,22 +87,15 @@ runs:
         echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
         echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
       shell: bash
-    - name: Import gpg key from secrets
-      run: |
-        echo -e "${{ inputs.gpg-key }}" >> tmp.file
-        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
-        rm tmp.file
-      shell: bash
+    - name: disable bypassing protection on ${{ inputs.ref}} branch for admin users
+      uses: greenbone/actions/admin-bypass@v2
+      with:
+        allow: "true"
+        github-token: ${{ inputs.github-user-token }}
+        branch: ${{ inputs.ref}}
     - name: Prepare release
       run: |
         poetry run pontos-release prepare ${{ env.PREPARE_FLAGS }}
-      shell: bash
-      env:
-        GITHUB_USER: ${{ inputs.github-user }}
-        GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: Create release
-      run: |
-        poetry run pontos-release release ${{ env.RELEASE_FLAGS }}
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
@@ -112,6 +105,25 @@ runs:
       run: |
         VERSION=$(poetry run pontos-version show)
         echo '"$VERSION"' >> $GITHUB_ENV
+    - name: Create release
+      run: |
+        poetry run pontos-release release ${{ env.RELEASE_FLAGS }}
+      shell: bash
+      env:
+        GITHUB_USER: ${{ inputs.github-user }}
+        GITHUB_TOKEN: ${{ inputs.github-user-token }}
+    - name: disable bypassing protection on ${{ inputs.ref}} branch for admin users
+      uses: greenbone/actions/admin-bypass@v2
+      with:
+        allow: "false"
+        github-token: ${{ inputs.github-user-token }}
+        branch: ${{ inputs.ref}}
+    - name: Import gpg key from secrets
+      run: |
+        echo -e "${{ inputs.gpg-key }}" >> tmp.file
+        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+        rm tmp.file
+      shell: bash
     - name: Sign assets for released version
       run: |
         poetry run pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
