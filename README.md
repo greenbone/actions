@@ -84,14 +84,14 @@ We offer several actions for linting, formatting, building and testing packages/
     github-token: ${{ token }}
     branch: <target>
     repository: <repository>
-- name: allow admin bypassing protection on <target> branch on <repository>
+- name: allow admin users bypassing protection on <target> branch on <repository>
   uses: greenbone/actions/admin-bypass@v2
   with:
     allow: "true"
     github-token: ${{ token }}
     branch: <target>
     repository: <repository>
-- name: disable admin bypassing protection on <target> branch on <repository>
+- name: disable bypassing protection on <target> branch on <repository> for admin users
   uses: greenbone/actions/admin-bypass@v2
   with:
     allow: "false"
@@ -101,7 +101,6 @@ We offer several actions for linting, formatting, building and testing packages/
 ```
 
 ## Other useful actions
-
 
 Release a project in C or JavaScript
 
