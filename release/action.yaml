@@ -114,7 +114,8 @@ runs:
       run: |
         . .venv/bin/activate
         VERSION=$(pontos-version show)
-        echo '"$VERSION"' >> $GITHUB_ENV
+        echo "Releasing $VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Create release
       run: |
         . .venv/bin/activate
