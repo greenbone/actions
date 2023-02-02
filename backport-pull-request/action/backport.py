@@ -39,6 +39,7 @@ class Backport:
         self.env = GitHubEnvironment()
         self.event = GitHubEvent(self.env.event_path)
         self.api = GitHubRESTApi(self.token, self.env.api_url)
+        self.username = ActionIO.input("username") or self.env.actor
 
     def backport_branch_name(
         self, pull_request: str, destination_branch: str
@@ -181,8 +182,8 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         if labels and backport_config:
             name = self.env.actor
-            email = f"{name}@users.noreply.github.com"
-            git.config("user.name", name, scope=ConfigScope.LOCAL)
+            email = f"{self.username}@users.noreply.github.com"
+            git.config("user.name", self.username, scope=ConfigScope.LOCAL)
             git.config("user.email", email, scope=ConfigScope.LOCAL)
 
         for bp in backport_config:
