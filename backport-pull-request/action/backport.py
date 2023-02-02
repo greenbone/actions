@@ -17,6 +17,7 @@
 
 import os
 import sys
+from pathlib import Path
 from typing import NoReturn
 
 import httpx
@@ -145,6 +146,9 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         git = Git()
         if not (workspace / ".git").exists():
+            workspace = Path("/tmp/checkout")
+            workspace.mkdir(parents=True, exist_ok=True)
+
             Console.log(
                 f"Cloning repository {self.env.repository} into {workspace}"
             )
@@ -203,8 +207,20 @@ and create a new pull request where the base is `{destination_branch}` and compa
         os.chdir(workspace)
 
         email = f"{self.username}@users.noreply.github.com"
-        git.config("user.name", self.username, scope=ConfigScope.LOCAL)
-        git.config("user.email", email, scope=ConfigScope.LOCAL)
+        try:
+            git.config("user.name", self.username, scope=ConfigScope.LOCAL)
+            git.config("user.email", email, scope=ConfigScope.LOCAL)
+        except GitError as e:
+            Console.warning(f"Error while setting git config. {e}")
+
+            config = workspace / ".git" / "config"
+            config.write_text(
+                f"""[user]
+        name = {self.username}
+        email = {email}
+""",
+                encoding="utf8",
+            )
 
         is_backport = False
         for bp in backport_config:
