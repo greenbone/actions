@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import sys
 from typing import NoReturn
 
@@ -151,18 +152,20 @@ and create a new pull request where the base is `{destination_branch}` and compa
             url = f"https://{self.env.actor}:{self.token}@github.com/{self.env.repository}.git"
             git.clone(url, workspace)
 
+            Console.log(
+                f"Cloned repository {self.env.repository} into {workspace}"
+            )
+
+            with Console.group(f"Workspace directory content {workspace}"):
+                for path in workspace.iterdir():
+                    Console.log(path)
+
             # add extra check to be safe
             if not (workspace / ".git").exists():
                 Console.error(
                     "Something went wrong while cloning the repository."
                 )
-                with Console.group(f"Workspace directory content {workspace}"):
-                    for path in workspace.iterdir():
-                        Console.log(path)
-
                 return 1
-
-        git = Git(cwd=workspace)
 
         config_path = workspace / config_file
         if not config_path.is_file():
@@ -195,6 +198,9 @@ and create a new pull request where the base is `{destination_branch}` and compa
         if not labels or not backport_config:
             Console.log("Nothing to backport.")
             return 0
+
+        git = Git(cwd=workspace)
+        os.chdir(workspace)
 
         email = f"{self.username}@users.noreply.github.com"
         git.config("user.name", self.username, scope=ConfigScope.LOCAL)
