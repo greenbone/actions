@@ -105,7 +105,7 @@ runs:
       run: |
         VERSION=$(poetry run pontos-version show)
         echo "Releasing $VERSION"
-        echo '"VERSION=$VERSION"' >> $GITHUB_ENV
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Create release
       run: |
         poetry run pontos-release release ${{ env.RELEASE_FLAGS }}
