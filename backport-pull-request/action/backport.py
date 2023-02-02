@@ -174,19 +174,21 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         backport_config = config.load()
 
-        is_backport = False
         labels = [label.name for label in self.event.pull_request.labels]
 
         with Console.group("Backport config"):
             Console.log(f"Labels: {labels}")
             Console.log(f"Config: {backport_config}")
 
-        if labels and backport_config:
-            name = self.env.actor
-            email = f"{self.username}@users.noreply.github.com"
-            git.config("user.name", self.username, scope=ConfigScope.LOCAL)
-            git.config("user.email", email, scope=ConfigScope.LOCAL)
+        if not labels or not backport_config:
+            Console.log("Nothing to backport.")
+            return 0
 
+        email = f"{self.username}@users.noreply.github.com"
+        git.config("user.name", self.username, scope=ConfigScope.LOCAL)
+        git.config("user.email", email, scope=ConfigScope.LOCAL)
+
+        is_backport = False
         for bp in backport_config:
             if bp.label in labels and bp.source == self.env.base_ref:
                 is_backport = True
