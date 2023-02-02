@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
+import tempfile
 from pathlib import Path
 from typing import NoReturn
 
@@ -43,6 +43,7 @@ class Backport:
         self.event = GitHubEvent(self.env.event_path)
         self.api = GitHubRESTApi(self.token, self.env.api_url)
         self.username = ActionIO.input("username") or self.env.actor
+        self.git = Git(cwd=self.env.workspace)
 
     def backport_branch_name(
         self, pull_request: str, destination_branch: str
@@ -52,7 +53,9 @@ class Backport:
     def backport_branch_exists(self, branch_name: str) -> bool:
         return self.api.branch_exists(self.env.repository, branch_name)
 
-    def backport_pull_request(self, pull_request: str, destination_branch: str):
+    def backport_pull_request(
+        self, pull_request: str, destination_branch: str
+    ) -> None:
         new_branch = self.backport_branch_name(pull_request, destination_branch)
 
         # check if backport branch already exists. return if it exists
@@ -60,20 +63,18 @@ class Backport:
             Console.log(f"Backport branch {new_branch} exists. Stopping here.")
             return
 
-        git = Git(cwd=self.env.workspace)
-
         head = self.env.head_ref
         head_sha = self.event.pull_request.head.sha
         base_sha = self.event.pull_request.base.sha
 
         # checkout new branch
         Console.log(f"Creating branch {new_branch}")
-        git.create_branch(new_branch, start_point=head_sha)
+        self.git.create_branch(new_branch, start_point=head_sha)
 
         # rebase
         Console.log(f"Rebasing {new_branch} onto {destination_branch}")
         try:
-            git.rebase(
+            self.git.rebase(
                 base_sha,
                 head=new_branch,
                 onto=f"origin/{destination_branch}",
@@ -106,7 +107,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         # push
         Console.log(f"Pushing {new_branch}")
-        git.push(remote="origin", branch=new_branch)
+        self.git.push(remote="origin", branch=new_branch)
 
         # create PR
         title = f"[Backport #{pull_request}] {self.event.pull_request.title}"
@@ -144,9 +145,9 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         workspace = self.env.workspace.absolute()
 
-        git = Git()
         if not (workspace / ".git").exists():
-            workspace = Path("/tmp/checkout")
+            temp_dir = tempfile.TemporaryDirectory()
+            workspace = Path(temp_dir.name)
             workspace.mkdir(parents=True, exist_ok=True)
 
             Console.log(
@@ -154,7 +155,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
             )
 
             url = f"https://{self.env.actor}:{self.token}@github.com/{self.env.repository}.git"
-            git.clone(url, workspace)
+            self.git.clone(url, workspace)
 
             Console.log(
                 f"Cloned repository {self.env.repository} into {workspace}"
@@ -170,6 +171,8 @@ and create a new pull request where the base is `{destination_branch}` and compa
                     "Something went wrong while cloning the repository."
                 )
                 return 1
+
+        self.git.cwd = workspace
 
         config_path = workspace / config_file
         if not config_path.is_file():
@@ -203,13 +206,10 @@ and create a new pull request where the base is `{destination_branch}` and compa
             Console.log("Nothing to backport.")
             return 0
 
-        git = Git(cwd=workspace)
-        os.chdir(workspace)
-
         email = f"{self.username}@users.noreply.github.com"
         try:
-            git.config("user.name", self.username, scope=ConfigScope.LOCAL)
-            git.config("user.email", email, scope=ConfigScope.LOCAL)
+            self.git.config("user.name", self.username, scope=ConfigScope.LOCAL)
+            self.git.config("user.email", email, scope=ConfigScope.LOCAL)
         except GitError as e:
             Console.warning(f"Error while setting git config. {e}")
 
