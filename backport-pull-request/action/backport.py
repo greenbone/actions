@@ -125,8 +125,6 @@ and create a new pull request where the base is `{destination_branch}` and compa
             ) from None
 
     def run(self) -> int:
-        Console.debug(self.event)
-
         pull_request = self.event.pull_request
 
         if not pull_request:
@@ -138,17 +136,31 @@ and create a new pull request where the base is `{destination_branch}` and compa
         if not self.token:
             Console.error("Authentication token not provided as input.")
 
-        workspace = self.env.workspace
-        if not workspace:
+        if not self.env.workspace:
             Console.error("GITHUB_WORKSPACE not set.")
             return 1
 
+        workspace = self.env.workspace.absolute()
+
         git = Git()
         if not (workspace / ".git").exists():
-            Console.log(f"Cloning repository {self.env.repository}")
+            Console.log(
+                f"Cloning repository {self.env.repository} into {workspace}"
+            )
 
             url = f"https://{self.env.actor}:{self.token}@github.com/{self.env.repository}.git"
             git.clone(url, workspace)
+
+            # add extra check to be safe
+            if not (workspace / ".git").exists():
+                Console.error(
+                    "Something went wrong while cloning the repository."
+                )
+                with Console.group(f"Workspace directory content {workspace}"):
+                    for path in workspace.iterdir():
+                        Console.log(path)
+
+                return 1
 
         git = Git(cwd=workspace)
 
