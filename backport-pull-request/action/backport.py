@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+from typing import NoReturn
 
 import httpx
 from pontos.git import ConfigScope, Git, GitError
@@ -211,8 +212,10 @@ and create a new pull request where the base is `{destination_branch}` and compa
         if not is_backport:
             Console.log("Nothing to backport.")
 
+        return 0
 
-def main():
+
+def main() -> NoReturn:
     backport = Backport()
 
     with Console.group("Settings"):

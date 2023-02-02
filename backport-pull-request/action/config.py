@@ -66,7 +66,7 @@ class Config:
                     f"Missing destination entry in [backport.{key}] section."
                 )
 
-    def load(self) -> Iterator[BackportConfig]:
+    def load(self) -> Iterable[BackportConfig]:
         backports_data = self._load_backports()
         if not backports_data:
             return []
