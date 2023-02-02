@@ -18,7 +18,7 @@
 import sys
 
 import httpx
-from pontos.git import Git, GitError
+from pontos.git import ConfigScope, Git, GitError
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.actions.event import GitHubEvent
@@ -182,8 +182,8 @@ and create a new pull request where the base is `{destination_branch}` and compa
         if labels and backport_config:
             name = self.env.actor
             email = f"{name}@users.noreply.github.com"
-            git.config("user.name", name)
-            git.config("user.email", email)
+            git.config("user.name", name, scope=ConfigScope.LOCAL)
+            git.config("user.email", email, scope=ConfigScope.LOCAL)
 
         for bp in backport_config:
             if bp.label in labels and bp.source == self.env.base_ref:
