@@ -150,9 +150,9 @@ and create a new pull request where the base is `{destination_branch}` and compa
             url = f"https://{self.env.actor}:{self.token}@github.com/{self.env.repository}.git"
             git.clone(url, workspace)
 
-        git.cwd = self.env.workspace
+        git = Git(cwd=workspace)
 
-        config_path = self.env.workspace / config_file
+        config_path = workspace / config_file
         if not config_path.is_file():
             Console.warning(
                 f"No {config_file} file found for backport configuration."
