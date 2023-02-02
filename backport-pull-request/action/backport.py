@@ -16,9 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+from typing import NoReturn
 
 import httpx
-from pontos.git import Git, GitError
+from pontos.git import ConfigScope, Git, GitError
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.actions.event import GitHubEvent
@@ -39,6 +40,7 @@ class Backport:
         self.env = GitHubEnvironment()
         self.event = GitHubEvent(self.env.event_path)
         self.api = GitHubRESTApi(self.token, self.env.api_url)
+        self.username = ActionIO.input("username") or self.env.actor
 
     def backport_branch_name(
         self, pull_request: str, destination_branch: str
@@ -148,9 +150,9 @@ and create a new pull request where the base is `{destination_branch}` and compa
             url = f"https://{self.env.actor}:{self.token}@github.com/{self.env.repository}.git"
             git.clone(url, workspace)
 
-        git.cwd = self.env.workspace
+        git = Git(cwd=workspace)
 
-        config_path = self.env.workspace / config_file
+        config_path = workspace / config_file
         if not config_path.is_file():
             Console.warning(
                 f"No {config_file} file found for backport configuration."
@@ -172,19 +174,21 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         backport_config = config.load()
 
-        is_backport = False
         labels = [label.name for label in self.event.pull_request.labels]
 
         with Console.group("Backport config"):
             Console.log(f"Labels: {labels}")
             Console.log(f"Config: {backport_config}")
 
-        if labels and backport_config:
-            name = self.env.actor
-            email = f"{name}@users.noreply.github.com"
-            git.config("user.name", name)
-            git.config("user.email", email)
+        if not labels or not backport_config:
+            Console.log("Nothing to backport.")
+            return 0
 
+        email = f"{self.username}@users.noreply.github.com"
+        git.config("user.name", self.username, scope=ConfigScope.LOCAL)
+        git.config("user.email", email, scope=ConfigScope.LOCAL)
+
+        is_backport = False
         for bp in backport_config:
             if bp.label in labels and bp.source == self.env.base_ref:
                 is_backport = True
@@ -210,8 +214,10 @@ and create a new pull request where the base is `{destination_branch}` and compa
         if not is_backport:
             Console.log("Nothing to backport.")
 
+        return 0
 
-def main():
+
+def main() -> NoReturn:
     backport = Backport()
 
     with Console.group("Settings"):

@@ -8,6 +8,8 @@ inputs:
   token:
     description: "GitHub Token for authentication"
     required: true
+  username:
+    description: "GitHub user name to use for the backported commits. By default ${{ github.actor }} is used."
 
 runs:
   using: "docker"
