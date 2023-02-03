@@ -51,7 +51,7 @@ class Backport(AsyncContextManager):
     def backport_branch_name(
         self, pull_request: str, destination_branch: str
     ) -> str:
-        return f"backport/{destination_branch}/pr-{pull_request}"
+        return f"backport/pr-{pull_request}/{destination_branch}"
 
     def is_merge_commit(self, commit: str) -> bool:
         # if a commit has two parents it is a merge commit
