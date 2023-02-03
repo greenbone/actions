@@ -239,7 +239,10 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         is_backport = False
         for bp in backport_config:
-            if bp.label in labels and bp.source == self.env.base_ref:
+            if bp.label in labels and (
+                (not bp.source and self.env.base_ref != bp.destination)
+                or bp.source == self.env.base_ref
+            ):
                 is_backport = True
 
                 try:
