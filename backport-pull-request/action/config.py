@@ -30,7 +30,7 @@ class BackportConfig:
 
 
 class VerificationIssue:
-    def __init__(self, message: str):
+    def __init__(self, message: str) -> None:
         self._message = message
 
     def __str__(self) -> str:
@@ -38,7 +38,7 @@ class VerificationIssue:
 
 
 class Config:
-    def __init__(self, config_path: Path):
+    def __init__(self, config_path: Path) -> None:
         self._config_path = config_path
 
     def _load_backports(self) -> Dict[str, Any]:

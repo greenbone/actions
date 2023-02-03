@@ -15,17 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import asyncio
 import sys
 import tempfile
 from pathlib import Path
-from typing import NoReturn
+from types import TracebackType
+from typing import AsyncContextManager, NoReturn, Optional
 
 import httpx
 from pontos.git import ConfigScope, Git, GitError
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.actions.event import GitHubEvent
-from pontos.github.api import GitHubRESTApi
+from pontos.github.api import GitHubAsyncRESTApi
+from pontos.github.models import PullRequest
 
 from action.config import Config
 
@@ -36,12 +39,12 @@ class BackportError(Exception):
     pass
 
 
-class Backport:
+class Backport(AsyncContextManager):
     def __init__(self) -> None:
         self.token = ActionIO.input("token")
         self.env = GitHubEnvironment()
         self.event = GitHubEvent(self.env.event_path)
-        self.api = GitHubRESTApi(self.token, self.env.api_url)
+        self.api = GitHubAsyncRESTApi(self.token, self.env.api_url)
         self.username = ActionIO.input("username") or self.env.actor
         self.git = Git(cwd=self.env.workspace)
 
@@ -50,44 +53,55 @@ class Backport:
     ) -> str:
         return f"backport/{destination_branch}/pr-{pull_request}"
 
-    def backport_branch_exists(self, branch_name: str) -> bool:
-        return self.api.branch_exists(self.env.repository, branch_name)
+    def is_merge_commit(self, commit: str) -> bool:
+        # if a commit has two parents it is a merge commit
+        output = self.git.log("--format=%p", "-n1", commit)
+        return len(output[0].split(" ")) > 1
 
-    def backport_pull_request(
+    def get_backport_commits(self, pr: PullRequest) -> list[str]:
+        commits = self.git.log(
+            "--format=%H", f"{pr.base.sha}..{pr.merge_commit_sha}"
+        )
+        if not commits:
+            return []
+
+        # skip first commit if it is a merge commit
+        return commits if not self.is_merge_commit(commits[0]) else commits[1:]
+
+    async def backport_branch_exists(self, branch_name: str) -> bool:
+        return await self.api.branches.exists(self.env.repository, branch_name)
+
+    async def backport_pull_request(
         self, pull_request: str, destination_branch: str
     ) -> None:
         new_branch = self.backport_branch_name(pull_request, destination_branch)
 
         # check if backport branch already exists. return if it exists
-        if self.backport_branch_exists(new_branch):
+        if await self.backport_branch_exists(new_branch):
             Console.log(f"Backport branch {new_branch} exists. Stopping here.")
             return
 
-        head = self.env.head_ref
-        head_sha = self.event.pull_request.head.sha
-        base_sha = self.event.pull_request.base.sha
+        pr = await self.api.pulls.get(self.env.repository, pull_request)
 
-        # checkout new branch
+        # get commits to backport
+        commits = self.get_backport_commits(pr)
+
         Console.log(f"Creating branch {new_branch}")
-        self.git.create_branch(new_branch, start_point=head_sha)
+        self.git.create_branch(new_branch, start_point=destination_branch)
 
-        # rebase
-        Console.log(f"Rebasing {new_branch} onto {destination_branch}")
+        Console.log(f"Cherry-picking commits from PR {pull_request}")
+
         try:
-            self.git.rebase(
-                base_sha,
-                head=new_branch,
-                onto=f"origin/{destination_branch}",
-            )
+            self.git.cherry_pick(commits)
         except GitError as e:
             Console.error(str(e))
-            comment = f"""Failed to backport `{head}` to `{destination_branch}`.
+            comment = f"""Failed to backport Pull Request #{pull_request} to `{destination_branch}`.
 
 To backport it manually, run these commands in your terminal:
 
 ```bash
-git checkout -b {new_branch} {head_sha}
-git rebase --onto origin/{destination_branch} {base_sha} {new_branch}
+git checkout -b {new_branch} {destination_branch}
+git cherry-pick {' '.join(commits)}
 ```
 
 Afterwards fix the conflicts, push the changes via
@@ -98,11 +112,11 @@ git push origin
 
 and create a new pull request where the base is `{destination_branch}` and compare `{new_branch}`.
 """
-            self.api.add_pull_request_comment(
+            await self.api.pulls.add_comment(
                 self.env.repository, pull_request, comment
             )
             raise BackportError(
-                f"Failed to rebase {new_branch} onto {destination_branch}"
+                f"Failed to backport PR {pull_request} to {destination_branch}"
             ) from None
 
         # push
@@ -114,7 +128,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
         body = f"This is an automatic backport of pull request #{pull_request}"
 
         try:
-            self.api.create_pull_request(
+            await self.api.pulls.create(
                 self.env.repository,
                 head_branch=new_branch,
                 base_branch=destination_branch,
@@ -127,7 +141,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
                 f"Could not create pull request. Error was {e}"
             ) from None
 
-    def run(self) -> int:
+    async def run(self) -> int:
         pull_request = self.event.pull_request
 
         if not pull_request:
@@ -143,6 +157,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
             Console.error("GITHUB_WORKSPACE not set.")
             return 1
 
+        pr_number = self.event.pull_request.number
         workspace = self.env.workspace.absolute()
 
         if not (workspace / ".git").exists():
@@ -226,20 +241,21 @@ and create a new pull request where the base is `{destination_branch}` and compa
         for bp in backport_config:
             if bp.label in labels and bp.source == self.env.base_ref:
                 is_backport = True
-                pull_request = self.event.pull_request.number
 
                 try:
                     with Console.group(
-                        f"Backporting PR {pull_request} to {bp.destination}"
+                        f"Backporting PR {pr_number} to {bp.destination}"
                     ):
-                        self.backport_pull_request(pull_request, bp.destination)
+                        await self.backport_pull_request(
+                            pr_number, bp.destination
+                        )
                 except BackportError as e:
                     has_error = True
                     Console.error(str(e))
                 except Exception as e:  # pylint: disable=broad-except
                     has_error = True
                     Console.error(
-                        f"Failed backporting PR {pull_request}. Error was {e}"
+                        f"Failed backporting PR {pr_number}. Error was {e}"
                     )
 
         if has_error:
@@ -250,20 +266,35 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         return 0
 
+    async def __aenter__(self) -> "Backport":
+        await self.api.__aenter__()
+        return self
+
+    async def __aexit__(
+        self,
+        __exc_type: Optional[type[BaseException]],
+        __exc_value: Optional[BaseException],
+        __traceback: Optional[TracebackType],
+    ) -> None:
+        await self.api.__aexit__(__exc_type, __exc_value, __traceback)
+
+
+async def run() -> int:
+    async with Backport() as backport:
+        with Console.group("Settings"):
+            Console.log(f"Workspace: {backport.env.workspace}")
+            Console.log(f"Ref: {backport.env.ref}")
+            Console.log(f"Ref name: {backport.env.ref_name}")
+            Console.log(f"Base ref: {backport.env.base_ref}")
+            Console.log(f"Head ref: {backport.env.head_ref}")
+            Console.log(f"Run ID: {backport.env.run_id}")
+            Console.log(f"Action ID: {backport.env.action_id}")
+
+        return await backport.run()
+
 
 def main() -> NoReturn:
-    backport = Backport()
-
-    with Console.group("Settings"):
-        Console.log(f"Workspace: {backport.env.workspace}")
-        Console.log(f"Ref: {backport.env.ref}")
-        Console.log(f"Ref name: {backport.env.ref_name}")
-        Console.log(f"Base ref: {backport.env.base_ref}")
-        Console.log(f"Head ref: {backport.env.head_ref}")
-        Console.log(f"Run ID: {backport.env.run_id}")
-        Console.log(f"Action ID: {backport.env.action_id}")
-
-    sys.exit(backport.run())
+    sys.exit(asyncio.run(run()))
 
 
 if __name__ == "__main__":
