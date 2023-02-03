@@ -17,7 +17,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, Optional
 
 import tomli
 
@@ -25,12 +25,12 @@ import tomli
 @dataclass
 class BackportConfig:
     label: str
-    source: str
     destination: str
+    source: Optional[str] = None
 
 
 class VerificationIssue:
-    def __init__(self, message: str):
+    def __init__(self, message: str) -> None:
         self._message = message
 
     def __str__(self) -> str:
@@ -38,7 +38,7 @@ class VerificationIssue:
 
 
 class Config:
-    def __init__(self, config_path: Path):
+    def __init__(self, config_path: Path) -> None:
         self._config_path = config_path
 
     def _load_backports(self) -> Dict[str, Any]:
@@ -57,10 +57,6 @@ class Config:
                 yield VerificationIssue(
                     f"Missing label entry in [backport.{key}] section."
                 )
-            if not backport.get("source"):
-                yield VerificationIssue(
-                    f"Missing source entry in [backport.{key}] section."
-                )
             if not backport.get("destination"):
                 yield VerificationIssue(
                     f"Missing destination entry in [backport.{key}] section."
@@ -74,8 +70,8 @@ class Config:
         return [
             BackportConfig(
                 label=b.get("label"),
-                source=b.get("source"),
                 destination=b.get("destination"),
+                source=b.get("source"),
             )
             for _, b in backports_data.items()
         ]
