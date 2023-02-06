@@ -453,14 +453,14 @@ files = [
 
 [[package]]
 name = "mypy-extensions"
-version = "0.4.3"
-description = "Experimental type system extensions for programs checked with the mypy typechecker."
+version = "1.0.0"
+description = "Type system extensions for programs checked with the mypy type checker."
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=3.5"
 files = [
-    {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
-    {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
+    {file = "mypy_extensions-1.0.0-py3-none-any.whl", hash = "sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d"},
+    {file = "mypy_extensions-1.0.0.tar.gz", hash = "sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782"},
 ]
 
 [[package]]
@@ -505,14 +505,14 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.2.2)", "pytest (>=7.2)", "pytest-
 
 [[package]]
 name = "pontos"
-version = "23.2.1"
+version = "23.2.2"
 description = "Common utilities and tools maintained by Greenbone Networks"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "pontos-23.2.1-py3-none-any.whl", hash = "sha256:c95e9a4d928f8b327c1487d94d698fcfbe6a5f68ecd7c3152924e572c9c0e46d"},
-    {file = "pontos-23.2.1.tar.gz", hash = "sha256:30cf16a8ddb5113e98c132cee5d9b043224384168e21137d5524341a6b04cc7b"},
+    {file = "pontos-23.2.2-py3-none-any.whl", hash = "sha256:7fdcf6d49a9fa4a342e6f1ad120926ad4a90d104b8cc2a2895cc238a0e8ad3d5"},
+    {file = "pontos-23.2.2.tar.gz", hash = "sha256:d18ae5c94c3369f95961c48defdd43f5e1c961dfaaa4ecf1a3e77e1d510894e4"},
 ]
 
 [package.dependencies]
@@ -757,4 +757,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b6ce736a95bdc61c0a060c30db427e5be9811dc20b42c8d028ba9b3980ab12a1"
+content-hash = "41d95bb21546dc00148716518c54761cf01646ae745f7c65db539578aa80e2c5"
