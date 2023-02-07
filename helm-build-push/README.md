@@ -19,6 +19,6 @@ jobs:
           REGISTRY: Registry to use || default ghcr.io
           REGISTRY_URL: Registry url to push to e.g oci://ghcr.io/greenbone/helm-charts/
           REGISTRY_USER: Registry username
-          REGISTRY_PASSWORD: Registry user password
+          REGISTRY_TOKEN: Registry user password/token
 ```
 

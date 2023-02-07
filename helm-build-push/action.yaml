@@ -19,8 +19,8 @@ inputs:
   REGISTRY_USER:
     description: Registry login user
     required: true
-  REGISTRY_PASSWORD:
-    description: Registry login password
+  REGISTRY_TOKEN:
+    description: Registry login password/token
     required: true
 branding:
   icon: "package"
@@ -34,7 +34,7 @@ runs:
       run: |
         helm registry login \
           -u '${{ inputs.REGISTRY_USER }}' \
-          -p '${{ inputs.REGISTRY_PASSWORD }}' \
+          -p '${{ inputs.REGISTRY_TOKEN }}' \
           '${{ inputs.REGISTRY }}'
     - name: Helm build and upload package
       shell: bash
