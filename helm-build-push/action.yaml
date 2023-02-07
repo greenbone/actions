@@ -1,0 +1,44 @@
+name: Helm build and push chart
+description: Push helm chart to OCI-based registries
+inputs:
+  CHARTS_PATH:
+    description: Path to charts base folder
+    default: ./charts
+    required: false
+  CHART_NAME:
+    description: "Chart to build and push"
+    required: true
+  REGISTRY:
+    description: Registry
+    default: ghcr.io
+    required: true
+  REGISTRY_URL:
+    description: Registry url
+    default: oci://ghcr.io/greenbone/helm-charts/
+    required: true
+  REGISTRY_USER:
+    description: Registry login user
+    required: true
+  REGISTRY_PASSWORD:
+    description: Registry login password
+    required: true
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Helm registry login 
+      shell: bash
+      run: |
+        helm registry login \
+          -u '${{ inputs.REGISTRY_USER }}' \
+          -p '${{ inputs.REGISTRY_PASSWORD }}' \
+          '${{ inputs.REGISTRY }}'
+    - name: Helm build and upload package
+      shell: bash
+      run: |
+        helm package '${{ inputs.CHARTS_PATH }}/${{ inputs.CHART_NAME }}'
+        helm push ${{ inputs.CHART_NAME }}-*.tgz '${{ inputs.REGISTRY_URL }}'
+        rm -f "${{ inputs.CHART_NAME }}-*.tgz"
