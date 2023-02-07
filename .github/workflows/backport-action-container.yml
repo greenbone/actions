@@ -46,7 +46,7 @@ jobs:
             type=ref,event=pr
             type=ref,event=branch
       - name: Build and push Container image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: backport-pull-request
           push: ${{ github.event_name != 'pull_request' }}
