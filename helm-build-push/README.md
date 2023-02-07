@@ -15,7 +15,7 @@ jobs:
         uses: greenbone/actions/helm-build-push@v2
         with:
           CHART_NAME: Chart folder name
-          CHARTS_PATH: Charts bae folder || default ./charts
+          CHARTS_PATH: Charts base folder || default ./charts
           REGISTRY: Registry to use || default ghcr.io
           REGISTRY_URL: Registry url to push to e.g oci://ghcr.io/greenbone/helm-charts/
           REGISTRY_USER: Registry username
