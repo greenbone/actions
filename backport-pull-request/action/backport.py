@@ -86,8 +86,14 @@ class Backport(AsyncContextManager):
         # get commits to backport
         commits = self.get_backport_commits(pr)
 
+        # ensure branch information is available
+        Console.log(f"Fetching branch {destination_branch}")
+        self.git.fetch("origin", destination_branch)
+
         Console.log(f"Creating branch {new_branch}")
-        self.git.create_branch(new_branch, start_point=destination_branch)
+        self.git.create_branch(
+            new_branch, start_point=f"origin/{destination_branch}"
+        )
 
         Console.log(f"Cherry-picking commits from PR {pull_request}")
 
