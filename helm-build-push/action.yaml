@@ -37,6 +37,7 @@ runs:
     - name: Helm build and upload package
       shell: bash
       run: |
+        helm dependency update '${{ inputs.CHARTS_PATH }}/${{ inputs.CHART_NAME }}'
         helm package '${{ inputs.CHARTS_PATH }}/${{ inputs.CHART_NAME }}'
         helm push ${{ inputs.CHART_NAME }}-*.tgz '${{ inputs.REGISTRY_URL }}'
         rm -f "${{ inputs.CHART_NAME }}-*.tgz"
