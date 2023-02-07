@@ -10,11 +10,9 @@ inputs:
     required: true
   REGISTRY:
     description: Registry
-    default: ${{ vars.IMAGE_REGISTRY }}
     required: true
   REGISTRY_URL:
     description: Registry url
-    default: oci://${{ vars.IMAGE_REGISTRY }}/greenbone/helm-charts/
     required: true
   REGISTRY_USER:
     description: Registry login user

@@ -16,7 +16,7 @@ jobs:
         with:
           CHART_NAME: Chart folder name
           CHARTS_PATH: Charts base folder || default ./charts
-          REGISTRY: Registry to use || default ghcr.io
+          REGISTRY: Registry to use e.g ghcr.io
           REGISTRY_URL: Registry url to push to e.g oci://ghcr.io/greenbone/helm-charts/
           REGISTRY_USER: Registry username
           REGISTRY_TOKEN: Registry user password/token
