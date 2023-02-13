@@ -22,20 +22,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download All Artifacts
-        uses: greenbone/actions/download-artifact@v1
+        uses: greenbone/actions/download-artifact@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: "foo/bar"
           workflow: deploy.yml
       - name: Download Single Artifact
-        uses: greenbone/actions/download-artifact@v1
+        uses: greenbone/actions/download-artifact@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: "foo/bar"
           workflow: deploy.yml
           name: artifact-a
       - name: Ignore non-existing Artifact
-        uses: greenbone/actions/download-artifact@v1
+        uses: greenbone/actions/download-artifact@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: "foo/bar"
