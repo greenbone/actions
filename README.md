@@ -102,7 +102,7 @@ We offer several actions for linting, formatting, building and testing packages/
 
 ## Other useful actions
 
-Release a project in C or JavaScript
+Release a project in C, GoLang, JavaScript or Python
 
 ```yml
 - name: Run release actions
@@ -114,25 +114,9 @@ Release a project in C or JavaScript
     gpg-key: boo
     gpg-passphrase: foo
     gpg-fingerprint: baz
-    conventional-commits: false
-    strategy: calendar
-```
-
-Release a Python project
-
-```yml
-- name: Release with release action
-  uses: greenbone/actions/release-python@v2
-  with:
-    version: 3.9 # python version
     conventional-commits: true
-    github-user: ${{ secrets.FOO_BAR }}
-    github-user-mail: foo@bar.baz
-    github-user-token: bar
-    gpg-key: boo
-    gpg-passphrase: foo
-    gpg-fingerprint: baz
     strategy: calendar
+    ref: main
 ```
 
 Update licence header supporting many different filetypes
