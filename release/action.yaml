@@ -41,18 +41,9 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Fetch-depth
-      run: |
-        if [[ ${{inputs.conventional-commits}} == true ]];
-        then
-          echo "FETCH_DEPTH=0" >> $GITHUB_ENV
-        else
-          echo "FETCH_DEPTH=1" >> $GITHUB_ENV
-        fi
-      shell: bash
     - uses: actions/checkout@v3
       with:
-        fetch-depth: ${{ env.FETCH_DEPTH }}
+        fetch-depth: 0 #for conventional commits
         persist-credentials: false
         ref: ${{ inputs.ref }}
     - name: Set up Python
@@ -83,14 +74,7 @@ runs:
             PREPARE_FLAGS="--release-type patch"
             ;;
         esac
-
-        if [[ ${{inputs.conventional-commits}} == true ]];
-        then
-          PREPARE_FLAGS="${PREPARE_FLAGS} -CC"
-          RELEASE_FLAGS="-CC"
-        fi
         echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
-        echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
       shell: bash
     - name: allow admin users bypassing protection on ${{ inputs.ref}} branch
       uses: greenbone/actions/admin-bypass@v2
@@ -116,7 +100,7 @@ runs:
     - name: Create release
       run: |
         . .venv/bin/activate
-        pontos-release release ${{ env.RELEASE_FLAGS }}
+        pontos-release release
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
