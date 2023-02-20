@@ -149,6 +149,13 @@ SHA256 file or GPG signature generation
     file: ./foo/bar
 ```
 
+Check for consistent versioning in a project
+
+```yml
+- name: Check versioning
+  uses: greenbone/actions/check-version@v2
+```
+
 ## Support
 
 For any question on the usage of python-gvm please use the
