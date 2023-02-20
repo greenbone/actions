@@ -1,4 +1,3 @@
-
 name: "Python Package Linting"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to lint Greenbone Python packages"
@@ -8,7 +7,7 @@ inputs:
     required: true
   version:
     description: "Python version that should be installed"
-    default: 3.9
+    default: "3.9"
 branding:
   icon: "package"
   color: "green"
@@ -30,10 +29,4 @@ runs:
     - run: poetry run pylint ${{ inputs.packages }}
       shell: bash
       name: Check with pylint
-      working-directory: ${{ github.workspace }}
-    - run: echo "Running pontos.version verify current"
-      shell: bash
-    - run: poetry run python -m pontos.version verify current
-      shell: bash
-      name: Check version information
       working-directory: ${{ github.workspace }}
