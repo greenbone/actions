@@ -61,7 +61,6 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Install pontos
       run: |
-        apt-get update && apt-get --assume-yes install python3-venv
         python3 -m venv .venv
         . .venv/bin/activate
         python -m pip install --upgrade pip
