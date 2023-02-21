@@ -15,6 +15,7 @@ runs:
       run: |
         python -m venv ${{ github.action_path }}/pontos-version-venv
         source ${{ github.action_path }}/pontos-version-venv/bin/activate
+        python -m pip install -U pip
         python -m pip install pontos
       shell: bash
     - name: Check version information
