@@ -94,7 +94,7 @@ runs:
         echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
         echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
       shell: bash
-    - name: allow admin users bypassing protection on ${{ inputs.ref}} branch
+    - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
       uses: greenbone/actions/admin-bypass@v2
       with:
         allow: "true"
@@ -123,7 +123,7 @@ runs:
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: disable bypassing protection on ${{ inputs.ref}} branch for admin users
+    - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
       uses: greenbone/actions/admin-bypass@v2
       with:
         allow: "false"
