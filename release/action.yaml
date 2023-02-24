@@ -3,6 +3,9 @@ author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action that creates a release [x.y.z -> x.y.z+1] for a project."
 
 inputs:
+  conventional-commits:
+    description: "Use conventional commits, or Changelog file."
+    default: "true"
   github-user:
     description: "Github user name."
     required: true
@@ -14,18 +17,15 @@ inputs:
     required: true
   gpg-key:
     description: "GPG key, represented as a string. Required for signing assets of the release."
-    required: true
+    required: false
   gpg-fingerprint:
     description: "GPG fingerprint, represented as a string. Required for signing assets of the release."
-    required: true
+    required: false
   gpg-passphrase:
     description: "GPG passphrase, represented as a string. Required for signing assets of the release."
-    required: true
-  conventional-commits:
-    description: "Use conventional commits, or Changelog file."
-    default: "true"
+    required: false
   strategy:
-    description: "What release strategy? ['patch', 'calendar'], default: patch"
+    description: "What release strategy? ['calendar', 'major', 'minor', 'patch'], default: patch"
     default: "patch"
   python-version:
     description: "Python version that should be installed"
@@ -41,18 +41,9 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Fetch-depth
-      run: |
-        if [[ ${{inputs.conventional-commits}} == true ]];
-        then
-          echo "FETCH_DEPTH=0" >> $GITHUB_ENV
-        else
-          echo "FETCH_DEPTH=1" >> $GITHUB_ENV
-        fi
-      shell: bash
     - uses: actions/checkout@v3
       with:
-        fetch-depth: ${{ env.FETCH_DEPTH }}
+        fetch-depth: 0 #for conventional commits
         persist-credentials: false
         ref: ${{ inputs.ref }}
     - name: Set up Python
@@ -75,24 +66,14 @@ runs:
     - name: Parse inputs
       run: |
         case ${{inputs.strategy}} in
-          calendar)
-            PREPARE_FLAGS="--${{ inputs.strategy }}"
-            ;;
-          patch)
-            PREPARE_FLAGS="--${{ inputs.strategy }}"
+          calendar | major | minor | patch )
+            PREPARE_FLAGS="--release-type ${{ inputs.strategy }}"
             ;;
           *)
-            PREPARE_FLAGS="--patch"
+            PREPARE_FLAGS="--release-type patch"
             ;;
         esac
-
-        if [[ ${{inputs.conventional-commits}} == true ]];
-        then
-          PREPARE_FLAGS="${PREPARE_FLAGS} -CC"
-          RELEASE_FLAGS="-CC"
-        fi
         echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
-        echo "RELEASE_FLAGS=${RELEASE_FLAGS}" >> $GITHUB_ENV
       shell: bash
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
       uses: greenbone/actions/admin-bypass@v2
@@ -118,7 +99,7 @@ runs:
     - name: Create release
       run: |
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release release ${{ env.RELEASE_FLAGS }}
+        pontos-release release
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
@@ -135,12 +116,14 @@ runs:
         gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
         rm tmp.file
       shell: bash
+      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
     - name: Sign assets for released version
       run: |
         echo "Signing assets for ${{env.VERSION}}"
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
         pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
       shell: bash
+      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
