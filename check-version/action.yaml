@@ -1,0 +1,26 @@
+name: "Python Package Linting"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to check version information via pontos"
+branding:
+  icon: "package"
+  color: "green"
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python ${{ inputs.version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Install pontos
+      run: |
+        python -m venv ${{ github.action_path }}/pontos-version-venv
+        source ${{ github.action_path }}/pontos-version-venv/bin/activate
+        python -m pip install -U pip
+        python -m pip install pontos
+      shell: bash
+    - name: Check version information
+      run: |
+        source ${{ github.action_path }}/pontos-version-venv/bin/activate
+        python -m pontos.version verify current
+      shell: bash
+      working-directory: ${{ github.workspace }}

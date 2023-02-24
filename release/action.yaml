@@ -52,9 +52,8 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Install pontos
       run: |
-        apt-get update && apt-get --assume-yes install python3-venv
-        python3 -m venv .venv
-        . .venv/bin/activate
+        python3 -m venv ${{ github.action_path }}/pontos-release-venv
+        source ${{ github.action_path }}/pontos-release-venv/bin/activate
         python -m pip install --upgrade pip
         python -m pip install --upgrade pontos
       shell: bash
@@ -76,7 +75,7 @@ runs:
         esac
         echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
       shell: bash
-    - name: allow admin users bypassing protection on ${{ inputs.ref}} branch
+    - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
       uses: greenbone/actions/admin-bypass@v2
       with:
         allow: "true"
@@ -84,7 +83,7 @@ runs:
         branch: ${{ inputs.ref}}
     - name: Prepare release
       run: |
-        . .venv/bin/activate
+        source ${{ github.action_path }}/pontos-release-venv/bin/activate
         pontos-release prepare ${{ env.PREPARE_FLAGS }}
       shell: bash
       env:
@@ -93,19 +92,19 @@ runs:
     - name: Get release version
       shell: bash
       run: |
-        . .venv/bin/activate
+        source ${{ github.action_path }}/pontos-release-venv/bin/activate
         VERSION=$(pontos-version show)
         echo "Releasing $VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Create release
       run: |
-        . .venv/bin/activate
+        source ${{ github.action_path }}/pontos-release-venv/bin/activate
         pontos-release release
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: disable bypassing protection on ${{ inputs.ref}} branch for admin users
+    - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
       uses: greenbone/actions/admin-bypass@v2
       with:
         allow: "false"
@@ -121,7 +120,7 @@ runs:
     - name: Sign assets for released version
       run: |
         echo "Signing assets for ${{env.VERSION}}"
-        . .venv/bin/activate
+        source ${{ github.action_path }}/pontos-release-venv/bin/activate
         pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
       shell: bash
       if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
