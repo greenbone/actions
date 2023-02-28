@@ -1,13 +1,14 @@
 name: "Pontos Release Patch version"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
-description: "An action that creates a release [x.y.z -> x.y.z+1] for a project."
+description: |
+  "An action that is able to create a release for a project"
+  "Supporting different programming languages and release types."
 
 inputs:
   conventional-commits:
-    description: "Use conventional commits, or Changelog file."
-    default: "true"
+    description: "Deprecated."
   github-user:
-    description: "Github user name."
+    description: "Github user name on behalf of whom the actions will be executed."
     required: true
   github-user-mail:
     description: "Mail address for the given github user."
@@ -25,13 +26,15 @@ inputs:
     description: "GPG passphrase, represented as a string. Required for signing assets of the release."
     required: false
   strategy:
-    description: "What release strategy? ['calendar', 'major', 'minor', 'patch'], default: patch"
+    description: |
+      "What type of release should be executed?"
+      "Supported: ['alpha', 'beta', 'calendar', 'major', 'minor', 'patch',  'release-candidate']; Default: patch"
     default: "patch"
   python-version:
     description: "Python version that should be installed"
     default: "3.10"
   ref:
-    description: "Branch that should be released"
+    description: "This branches HEAD will be candidate of the next release"
     default: ""
 
 branding:
@@ -66,14 +69,14 @@ runs:
     - name: Parse inputs
       run: |
         case ${{inputs.strategy}} in
-          calendar | major | minor | patch )
-            PREPARE_FLAGS="--release-type ${{ inputs.strategy }}"
+          alpha | beta | calendar | major | minor | patch | release-candidate)
+            ARGS="--release-type ${{ inputs.strategy }}"
             ;;
           *)
-            PREPARE_FLAGS="--release-type patch"
+            ARGS="--release-type patch"
             ;;
         esac
-        echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
       uses: greenbone/actions/admin-bypass@v2
@@ -81,25 +84,10 @@ runs:
         allow: "true"
         github-token: ${{ inputs.github-user-token }}
         branch: ${{ inputs.ref}}
-    - name: Prepare release
+    - name: Create automatic release
       run: |
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release prepare ${{ env.PREPARE_FLAGS }}
-      shell: bash
-      env:
-        GITHUB_USER: ${{ inputs.github-user }}
-        GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: Get release version
-      shell: bash
-      run: |
-        source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        VERSION=$(pontos-version show)
-        echo "Releasing $VERSION"
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-    - name: Create release
-      run: |
-        source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release release
+        pontos-release release ${{ env.ARGS }}
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
@@ -121,7 +109,7 @@ runs:
       run: |
         echo "Signing assets for ${{env.VERSION}}"
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
+        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }}
       shell: bash
       if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:
