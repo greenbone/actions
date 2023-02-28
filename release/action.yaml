@@ -26,6 +26,8 @@ inputs:
     description: "GPG passphrase, represented as a string. Required for signing assets of the release."
     required: false
   strategy:
+    description: "Deprecated by release-type."
+  release-type:
     description: |
       "What type of release should be executed?"
       "Supported: ['alpha', 'beta', 'calendar', 'major', 'minor', 'patch',  'release-candidate']; Default: patch"
@@ -68,14 +70,18 @@ runs:
       shell: bash
     - name: Parse inputs
       run: |
-        case ${{inputs.strategy}} in
+        case ${{ inputs.release-type }} in
           alpha | beta | calendar | major | minor | patch | release-candidate)
-            ARGS="--release-type ${{ inputs.strategy }}"
+            ARGS="--release-type ${{ inputs.release-type }}"
             ;;
           *)
             ARGS="--release-type patch"
             ;;
         esac
+        if [[ "${{ inputs.strategy }}" ]]; then
+          echo "strategy is deprecated, please use release-type argument"
+          ARGS="--release-type ${{ inputs.strategy }}"
+        fi
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
