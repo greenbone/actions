@@ -1,6 +1,8 @@
 name: "Pontos Release Patch version"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
-description: "An action that creates a release [x.y.z -> x.y.z+1] for a project."
+description: |
+  "An action that is able to create a release for a project"
+  "Supporting different programming languages and release types."
 
 inputs:
   conventional-commits:
@@ -24,7 +26,9 @@ inputs:
     description: "GPG passphrase, represented as a string. Required for signing assets of the release."
     required: false
   strategy:
-    description: "What release strategy? Supported: ['alpha', 'beta', 'calendar', 'major', 'minor', 'patch',  'release-candidate']; Default: patch"
+    description: |
+      "What type of release should be executed?"
+      "Supported: ['alpha', 'beta', 'calendar', 'major', 'minor', 'patch',  'release-candidate']; Default: patch"
     default: "patch"
   python-version:
     description: "Python version that should be installed"
