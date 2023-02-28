@@ -67,13 +67,13 @@ runs:
       run: |
         case ${{inputs.strategy}} in
           calendar | major | minor | patch )
-            PREPARE_FLAGS="--release-type ${{ inputs.strategy }}"
+            ARGS="--release-type ${{ inputs.strategy }}"
             ;;
           *)
-            PREPARE_FLAGS="--release-type patch"
+            ARGS="--release-type patch"
             ;;
         esac
-        echo "PREPARE_FLAGS=${PREPARE_FLAGS}" >> $GITHUB_ENV
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
       uses: greenbone/actions/admin-bypass@v2
@@ -81,14 +81,6 @@ runs:
         allow: "true"
         github-token: ${{ inputs.github-user-token }}
         branch: ${{ inputs.ref}}
-    - name: Prepare release
-      run: |
-        source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release prepare ${{ env.PREPARE_FLAGS }}
-      shell: bash
-      env:
-        GITHUB_USER: ${{ inputs.github-user }}
-        GITHUB_TOKEN: ${{ inputs.github-user-token }}
     - name: Get release version
       shell: bash
       run: |
@@ -96,10 +88,10 @@ runs:
         VERSION=$(pontos-version show)
         echo "Releasing $VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
-    - name: Create release
+    - name: Create automatic release
       run: |
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release release
+        pontos-release release ${{ env.ARGS }}
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
