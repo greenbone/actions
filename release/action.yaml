@@ -84,13 +84,6 @@ runs:
         allow: "true"
         github-token: ${{ inputs.github-user-token }}
         branch: ${{ inputs.ref}}
-    - name: Get release version
-      shell: bash
-      run: |
-        source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        VERSION=$(pontos-version show)
-        echo "Releasing $VERSION"
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Create automatic release
       run: |
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
@@ -116,7 +109,7 @@ runs:
       run: |
         echo "Signing assets for ${{env.VERSION}}"
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --release-version ${{ env.VERSION }}
+        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }}
       shell: bash
       if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:
