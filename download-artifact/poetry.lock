@@ -505,14 +505,14 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.2.2)", "pytest (>=7.2.1)", "pytes
 
 [[package]]
 name = "pontos"
-version = "23.2.10"
+version = "23.3.0"
 description = "Common utilities and tools maintained by Greenbone Networks"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "pontos-23.2.10-py3-none-any.whl", hash = "sha256:8eebafb362ecc81eb5201b8f18b73b1807e274b91041755094e33ae39c34dc23"},
-    {file = "pontos-23.2.10.tar.gz", hash = "sha256:a4dcea78f6dca97cbd2b09d3b1db7d1d378a7331fc48581e9309a89c5479b408"},
+    {file = "pontos-23.3.0-py3-none-any.whl", hash = "sha256:4683fbdb5937761b28cdc1005305893b7f097d73125ef7c8a4a4d0ccb9ff0b7d"},
+    {file = "pontos-23.3.0.tar.gz", hash = "sha256:16015a38487027640bdbb0ec8635fbdd6bdc751b8a1cb0a03a7a7cedf7431806"},
 ]
 
 [package.dependencies]
@@ -768,4 +768,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "26691b617729f69fb42ea4a33e6ea1aa51e0973951cf68c55b6e2308d814d2f8"
+content-hash = "9b06e69478e76faedfda3800cf610c0c45eda4dcf3ade7f893e245d777977562"
