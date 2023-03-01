@@ -246,7 +246,7 @@ class DownloadArtifacts:
                             print(".", end="")
                 except httpx.HTTPStatusError as e:
                     raise DownloadArtifactsError(
-                        f"Failed to download '{artifact.name}' with ID "
+                        f"HTTP Error {e}: Failed to download '{artifact.name}' with ID "
                         f"{artifact.id}"
                     ) from e
                 finally:
