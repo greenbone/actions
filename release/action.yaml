@@ -99,6 +99,7 @@ runs:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
     - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
+      if: always()
       uses: greenbone/actions/admin-bypass@v2
       with:
         allow: "false"
