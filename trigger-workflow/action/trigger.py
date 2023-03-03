@@ -18,11 +18,12 @@
 import asyncio
 import json
 import sys
+from argparse import ArgumentParser, Namespace
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Iterable, NoReturn, Optional
+from typing import Iterable, NoReturn, Optional
 
 import httpx
-from pontos.github.actions.core import ActionIO, Console
+from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.api import JSON, GitHubAsyncRESTApi
 from pontos.github.models import Event, WorkflowRun, WorkflowRunStatus
@@ -55,6 +56,18 @@ def date_now() -> datetime:
     return datetime.now(timezone.utc)  # current time in UTC
 
 
+def parser_arguments() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("--token", required=True)
+    parser.add_argument("--workflow", required=True)
+    parser.add_argument("--ref", required=True)
+    parser.add_argument("--repository", required=True)
+    parser.add_argument("--timeout")
+    parser.add_argument("--interval")
+    parser.add_argument("--inputs")
+    return parser.parse_args()
+
+
 class TriggerError(Exception):
     pass
 
@@ -63,37 +76,33 @@ class Trigger:
     def __init__(
         self,
         *,
-        token: Optional[str] = None,
-        workflow: Optional[str] = None,
-        ref: Optional[str] = None,
-        repository: Optional[str] = None,
+        token: str,
+        workflow: str,
+        ref: str,
+        repository: str,
         timeout: Optional[str] = None,
         interval: Optional[str] = None,
-        inputs: Optional[Dict[str, str]] = None,
+        inputs: Optional[str] = None,
     ) -> None:
-        token = token or ActionIO.input("token")
         if not token:
             raise TriggerError("Missing token.")
 
-        self.workflow = workflow or ActionIO.input("workflow")
+        self.workflow = workflow
         if not self.workflow:
             raise TriggerError("Missing workflow.")
 
-        self.ref = ref or ActionIO.input("ref")
+        self.ref = ref
         if not self.ref:
             raise TriggerError("Missing ref.")
 
-        self.repository = repository or ActionIO.input("repository")
+        self.repository = repository
         if not self.repository:
             raise TriggerError("Missing repository.")
 
-        timeout = timeout or ActionIO.input("wait-for-completion-timeout")
         self.timeout = parse_int(timeout)
-
-        interval = interval or ActionIO.input("wait-for-completion-interval")
         self.interval = parse_int(interval)
 
-        self.inputs = inputs or ActionIO.input("inputs")
+        self.inputs = None if not inputs else json.loads(inputs)
 
         self.trigger_date = date_now()
         self.timeout_date = (
@@ -233,8 +242,19 @@ class Trigger:
 
 
 def main() -> NoReturn:
+    args = parser_arguments()
     try:
-        asyncio.run(Trigger().run())
+        asyncio.run(
+            Trigger(
+                token=args.token,
+                workflow=args.workflow,
+                ref=args.ref,
+                repository=args.repository,
+                timeout=args.timeout,
+                interval=args.interval,
+                inputs=args.inputs,
+            ).run()
+        )
         sys.exit(0)
     except TriggerError as e:
         Console.error(f"{e} ❌.")
