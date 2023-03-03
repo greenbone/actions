@@ -39,6 +39,7 @@ runs:
       with:
         version: ${{ inputs.python-version }}
         working-directory: ${{ github.action_path }}
+        without-dev: "true"
     - name: Run trigger-workflow
       shell: bash
       working-directory: ${{ github.action_path }}
