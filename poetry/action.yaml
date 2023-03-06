@@ -1,11 +1,16 @@
-
 name: "Python Poetry Action"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to install python and project dependencies via poetry"
 inputs:
   version:
     description: "Python version that should be installed"
-    default: 3.9
+    default: "3.9"
+  working-directory:
+    description: "A working directory where to run poetry install"
+  no-root:
+    description: "Do not install the project itself, only the dependencies"
+  without-dev:
+    description: "Do not install the development dependencies"
 branding:
   icon: "package"
   color: "green"
@@ -17,11 +22,22 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.version }}
-    - run: |
-          python -m pip install --upgrade pip
-          python -m pip install --upgrade poetry
+    - name: Install poetry
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade poetry
       shell: bash
-      name: Install poetry
-    - run: poetry install
+    - name: Parse inputs
+      run: |
+        if [[ -n "${{ inputs.no-root }}" ]]; then
+          ARGS="--no-root"
+        fi
+        if [[ -n "${{ inputs.without-dev }}" ]]; then
+          ARGS="$ARGS --without dev"
+        fi
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
-      name: Install dependencies
+    - name: Install dependencies
+      run: poetry install ${{ env.ARGS }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}

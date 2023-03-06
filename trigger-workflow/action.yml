@@ -21,12 +21,27 @@ inputs:
   wait-for-completion-timeout:
     description: "Maximum amount of time in seconds to wait to for workflow to finish. Set to empty string or false to not wait for the workflow."
     required: false
-    default: 3600
+    default: "3600"
   wait-for-completion-interval:
     description: "Time to wait  between two polls to get run status in seconds."
     required: false
-    default: 60
+    default: "60"
+  python-version:
+    description: "Python version to use for running the action"
+    required: false
+    default: "3.10"
 
 runs:
-  using: "docker"
-  image: "docker://ghcr.io/greenbone/trigger-workflow-action:v2"
+  using: "composite"
+  steps:
+    - name: Set up Python and Poetry
+      uses: greenbone/actions/poetry@v2
+      with:
+        version: ${{ inputs.python-version }}
+        working-directory: ${{ github.action_path }}
+        without-dev: "true"
+    - name: Run trigger-workflow
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        poetry run trigger-workflow --token ${{ inputs.token }} --repository ${{ inputs.repository }} --workflow ${{ inputs.workflow }} --ref ${{ inputs.ref }} --timeout ${{ inputs.wait-for-completion-timeout }} --interval ${{ inputs.wait-for-completion-interval }}
