@@ -1,0 +1,47 @@
+name: "JavaScript/TypeScript Installer"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
+description: "An action to install Greenbone JavaScript/TypeScript Projects"
+inputs:
+  version:
+    description: "Node version that should be installed"
+    default: "16.x"
+  token:
+    description: "Token with GitHub Packages read rights required to install."
+    required: true
+    default: ${{ github.token }}
+  dependency-manager:
+    description: "What dependency manager should be used? [npm, yarn], default: npm"
+    required: true
+    default: "npm"
+  registry-url:
+    description: "npm registry to use for installing dependencies. default: 'https://npm.pkg.github.com'"
+    default: "https://npm.pkg.github.com"
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo "Checkout Repository"
+      shell: bash
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ inputs.version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.version }}
+        cache: ${{ inputs.dependency-manager }}
+        registry-url: ${{ inputs.registry-url }}
+    - name: Install NPM
+      if: ${{ inputs.dependency-manager == "npm" }}
+      run: npm ci
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.token }}
+      shell: bash
+    - name: Install Yarn
+      if: ${{ inputs.dependency-manager == "yarn" }}
+      # `--prefer-offline` gives cache priority
+      run: yarn install --prefer-offline # optional, --immutable
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.token }}
+      shell: bash

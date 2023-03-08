@@ -1,0 +1,52 @@
+
+name: "JavaScript/TypeScript Linting"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
+description: "An action to check linting and formatting Greenbone JavaScript/TypeScript Projects"
+inputs:
+  version:
+    description: "Node version that should be installed"
+    default: "16.x"
+  token:
+    description: "Token with GitHub Packages read rights required to install."
+    required: true
+    default: ${{ github.token }}
+  dependency-manager:
+    description: "What dependency manager should be used? [npm, yarn], default: npm"
+    required: true
+    default: "npm"
+  registry-url:
+    description: "npm registry to use for installing dependencies. default: 'https://npm.pkg.github.com'"
+    default: "https://npm.pkg.github.com"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo "Install project with ${{ inputs.dependency-manager }}"
+      shell: bash
+    - name: Install Project
+      uses: greenbone/actions/install-node@v2
+      with:
+        version: ${{ inputs.version }}
+        token: ${{ inputs.token }}
+        dependency-manager: ${{ inputs.dependency-manager }}
+        registry-url: ${{ inputs.registry-url }}
+    - name: Run linting
+      if: ${{ inputs.dependency-manager == "npm" }}
+      run: npm run lint
+      shell: bash
+    - name: Run linting
+      if: ${{ inputs.dependency-manager == "yarn" }}
+      run: yarn lint
+      shell: bash
+    - name: Run formatting
+      if: ${{ inputs.dependency-manager == "npm" }}
+      run: npm run pretty:check
+      shell: bash
+    - name: Run formatting
+      if: ${{ inputs.dependency-manager == "yarn" }}
+      run: yarn format
+      shell: bash
