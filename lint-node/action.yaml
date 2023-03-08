@@ -35,18 +35,18 @@ runs:
         dependency-manager: ${{ inputs.dependency-manager }}
         registry-url: ${{ inputs.registry-url }}
     - name: Run linting
-      if: ${{ inputs.dependency-manager == "npm" }}
+      if: inputs.dependency-manager == "npm"
       run: npm run lint
       shell: bash
     - name: Run linting
-      if: ${{ inputs.dependency-manager == "yarn" }}
+      if: inputs.dependency-manager == "yarn"
       run: yarn lint
       shell: bash
     - name: Run formatting
-      if: ${{ inputs.dependency-manager == "npm" }}
+      if: inputs.dependency-manager == "npm"
       run: npm run pretty:check
       shell: bash
     - name: Run formatting
-      if: ${{ inputs.dependency-manager == "yarn" }}
+      if: inputs.dependency-manager == "yarn"
       run: yarn format
       shell: bash
