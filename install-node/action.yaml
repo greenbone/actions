@@ -14,7 +14,7 @@ inputs:
     required: true
     default: "npm"
   registry-url:
-    description: "Upload into which registry? default: 'https://npm.pkg.github.com'"
+    description: "npm registry to use for installing dependencies. default: 'https://npm.pkg.github.com'"
     default: "https://npm.pkg.github.com"
 branding:
   icon: "package"
