@@ -1,23 +1,23 @@
 name: Helm build and push chart
 description: Push helm chart to OCI-based registries
 inputs:
-  CHARTS_PATH:
+  charts-path:
     description: Path to charts base folder
     default: ./charts
     required: false
-  CHART_NAME:
+  chart-name:
     description: "Chart to build and push"
     required: true
-  REGISTRY:
+  registry:
     description: Registry
     required: true
-  REGISTRY_URL:
+  registry-url:
     description: Registry url
     required: true
-  REGISTRY_USER:
+  registry-user:
     description: Registry login user
     required: true
-  REGISTRY_TOKEN:
+  registry-token:
     description: Registry login password/token
     required: true
 branding:
@@ -31,13 +31,13 @@ runs:
       shell: bash
       run: |
         helm registry login \
-          -u '${{ inputs.REGISTRY_USER }}' \
-          -p '${{ inputs.REGISTRY_TOKEN }}' \
-          '${{ inputs.REGISTRY }}'
+          -u '${{ inputs.registry-user }}' \
+          -p '${{ inputs.registry-token }}' \
+          '${{ inputs.registry }}'
     - name: Helm build and upload package
       shell: bash
       run: |
-        helm dependency update '${{ inputs.CHARTS_PATH }}/${{ inputs.CHART_NAME }}'
-        helm package '${{ inputs.CHARTS_PATH }}/${{ inputs.CHART_NAME }}'
-        helm push ${{ inputs.CHART_NAME }}-*.tgz '${{ inputs.REGISTRY_URL }}'
-        rm -f "${{ inputs.CHART_NAME }}-*.tgz"
+        helm dependency update '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
+        helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
+        helm push ${{ inputs.chart-name }}-*.tgz '${{ inputs.registry-url }}'
+        rm -f "${{ inputs.chart-name }}-*.tgz"
