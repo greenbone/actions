@@ -25,7 +25,7 @@ inputs:
   strategy:
     description: "Deprecated by release-type."
   python-version:
-    description: "Python version used for release."
+    description: "Python version used  to create the release. (Only important for python projects)"
     default: "3.10"
   ref:
     description: "This branch's/tag's HEAD will be candidate of the next release. Default: default branch"
