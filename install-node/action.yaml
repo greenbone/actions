@@ -33,13 +33,13 @@ runs:
         cache: ${{ inputs.dependency-manager }}
         registry-url: ${{ inputs.registry-url }}
     - name: Install NPM
-      if: inputs.dependency-manager == "npm"
+      if: ${{ inputs.dependency-manager == 'npm' }}
       run: npm ci
       env:
         NODE_AUTH_TOKEN: ${{ inputs.token }}
       shell: bash
     - name: Install Yarn
-      if: inputs.dependency-manager == "yarn"
+      if: ${{ inputs.dependency-manager == 'yarn' }}
       # `--prefer-offline` gives cache priority
       run: yarn install --prefer-offline # optional, --immutable
       env:
