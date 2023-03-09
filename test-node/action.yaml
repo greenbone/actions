@@ -28,7 +28,7 @@ branding:
 runs:
   using: "composite"
   steps:
-    - run: echo "Install project with ${{ inputs.dependency-manager }}""
+    - run: echo "Install project with ${{ inputs.dependency-manager }}"
       shell: bash
     - name: Install Project
       uses: greenbone/actions/install-node@v2
