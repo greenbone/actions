@@ -50,7 +50,7 @@ runs:
       run: npm run test:ci
       shell: bash
     - name: Run Tests
-      if: ${{ inputs.dependency-manager == 'yarn }}
+      if: ${{ inputs.dependency-manager == 'yarn' }}
       run: yarn test:coverage --reporters=default
       env:
         JEST_JUNIT_OUTPUT_DIR: ${{ env.REPORT_DIR }}
