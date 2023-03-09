@@ -16,28 +16,27 @@ inputs:
   github-user-token:
     description: "Token with write rights required to create the release."
     required: true
-  gpg-key:
-    description: "GPG key, represented as a string. Required for signing assets of the release."
-    required: false
   gpg-fingerprint:
     description: "GPG fingerprint, represented as a string. Required for signing assets of the release."
-    required: false
+  gpg-key:
+    description: "GPG key, represented as a string. Required for signing assets of the release."
   gpg-passphrase:
     description: "GPG passphrase, represented as a string. Required for signing assets of the release."
-    required: false
   strategy:
     description: "Deprecated by release-type."
+  python-version:
+    description: "Python version used for release."
+    default: "3.10"
+  ref:
+    description: "This branch's/tag's HEAD will be candidate of the next release. Default: default branch"
+    default: ""
   release-type:
     description: |
       "What type of release should be executed?"
       "Supported: ['alpha', 'beta', 'calendar', 'major', 'minor', 'patch',  'release-candidate']; Default: patch"
     default: "patch"
-  python-version:
-    description: "Python version that should be installed"
-    default: "3.10"
-  ref:
-    description: "This branches HEAD will be candidate of the next release"
-    default: ""
+  release-version:
+    description: "Set an explicit version, that should be released."
 
 branding:
   icon: "package"
@@ -46,6 +45,7 @@ branding:
 runs:
   using: "composite"
   steps:
+      # Setup
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0 #for conventional commits
@@ -63,12 +63,21 @@ runs:
         python -m pip install --upgrade pontos
       shell: bash
     - name: Set git name, mail and origin
+      uses: greenbone/actions/set-github-user@v2
+      with:
+        name: ${{ inputs.github-user }}
+        mail: ${{ inputs.github-user-mail }}
+        token: ${{ inputs.github-user-token }}
+    - name: Import gpg key from secrets
       run: |
-        git config --global user.name "${{ inputs.github-user }}"
-        git config --global user.email "${{ inputs.github-user-mail }}"
-        git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+        echo -e "${{ inputs.gpg-key }}" >> tmp.file
+        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+        rm tmp.file
       shell: bash
-    - name: Parse inputs
+      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
+
+      # Input parsing
+    - name: Parse release-type
       run: |
         case ${{ inputs.release-type }} in
           alpha | beta | calendar | major | minor | patch | release-candidate)
@@ -84,12 +93,21 @@ runs:
         fi
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
+    - name: Parse release-version if set (overwrite release-type)
+      if: ${{ inputs.release-version }}
+      run: |
+        ARGS="--release-version ${{ inputs.release-version }}"
+      shell: bash
+
+      # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
       uses: greenbone/actions/admin-bypass@v2
       with:
         allow: "true"
         github-token: ${{ inputs.github-user-token }}
         branch: ${{ inputs.ref}}
+
+      # Create release
     - name: Create automatic release
       run: |
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
@@ -98,6 +116,8 @@ runs:
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
+
+      # Disable admin bypass
     - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
       if: always()
       uses: greenbone/actions/admin-bypass@v2
@@ -105,16 +125,11 @@ runs:
         allow: "false"
         github-token: ${{ inputs.github-user-token }}
         branch: ${{ inputs.ref}}
-    - name: Import gpg key from secrets
-      run: |
-        echo -e "${{ inputs.gpg-key }}" >> tmp.file
-        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
-        rm tmp.file
-      shell: bash
-      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
+
+      # Signing
     - name: Sign assets for released version
       run: |
-        echo "Signing assets for ${{env.VERSION}}"
+        echo "Signing release assets"
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
         pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }}
       shell: bash
