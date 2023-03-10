@@ -55,13 +55,32 @@ def parse_arguments() -> Namespace:
         help="Set the path to chart folder",
     )
     parser.add_argument(
-        "--chart-version", required=True, type=str, help="Set chart version"
+        "--chart-version", required=False, type=str, help="Set chart version"
     )
     parser.add_argument(
         "--app-version", required=False, type=str, help="Set appVersion"
     )
     parser.add_argument(
         "--image-tag", required=False, type=str, help="Set image tag"
+    )
+    parser.add_argument(
+        "--dependencie-name",
+        required=False,
+        type=str,
+        help="Set dependencie to upgrade",
+    )
+    parser.add_argument(
+        "--dependencie-version",
+        required=False,
+        type=str,
+        help="Set dependencie version",
+    )
+    parser.add_argument(
+        "--no-tag",
+        required=False,
+        default=False,
+        action="store_true",
+        help="Do not upgrade image tag",
     )
     return parser.parse_args()
 
@@ -79,20 +98,19 @@ class ChartVersionUpgrade:
     def __init__(
         self,
         chart_dir: str,
-        chart_version: str,
+        chart_version: str = None,
         app_version: str = None,
         image_tag: str = None,
+        dependencie_name: str = None,
+        dependencie_version: str = None,
+        no_tag: bool = False,
     ) -> None:
+        self.no_tag = no_tag
+
         self.chart_dir = Path(chart_dir)
         if not self.chart_dir.is_dir():
             raise ChartVersionUpgradeError(
                 f"{self.chart_dir} does not exist, or is not a dir."
-            )
-
-        self.values_file = self.chart_dir / "values.yaml"
-        if not self.values_file.is_file():
-            raise ChartVersionUpgradeError(
-                f"{self.values_file} does not exist, or is not a file."
             )
 
         self.chart_file = self.chart_dir / "Chart.yaml"
@@ -102,6 +120,13 @@ class ChartVersionUpgrade:
             )
 
         self.chart_version = chart_version
+
+        self.values_file = self.chart_dir / "values.yaml"
+        if self.chart_version and not self.no_tag:
+            if not self.values_file.is_file():
+                raise ChartVersionUpgradeError(
+                    f"{self.values_file} does not exist, or is not a file."
+                )
 
         if app_version:
             self.app_version = app_version
@@ -113,8 +138,15 @@ class ChartVersionUpgrade:
         else:
             self.image_tag = self.chart_version
 
+        self.dependencie_name = dependencie_name
+        self.dependencie_version = dependencie_version
+
     def values_run(self) -> None:
         """run values.yaml version upgrade"""
+
+        if self.no_tag:
+            print("Image tag upgrade disabled", flush=True)
+            return None
 
         values_data = yaml_file_read(self.values_file)
         if not values_data:
@@ -123,6 +155,10 @@ class ChartVersionUpgrade:
         if not "image" in values_data:
             raise ChartVersionUpgradeError(
                 f"{self.values_file} has not entry >image<"
+            )
+        if not isinstance(values_data["image"], dict):
+            raise ChartVersionUpgradeError(
+                f"entry >image< in {self.values_file} is not type dict"
             )
         if not "tag" in values_data["image"]:
             raise ChartVersionUpgradeError(
@@ -138,6 +174,10 @@ class ChartVersionUpgrade:
         chart_data = yaml_file_read(self.chart_file)
         if not chart_data:
             raise ChartVersionUpgradeError(f"{self.chart_file} is empty")
+        if not isinstance(chart_data, dict):
+            raise ChartVersionUpgradeError(
+                f"{self.chart_file} is not type dict"
+            )
 
         if not "version" in chart_data:
             raise ChartVersionUpgradeError(
@@ -153,11 +193,73 @@ class ChartVersionUpgrade:
 
         return yaml_file_write(self.chart_file, chart_data)
 
+    def dependencie_run(self) -> None:
+        """Run Chart.yaml dependencie version upgrade"""
+
+        chart_data = yaml_file_read(self.chart_file)
+        if not chart_data:
+            raise ChartVersionUpgradeError(f"{self.chart_file} is empty")
+        if not isinstance(chart_data, dict):
+            raise ChartVersionUpgradeError(
+                f"{self.chart_file} is not type dict"
+            )
+
+        if not "dependencies" in chart_data:
+            raise ChartVersionUpgradeError(
+                f"{self.chart_file} has not entry >dependencies<"
+            )
+        if not isinstance(chart_data["dependencies"], list):
+            raise ChartVersionUpgradeError(
+                f"entry >dependencies< in {self.chart_file} is not type dict"
+            )
+
+        dependencie = None
+        for dep in chart_data["dependencies"]:
+            if "name" in dep and dep["name"] == self.dependencie_name:
+                dependencie = dep
+                break
+        if not dependencie:
+            raise ChartVersionUpgradeError(
+                f"Dependencie {self.dependencie_name} not found in {self.chart_file}"
+            )
+        if not isinstance(dependencie, dict):
+            raise ChartVersionUpgradeError(
+                f"entry >{dependencie['name']}< in {self.chart_file} is not type dict"
+            )
+        if "version" not in dependencie:
+            raise ChartVersionUpgradeError(
+                f"{dependencie['name']} has not entry >version<"
+            )
+        dependencie["version"] = self.dependencie_version
+
+        return yaml_file_write(self.chart_file, chart_data)
+
     def run(self) -> None:
         """Run Chart.yaml and values.yaml version upgrade"""
 
-        self.chart_run()
-        self.values_run()
+        if (
+            not self.dependencie_name or not self.dependencie_version
+        ) and not self.chart_version:
+            raise ChartVersionUpgradeError(
+                "Nothing to do! No chart version or dependencie_version to upgrade"
+            )
+
+        if self.chart_version:
+            print("Upgrade Chart version", flush=True)
+            self.chart_run()
+            self.values_run()
+            print(f"Chart version upgraded to {self.chart_version}", flush=True)
+
+        if self.dependencie_name and self.dependencie_version:
+            print("Upgrade Chart dependencie", flush=True)
+            self.dependencie_run()
+            print(
+                (
+                    f"Chart dependencie {self.dependencie_name}"
+                    f"upgraded to version {self.dependencie_version}"
+                ),
+                flush=True,
+            )
 
 
 def main() -> int:
@@ -167,9 +269,12 @@ def main() -> int:
     try:
         cvu = ChartVersionUpgrade(
             args.chart_path,
-            args.chart_version,
+            chart_version=args.chart_version,
             app_version=args.app_version,
             image_tag=args.image_tag,
+            dependencie_name=args.dependencie_name,
+            dependencie_version=args.dependencie_version,
+            no_tag=args.no_tag,
         )
         cvu.run()
         return 0

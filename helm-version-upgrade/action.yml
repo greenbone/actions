@@ -6,12 +6,21 @@ inputs:
     required: true
   chart-version:
     description: "New helm chart version"
-    required: true
+    required: false
   app-version:
     description: "New helm chart appVersion, optional default chart-version"
     required: false
   image-tag:
     description: "New helm chart docker image tag, optional default chart-version"
+    required: false
+  no-tag:
+    description: "Do not upgrade an image tag in values.yaml"
+    required: false
+  dependencie-name:
+    description: "Helm chart dependencie to upgrade"
+    required: false
+  dependencie-version:
+    description: "New helm chart dependencie version"
     required: false
   git-user:
     description: "Git user name for commit, set only if autocommit is desired"
@@ -40,12 +49,24 @@ runs:
       working-directory: ${{ github.action_path }}
       shell: bash
       run: |
-        cmd="--chart-path ${{ inputs.chart-path }} --chart-version ${{ inputs.chart-version }}"
+        cmd="--chart-path ${{ inputs.chart-path }}"
+        if [ "${{ inputs.chart-version }}" ]; then
+          cmd+=" --chart-version ${{ inputs.chart-version }}"
+        fi
         if [ "${{ inputs.app-version }}" ]; then
           cmd+=" --app-version ${{ inputs.app-version }}"
         fi
         if [ "${{ inputs.image-tag }}" ]; then
           cmd+=" --image-tag ${{ inputs.image-tag }}"
+        fi
+        if [ "${{ inputs.no-tag }}" == 'true' ]; then
+          cmd+=" --no-tag"
+        fi
+        if [ "${{ inputs.dependencie-name }}" ]; then
+          cmd+=" --dependencie-name ${{ inputs.dependencie-name }}"
+        fi
+        if [ "${{ inputs.dependencie-version }}" ]; then
+          cmd+=" --dependencie-version ${{ inputs.dependencie-version }}"
         fi
         poetry run helm-chart-version-upgrade $cmd
     - name: Push
