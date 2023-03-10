@@ -1,0 +1,30 @@
+name: "Action to set up the user for the workflow"
+author: "Jaspar Stach <jaspar.stach@greenbone.net>"
+description: |
+  "An action that sets up the machines github user and email and "
+  "activates the users tokens permissions to execute git commands."
+
+# Never look up these commands again. :)
+
+inputs:
+  user:
+    description: "GitHub user name on behalf of whom the actions will be executed."
+    required: true
+  mail:
+    description: "Mail address for the given GitHub user."
+    required: true
+  token:
+    description: "The GitHub user's token (PAT)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo "Setting up GitHub user and git permissions"
+      shell: bash
+    - name: Set git name, mail and origin
+      run: |
+        git config --global user.name "${{ inputs.github-user }}"
+        git config --global user.email "${{ inputs.github-user-mail }}"
+        git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+      shell: bash
