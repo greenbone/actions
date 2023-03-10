@@ -24,7 +24,7 @@ runs:
       shell: bash
     - name: Set git name, mail and origin
       run: |
-        git config --global user.name "${{ inputs.github-user }}"
-        git config --global user.email "${{ inputs.github-user-mail }}"
-        git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
+        git config --global user.name "${{ inputs.user }}"
+        git config --global user.email "${{ inputs.mail }}"
+        git remote set-url origin https://${{ inputs.token }}@github.com/${{ github.repository }}
       shell: bash
