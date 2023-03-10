@@ -114,7 +114,7 @@ Release a project in C, GoLang, JavaScript or Python
     gpg-key: boo
     gpg-passphrase: foo
     gpg-fingerprint: baz
-    strategy: calendar
+    release-type: calendar
     ref: main
 ```
 
