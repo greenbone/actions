@@ -65,7 +65,7 @@ runs:
     - name: Set git name, mail and origin
       uses: greenbone/actions/set-github-user@v2
       with:
-        name: ${{ inputs.github-user }}
+        user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
     - name: Import gpg key from secrets
@@ -97,6 +97,7 @@ runs:
       if: ${{ inputs.release-version }}
       run: |
         ARGS="--release-version ${{ inputs.release-version }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
 
       # Enable admin bypass
