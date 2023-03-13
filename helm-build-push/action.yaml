@@ -4,15 +4,13 @@ inputs:
   charts-path:
     description: Path to charts base folder
     default: ./charts
-    required: false
   chart-name:
     description: "Chart to build and push"
-    required: true
   registry:
     description: Registry
-    required: true
-  registry-url:
-    description: Registry url
+    default: ${{ vars.IMAGE_REGISTRY }}
+  registry-subpath:
+    description: Registry subpath to place the helm chart in
     required: true
   registry-user:
     description: Registry login user
@@ -39,5 +37,11 @@ runs:
       run: |
         helm dependency update '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
         helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
-        helm push ${{ inputs.chart-name }}-*.tgz '${{ inputs.registry-url }}'
+    - name: Push with subpath
+      if: ${{ inputs.registry-subpath }}
+      run: helm push ${{ inputs.chart-name }}-*.tgz '${{ inputs.registry-subpath }}/${{ inputs.registry }}'
+    - name: Push without subpath
+      if: ${{ !inputs.registry-subpath }}
+      run: helm push ${{ inputs.chart-name }}-*.tgz '${{ inputs.registry }}'
+    - name: Cleanup
         rm -f "${{ inputs.chart-name }}-*.tgz"
