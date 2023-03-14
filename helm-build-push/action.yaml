@@ -6,6 +6,7 @@ inputs:
     default: ./charts
   chart-name:
     description: "Chart to build and push"
+    required: true
   registry:
     description: Registry
     default: ${{ vars.IMAGE_REGISTRY }}
