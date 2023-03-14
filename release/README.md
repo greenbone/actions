@@ -51,7 +51,7 @@ You can alternatively set an explicit `release-version`. It will overwrite the `
 | ref                  | This branch's/tag's HEAD will be candidate of the next release.                                                                 | No        | `""` (default branch) |
 | release-type         | What type of release should be executed? Supported: `alpha`, `beta`, `calendar`, `major`, `minor`, `patch`, `release-candidate` | No        | `patch`               |
 | release-version      | Set an explicit version, that should be released.                                                                               | No        | None                  |
-| versioning-scheme    | What versioning scheme should be used for the release? Supported: `semantic`, `pep440`                                          | No        | `pep440`              |
+| versioning-scheme    | What versioning scheme should be used for the release? Supported: `semver`, `pep440`                                            | No        | `pep440`              |
 
 
 ## Examples
