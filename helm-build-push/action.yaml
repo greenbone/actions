@@ -40,9 +40,9 @@ runs:
         helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
     - name: Push with subpath
       if: ${{ inputs.registry-subpath }}
-      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ inputs.registry-subpath }}'
+      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/${{ inputs.registry-subpath }}'
     - name: Push without subpath
       if: ${{ !inputs.registry-subpath }}
-      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}'
+      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/'
     - name: Cleanup
         rm -f "${{ inputs.chart-name }}-*.tgz"
