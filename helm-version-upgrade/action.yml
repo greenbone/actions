@@ -77,6 +77,9 @@ runs:
       run: |
         git config --global user.name "${{ inputs.git-user }}"
         git config --global user.email "${{ inputs.git-user-email }}"
-        git add -u
-        git commit -m "Change: Upgrade helm chart to version ${{ inputs.chart-version }}"
-        git push
+        git diff --exit-code
+        if ! [ "$?" -eq 0 ]; then
+          git add -u
+          git commit -m "Change: Upgrade helm chart to version ${{ inputs.chart-version }}"
+          git push
+        fi
