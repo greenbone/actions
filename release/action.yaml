@@ -38,7 +38,7 @@ inputs:
   release-version:
     description: "Set an explicit version, that should be released."
   versioning-scheme:
-    description: "What versioning scheme should be used for the release? Supported: ['semantic', 'pep440']; Default: pep440"
+    description: "What versioning scheme should be used for the release? Supported: ['semver', 'pep440']; Default: pep440"
     default: "pep440"
 
 branding:
