@@ -9,7 +9,7 @@ inputs:
     required: true
   registry:
     description: Registry
-    default: ${{ vars.IMAGE_REGISTRY }}
+    default: "ghcr.io"
   registry-subpath:
     description: Registry subpath to place the helm chart in
     required: true
@@ -39,10 +39,13 @@ runs:
         helm dependency update '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
         helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
     - name: Push with subpath
+      shell: bash
       if: ${{ inputs.registry-subpath }}
       run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/${{ inputs.registry-subpath }}'
     - name: Push without subpath
+      shell: bash
       if: ${{ !inputs.registry-subpath }}
       run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/'
     - name: Cleanup
-        rm -f "${{ inputs.chart-name }}-*.tgz"
+      shell: bash
+      run: rm -f "${{ inputs.chart-name }}-*.tgz"
