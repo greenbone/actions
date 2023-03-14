@@ -37,6 +37,9 @@ inputs:
     default: "patch"
   release-version:
     description: "Set an explicit version, that should be released."
+  versioning-scheme:
+    description: "What versioning scheme should be used for the release? Supported: ['semantic', 'pep440']; Default: pep440"
+    default: "pep440"
 
 branding:
   icon: "package"
@@ -112,7 +115,7 @@ runs:
     - name: Create automatic release
       run: |
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release release ${{ env.ARGS }}
+        pontos-release release ${{ env.ARGS }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
@@ -132,7 +135,7 @@ runs:
       run: |
         echo "Signing release assets"
         source ${{ github.action_path }}/pontos-release-venv/bin/activate
-        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }}
+        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
       if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:
