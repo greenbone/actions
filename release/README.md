@@ -16,19 +16,20 @@ Currently supported programming languages:
 Currently this action can create different types of releases.
 Supported with the `release-type` argument are `major`, `minor`, `patch` and different type of `pre-releases`. Additionally you can also use `calendar` versioning.
 
-| Type              | Old version  | New version  |
-|-------------------|--------------|--------------|
-| major             |      `1.x.x` |      `2.x.x` |
-| minor             |      `x.1.x` |      `x.2.x` |
-| patch             |      `x.x.1` |      `x.x.2` |
-| alpha             |      `x.x.1` |    `x.x.2a1` |
-| alpha             |    `x.x.2a1` |    `x.x.2a2` |
-| beta              |      `x.x.1` |    `x.x.2a1` |
-| beta              |    `x.x.2a1` |    `x.x.2b1` |
-| release-candidate |    `x.x.2a3` |   `x.x.2rc1` |
-| release-candidate |      `x.x.2` |   `x.x.3rc1` |
-| calendar          |     `20.5.1` |     `23.2.0` |
-| calendar          |     `23.2.1` |     `23.2.2` |
+| Type              | Old version      | New version      |
+|-------------------|------------------|------------------|
+| major             |      `1.x.x`     |      `2.x.x`     |
+| minor             |      `x.1.x`     |      `x.2.x`     |
+| patch             |      `x.x.1`     |      `x.x.2`     |
+| alpha             |      `x.x.1`     |   `x.x.2-a1`     |
+| alpha             |   `x.x.2-a1`     |   `x.x.2-a2`     |
+| alpha             |   `x.x.2-alpha1` |   `x.x.2-alpha2` |
+| beta              |      `x.x.1`     |   `x.x.2-a1`     |
+| beta              |   `x.x.2-a1`     |   `x.x.2-b1`     |
+| release-candidate |   `x.x.2-a3`     |  `x.x.2-rc1`     |
+| release-candidate |      `x.x.2`     |  `x.x.3-rc1`     |
+| calendar          |     `20.5.1`     |     `23.2.0`     |
+| calendar          |     `23.2.1`     |     `23.2.2`     |
 
 You can alternatively set an explicit `release-version`. It will overwrite the `release-type` argument.
 
@@ -50,6 +51,7 @@ You can alternatively set an explicit `release-version`. It will overwrite the `
 | ref                  | This branch's/tag's HEAD will be candidate of the next release.                                                                 | No        | `""` (default branch) |
 | release-type         | What type of release should be executed? Supported: `alpha`, `beta`, `calendar`, `major`, `minor`, `patch`, `release-candidate` | No        | `patch`               |
 | release-version      | Set an explicit version, that should be released.                                                                               | No        | None                  |
+| versioning-scheme    | What versioning scheme should be used for the release? Supported: `semantic`, `pep440`                                          | No        | `pep440`              |
 
 
 ## Examples
