@@ -39,7 +39,7 @@ runs:
         helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
     - name: Push with subpath
       if: ${{ inputs.registry-subpath }}
-      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry-subpath }}/${{ inputs.registry }}'
+      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ inputs.registry-subpath }}'
     - name: Push without subpath
       if: ${{ !inputs.registry-subpath }}
       run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}'
