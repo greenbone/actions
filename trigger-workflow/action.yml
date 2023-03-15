@@ -16,7 +16,7 @@ inputs:
     required: true
     default: "main"
   inputs:
-    description: "Inputs to pass to the workflow, must be a JSON string. All values must be strings (even if used as boolean or number)."
+    description: "Inputs to pass to the workflow, must be a JSON string and single quotation marks are not allowed. All values must be strings (even if used as boolean or number)."
     required: false
     default: "{}"
   wait-for-completion-timeout:
