@@ -64,16 +64,16 @@ def parse_arguments() -> Namespace:
         "--image-tag", required=False, type=str, help="Set image tag"
     )
     parser.add_argument(
-        "--dependencie-name",
+        "--dependency-name",
         required=False,
         type=str,
-        help="Set dependencie to upgrade",
+        help="Set dependency to upgrade",
     )
     parser.add_argument(
-        "--dependencie-version",
+        "--dependency-version",
         required=False,
         type=str,
-        help="Set dependencie version",
+        help="Set dependency version",
     )
     parser.add_argument(
         "--no-tag",
@@ -101,8 +101,8 @@ class ChartVersionUpgrade:
         chart_version: str = None,
         app_version: str = None,
         image_tag: str = None,
-        dependencie_name: str = None,
-        dependencie_version: str = None,
+        dependency_name: str = None,
+        dependency_version: str = None,
         no_tag: bool = False,
     ) -> None:
         self.no_tag = no_tag
@@ -138,8 +138,8 @@ class ChartVersionUpgrade:
         else:
             self.image_tag = self.chart_version
 
-        self.dependencie_name = dependencie_name
-        self.dependencie_version = dependencie_version
+        self.dependency_name = dependency_name
+        self.dependency_version = dependency_version
 
     def values_run(self) -> None:
         """run values.yaml version upgrade"""
@@ -193,7 +193,7 @@ class ChartVersionUpgrade:
 
         return yaml_file_write(self.chart_file, chart_data)
 
-    def dependencie_run(self) -> None:
+    def dependency_run(self) -> None:
         """Run Chart.yaml dependencie version upgrade"""
 
         chart_data = yaml_file_read(self.chart_file)
@@ -215,12 +215,12 @@ class ChartVersionUpgrade:
 
         dependencie = None
         for dep in chart_data["dependencies"]:
-            if "name" in dep and dep["name"] == self.dependencie_name:
+            if "name" in dep and dep["name"] == self.dependency_name:
                 dependencie = dep
                 break
         if not dependencie:
             raise ChartVersionUpgradeError(
-                f"Dependencie {self.dependencie_name} not found in {self.chart_file}"
+                f"Dependencie {self.dependency_name} not found in {self.chart_file}"
             )
         if not isinstance(dependencie, dict):
             raise ChartVersionUpgradeError(
@@ -230,7 +230,7 @@ class ChartVersionUpgrade:
             raise ChartVersionUpgradeError(
                 f"{dependencie['name']} has not entry >version<"
             )
-        dependencie["version"] = self.dependencie_version
+        dependencie["version"] = self.dependency_version
 
         return yaml_file_write(self.chart_file, chart_data)
 
@@ -238,10 +238,10 @@ class ChartVersionUpgrade:
         """Run Chart.yaml and values.yaml version upgrade"""
 
         if (
-            not self.dependencie_name or not self.dependencie_version
+            not self.dependency_name or not self.dependency_version
         ) and not self.chart_version:
             raise ChartVersionUpgradeError(
-                "Nothing to do! No chart version or dependencie_version to upgrade"
+                "Nothing to do! No chart version or dependency_version to upgrade"
             )
 
         if self.chart_version:
@@ -250,13 +250,13 @@ class ChartVersionUpgrade:
             self.values_run()
             print(f"Chart version upgraded to {self.chart_version}", flush=True)
 
-        if self.dependencie_name and self.dependencie_version:
+        if self.dependency_name and self.dependency_version:
             print("Upgrade Chart dependencie", flush=True)
-            self.dependencie_run()
+            self.dependency_run()
             print(
                 (
-                    f"Chart dependencie {self.dependencie_name}"
-                    f"upgraded to version {self.dependencie_version}"
+                    f"Chart dependencie {self.dependency_name}"
+                    f"upgraded to version {self.dependency_version}"
                 ),
                 flush=True,
             )
@@ -272,8 +272,8 @@ def main() -> int:
             chart_version=args.chart_version,
             app_version=args.app_version,
             image_tag=args.image_tag,
-            dependencie_name=args.dependencie_name,
-            dependencie_version=args.dependencie_version,
+            dependency_name=args.dependency_name,
+            dependency_version=args.dependency_version,
             no_tag=args.no_tag,
         )
         cvu.run()

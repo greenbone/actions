@@ -16,11 +16,11 @@ inputs:
   no-tag:
     description: "Do not upgrade an image tag in values.yaml"
     required: false
-  dependencie-name:
-    description: "Helm chart dependencie to upgrade"
+  dependency-name:
+    description: "Helm chart dependency to upgrade"
     required: false
-  dependencie-version:
-    description: "New helm chart dependencie version"
+  dependency-version:
+    description: "New helm chart dependency version"
     required: false
   git-user:
     description: "Git user name for commit, set only if autocommit is desired"
@@ -62,11 +62,11 @@ runs:
         if [ "${{ inputs.no-tag }}" == 'true' ]; then
           cmd+=" --no-tag"
         fi
-        if [ "${{ inputs.dependencie-name }}" ]; then
-          cmd+=" --dependencie-name ${{ inputs.dependencie-name }}"
+        if [ "${{ inputs.dependency-name }}" ]; then
+          cmd+=" --dependency-name ${{ inputs.dependency-name }}"
         fi
-        if [ "${{ inputs.dependencie-version }}" ]; then
-          cmd+=" --dependencie-version ${{ inputs.dependencie-version }}"
+        if [ "${{ inputs.dependency-version }}" ]; then
+          cmd+=" --dependency-version ${{ inputs.dependency-version }}"
         fi
         poetry run helm-chart-version-upgrade $cmd
     - name: Push
