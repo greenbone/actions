@@ -22,15 +22,17 @@ jobs:
           chart-path: ${{ github.workspace }}/charts/<YOUR-CHART>
           chart-version: <NEW-VERSION> e.g 0.1.1-a1
 ```
-
 ## Action Configuration
 
 | Input Variable               | Description                                                                                                                     | Required / Optional      |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
 | chart-path                   | Full path to helm chart folder                                                                                                  | Required                 |
-| chart-version                | New helm chart version                                                                                                          | Required                 |
+| chart-version                | New helm chart version                                                                                                          | Optional                 |
 | app-version                  | New helm chart appVersion, optional default chart-version                                                                       | Optional                 |
 | image-tag                    | New helm chart docker image tag, optional default chart-version                                                                 | Optional                 |
+| no-tag                       | Do not upgrade an image tag in values                                                                                           | Optional                 |
+| dependency-version          | New helm chart dependency version                                                                                              | Optional                 |
+| dependency-name             | Helm chart dependency to upgrade                                                                                               | Optional                 |
 | git-user                     | Git user name for commit, set only if autocommit is desired                                                                     | Optional                 |
 | git-user-email               | Git user email for commit, set only if autocommit is desired                                                                    | Optional                 |
 | token                        | Github token for commit, set only if autocommit is desired                                                                      | Optional                 |
