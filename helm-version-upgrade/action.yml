@@ -6,7 +6,6 @@ inputs:
     required: true
   chart-version:
     description: "New helm chart version"
-    required: false
   app-version:
     description: "New helm chart appVersion, optional default chart-version"
     required: false
