@@ -4,13 +4,15 @@ description: "An action to upload coverage to codecov.io for Python package by u
 inputs:
   version:
     description: "Python version that should be installed"
-    default: 3.9
+    default: "3.9"
   test-command:
     description: "Command to run the tests"
     required: true
     default: "-m unittest"
   token:
     description: "Token required for private repositories"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
 branding:
   icon: "package"
   color: "green"
@@ -21,6 +23,7 @@ runs:
       uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
+        poetry-version: ${{ inputs.poetry-version }}
     - run: poetry run python -m pip install codecov
       shell: bash
       name: Install codecov-python
@@ -29,7 +32,7 @@ runs:
       shell: bash
       name: Run unit tests with coverage
       working-directory: ${{ github.workspace }}
-    - run:  poetry run coverage xml
+    - run: poetry run coverage xml
       shell: bash
       name: Create coverage XML report
       working-directory: ${{ github.workspace }}
