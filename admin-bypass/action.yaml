@@ -14,7 +14,7 @@ inputs:
     default: ${{ github.repository }}
   branch:
     description: "Target branch for the bypass. Default: main"
-    default: 'main'
+    default: "main"
 
 branding:
   icon: "package"

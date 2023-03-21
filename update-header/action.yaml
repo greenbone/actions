@@ -14,7 +14,7 @@ inputs:
     required: true
   version:
     description: "Python version that should be installed"
-    default: 3.9
+    default: "3.9"
     required: false
   target:
     description: "Branch that should be released. Default: main"
@@ -27,6 +27,8 @@ inputs:
     description: "Specify the file, that contains files to ignore"
     default: .pontos-header-ignore
     required: false
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
 
 branding:
   icon: "package"
@@ -43,9 +45,10 @@ runs:
       uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
+        poetry-version: ${{ inputs.poetry-version }}
     - name: Install pontos
       run: |
-        apt-get update && apt-get --assume-yes install python3-venv
+        apt-get --assume-yes install python3-venv
         python3 -m venv .venv
         . .venv/bin/activate
         python -m pip install --upgrade pip

@@ -7,7 +7,9 @@ inputs:
     required: true
   version:
     description: "Python version that should be installed"
-    default: 3.9
+    default: "3.9"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
 branding:
   icon: "package"
   color: "green"
@@ -18,6 +20,7 @@ runs:
       uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
+        poetry-version: ${{ inputs.poetry-version }}
     - run: echo "Running mypy"
       shell: bash
     - run: poetry run mypy ${{ inputs.packages }}
