@@ -34,6 +34,8 @@ inputs:
     description: "Python version to use for running the action"
     required: false
     default: "3.11"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
 
 runs:
   using: "composite"
@@ -44,6 +46,8 @@ runs:
         version: ${{ inputs.python-version }}
         working-directory: ${{ github.action_path }}
         without-dev: "true"
+        poetry-version: ${{ inputs.poetry-version }}
+        cache-dependency-path: ${{ github.action_path }}/poetry.lock
     - name: Run helm-chart-version-upgrade
       working-directory: ${{ github.action_path }}
       shell: bash
