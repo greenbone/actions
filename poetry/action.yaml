@@ -23,6 +23,16 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Install poetry ${{ inputs.poetry-version }}
+      # poetry needs to be installed before using setup-python with poetry cache
+      if: ${{ inputs.cache == 'poetry' }}
+      run: |
+        if [[ -n "${{ inputs.poetry-version }}" ]]; then
+          python -m pip install --upgrade poetry==${{ inputs.poetry-version }}
+        else
+          python -m pip install --upgrade poetry
+        fi
+      shell: bash
     - name: Set up Python ${{ inputs.version }}
       uses: actions/setup-python@v4
       with:
@@ -33,13 +43,19 @@ runs:
         python -m pip install --upgrade pip
       shell: bash
     - name: Install poetry ${{ inputs.poetry-version }}
+      # ensure that poetry is installed in the current set up python environment
+      # if poetry cache isn't used
+      if: ${{ inputs.cache != 'poetry' }}
       run: |
         if [[ -n "${{ inputs.poetry-version }}" ]]; then
           python -m pip install --upgrade poetry==${{ inputs.poetry-version }}
         else
           python -m pip install --upgrade poetry
         fi
-        echo "Installed:\n* $(poetry --version)\n* $(pip --version)"
+      shell: bash
+    - name: List installed
+      run: |
+        echo "Installed:\n* $(which poetry) $(poetry --version)\n* $(pip --version)"
       shell: bash
     - name: Parse inputs
       run: |
