@@ -12,8 +12,7 @@ inputs:
   without-dev:
     description: "Do not install the development dependencies"
   cache:
-    description: "Cache the poetry dependencies by default. Empty string to disable the cache."
-    default: "poetry"
+    description: "Cache dependencies by setting it to poetry. Leave unset or set to empty string to disable the cache."
   cache-dependency-path:
     description: "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies."
   poetry-version:
