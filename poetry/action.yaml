@@ -29,9 +29,9 @@ runs:
       if: ${{ inputs.cache == 'poetry' }}
       run: |
         if [[ -n "${{ inputs.poetry-version }}" ]]; then
-          python -m pip install --upgrade poetry==${{ inputs.poetry-version }}
+          python3 -m pip install --upgrade poetry==${{ inputs.poetry-version }}
         else
-          python -m pip install --upgrade poetry
+          python3 -m pip install --upgrade poetry
         fi
       shell: bash
     - name: Set up Python ${{ inputs.version }}
