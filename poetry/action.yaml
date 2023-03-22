@@ -12,7 +12,7 @@ inputs:
   without-dev:
     description: "Do not install the development dependencies"
   cache:
-    description: "Cache dependencies by setting it to poetry. Leave unset or set to empty string to disable the cache."
+    description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   cache-dependency-path:
     description: "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies."
   poetry-version:
@@ -24,9 +24,20 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Enable/Disable caching
+      run: |
+        if [[ "${{ inputs.cache }}" = "true" ]]; then
+          echo "Caching is enabled"
+          CACHE="poetry"
+        else
+          echo "Caching is disabled"
+          CACHE=""
+        fi
+        echo "CACHE=${CACHE}" >> $GITHUB_ENV
+      shell: bash
     - name: Install poetry ${{ inputs.poetry-version }}
       # poetry needs to be installed before using setup-python with poetry cache
-      if: ${{ inputs.cache == 'poetry' }}
+      if: ${{ inputs.cache == 'true' }}
       run: |
         if [[ -n "${{ inputs.poetry-version }}" ]]; then
           python3 -m pip install --upgrade poetry==${{ inputs.poetry-version }}
@@ -38,7 +49,7 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.version }}
-        cache: ${{ inputs.cache }}
+        cache: ${{ env.CACHE }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - name: Install pip
       run: |
@@ -47,7 +58,7 @@ runs:
     - name: Install poetry ${{ inputs.poetry-version }}
       # ensure that poetry is installed in the current set up python environment
       # if poetry cache isn't used
-      if: ${{ inputs.cache != 'poetry' }}
+      if: ${{ inputs.cache != 'true' }}
       run: |
         if [[ -n "${{ inputs.poetry-version }}" ]]; then
           python -m pip install --upgrade poetry==${{ inputs.poetry-version }}
