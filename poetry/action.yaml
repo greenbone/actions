@@ -57,7 +57,9 @@ runs:
       shell: bash
     - name: List installed
       run: |
-        echo "Installed:\n* $(which poetry) $(poetry --version)\n* $(pip --version)"
+        echo "Installed:"
+        echo " * $(poetry --version) $(which poetry)"
+        echo " * $(pip --version)"
       shell: bash
     - name: Parse inputs
       run: |
