@@ -1,6 +1,7 @@
 name: "Python Package Linting"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to lint Greenbone Python packages"
+
 inputs:
   packages:
     description: "Python packages to lint"
@@ -10,9 +11,15 @@ inputs:
     default: "3.9"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+  cache:
+    description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
+  cache-dependency-path:
+    description: "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies."
+
 branding:
   icon: "package"
   color: "green"
+
 runs:
   using: "composite"
   steps:
@@ -21,6 +28,8 @@ runs:
       with:
         version: ${{ inputs.version }}
         poetry-version: ${{ inputs.poetry-version }}
+        cache: ${{ inputs.cache }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - run: echo "Running black"
       shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}
