@@ -1,0 +1,19 @@
+name: 'Dependency Review'
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: high
+          vulnerability-check: true
+          license-check: true
+          allow-licenses: AGPL-3.0-or-later, GPL-3.0-or-later, LGPL-2.1, EPL-2.0, Python-2.0, GPL-2.0-or-later, GPL-2.0-only, MIT, Apache-2.0, BSD-3-Clause, BSD-2-Clause, CC-BY-SA-4.0
