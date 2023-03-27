@@ -18,13 +18,14 @@
 import asyncio
 import sys
 import tempfile
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from types import TracebackType
 from typing import AsyncContextManager, NoReturn, Optional
 
 import httpx
 from pontos.git import ConfigScope, Git, GitError
-from pontos.github.actions.core import ActionIO, Console
+from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.actions.event import GitHubEvent
 from pontos.github.api import GitHubAsyncRESTApi
@@ -39,13 +40,30 @@ class BackportError(Exception):
     pass
 
 
+def parse_arguments() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("--token", required=True)
+    parser.add_argument("--username", nargs="?")
+    parser.add_argument("--config-file", nargs="?")
+    return parser.parse_args()
+
+
 class Backport(AsyncContextManager):
-    def __init__(self) -> None:
-        self.token = ActionIO.input("token")
+    def __init__(
+        self,
+        *,
+        token: str,
+        username: Optional[str] = None,
+        config_file: Optional[str] = None,
+    ) -> None:
         self.env = GitHubEnvironment()
+
+        self.token = token
+        self.username = username or self.env.actor
+        self.config_file = config_file or DEFAULT_CONFIG_FILE
+
         self.event = GitHubEvent(self.env.event_path)
         self.api = GitHubAsyncRESTApi(self.token, self.env.api_url)
-        self.username = ActionIO.input("username") or self.env.actor
         self.git = Git(cwd=self.env.workspace)
 
     def backport_branch_name(
@@ -154,8 +172,6 @@ and create a new pull request where the base is `{destination_branch}` and compa
             Console.warning("Not a pull request.")
             return 1
 
-        config_file = ActionIO.input("config", DEFAULT_CONFIG_FILE)
-
         if not self.token:
             Console.error("Authentication token not provided as input.")
 
@@ -195,10 +211,10 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         self.git.cwd = workspace
 
-        config_path = workspace / config_file
+        config_path = workspace / self.config_file
         if not config_path.is_file():
             Console.warning(
-                f"No {config_file} file found for backport configuration."
+                f"No {config_path} file found for backport configuration."
             )
             return 1
 
@@ -206,7 +222,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
         has_error = False
         for issue in config.verify():
             has_error = True
-            Console.error(str(issue), name=config_file)
+            Console.error(str(issue), name=self.config_file)
 
         if has_error:
             return 2
@@ -289,7 +305,12 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
 
 async def run() -> int:
-    async with Backport() as backport:
+    args = parse_arguments()
+    async with Backport(
+        token=args.token,
+        username=args.username,
+        config_file=args.config_file,
+    ) as backport:
         with Console.group("Settings"):
             Console.log(f"Workspace: {backport.env.workspace}")
             Console.log(f"Ref: {backport.env.ref}")
