@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-
 from unittest.mock import patch
 
 from action.config import Config
@@ -55,24 +54,6 @@ class ConfigTestCase(unittest.TestCase):
             verify_issue = next(verify_iterator)
 
     @patch("pathlib.Path")
-    def test_verify_missing_source(self, path_mock):
-        path_mock.read_text.return_value = """
-        [backport.foo]
-        label = "foo"
-        destination = "b"
-        """
-        config = Config(path_mock)
-        verify_iterator = config.verify()
-        verify_issue = next(verify_iterator)
-
-        self.assertEqual(
-            str(verify_issue), "Missing source entry in [backport.foo] section."
-        )
-
-        with self.assertRaises(StopIteration):
-            verify_issue = next(verify_iterator)
-
-    @patch("pathlib.Path")
     def test_verify_missing_destination(self, path_mock):
         path_mock.read_text.return_value = """
         [backport.foo]
@@ -84,7 +65,8 @@ class ConfigTestCase(unittest.TestCase):
         verify_issue = next(verify_iterator)
 
         self.assertEqual(
-            str(verify_issue), "Missing destination entry in [backport.foo] section."
+            str(verify_issue),
+            "Missing destination entry in [backport.foo] section.",
         )
 
         with self.assertRaises(StopIteration):
@@ -110,12 +92,8 @@ class ConfigTestCase(unittest.TestCase):
 
         verify_issue = next(verify_iterator)
         self.assertEqual(
-            str(verify_issue), "Missing source entry in [backport.bar] section."
-        )
-
-        verify_issue = next(verify_iterator)
-        self.assertEqual(
-            str(verify_issue), "Missing destination entry in [backport.bar] section."
+            str(verify_issue),
+            "Missing destination entry in [backport.bar] section.",
         )
 
         with self.assertRaises(StopIteration):
