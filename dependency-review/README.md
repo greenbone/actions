@@ -6,7 +6,7 @@ The action is available for all public repositories, as well as private reposito
 
 You can use the dependency review action within a GitHub Action workflow.
 
-More information availabe in [dependency-review-action](https://github.com/actions/dependency-review-action)
+More information availabe in [dependency-review](https://github.com/actions/dependency-review-action)
 
 #### Example using as a Workflow
 
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Repository'
-        uses: greenbone/actions/dependency-review-action@v1
+        uses: greenbone/actions/dependency-review@v2
       - name: 'Dependency Review'
-        uses: greenbone/actions/dependency-review-action@v1
+        uses: greenbone/actions/dependency-review@v2
 ```
