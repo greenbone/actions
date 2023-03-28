@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: Backport Pull Request
-          uses: greenbone/actions/backport-pull-request@v1
+          uses: greenbone/actions/backport-pull-request@v2
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -35,7 +35,7 @@ workflow file of the backport action.
 
 ```yaml
         - name: Backport Pull Request
-          uses: greenbone/actions/backport-pull-request@v1
+          uses: greenbone/actions/backport-pull-request@v2
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
             config: pyproject.toml
@@ -45,8 +45,11 @@ workflow file of the backport action.
 
 |Input Variable|Description| |
 |--------------|-----------|-|
-|token|Token required to create the backport pull request|Required|
-|config|TOML based configuration file for backporting pull requests|Optional (default is `backport.toml`)|
+| token          | Token required to create the backport pull request          | Required |
+| config         | TOML based configuration file for backporting pull requests | Optional (default is `backport.toml`) |
+| username       | GitHub user name to use for the backported commits          | Optional (by default github.actor is used) |
+| python-version | Python version to use for running the action                | Optional (default is `3.10`) |
+| poetry-version | Poetry version to use for running the action                | Optional (default is latest) |
 
 ## TOML Configuration
 
@@ -57,14 +60,18 @@ backported. The backport configuration file requires at least a section
 `rule-1`). The section takes three key/value pairs
 
 * label
-* source
 * destination
+* source
 
 The `label` defines which GitHub needs to be set to activate the backporting
 procedure.
-The `source` is the name of the branch from where to backport the pull request.
-It is matched against the base branch of a pull request.
-The `destination` sets the branch to where to backport the pull request.
+
+The `destination` sets the branch to where to backport the pull request (the
+base branch of the to be created backport pull request).
+
+The `source` is optional. If set the backport rule is only applied if the
+`source` matches the name of the branch from where to backport the pull request
+(the base branch of the current pull request).
 
 Example:
 ```TOML
@@ -75,6 +82,13 @@ destination = "main"
 
 [backport.rule-2]
 label = "backport-to-staging"
-source = "main"
 destination = "staging"
 ```
+
+`rule-1` is only applied if the label `backport-to-main` is set and the base
+branch is named `develop`. A new backport pull request gets created against the
+`main` branch.
+
+`rule-2` is only applied if the label `backport-to-staging` is set. The base
+branch of the pull request is not considered. A new backport pull request gets
+created against the `staging` branch.
