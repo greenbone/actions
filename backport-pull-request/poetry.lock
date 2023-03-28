@@ -23,14 +23,14 @@ trio = ["trio (>=0.16,<0.22)"]
 
 [[package]]
 name = "astroid"
-version = "2.15.0"
+version = "2.15.1"
 description = "An abstract syntax tree for Python with inference support."
 category = "dev"
 optional = false
 python-versions = ">=3.7.2"
 files = [
-    {file = "astroid-2.15.0-py3-none-any.whl", hash = "sha256:e3e4d0ffc2d15d954065579689c36aac57a339a4679a679579af6401db4d3fdb"},
-    {file = "astroid-2.15.0.tar.gz", hash = "sha256:525f126d5dc1b8b0b6ee398b33159105615d92dc4a17f2cd064125d57f6186fa"},
+    {file = "astroid-2.15.1-py3-none-any.whl", hash = "sha256:89860bda98fe2bbd1f5d262229be7629d778ce280de68d95d4a73d1f592ad268"},
+    {file = "astroid-2.15.1.tar.gz", hash = "sha256:af4e0aff46e2868218502789898269ed95b663fba49e65d91c1e09c966266c34"},
 ]
 
 [package.dependencies]
@@ -489,30 +489,30 @@ files = [
 
 [[package]]
 name = "platformdirs"
-version = "3.1.1"
+version = "3.2.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.1.1-py3-none-any.whl", hash = "sha256:e5986afb596e4bb5bde29a79ac9061aa955b94fca2399b7aaac4090860920dd8"},
-    {file = "platformdirs-3.1.1.tar.gz", hash = "sha256:024996549ee88ec1a9aa99ff7f8fc819bb59e2c3477b410d90a16d32d6e707aa"},
+    {file = "platformdirs-3.2.0-py3-none-any.whl", hash = "sha256:ebe11c0d7a805086e99506aa331612429a72ca7cd52a1f0d277dc4adc20cb10e"},
+    {file = "platformdirs-3.2.0.tar.gz", hash = "sha256:d5b638ca397f25f979350ff789db335903d7ea010ab28903f57b27e1b16c2b08"},
 ]
 
 [package.extras]
 docs = ["furo (>=2022.12.7)", "proselint (>=0.13)", "sphinx (>=6.1.3)", "sphinx-autodoc-typehints (>=1.22,!=1.23.4)"]
-test = ["appdirs (==1.4.4)", "covdefaults (>=2.2.2)", "pytest (>=7.2.1)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
+test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.2.2)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
 
 [[package]]
 name = "pontos"
-version = "23.3.5"
+version = "23.3.6"
 description = "Common utilities and tools maintained by Greenbone Networks"
 category = "main"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.9,<4.0"
 files = [
-    {file = "pontos-23.3.5-py3-none-any.whl", hash = "sha256:b82c6165c8d73ce66e234945ed52104b1895215e3dedac0fecee5326035a0df8"},
-    {file = "pontos-23.3.5.tar.gz", hash = "sha256:f19f42718faa20af54096fe88a9210f285e89b7586ffeca665ad49c9e3c7ae69"},
+    {file = "pontos-23.3.6-py3-none-any.whl", hash = "sha256:05bee283d598392bf9e2b3cf45851863706c376bffe2952c6af7e0f54c39096b"},
+    {file = "pontos-23.3.6.tar.gz", hash = "sha256:efca1b7fe3f819c780dc6d390aef8b37170d0f41d6a808d22d5ff2334cdf38c1"},
 ]
 
 [package.dependencies]
@@ -541,14 +541,14 @@ plugins = ["importlib-metadata"]
 
 [[package]]
 name = "pylint"
-version = "2.17.0"
+version = "2.17.1"
 description = "python code static checker"
 category = "dev"
 optional = false
 python-versions = ">=3.7.2"
 files = [
-    {file = "pylint-2.17.0-py3-none-any.whl", hash = "sha256:e097d8325f8c88e14ad12844e3fe2d963d3de871ea9a8f8ad25ab1c109889ddc"},
-    {file = "pylint-2.17.0.tar.gz", hash = "sha256:1460829b6397cb5eb0cdb0b4fc4b556348e515cdca32115f74a1eb7c20b896b4"},
+    {file = "pylint-2.17.1-py3-none-any.whl", hash = "sha256:8660a54e3f696243d644fca98f79013a959c03f979992c1ab59c24d3f4ec2700"},
+    {file = "pylint-2.17.1.tar.gz", hash = "sha256:d4d009b0116e16845533bc2163493d6681846ac725eab8ca8014afb520178ddd"},
 ]
 
 [package.dependencies]
@@ -604,14 +604,14 @@ idna2008 = ["idna"]
 
 [[package]]
 name = "rich"
-version = "13.3.2"
+version = "13.3.3"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "rich-13.3.2-py3-none-any.whl", hash = "sha256:a104f37270bf677148d8acb07d33be1569eeee87e2d1beb286a4e9113caf6f2f"},
-    {file = "rich-13.3.2.tar.gz", hash = "sha256:91954fe80cfb7985727a467ca98a7618e5dd15178cc2da10f553b36a93859001"},
+    {file = "rich-13.3.3-py3-none-any.whl", hash = "sha256:540c7d6d26a1178e8e8b37e9ba44573a3cd1464ff6348b99ee7061b95d1c6333"},
+    {file = "rich-13.3.3.tar.gz", hash = "sha256:dc84400a9d842b3a9c5ff74addd8eb798d155f36c1c91303888e0a66850d2a15"},
 ]
 
 [package.dependencies]
@@ -671,14 +671,14 @@ files = [
 
 [[package]]
 name = "tomlkit"
-version = "0.11.6"
+version = "0.11.7"
 description = "Style preserving TOML library"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "tomlkit-0.11.6-py3-none-any.whl", hash = "sha256:07de26b0d8cfc18f871aec595fda24d95b08fef89d147caa861939f37230bf4b"},
-    {file = "tomlkit-0.11.6.tar.gz", hash = "sha256:71b952e5721688937fb02cf9d354dbcf0785066149d2855e44531ebdd2b65d73"},
+    {file = "tomlkit-0.11.7-py3-none-any.whl", hash = "sha256:5325463a7da2ef0c6bbfefb62a3dc883aebe679984709aee32a317907d0a8d3c"},
+    {file = "tomlkit-0.11.7.tar.gz", hash = "sha256:f392ef70ad87a672f02519f99967d28a4d3047133e2d1df936511465fbb3791d"},
 ]
 
 [[package]]
