@@ -21,8 +21,6 @@ jobs:
   dependency-review:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout Repository'
-        uses: greenbone/actions/dependency-review@v2
       - name: 'Dependency Review'
         uses: greenbone/actions/dependency-review@v2
 ```
