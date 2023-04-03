@@ -68,14 +68,19 @@ runs:
           cmd+=" --dependency-version ${{ inputs.dependency-version }}"
         fi
         poetry run helm-chart-version-upgrade $cmd
+    - name: Set github user
+      if: inputs.git-user && inputs.git-user-email && inputs.token
+      uses: greenbone/actions/set-github-user
+      with:
+        user: ${{ inputs.git-user }}
+        email: ${{ inputs.git-user-email }}
+        token: ${{ inputs.token }}
     - name: Push
       if: inputs.git-user && inputs.git-user-email && inputs.token
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
       shell: bash
       run: |
-        git config --global user.name "${{ inputs.git-user }}"
-        git config --global user.email "${{ inputs.git-user-email }}"
         set +e
         git diff --exit-code
         if ! [ "$?" -eq 0 ]; then

@@ -16,16 +16,37 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Simple script that upgrades 
-a Helm chart version.
+Simple script that upgrades dependency versions in
+a Helm chart.
 """
 
+import re
 import sys
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
+from pontos.git import Git
 
 from ruamel.yaml import YAML
+
+r"^[0-9]+\.[0-9]+\.[0-9]+\-(a|b|alpha|beta)[0-9]+"
+
+PREFIX = "opensight-"
+DEPENDENCIES = [
+    "asset-management-backend",
+    "asset-management-frontend",
+    "job-system-postgres",
+    "job-system",
+    "keycloak",
+    "opensearch",
+    "postgres",
+    "rabbitmq",
+    "user-management-backend",
+    "user-management-frontend",
+    "scan-management-backend",
+    "scan-management-frontend",
+    "scan-management-postgres",
+]
 
 
 def yaml_file_read(yaml_path: Path) -> dict[Any, Any]:
@@ -64,6 +85,22 @@ def parse_arguments() -> Namespace:
         "--image-tag", required=False, type=str, help="Set image tag"
     )
     parser.add_argument(
+        "-a",
+        "--auto",
+        type=str,
+        help="Auto update by determining dependecies version by its lates tag",
+        choices=['rc', 'alpha', 'all'],
+        default=None
+    )
+    deps = parser.add_mutually_exclusive_group()
+    deps.add_argument(
+        "-d",
+        "--dependencies",
+        nargs='*',
+        type=str,
+        help="Set dependencies to upgrade",
+    )
+    deps.add_argument(
         "--dependency-name",
         required=False,
         type=str,
@@ -82,8 +119,30 @@ def parse_arguments() -> Namespace:
         action="store_true",
         help="Do not upgrade image tag",
     )
+    parser.add_argument(
+        "--token",
+        type=str,
+        help="GitHub User Token",
+    )
     return parser.parse_args()
 
+def _check_tag(tag, release_type) -> bool:
+    """ Check if tag matches required release type """
+    alpha: str = r"^v?[0-9]+\.[0-9]+\.[0-9]+\-(a|alpha)[0-9]+$"
+    rc: str = r"^v?[0-9]+\.[0-9]+\.[0-9]+\-rc[0-9]+$"
+    all_tags: str = r"^v[0-9]+.[0-9]+.[0-9]+$"
+    
+    if release_type == "all":
+        if re.match(all_tags, tag):
+            return True
+    if release_type == "rc":
+        if re.match(rc, tag):
+            return True
+    if release_type == "alpha":
+        if re.match(alpha, tag):
+            return True
+
+    return False
 
 class ChartVersionUpgradeError(Exception):
     """Base Update error class"""
@@ -98,14 +157,16 @@ class ChartVersionUpgrade:
     def __init__(
         self,
         chart_dir: str,
-        chart_version: str = None,
-        app_version: str = None,
-        image_tag: str = None,
-        dependency_name: str = None,
-        dependency_version: str = None,
-        no_tag: bool = False,
+        *,
+        app_version: Optional[str] = None,
+        no_tag: Optional[bool] = False,
+        release_type: Optional[str] = "all",
+        git: Optional[Git] = None,
+        auto: Optional[str] = None,
     ) -> None:
         self.no_tag = no_tag
+        self.git: Git = git
+        self.release_type = release_type
 
         self.chart_dir = Path(chart_dir)
         if not self.chart_dir.is_dir():
@@ -119,10 +180,8 @@ class ChartVersionUpgrade:
                 f"{self.chart_file} does not exist, or is not a file."
             )
 
-        self.chart_version = chart_version
-
         self.values_file = self.chart_dir / "values.yaml"
-        if self.chart_version and not self.no_tag:
+        if not self.no_tag:
             if not self.values_file.is_file():
                 raise ChartVersionUpgradeError(
                     f"{self.values_file} does not exist, or is not a file."
@@ -130,19 +189,27 @@ class ChartVersionUpgrade:
 
         if app_version:
             self.app_version = app_version
-        else:
-            self.app_version = self.chart_version
 
-        if image_tag:
-            self.image_tag = image_tag
-        else:
-            self.image_tag = self.chart_version
+    def upgrade_all(self) -> None:
+        """Upgrade all dependencies """
+        for dependency in DEPENDENCIES:
+            tag = self.determine_tag(dependency)
+            self.update_dependency_version(dependency=dependency, version=tag)
 
-        self.dependency_name = dependency_name
-        self.dependency_version = dependency_version
 
-    def values_run(self) -> None:
-        """run values.yaml version upgrade"""
+    def determine_tag(self, dependency: str) -> str:
+        if not self.git:
+            raise ChartVersionUpgradeError("Tags can't be determined without git")
+        git_tags = self.git.list_tags()
+        for tag in git_tags:
+            # check next tag, until tag matches the desired dependency release type
+            if _check_tag(tag, self.release_type):
+                return tag.replace("v", '')
+        raise ChartVersionUpgradeError("No matching tag found.")
+
+
+    def update_values_file(self, image_tag: str) -> None:
+        """Run values.yaml version upgrade"""
 
         if self.no_tag:
             print("Image tag upgrade disabled", flush=True)
@@ -168,8 +235,13 @@ class ChartVersionUpgrade:
 
         return yaml_file_write(self.values_file, values_data)
 
-    def chart_run(self) -> None:
-        """Run Chart.yaml version upgrade"""
+    def update_charts_file(self, dependency: str, version: str) -> None:
+        """Run Chart.yaml version upgrade
+        
+        Args:
+          chart_version: Version of the helm chart that should be loaded
+          
+        """
 
         chart_data = yaml_file_read(self.chart_file)
         if not chart_data:
@@ -183,18 +255,18 @@ class ChartVersionUpgrade:
             raise ChartVersionUpgradeError(
                 f"{self.chart_file} has not entry >version<"
             )
-        chart_data["version"] = self.chart_version
+        chart_data["version"] = version
 
         if not "appVersion" in chart_data:
             raise ChartVersionUpgradeError(
                 f"{self.chart_file} has not entry >appVersion<"
             )
-        chart_data["appVersion"] = self.app_version
+        chart_data["appVersion"] = version
 
         return yaml_file_write(self.chart_file, chart_data)
 
-    def dependency_run(self) -> None:
-        """Run Chart.yaml dependencie version upgrade"""
+    def update_dependency_version(self, dependency: str, version: str) -> None:
+        """Run Chart.yaml dependency version upgrade"""
 
         chart_data = yaml_file_read(self.chart_file)
         if not chart_data:
@@ -213,30 +285,33 @@ class ChartVersionUpgrade:
                 f"entry >dependencies< in {self.chart_file} is not type dict"
             )
 
-        dependencie = None
+        dependency_dict = None
         for dep in chart_data["dependencies"]:
-            if "name" in dep and dep["name"] == self.dependency_name:
-                dependencie = dep
+            if "name" in dep and dep["name"] == f"{PREFIX}{dependency}":
+                dependency_dict = dep
                 break
-        if not dependencie:
+        if not dependency_dict:
             raise ChartVersionUpgradeError(
-                f"Dependencie {self.dependency_name} not found in {self.chart_file}"
+                f"Dependency {self.dependency_name} not found in {self.chart_file}"
             )
-        if not isinstance(dependencie, dict):
+        if not isinstance(dependency_dict, dict):
             raise ChartVersionUpgradeError(
-                f"entry >{dependencie['name']}< in {self.chart_file} is not type dict"
+                f"Entry >{dependency_dict['name']}< in {self.chart_file} is not type dict"
             )
-        if "version" not in dependencie:
+        if "version" not in dependency_dict:
             raise ChartVersionUpgradeError(
-                f"{dependencie['name']} has not entry >version<"
+                f"{dependency_dict['name']} has not entry >version<"
             )
-        dependencie["version"] = self.dependency_version
+        dependency_dict["version"] = version
 
         return yaml_file_write(self.chart_file, chart_data)
 
-    def run(self) -> None:
+    def run(self, chart_version: str,) -> None:
         """Run Chart.yaml and values.yaml version upgrade"""
 
+        if self.auto:
+            if self.auto == 'all':
+                self.upgrade_all()
         if (
             not self.dependency_name or not self.dependency_version
         ) and not self.chart_version:
@@ -244,18 +319,18 @@ class ChartVersionUpgrade:
                 "Nothing to do! No chart version or dependency_version to upgrade"
             )
 
-        if self.chart_version:
+        if chart_version:
             print("Upgrade Chart version", flush=True)
-            self.chart_run()
-            self.values_run()
+            self.update_charts_file()
+            self.update_values_file()
             print(f"Chart version upgraded to {self.chart_version}", flush=True)
 
         if self.dependency_name and self.dependency_version:
-            print("Upgrade Chart dependencie", flush=True)
+            print("Upgrade Chart dependency", flush=True)
             self.dependency_run()
             print(
                 (
-                    f"Chart dependencie {self.dependency_name}"
+                    f"Chart dependency {self.dependency_name}"
                     f"upgraded to version {self.dependency_version}"
                 ),
                 flush=True,
@@ -267,6 +342,8 @@ def main() -> int:
 
     args = parse_arguments()
     try:
+        git = Git()
+        git.init()
         cvu = ChartVersionUpgrade(
             args.chart_path,
             chart_version=args.chart_version,
@@ -275,6 +352,8 @@ def main() -> int:
             dependency_name=args.dependency_name,
             dependency_version=args.dependency_version,
             no_tag=args.no_tag,
+            git=git,
+            auto=args.auto,
         )
         cvu.run()
         return 0
