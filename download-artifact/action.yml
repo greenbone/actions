@@ -17,7 +17,7 @@ inputs:
     required: false
   branch:
     description: "The git branch for the workflow to download the artifacts from."
-    required: true
+    required: false
     default: "main"
   name:
     description: "Artifact name to be downloaded. If not set, all artifacts will be downloaded."
@@ -27,7 +27,7 @@ inputs:
     default: "false"
   path:
     description: "Path where to store the downloaded artifacts."
-    required: true
+    required: false
     default: "."
   user:
     description: "User ID for ownership of the downloaded artifacts."
@@ -35,12 +35,44 @@ inputs:
   group:
     description: "Group ID for ownership of the downloaded artifacts."
     required: false
+  python-version:
+    description: "Python version to use for running the action"
+    required: false
+    default: "3.10"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
 outputs:
   downloaded-artifacts:
     description: List of downloaded artifact names as JSON array string
+    value: ${{ steps.download.outputs.downloaded-artifacts }}
   total-downloaded-artifacts:
     description: Number of downloaded artifacts
+    value: ${{ steps.download.outputs.total-downloaded-artifacts }}
 
 runs:
-  using: "docker"
-  image: "docker://ghcr.io/greenbone/download-artifact-action:v2"
+  using: "composite"
+  steps:
+    - name: Set up Python and Poetry
+      uses: greenbone/actions/poetry@v2
+      with:
+        version: ${{ inputs.python-version }}
+        poetry-version: ${{ inputs.poetry-version }}
+        working-directory: ${{ github.action_path }}
+        without-dev: "true"
+        cache-dependency-path: ${{ github.action_path }}/poetry.lock
+    - name: Run download artifact
+      shell: bash
+      id: download
+      working-directory: ${{ github.action_path }}
+      run: |
+        poetry run download-artifact \
+          --token ${{ inputs.token }} \
+          --repository ${{ inputs.repository }} \
+          --workflow ${{ inputs.workflow }} \
+          --workflow-events "${{ inputs.workflow-events }}" \
+          --branch ${{ inputs.branch }} \
+          --name ${{ inputs.name }} \
+          --allow-not-found ${{ inputs.allow-not-found }} \
+          --path ${{ inputs.path }} \
+          --user ${{ inputs.user }} \
+          --group ${{ inputs.group }}

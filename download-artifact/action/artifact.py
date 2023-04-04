@@ -22,6 +22,7 @@ import shutil
 import stat
 import sys
 import tempfile
+from argparse import ArgumentParser, Namespace
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
@@ -75,6 +76,21 @@ def temp_directory() -> Generator[Path, None, None]:
         yield dir_path
     finally:
         temp_dir.cleanup()
+
+
+def parse_arguments() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("--token", required=True)
+    parser.add_argument("--repository")
+    parser.add_argument("--workflow", required=True)
+    parser.add_argument("--workflow-events", nargs="?")
+    parser.add_argument("--branch", required=True)
+    parser.add_argument("--name", nargs="?")
+    parser.add_argument("--allow-not-found")
+    parser.add_argument("--path", required=True)
+    parser.add_argument("--user", nargs="?")
+    parser.add_argument("--group", nargs="?")
+    return parser.parse_args()
 
 
 class DownloadArtifactsError(Exception):
@@ -334,8 +350,22 @@ class DownloadArtifacts:
 
 
 def main() -> NoReturn:
+    args = parse_arguments()
     try:
-        asyncio.run(DownloadArtifacts().run())
+        asyncio.run(
+            DownloadArtifacts(
+                token=args.token,
+                repository=args.repository,
+                workflow=args.workflow,
+                workflow_events=args.workflow_events,
+                branch=args.branch,
+                name=args.name,
+                allow_not_found=args.allow_not_found,
+                path=args.path,
+                user=args.user,
+                group=args.group,
+            ).run()
+        )
         sys.exit(0)
     except DownloadArtifactsError as e:
         Console.error(f"{e} ❌.")
