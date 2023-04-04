@@ -147,7 +147,7 @@ class DownloadArtifacts:
         self.user = parse_int(user or ActionIO.input("user"))
         self.group = parse_int(group or ActionIO.input("group"))
 
-        self.download_path = Path(download_path)
+        self.download_path = Path(download_path).absolute()
 
         allow_not_found = allow_not_found or ActionIO.input("allow-not-found")
         self.allow_not_found = allow_not_found == "true"
@@ -155,6 +155,17 @@ class DownloadArtifacts:
         self.is_debug = env.is_debug
 
         self.api = GitHubAsyncRESTApi(token)
+
+        with Console.group("Settings"):
+            Console.log(f"repository: {self.repository}")
+            Console.log(f"workflow: {self.workflow}")
+            Console.log(f"workflow-events: {self.workflow_events}")
+            Console.log(f"branch: {self.branch}")
+            Console.log(f"name: {self.name}")
+            Console.log(f"path: {self.download_path}")
+            Console.log(f"allow-not-found: {self.allow_not_found}")
+            Console.log(f"user: {self.user}")
+            Console.log(f"group: {self.group}")
 
     async def get_newest_workflow_run(self) -> Optional[WorkflowRun]:
         try:
@@ -247,8 +258,7 @@ class DownloadArtifacts:
             self.adjust_permissions(destination_dir)
 
             print(
-                f"Downloading artifact '{artifact.name}' with ID "
-                f"{artifact.id}",
+                f"Downloading artifact '{artifact.name}' with ID {artifact.id}",
                 end=" ",
             )
 
@@ -271,7 +281,7 @@ class DownloadArtifacts:
 
                 Console.log(
                     f"Extracting artifact '{artifact.name}' to "
-                    f"'{destination_dir}'."
+                    f"'{destination_dir.absolute()}'."
                 )
 
                 f.flush()
@@ -281,7 +291,7 @@ class DownloadArtifacts:
                     file_path = destination_dir / zipinfo.filename
 
                     if self.is_debug:
-                        Console.debug(f"Extracting '{file_path}'")
+                        Console.debug(f"Extracting '{file_path.absolute()}'")
 
                     zipfile.extract(zipinfo, destination_dir)
                     self.adjust_permissions(file_path)
