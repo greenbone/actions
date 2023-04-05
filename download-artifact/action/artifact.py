@@ -81,7 +81,7 @@ def temp_directory() -> Generator[Path, None, None]:
 def parse_arguments() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("--token", required=True)
-    parser.add_argument("--repository")
+    parser.add_argument("--repository", nargs="?")
     parser.add_argument("--workflow", required=True)
     parser.add_argument("--workflow-events", nargs="?")
     parser.add_argument("--branch", required=True)
