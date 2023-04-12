@@ -23,36 +23,36 @@ branding:
 runs:
   using: "composite"
   steps:
-  - name: Set up Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: 3.9
-  - name: Install pontos
-    run: |
-      apt-get update && apt-get --assume-yes install python3-venv wget
-      python3 -m venv .venv
-      . .venv/bin/activate
-      python -m pip install --upgrade pip
-      python -m pip install --upgrade pontos
-      wget https://github.com/greenbone/pontos/raw/main/scripts/github/enforce-admins.py -O ~/enforce-admins.py
-    shell: bash
-  - name: allow/not allow bypass?
-    run: |
-      if [[ "${{inputs.allow}}" == "true" ]];
-      then
-        echo "ALLOW_OPT=--allow" >> $GITHUB_ENV
-      elif [[ "${{inputs.allow}}" == "false" ]];
-      then
-        echo "ALLOW_OPT=--no-allow" >> $GITHUB_ENV
-      else
-        echo "ALLOW_OPT=--no-allow" >> $GITHUB_ENV
-      fi
-    shell: bash
-    # in case of blubber input let the branch be unlocked!
-  - name: Prepare release and store the version
-    run: |
-      . .venv/bin/activate
-      pontos-github-script ~/enforce-admins.py ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.ALLOW_OPT }}
-    shell: bash
-    env:
-      GITHUB_TOKEN: ${{ inputs.github-token }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    - name: Install pontos
+      run: |
+        apt-get --assume-yes install python3-venv wget
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade pontos
+        wget https://github.com/greenbone/pontos/raw/main/scripts/github/enforce-admins.py -O ~/enforce-admins.py
+      shell: bash
+    - name: allow/not allow bypass?
+      run: |
+        if [[ "${{inputs.allow}}" == "true" ]];
+        then
+          echo "ALLOW_OPT=--allow" >> $GITHUB_ENV
+        elif [[ "${{inputs.allow}}" == "false" ]];
+        then
+          echo "ALLOW_OPT=--no-allow" >> $GITHUB_ENV
+        else
+          echo "ALLOW_OPT=--no-allow" >> $GITHUB_ENV
+        fi
+      shell: bash
+      # in case of blubber input let the branch be unlocked!
+    - name: Prepare release and store the version
+      run: |
+        . .venv/bin/activate
+        pontos-github-script ~/enforce-admins.py ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.ALLOW_OPT }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
