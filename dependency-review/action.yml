@@ -1,17 +1,33 @@
-name: 'Dependency Review'
-description: 'Scans your pull requests for dependency changes'
+name: "Dependency Review"
+description: "Scans your pull requests for dependency changes"
 branding:
-    icon: "umbrella"
-    color: "green"
+  icon: "umbrella"
+  color: "green"
 runs:
   using: "composite"
   steps:
-    - name: 'Checkout Repository'
+    - name: "Checkout Repository"
       uses: actions/checkout@v3
-    - name: 'Dependency Review'
+    - name: "Dependency Review"
       uses: actions/dependency-review-action@v3
       with:
         fail-on-severity: high
         vulnerability-check: true
         license-check: true
-        allow-licenses: AGPL-3.0-or-later, GPL-3.0-or-later, LGPL-2.1, EPL-2.0, Python-2.0, GPL-2.0-or-later, GPL-2.0-only, MIT, Unlicense, Apache-2.0, BSD-3-Clause, BSD-2-Clause, CC-BY-SA-4.0, BSD-2-Clause AND BSD-3-Clause
+        allow-licenses: |
+          AGPL-3.0-or-later,
+          GPL-3.0-or-later,
+          LGPL-2.1,
+          EPL-2.0,
+          Python-2.0,
+          GPL-2.0-or-later,
+          GPL-2.0-only,
+          MIT,
+          Unlicense,
+          Apache-2.0,
+          BSD-3-Clause,
+          BSD-2-Clause,
+          MPL-2.0,
+          CC-BY-SA-4.0,
+          BSD-2-Clause AND BSD-3-Clause,
+          (Apache-2.0 AND BSD-3-Clause) OR (Apache-2.0 AND MIT),
