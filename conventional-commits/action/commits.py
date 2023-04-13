@@ -96,6 +96,7 @@ class Commits:
             comment_lines.append(f"| {key} | {len(commits)} ")
 
         if has_cc:
+            comment_lines.append("")
             comment_lines.append(":rocket: Conventional commits found.")
         else:
             comment_lines.append(":cry: No conventional commits found.")
