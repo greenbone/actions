@@ -20,7 +20,7 @@ runs:
       with:
         fetch-depth: 0
     - name: Set up Python and Poetry
-      uses: greenbone/actions/poetry@main
+      uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
