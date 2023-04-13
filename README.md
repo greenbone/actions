@@ -155,6 +155,15 @@ Check for consistent versioning in a project
   uses: greenbone/actions/check-version@v2
 ```
 
+Report Conventional Commits
+
+```yml
+- name: Check conventional commits
+  uses: greenbone/actions/conventional-commits@v2
+  with:
+    token: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ## Support
 
 For any question on the usage of python-gvm please use the
