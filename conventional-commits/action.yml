@@ -1,0 +1,38 @@
+name: "Greenbone Conventional Commits Action"
+description: "A GitHub Action to check for conventional commits"
+author: "Björn Ricks"
+inputs:
+  token:
+    description: "GitHub Token for authentication"
+    default: ${{ github.token }}
+  python-version:
+    description: "Python version to use for running the action"
+    required: false
+    default: "3.10"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Set up Python and Poetry
+      uses: greenbone/actions/poetry@main
+      with:
+        version: ${{ inputs.python-version }}
+        poetry-version: ${{ inputs.poetry-version }}
+        working-directory: ${{ github.action_path }}
+        without-dev: "true"
+        cache-dependency-path: ${{ github.action_path }}/poetry.lock
+    - name: Run conventional commits
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      run: |
+        poetry run conventional-commits \
+          --token ${{ inputs.token }} \
+          --base-ref ${{ github.base_ref }} \
+          --event-path ${{ github.event_path }} \
+          --repository ${{ github.repository }}

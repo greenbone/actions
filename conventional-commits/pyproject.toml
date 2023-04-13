@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "conventional-commits-action"
+version = "1.0.0"
+description = "A GitHub Action to check for conventional commits"
+authors = ["Björn Ricks <bjoern.ricks@greenbone.net>"]
+license = "GPLv3+"
+packages = [
+    { include = "action" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pontos = ">=23.4.3"
+
+[tool.poetry.dev-dependencies]
+autohooks = ">=21.7.0"
+autohooks-plugin-pylint = ">=21.6.0"
+autohooks-plugin-black = ">=21.12.0"
+autohooks-plugin-isort = ">=22.8.0"
+
+[tool.poetry.scripts]
+conventional-commits = 'action.commits:main'
+
+[tool.black]
+line-length = 80
+target-version = ['py310']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
