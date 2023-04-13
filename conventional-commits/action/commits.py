@@ -17,6 +17,7 @@
 
 
 import asyncio
+import os
 import sys
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
@@ -34,6 +35,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument("--token", required=True)
     parser.add_argument("--base-ref", required=True)
     parser.add_argument("--repository", required=True)
+    parser.add_argument("--working-directory", type=Path, required=True)
     pr_group = parser.add_mutually_exclusive_group(required=True)
     pr_group.add_argument("--event-path")
     pr_group.add_argument("--pull-request")
@@ -51,12 +53,14 @@ class Commits:
         repository: str,
         token: str,
         base_ref: str,
+        working_directory: Path,
         event_path: Optional[str] = None,
         pull_request: Optional[str] = None,
     ) -> None:
         self.repository = repository
         self.token = token
         self.base_ref = base_ref
+        self.working_directory = working_directory
         self.api = GitHubAsyncRESTApi(token)
         if pull_request:
             self.pull_request = pull_request
@@ -65,8 +69,10 @@ class Commits:
             self.pull_request = event.pull_request.number
 
     async def run(self) -> int:
+        os.chdir(self.working_directory)
+
         space, project = self.repository.split("/", 1)
-        config_file = Path("changelog.toml").absolute()
+        config_file = (self.working_directory / "changelog.toml").absolute()
         builder = ChangelogBuilder(
             git_tag_prefix="",
             space=space,
@@ -131,6 +137,7 @@ def main() -> NoReturn:
                 base_ref=args.base_ref,
                 event_path=args.event_path,
                 pull_request=args.pull_request,
+                working_directory=args.working_directory,
             ).run()
         )
         sys.exit(0)
