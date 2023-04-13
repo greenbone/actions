@@ -79,7 +79,7 @@ class Commits:
             project=project,
             config=config_file if config_file.exists() else None,
         )
-        commit_dict = builder.get_commits(self.base_ref)
+        commit_dict = builder.get_commits(f"origin/{self.base_ref}")
 
         comment_lines = [
             CONVENTIONAL_COMMIT_REPORT_LINE,
