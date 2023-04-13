@@ -37,7 +37,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument("--repository", required=True)
     parser.add_argument("--working-directory", type=Path, required=True)
     pr_group = parser.add_mutually_exclusive_group(required=True)
-    pr_group.add_argument("--event-path")
+    pr_group.add_argument("--event-path", type=Path)
     pr_group.add_argument("--pull-request")
     return parser.parse_args()
 
@@ -54,7 +54,7 @@ class Commits:
         token: str,
         base_ref: str,
         working_directory: Path,
-        event_path: Optional[str] = None,
+        event_path: Optional[Path] = None,
         pull_request: Optional[str] = None,
     ) -> None:
         self.repository = repository
