@@ -87,7 +87,7 @@ class Commits:
         ]
         if commit_dict:
             comment_lines.append("| Type | Number |")
-            comment_lines.append("|------|--------|")
+            comment_lines.append("|------|-------:|")
 
         has_cc = False
         for key, commits in commit_dict.items():
