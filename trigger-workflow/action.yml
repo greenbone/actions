@@ -33,6 +33,9 @@ inputs:
     default: "3.10"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
+    default: "true"
 
 runs:
   using: "composite"
@@ -45,6 +48,7 @@ runs:
         working-directory: ${{ github.action_path }}
         without-dev: "true"
         cache-dependency-path: ${{ github.action_path }}/poetry.lock
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
     - name: Run trigger-workflow
       shell: bash
       working-directory: ${{ github.action_path }}
