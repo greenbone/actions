@@ -29,13 +29,16 @@ inputs:
     required: false
   token:
     description: "Github token for commit, set only if autocommit is desired"
-    required: false
+    default: ${{ github.token }}
   python-version:
     description: "Python version to use for running the action"
     required: false
     default: "3.11"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
+    default: "true"
 
 runs:
   using: "composite"
@@ -48,6 +51,7 @@ runs:
         without-dev: "true"
         poetry-version: ${{ inputs.poetry-version }}
         cache-dependency-path: ${{ github.action_path }}/poetry.lock
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
     - name: Run helm-chart-version-upgrade
       working-directory: ${{ github.action_path }}
       shell: bash
