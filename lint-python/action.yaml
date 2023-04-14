@@ -18,6 +18,9 @@ inputs:
   cache-poetry-installation:
     description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
     default: "true"
+  install-dependencies:
+    description: "Install project dependencies. Default is 'true'. Set to an other string then 'true' to not install the dependencies."
+    default: "true"
 
 branding:
   icon: "package"
@@ -34,6 +37,7 @@ runs:
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
+        install-dependencies: ${{ inputs.install-dependencies }}
     - run: echo "Running black"
       shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}

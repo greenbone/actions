@@ -7,6 +7,9 @@ inputs:
     default: "3.9"
   working-directory:
     description: "A working directory where to run poetry install"
+  install-dependencies:
+    description: "Install project dependencies. Default is 'true'. Set to an other string then 'true' to not install the dependencies."
+    default: "true"
   no-root:
     description: "Do not install the project itself, only the dependencies"
   without-dev:
@@ -87,6 +90,7 @@ runs:
         echo " * $(pip --version)"
       shell: bash
     - name: Parse inputs
+      if: ${{ inputs.install-dependencies == 'true' }}
       run: |
         if [[ -n "${{ inputs.no-root }}" ]]; then
           ARGS="--no-root"
@@ -97,6 +101,7 @@ runs:
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - name: Install dependencies
+      if: ${{ inputs.install-dependencies == 'true' }}
       run: poetry install ${{ env.ARGS }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
