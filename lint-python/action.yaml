@@ -15,6 +15,9 @@ inputs:
     description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   cache-dependency-path:
     description: "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
+    default: "true"
 
 branding:
   icon: "package"
@@ -30,6 +33,7 @@ runs:
         poetry-version: ${{ inputs.poetry-version }}
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
     - run: echo "Running black"
       shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}
