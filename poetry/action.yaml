@@ -15,6 +15,8 @@ inputs:
     description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   cache-dependency-path:
     description: "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
 branding:
@@ -35,6 +37,18 @@ runs:
         fi
         echo "CACHE=${CACHE}" >> $GITHUB_ENV
       shell: bash
+    - name: Get pip cache dir
+      id: pip-cache
+      if: ${{ inputs.cache-poetry-installation == 'true' }}
+      run: |
+        echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Cache poetry installation
+      if: ${{ inputs.cache-poetry-installation == 'true' }}
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-poetry-install-cache
     - name: Install poetry ${{ inputs.poetry-version }}
       # poetry needs to be installed before using setup-python with poetry cache
       if: ${{ inputs.cache == 'true' }}
