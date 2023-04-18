@@ -40,6 +40,8 @@ inputs:
   versioning-scheme:
     description: "What versioning scheme should be used for the release? Supported: ['semver', 'pep440']; Default: pep440"
     default: "pep440"
+  release-series:
+    description: "Allow to create new releases for an older release series like '22.4'."
 
 branding:
   icon: "package"
@@ -117,6 +119,12 @@ runs:
       if: ${{ inputs.release-version }}
       run: |
         ARGS="--release-version ${{ inputs.release-version }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Parse release-series
+      if: ${{ inputs.release-series }}
+      run: |
+        ARGS="${ARGS} --release-series ${{ inputs.release-series }}"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
 
