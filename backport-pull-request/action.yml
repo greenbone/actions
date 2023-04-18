@@ -7,7 +7,7 @@ inputs:
     default: "backport.toml"
   token:
     description: "GitHub Token for authentication"
-    required: true
+    default: ${{ github.token }}
   username:
     description: "GitHub user name to use for the backported commits. By default github.actor is used."
   python-version:

@@ -48,7 +48,7 @@ branding:
 runs:
   using: "composite"
   steps:
-      # Setup
+    # Setup
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0 #for conventional commits
@@ -56,12 +56,29 @@ runs:
         ref: ${{ inputs.ref }}
     - name: Set up Python
       uses: actions/setup-python@v4
+      id: python
       with:
         python-version: ${{ inputs.python-version }}
+    - name: Virtual Environment
+      id: virtualenv
+      run: |
+        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
+        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Cache Virtual Environment
+      id: cache-virtualenv
+      uses: actions/cache@v3
+      with:
+        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ steps.virtualenv.outputs.name }}
+        path: ${{ steps.virtualenv.outputs.path }}
+    - name: Create virtual environment
+      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
+      run: |
+        python -m venv ${{ steps.virtualenv.outputs.path }}
+      shell: bash
     - name: Install pontos
       run: |
-        python3 -m venv ${{ github.action_path }}/pontos-release-venv
-        source ${{ github.action_path }}/pontos-release-venv/bin/activate
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         python -m pip install --upgrade pip
         python -m pip install --upgrade pontos
       shell: bash
@@ -114,7 +131,7 @@ runs:
       # Create release
     - name: Create automatic release
       run: |
-        source ${{ github.action_path }}/pontos-release-venv/bin/activate
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         pontos-release release ${{ env.ARGS }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
       env:
@@ -134,7 +151,7 @@ runs:
     - name: Sign assets for released version
       run: |
         echo "Signing release assets"
-        source ${{ github.action_path }}/pontos-release-venv/bin/activate
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
       if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}

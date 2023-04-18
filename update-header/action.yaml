@@ -12,16 +12,16 @@ inputs:
   github-user-token:
     description: "Token with write rights required to create the release."
     required: true
-  version:
+  python-version:
     description: "Python version that should be installed"
-    default: 3.9
+    default: "3.10"
     required: false
   target:
     description: "Branch that should be released. Default: main"
     default: "main"
     required: false
   directories:
-    description: "Specify the directories that should be updated, seperated by space e.g. 'foo bar baz'"
+    description: "Specify the directories that should be updated, separated by space e.g. 'foo bar baz'"
     required: true
   exclude-file:
     description: "Specify the file, that contains files to ignore"
@@ -44,13 +44,28 @@ runs:
     - name: Set up Poetry, python and the project
       uses: greenbone/actions/poetry@v2
       with:
-        version: ${{ inputs.version }}
+        version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
+    - name: Virtual Environment
+      id: virtualenv
+      run: |
+        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
+        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Cache Virtual Environment
+      id: cache-virtualenv
+      uses: actions/cache@v3
+      with:
+        key: ${{ runner.os }}-${{ inputs.python-version }}-${{ steps.virtualenv.outputs.name }}
+        path: ${{ steps.virtualenv.outputs.path }}
+    - name: Create virtual environment
+      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
+      run: |
+        python -m venv ${{ steps.virtualenv.outputs.path }}
+      shell: bash
     - name: Install pontos
       run: |
-        apt-get --assume-yes install python3-venv
-        python3 -m venv .venv
-        . .venv/bin/activate
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         python -m pip install --upgrade pip
         python -m pip install --upgrade pontos
       shell: bash
@@ -68,7 +83,7 @@ runs:
     - name: Run commands to update headers
       run: |
         git checkout -b ${{ env.HEAD }}
-        . .venv/bin/activate
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         pontos-update-header -d ${{ inputs.directories }}
       shell: bash
     - name: Run git commands for PR
@@ -76,7 +91,7 @@ runs:
         git add -u
         git commit -m "Update header to ${{ env.YEAR }}"
         git push --set-upstream origin ${{ env.HEAD }}
-        . .venv/bin/activate
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} \
           'Update year to ${{ env.YEAR }} in copyright header' \
           --body "**What**:\n\nUpdate year to ${{ env.YEAR }} in \
