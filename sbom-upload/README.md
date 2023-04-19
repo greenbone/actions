@@ -14,11 +14,11 @@ on:
   push:
     branches: ["main"]
 jobs:
-    SBOM-upload:
+  SBOM-upload:
     runs-on: ubuntu-latest
     permissions:
-        id-token: write
-        contents: write
+      id-token: write
+      contents: write
     steps:
       - name: 'SBOM upload'
         uses: greenbone/actions/sbom-upload@v2
