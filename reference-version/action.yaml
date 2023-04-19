@@ -1,4 +1,3 @@
-
 name: "Find a version by referenced branch or tag"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to get the target branch or current tag name and use it as a version"
@@ -9,7 +8,7 @@ branding:
 inputs:
   strip-tag-prefix:
     description: "The tag prefix to strip i.e v1.2.3 -> 1.2.3 (default 'v')"
-    default: 'v'
+    default: "v"
     required: false
 
 runs:
@@ -24,6 +23,7 @@ runs:
           echo "REF=${GITHUB_REF}" >> $GITHUB_ENV;
           echo "VERSION=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
         fi;
+        echo "::warning title=reference-version is deprecated:: The reference-version action is deprecated. Please use ${{ github.ref_name }} instead. See https://docs.github.com/en/actions/learn-github-actions/contexts#github-context for more details."
       shell: bash
       name: Set version in environment
     - run: |
