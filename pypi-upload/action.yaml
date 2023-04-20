@@ -1,0 +1,41 @@
+name: "Upload to PyPI"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "Action to build and upload a release via poetry to PyPI"
+
+inputs:
+  python-version:
+    description: "Python version to use for this action"
+    default: "3.10"
+  pypi-token:
+    description: "Token for uploading the build to PyPI"
+    required: true
+  ref:
+    description: The branch, tag or SHA to checkout. Default depends on the event (https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows).
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.ref }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install pip and poetry
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade poetry
+      shell: bash
+    - name: Build and publish
+      run: |
+        poetry build
+        poetry publish
+      shell: bash
+      env:
+        POETRY_PYPI_TOKEN_PYPI: ${{ inputs.pypi-token }}
