@@ -1,17 +1,28 @@
 name: "Check Version"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to check version information via pontos"
+
+inputs:
+  python-version:
+    description: "Python version that should be installed"
+    default: "3.10"
+  working-directory:
+    description: "A working directory where to check the versioning"
+    default: ${{ github.workspace }}
+
 branding:
   icon: "package"
   color: "green"
+
 runs:
   using: "composite"
   steps:
-    - name: Set up Python ${{ inputs.version }}
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v4
       id: python
       with:
-        python-version: "3.10"
+        python-version: ${{ inputs.python-version}}
     - name: Virtual Environment
       id: virtualenv
       run: |
@@ -40,4 +51,4 @@ runs:
         source ${{ steps.virtualenv.outputs.path }}/bin/activate
         python -m pontos.version verify current
       shell: bash
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}
