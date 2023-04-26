@@ -4,8 +4,10 @@ description: "An action to upload coverage to codecov.io for Python package by u
 
 inputs:
   version:
+    description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
+    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
+  python-version:
     description: "Python version that should be installed"
-    default: "3.9"
   test-command:
     description: "Command to run the tests"
     required: true
@@ -36,6 +38,7 @@ runs:
       uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
+        python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
