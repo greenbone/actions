@@ -23,6 +23,9 @@ inputs:
   install-dependencies:
     description: "Install project dependencies. Default is 'true'. Set to an other string then 'true' to not install the dependencies."
     default: "true"
+  working-directory:
+    description: "Working directory where to run the action"
+    default: ${{ github.workspace }}
 
 branding:
   icon: "package"
@@ -41,15 +44,16 @@ runs:
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
         install-dependencies: ${{ inputs.install-dependencies }}
+        working-directory: ${{ inputs.working-directory }}
     - run: echo "Running black"
       shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}
       shell: bash
       name: Check with black
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}
     - run: echo "Running pylint"
       shell: bash
     - run: poetry run pylint ${{ inputs.packages }}
       shell: bash
       name: Check with pylint
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}
