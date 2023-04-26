@@ -3,11 +3,10 @@ name: Test Python Actions
 on:
   push:
     tags: [ "*" ]
-    branches: [ main ]
-    paths: [ "poetry/**","poetry/**","coverage-python/**","lint-python/**", ".github/workflows/test-python.yml" ]
+    branches:
+      - main
+      - "v*"
   pull_request:
-    branches: [ main ]
-    paths: [ "poetry/**","poetry/**","coverage-python/**","lint-python/**", ".github/workflows/test-python.yml" ]
 
 jobs:
   install-poetry:
