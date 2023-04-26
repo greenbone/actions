@@ -23,6 +23,7 @@ runs:
           GPL-2.0-or-later,
           GPL-2.0-only,
           MIT,
+          ISC,
           Unlicense,
           Apache-2.0,
           BSD-3-Clause,
