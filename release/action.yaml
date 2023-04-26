@@ -42,6 +42,9 @@ inputs:
     default: "pep440"
   release-series:
     description: "Allow to create new releases for an older release series like '22.4'."
+  sign-release-files:
+    description: "Create and upload release file signatures. Default is 'true'. Set to an other string then 'true' to disable the signatures."
+    default: "true"
 
 branding:
   icon: "package"
@@ -162,7 +165,7 @@ runs:
         source ${{ steps.virtualenv.outputs.path }}/bin/activate
         pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
-      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
+      if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:
         GITHUB_USER: ${{ inputs.github-user }}
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
