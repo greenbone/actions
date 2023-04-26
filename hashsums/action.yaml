@@ -1,5 +1,6 @@
 name: "Generate a hashsums file"
 description: "Generate a file containing hashsums for all files of a directory"
+
 inputs:
   hash:
     description: "Which hashsum program to use. Default is sha256sum."
@@ -9,9 +10,11 @@ inputs:
     required: true
   filename:
     description: "Name of the generated hashsums file. Default is sha256sums."
+
 branding:
   icon: "package"
   color: "green"
+
 runs:
   using: "composite"
   steps:
