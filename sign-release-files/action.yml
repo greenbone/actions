@@ -1,0 +1,96 @@
+name: "Pontos Release Patch version"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: |
+  "An action to download GitHub release files, sign the releases files and "
+  "upload release file signatures."
+
+inputs:
+  python-version:
+    description: "Python version that should be installed and used."
+    default: "3.10"
+  github-token:
+    description: "Token with write rights required to create the release."
+    default: ${{ github.token }}
+  gpg-fingerprint:
+    description: "GPG fingerprint, represented as a string."
+    required: true
+  gpg-key:
+    description: "GPG key, represented as a string."
+    required: true
+  gpg-passphrase:
+    description: "GPG passphrase, represented as a string."
+    required: true
+  versioning-scheme:
+    description: "The versioning scheme to use for version parsing and calculation of the last release. Supported: ['semver', 'pep440']; Default: pep440"
+    default: "pep440"
+  release-version:
+    description: "Set an explicit release version, that should be used. Otherwise it will be determined from the tags."
+  release-series:
+    description: "Allow to determine release versions for an older release series like '22.4'."
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    # Setup
+    - name: Parse release-version if set (overwrite release-type)
+      if: ${{ inputs.release-version }}
+      run: |
+        ARGS="--release-version ${{ inputs.release-version }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Parse release-series
+      if: ${{ inputs.release-series }}
+      run: |
+        ARGS="${ARGS} --release-series ${{ inputs.release-series }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      id: python
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Virtual Environment
+      id: virtualenv
+      run: |
+        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
+        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Cache Virtual Environment
+      id: cache-virtualenv
+      uses: actions/cache@v3
+      with:
+        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ steps.virtualenv.outputs.name }}
+        path: ${{ steps.virtualenv.outputs.path }}
+    - name: Create virtual environment
+      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
+      run: |
+        python3 -m venv ${{ steps.virtualenv.outputs.path }}
+      shell: bash
+    - name: Install pontos
+      run: |
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade pontos
+      shell: bash
+    - name: Import gpg key from secrets
+      run: |
+        echo -e "${{ inputs.gpg-key }}" >> tmp.file
+        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+        rm tmp.file
+      shell: bash
+      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
+    # Signing
+    - name: Sign files for released version
+      run: |
+        echo "Signing release files"
+        source ${{ steps.virtualenv.outputs.path }}/bin/activate
+        pontos-release sign ${{ env.ARGS }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }}
+      shell: bash
+      if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}

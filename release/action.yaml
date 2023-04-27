@@ -179,12 +179,13 @@ runs:
 
       # Signing
     - name: Sign assets for released version
-      run: |
-        echo "Signing release assets"
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
-        pontos-release sign --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }}
-      shell: bash
+      uses: greenbone/actions/sign-release-files@v2
       if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
-      env:
-        GITHUB_USER: ${{ inputs.github-user }}
-        GITHUB_TOKEN: ${{ inputs.github-user-token }}
+      with:
+        python-version: ${{ inputs.poetry-version }}
+        github-token: ${{ inputs.github-user-token }}
+        gpg-fingerprint: ${{ inputs.gpg-fingerprint }}
+        gpg-passphrase: ${{ inputs.gpg-passphrase }}
+        versioning-scheme: ${{ inputs.versioning-scheme }}
+        release-series: ${{ inputs.release-series }}
+        release-version: ${{ inputs.release-version }}
