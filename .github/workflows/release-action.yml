@@ -1,45 +1,60 @@
-name: Trigger release of a new action
+name: Create new release
 # We will push the action to the correct branch
 # and can use it afterwards with the `@v2` tag
 
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: | 
-          Enter the version for the release tag.
-          Must be larger than last tag.
-          Use patch (0.0.x) for bug fixes.
-          Use minor (0.x.0) for new actions.
+      release-type:
+        type: choice
+        description: Before setting a release type ensure that the workflow is run from the desired release branch (for example v2). What kind of release do you want to do (pontos --release-type argument)?
+        options:
+          - patch
+          - minor
+          - major
+          - alpha
+          - release-candidate
+      release-version:
         type: string
-        required: true
-      branch:
-        description: |
-          Specify the branch to push to.
-          Default will be `v2`
-        type: string
-        default: v2
+        description: Set an explicit version, that will overwrite release-type. Fails if version is not compliant.
 
 jobs:
-  merge-main-to-release-branch:
-    name: Create release by merging main to ${{ github.event.inputs.branch }} and create a new tag
+  create-release:
+    name: Create release
     runs-on: 'ubuntu-latest'
     steps:
-      - name: Checkout actions
-        uses: actions/checkout@v3
+      - name: Setting release type and release ref
+        id: release
+        run: |
+          echo "type=${{ inputs.release-type }}" >> $GITHUB_OUTPUT
+          echo "ref=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+      - name: Echoing the release type and release ref
+        run: |
+          echo "Release type: ${{ steps.release.outputs.type }}"
+          echo "Release ref: ${{ steps.release.outputs.ref }}"
+      - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0 # for conventional commits
+          ref: ${{ steps.release.outputs.ref }}
       - name: Set git name, mail and origin
         run: |
           git config --global user.name "${{ secrets.GREENBONE_BOT }}"
           git config --global user.email "${{ secrets.GREENBONE_BOT_MAIL }}"
-      - name: Checkout ${{ github.event.inputs.branch }} branch and merge
+      - name: Merge changes from main into ${{ steps.release.outputs.ref }}
         run: |
-          git merge origin/main -m "Merge main into ${{ github.event.inputs.branch }} for the new tag v${{ github.event.inputs.tag }}"
-      - name: Generate new tag, push tag and branch
-        run: |
-          git tag v${{ github.event.inputs.tag }}
-          git push
-          git push --tags
+          git merge origin/main -m "Merge main into ${{ steps.release.outputs.ref }}"
+      - name: Release with release action
+        uses: greenbone/actions/release@v2
+        with:
+          github-user: ${{ secrets.GREENBONE_BOT }}
+          github-user-mail: ${{ secrets.GREENBONE_BOT_MAIL }}
+          github-user-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+          gpg-key: ${{ secrets.GPG_KEY }}
+          gpg-fingerprint: ${{ secrets.GPG_FINGERPRINT }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          release-type: ${{ steps.release.outputs.type }}
+          release-version: ${{ inputs.release-version }}
+          ref: ${{ steps.release.outputs.ref }}
+          versioning-scheme: "semver"
+          update-project: false
