@@ -100,6 +100,12 @@ class Commits:
             comment_lines.append(":rocket: Conventional commits found.")
         else:
             comment_lines.append(":cry: No conventional commits found.")
+            comment_lines.append("")
+            # pylint: disable=line-too-long
+            comment_lines.append(
+                ":point_right: [Learn more](https://github.com/greenbone/.github/blob/main/conventional-commits/README.md) "
+                "about the conventional commits usage at [Greenbone](https://github.com/greenbone/)."
+            )
 
         cc_report_comment = None
 
