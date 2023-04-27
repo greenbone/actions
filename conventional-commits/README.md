@@ -6,17 +6,17 @@ To run this action you need to add the following code to your workflow file
 (for example `.github/workflows/backport.yml`):
 
 ```yml
-name: Backport
+name: Conventional Commits
 
 on:
   pull_request:
 
 jobs:
   conventional-commits:
-    name: Check for Conventional Commits
+    name: Report Conventional Commits
     runs-on: ubuntu-latest
     steps:
-        - name: Backport Pull Request
+        - name: Report Conventional Commits
           uses: greenbone/actions/conventional-commits@v2
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
