@@ -45,6 +45,9 @@ inputs:
   sign-release-files:
     description: "Create and upload release file signatures. Default is 'true'. Set to an other string then 'true' to disable the signatures."
     default: "true"
+  update-project:
+    description: "Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files."
+    default: "true"
 
 branding:
   icon: "package"
@@ -140,6 +143,10 @@ runs:
         ARGS="${ARGS} --release-series ${{ inputs.release-series }}"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
+    - name: Update project files
+      if: ${{ inputs.update-project != 'true' }}
+        ARGS="${ARGS} --no-update-project"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
 
       # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
