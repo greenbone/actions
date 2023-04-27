@@ -10,7 +10,7 @@ build_hash_for_files() {
         if [ -d "$f" ]; then
             build_hash_for_files "$1" "$f" "$3" || return $?
         elif [ -e "$f" ]; then
-            $1 $f >> $3 || return $?
+            $1 "$f" >> "$3" || return $?
         else
             continue
         fi

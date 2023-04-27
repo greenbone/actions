@@ -3,8 +3,8 @@ author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to install python and project dependencies via poetry"
 inputs:
   version:
-    description: "Python version that should be installed"
-    default: "3.9"
+    description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
+    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
   working-directory:
     description: "A working directory where to run poetry install"
   install-dependencies:
@@ -22,6 +22,9 @@ inputs:
     description: "Cache poetry and its dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+  python-version:
+    description: "Python version that should be installed and used."
+    default: "3.9"
 branding:
   icon: "package"
   color: "green"
@@ -29,6 +32,18 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Set Python version
+      id: python-version
+      run: |
+        if [[ -n "${{ inputs.version }}" ]]; then
+          echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=${{ inputs.python-version }}" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+    - run: |
+        echo "Using Python version ${{ steps.python-version.outputs.version }}"
+      shell: bash
     - name: Enable/Disable caching
       run: |
         if [[ "${{ inputs.cache }}" = "true" ]]; then
@@ -62,10 +77,10 @@ runs:
           python3 -m pip install --upgrade poetry
         fi
       shell: bash
-    - name: Set up Python ${{ inputs.version }}
+    - name: Set up Python ${{ steps.python-version.outputs.version }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ inputs.version }}
+        python-version: ${{ steps.python-version.outputs.version }}
         cache: ${{ env.CACHE }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - name: Install pip

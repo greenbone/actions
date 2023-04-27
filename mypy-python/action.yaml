@@ -7,8 +7,10 @@ inputs:
     description: "Python packages to check with mypy"
     required: true
   version:
+    description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
+    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
+  python-version:
     description: "Python version that should be installed"
-    default: "3.9"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
   cache:
@@ -30,6 +32,7 @@ runs:
       uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
+        python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}

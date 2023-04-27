@@ -7,8 +7,10 @@ inputs:
     description: "Python packages to lint"
     required: true
   version:
+    description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
+    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
+  python-version:
     description: "Python version that should be installed"
-    default: "3.9"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
   cache:
@@ -21,6 +23,9 @@ inputs:
   install-dependencies:
     description: "Install project dependencies. Default is 'true'. Set to an other string then 'true' to not install the dependencies."
     default: "true"
+  working-directory:
+    description: "Working directory where to run the action"
+    default: ${{ github.workspace }}
 
 branding:
   icon: "package"
@@ -33,20 +38,22 @@ runs:
       uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
+        python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
         install-dependencies: ${{ inputs.install-dependencies }}
+        working-directory: ${{ inputs.working-directory }}
     - run: echo "Running black"
       shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}
       shell: bash
       name: Check with black
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}
     - run: echo "Running pylint"
       shell: bash
     - run: poetry run pylint ${{ inputs.packages }}
       shell: bash
       name: Check with pylint
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}

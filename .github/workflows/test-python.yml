@@ -3,11 +3,10 @@ name: Test Python Actions
 on:
   push:
     tags: [ "*" ]
-    branches: [ main ]
-    paths: [ "poetry/**","poetry/**","coverage-python/**","lint-python/**", ".github/workflows/test-python.yml" ]
+    branches:
+      - main
+      - "v*"
   pull_request:
-    branches: [ main ]
-    paths: [ "poetry/**","poetry/**","coverage-python/**","lint-python/**", ".github/workflows/test-python.yml" ]
 
 jobs:
   install-poetry:
@@ -19,7 +18,7 @@ jobs:
       - name: Install poetry
         uses: ./poetry
         with:
-          install-dependencies: "false"
+          working-directory: ${{ github.workspace }}/.github/workflows/test-python-project
       - run: poetry --version
 
   test-coverage:
@@ -31,8 +30,8 @@ jobs:
       - name: Install poetry
         uses: ./coverage-python
         with:
-          install-dependencies: "false"
-      - run: poetry
+          working-directory: ${{ github.workspace }}/.github/workflows/test-python-project
+          codecov-upload: false
 
   test-linting:
     runs-on: ubuntu-latest
@@ -43,5 +42,5 @@ jobs:
       - name: Install poetry
         uses: ./lint-python
         with:
-          install-dependencies: "false"
-      - run: poetry
+          working-directory: ${{ github.workspace }}/.github/workflows/test-python-project
+          packages: project

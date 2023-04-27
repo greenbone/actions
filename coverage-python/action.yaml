@@ -4,14 +4,16 @@ description: "An action to upload coverage to codecov.io for Python package by u
 
 inputs:
   version:
+    description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
+    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
+  python-version:
     description: "Python version that should be installed"
-    default: "3.9"
   test-command:
     description: "Command to run the tests"
     required: true
     default: "-m unittest"
   token:
-    description: "Token required for private repositories"
+    description: "Upload token for codecov.io. Required for private repositories."
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
   cache:
@@ -23,6 +25,12 @@ inputs:
     default: "true"
   install-dependencies:
     description: "Install project dependencies. Default is 'true'. Set to an other string then 'true' to not install the dependencies."
+    default: "true"
+  working-directory:
+    description: "Working directory where to run the action"
+    default: ${{ github.workspace }}
+  codecov-upload:
+    description: "Upload coverage to codecov.io. Default is 'true'. Set to an other string then 'true' to disable the upload."
     default: "true"
 
 branding:
@@ -36,20 +44,23 @@ runs:
       uses: greenbone/actions/poetry@v2
       with:
         version: ${{ inputs.version }}
+        python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
         install-dependencies: ${{ inputs.install-dependencies }}
+        working-directory: ${{ inputs.working-directory }}
     - run: poetry run coverage run ${{ inputs.test-command }}
       shell: bash
       name: Run unit tests with coverage
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}
     - run: poetry run coverage xml
       shell: bash
       name: Create coverage XML report
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}
     - uses: codecov/codecov-action@v3
+      if: ${{ inputs.codecov-upload == 'true' }}
       with:
         token: ${{ inputs.token }}
         fail_ci_if_error: true
