@@ -145,8 +145,10 @@ runs:
       shell: bash
     - name: Update project files
       if: ${{ inputs.update-project != 'true' }}
+      run: |
         ARGS="${ARGS} --no-update-project"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
 
       # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
