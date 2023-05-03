@@ -11,6 +11,10 @@ name: Conventional Commits
 on:
   pull_request:
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   conventional-commits:
     name: Report Conventional Commits
