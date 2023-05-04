@@ -24,7 +24,7 @@ inputs:
     description: "Use a specific poetry version. By default the latest release is used."
   python-version:
     description: "Python version that should be installed and used."
-    default: "3.9"
+    default: "3.10"
 branding:
   icon: "package"
   color: "green"

@@ -11,6 +11,7 @@ inputs:
     deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
   python-version:
     description: "Python version that should be installed"
+    default: "3.10"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
   cache:
