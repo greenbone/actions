@@ -49,34 +49,11 @@ runs:
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      id: python
+    - name: Set up Python and pontos
+      uses: greenbone/actions/setup-pontos@v2
+      id: virtualenv
       with:
         python-version: ${{ inputs.python-version }}
-    - name: Virtual Environment
-      id: virtualenv
-      run: |
-        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
-        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Cache Virtual Environment
-      id: cache-virtualenv
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ steps.virtualenv.outputs.name }}
-        path: ${{ steps.virtualenv.outputs.path }}
-    - name: Create virtual environment
-      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
-      run: |
-        python3 -m venv ${{ steps.virtualenv.outputs.path }}
-      shell: bash
-    - name: Install pontos
-      run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
-        python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade pontos
-      shell: bash
     - name: Import gpg key from secrets
       run: |
         echo -e "${{ inputs.gpg-key }}" >> tmp.file
@@ -88,7 +65,7 @@ runs:
     - name: Sign files for released version
       run: |
         echo "Signing release files"
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
+        source ${{ steps.virtualenv.outputs.activate }}
         pontos-release sign ${{ env.ARGS }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
       if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
