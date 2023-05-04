@@ -44,7 +44,7 @@ runs:
     - name: Set up Poetry, python and the project
       uses: greenbone/actions/poetry@v2
       with:
-        version: ${{ inputs.python-version }}
+        python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
     - name: Virtual Environment
       id: virtualenv
