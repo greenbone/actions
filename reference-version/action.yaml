@@ -23,7 +23,7 @@ runs:
           echo "REF=${GITHUB_REF}" >> $GITHUB_ENV;
           echo "VERSION=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
         fi;
-        echo "::warning title=reference-version is deprecated:: The reference-version action is deprecated. Please use ${{ github.ref_name }} instead. See https://docs.github.com/en/actions/learn-github-actions/contexts#github-context for more details."
+        echo "::warning title=reference-version is deprecated:: The reference-version action is deprecated. Please use `github.ref_name` instead. See https://docs.github.com/en/actions/learn-github-actions/contexts#github-context for more details."
       shell: bash
       name: Set version in environment
     - run: |
