@@ -80,8 +80,8 @@ runs:
     - name: Virtual Environment
       id: virtualenv
       run: |
-        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
-        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
+        echo "path=${{ github.action_path }}/release-action-venv" >> $GITHUB_OUTPUT
+        echo "name=release-action-venv" >> $GITHUB_OUTPUT
       shell: bash
     - name: Cache Virtual Environment
       id: cache-virtualenv
@@ -106,13 +106,6 @@ runs:
         user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
-    - name: Import gpg key from secrets
-      run: |
-        echo -e "${{ inputs.gpg-key }}" >> tmp.file
-        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
-        rm tmp.file
-      shell: bash
-      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
 
       # Input parsing
     - name: Parse release-type
