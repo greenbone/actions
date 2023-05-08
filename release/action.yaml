@@ -72,40 +72,17 @@ runs:
         fetch-depth: 0 #for conventional commits
         persist-credentials: false
         ref: ${{ inputs.ref }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      id: python
-      with:
-        python-version: ${{ inputs.python-version }}
-    - name: Virtual Environment
-      id: virtualenv
-      run: |
-        echo "path=${{ github.action_path }}/release-action-venv" >> $GITHUB_OUTPUT
-        echo "name=release-action-venv" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Cache Virtual Environment
-      id: cache-virtualenv
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ steps.virtualenv.outputs.name }}
-        path: ${{ steps.virtualenv.outputs.path }}
-    - name: Create virtual environment
-      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
-      run: |
-        python -m venv ${{ steps.virtualenv.outputs.path }}
-      shell: bash
-    - name: Install pontos
-      run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade pontos
-      shell: bash
     - name: Set git name, mail and origin
       uses: greenbone/actions/set-github-user@v2
       with:
         user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
+    - name: Set up Python and pontos
+      uses: greenbone/actions/setup-pontos@v2
+      id: virtualenv
+      with:
+        python-version: ${{ inputs.python-version }}
 
       # Input parsing
     - name: Parse release-type
@@ -153,8 +130,9 @@ runs:
 
       # Create release
     - name: Create automatic release
+      id: release
       run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
+        source ${{ steps.virtualenv.outputs.activate }}
         pontos-release release ${{ env.ARGS }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
       env:
