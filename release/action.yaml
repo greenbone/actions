@@ -106,13 +106,6 @@ runs:
         user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
-    - name: Import gpg key from secrets
-      run: |
-        echo -e "${{ inputs.gpg-key }}" >> tmp.file
-        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
-        rm tmp.file
-      shell: bash
-      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
 
       # Input parsing
     - name: Parse release-type
