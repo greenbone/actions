@@ -49,6 +49,20 @@ inputs:
     description: "Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files."
     default: "true"
 
+outputs:
+  release-version:
+    description: "Version of the release. Depending on the inputs it is calculated from the detected last release version."
+    value: ${{ steps.release.outputs.release-version }}
+  last-release-version:
+    description: "Detected version of the previous release."
+    value: ${{ steps.release.outputs.last-release-version }}
+  git-release-tag:
+    description: "Git tag created for the release version"
+    value: ${{ steps.release.outputs.git-release-tag }}
+  next-version:
+    description: "Version set after a successful release"
+    value: ${{ steps.release.outputs.next-version }}
+
 branding:
   icon: "package"
   color: "green"
@@ -159,4 +173,4 @@ runs:
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
         versioning-scheme: ${{ inputs.versioning-scheme }}
         release-series: ${{ inputs.release-series }}
-        release-version: ${{ inputs.release-version }}
+        release-version: ${{ steps.release.outputs.release-version }}
