@@ -18,37 +18,14 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v3
-    - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v4
-      id: python
+    - name: Set up Python ${{ inputs.python-version }} and pontos
+      uses: actions/setup-pontos@v2
+      id: virtualenv
       with:
         python-version: ${{ inputs.python-version}}
-    - name: Virtual Environment
-      id: virtualenv
-      run: |
-        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
-        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Cache Virtual Environment
-      id: cache-virtualenv
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ steps.virtualenv.outputs.name }}
-        path: ${{ steps.virtualenv.outputs.path }}
-    - name: Create virtual environment
-      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
-      run: |
-        python -m venv ${{ steps.virtualenv.outputs.path }}
-      shell: bash
-    - name: Install pontos
-      run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
-        python -m pip install -U pip
-        python -m pip install pontos
-      shell: bash
     - name: Check version information
       run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
+        source ${{ steps.virtualenv.outputs.activate }}
         python -m pontos.version verify current
       shell: bash
       working-directory: ${{ inputs.working-directory }}

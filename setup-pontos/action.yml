@@ -1,0 +1,61 @@
+name: "Setup Pontos Action"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to setup python and pontos"
+inputs:
+  cache-key:
+    description: "Key to use for the cache name."
+    default: "pontos-venv"
+  python-version:
+    description: "Python version that should be installed and used."
+    default: "3.10"
+  virtualenv-path:
+    description: "Path to the created virtual environment"
+    default: "${{ github.workspace }}/pontos-env"
+
+outputs:
+  virtualenv-path:
+    description: "Path to the created virtual environment"
+    value: ${{ steps.virtualenv.outputs.path }}
+  activate:
+    description: "Path to the activate environment script to source"
+    value: ${{ steps.virtualenv.outputs.activate }}
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Virtual Environment
+      id: virtualenv
+      run: |
+        echo "path=${{ inputs.virtualenv-path }}" >> $GITHUB_OUTPUT
+        echo "activate=${{ inputs.virtualenv-path }}/bin/activate" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Cache Virtual Environment
+      id: cache-virtualenv
+      uses: actions/cache@v3
+      with:
+        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ inputs.cache-key }}
+        path: ${{ steps.virtualenv.outputs.path }}
+    - name: Create virtual environment
+      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
+      run: |
+        python3 -m venv ${{ steps.virtualenv.outputs.path }}
+      shell: bash
+    - name: Install pontos
+      run: |
+        source ${{ steps.virtualenv.outputs.activate }}
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade pontos
+      shell: bash
+    - name: Print pontos version
+      run: |
+        source ${{ steps.virtualenv.outputs.activate }}
+        pontos --version
+      shell: bash

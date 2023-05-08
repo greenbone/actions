@@ -1,9 +1,7 @@
-# Greenbone Conventional Commits Action
+# Setup Pontos Action
 
-GitHub Action to check for conventional commits
-
-To run this action you need to add the following code to your workflow file
-(for example `.github/workflows/backport.yml`):
+GitHub Action to setup [pontos](https://github.com/greenbone/pontos) for your
+action or workflow.
 
 ```yml
 name: Conventional Commits

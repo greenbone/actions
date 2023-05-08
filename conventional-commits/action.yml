@@ -25,7 +25,7 @@ runs:
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v2
       with:
-        version: ${{ inputs.python-version }}
+        python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
         working-directory: ${{ github.action_path }}
         without-dev: "true"
