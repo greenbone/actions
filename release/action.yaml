@@ -80,8 +80,8 @@ runs:
     - name: Virtual Environment
       id: virtualenv
       run: |
-        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
-        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
+        echo "path=${{ github.action_path }}/release-action-venv" >> $GITHUB_OUTPUT
+        echo "name=release-action-venv" >> $GITHUB_OUTPUT
       shell: bash
     - name: Cache Virtual Environment
       id: cache-virtualenv
