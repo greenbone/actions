@@ -1,4 +1,4 @@
-name: "Pontos Release Patch version"
+name: "Sign GitHub Release Files"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: |
   "An action to download GitHub release files, sign the releases files and "
