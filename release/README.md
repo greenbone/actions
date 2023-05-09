@@ -51,7 +51,19 @@ You can alternatively set an explicit `release-version`. It will overwrite the `
 | ref                  | This branch's/tag's HEAD will be candidate of the next release.                                                                 | No        | `""` (default branch) |
 | release-type         | What type of release should be executed? Supported: `alpha`, `beta`, `calendar`, `major`, `minor`, `patch`, `release-candidate` | No        | `patch`               |
 | release-version      | Set an explicit version, that should be released.                                                                               | No        | None                  |
+| release-series  | Allow to determine release versions for an older release series like '22.4'. | No | None |
 | versioning-scheme    | What versioning scheme should be used for the release? Supported: `semver`, `pep440`                                            | No        | `pep440`              |
+| sign-release-files | Create and upload release file signatures. Default is 'true'. Set to an other string then 'true' to disable the signatures. | No | `"true"` |
+| update-project | Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files. | No | `"true"` |
+
+## Output Arguments
+
+|Output Variable|Description|
+|---------------|-----------|
+| release-version      | Version of the release. Depending on the inputs it is calculated from the detected last release version. |
+| last-release-version | Detected version of the previous release. |
+| git-release-tag      | Git tag created for the release version |
+| next-version         | Version set after a successful release |
 
 
 ## Examples

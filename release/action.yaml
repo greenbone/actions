@@ -1,4 +1,4 @@
-name: "Pontos Release Patch version"
+name: "Create GitHub Releases"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: |
   "An action that is able to create a release for a project"
