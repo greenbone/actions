@@ -6,6 +6,7 @@ description: |
 
 inputs:
   conventional-commits:
+    deprecationMessage: "conventional-commits input is obsolete. Using conventional commits is always expected."
     description: "Deprecated."
   github-user:
     description: "Github user name on behalf of whom the actions will be executed."
@@ -23,6 +24,7 @@ inputs:
   gpg-passphrase:
     description: "GPG passphrase, represented as a string. Required for signing assets of the release."
   strategy:
+    deprecationMessage: "strategy input is deprecated. Please use `release-type` instead."
     description: "Deprecated by release-type."
   python-version:
     description: "Python version used  to create the release. (Only important for python projects)"
