@@ -1,0 +1,23 @@
+name: Conventional Commits
+
+on:
+  workflow_call:
+    inputs:
+      ignore-actors:
+        description: "A comma separated list of users to ignore PRs from"
+        default: ""
+        required: false
+        type: string
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  conventional-commits:
+    if: !contains(split('${{ github.event.inputs.ignore-actors }}', ','), github.actor)
+    name: Report Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+        - name: Report Conventional Commits
+          uses: greenbone/actions/conventional-commits@v2
