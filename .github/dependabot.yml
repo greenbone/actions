@@ -7,77 +7,66 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/poetry/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/release/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/release-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/coverage-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/lint-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/mypy-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/mattermost-notify/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/install-npm/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/lint-javascript/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/test-javascript/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-      include: "scope"
 
     # PIP
   - package-ecosystem: pip
@@ -90,7 +79,6 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: pip
     directory: "/download-artifact/"
     schedule:
@@ -101,7 +89,6 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-      include: "scope"
   - package-ecosystem: pip
     directory: "/backport-pull-request/"
     schedule:
@@ -112,4 +99,3 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-      include: "scope"
