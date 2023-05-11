@@ -4,28 +4,18 @@
 
 Repository that contains a collection of GitHub Actions for Greenbone projects
 
-## Language specific CI actions
+## Language specific Actions
 
 We offer several actions for linting, formatting, building and testing packages/modules/projects in different programming languages
 
 ### Python
 
-```yml
-- name: Install python and poetry and the project
-  uses: greenbone/actions/poetry@v2
-  with:
-    version: 3.9
-
-- name: Install python, poetry, project and run coverage
-  uses: greenbone/actions/coverage-python@v2
-  with:
-    version: 3.9
-
-- name: Install python, poetry, project and run lint
-  uses: greenbone/actions/lint-python@v2
-  with:
-    version: 3.9
-```
+* [Install python, poetry and the project](https://github.com/greenbone/actions/tree/v2/poetry)
+* [Install python, poetry, project and run coverage to create a code coverage report](https://github.com/greenbone/actions/tree/v2/coverage-python)
+* [Install python, poetry, project and run pylint linter](https://github.com/greenbone/actions/tree/v2/lint-python)
+* [Install python, poetry, project and and run mypy type checker](https://github.com/greenbone/actions/tree/v2/mypy-python)
+* [Install python, poetry, build python package and upload it to PyPI](https://github.com/greenbone/actions/tree/v2/pypi-upload)
+* [Setup python and pontos](https://github.com/greenbone/actions/tree/v2/setup-pontos)
 
 ### JavaScript
 
@@ -67,58 +57,24 @@ We offer several actions for linting, formatting, building and testing packages/
   uses: greenbone/actions/doc-coverage-clang@v2
 ```
 
-## Branch protection
+## Language independent Actions
+### Branch protection
 
-```yml
-- name: lock <target> branch on <repository>
-  uses: greenbone/actions/lock-branch@v2
-  with:
-    lock: "true"
-    github-token: ${{ token }}
-    branch: <target>
-    repository: <repository>
-- name: unlock <target> branch on <repository>
-  uses: greenbone/actions/lock-branch@v2
-  with:
-    lock: "false"
-    github-token: ${{ token }}
-    branch: <target>
-    repository: <repository>
-- name: allow admin users bypassing protection on <target> branch on <repository>
-  uses: greenbone/actions/admin-bypass@v2
-  with:
-    allow: "true"
-    github-token: ${{ token }}
-    branch: <target>
-    repository: <repository>
-- name: disable bypassing protection on <target> branch on <repository> for admin users
-  uses: greenbone/actions/admin-bypass@v2
-  with:
-    allow: "false"
-    github-token: ${{ token }}
-    branch: <target>
-    repository: <repository>
-```
+* [Lock and unlock a branch in a GitHub repository](https://github.com/greenbone/actions/tree/v2/lock-branch)
+* [Allow and disallow admin users bypassing protection rules](https://github.com/greenbone/actions/tree/v2/admin-bypass)
 
-## Other useful actions
+### Other useful actions
 
-Release a project in C, GoLang, JavaScript or Python
+* [Release a project in C, GoLang, JavaScript or Python](https://github.com/greenbone/actions/tree/v2/release)
+* [Create and upload signatures for GitHub release files](https://github.com/greenbone/actions/tree/v2/sign-release-files)
+* [Report usage of conventional commits in a Pull Request](https://github.com/greenbone/actions/tree/v2/conventional-commits)
+* [Check for consistent versioning in a project](https://github.com/greenbone/actions/tree/v2/check-version)
+* [Backport Pull Requests to other additional branches](https://github.com/greenbone/actions/tree/v2/backport-pull-request)
+* [Workflow notifications in Mattermost channels](https://github.com/greenbone/actions/tree/v2/mattermost-notify)
+* [Trigger Workflow Runs](https://github.com/greenbone/actions/tree/v2/trigger-workflow)
+* [Download Workflow Artifacts from a different workflow or even repository](https://github.com/greenbone/actions/tree/v2/trigger-workflow)
 
-```yml
-- name: Run release actions
-  uses: greenbone/actions/release@v2
-  with:
-    github-user: ${{ secrets.FOO_BAR }}
-    github-user-mail: foo@bar.baz
-    github-user-token: bar
-    gpg-key: boo
-    gpg-passphrase: foo
-    gpg-fingerprint: baz
-    release-type: calendar
-    ref: main
-```
-
-Update licence header supporting many different filetypes
+Update license header supporting many different filetypes
 
 ```yml
 - name: Run update header
@@ -148,25 +104,9 @@ SHA256 file or GPG signature generation
     file: ./foo/bar
 ```
 
-Check for consistent versioning in a project
-
-```yml
-- name: Check versioning
-  uses: greenbone/actions/check-version@v2
-```
-
-Report Conventional Commits
-
-```yml
-- name: Check conventional commits
-  uses: greenbone/actions/conventional-commits@v2
-  with:
-    token: ${{ secrets.GITHUB_TOKEN }}
-```
-
 ## Support
 
-For any question on the usage of python-gvm please use the
+For any question on the usage of the Greenbone actions please use the
 [Greenbone Community Forum](https://forum.greenbone.net/). If you
 found a problem with the software, please
 [create an issue](https://github.com/greenbone/actions/issues)
@@ -178,6 +118,6 @@ This project is maintained by [Greenbone AG](https://www.greenbone.net/).
 
 ## License
 
-Copyright (C) 2020-2022 [Greenbone AG](https://www.greenbone.net/)
+Copyright (C) 2020-2023 [Greenbone AG](https://www.greenbone.net/)
 
 Licensed under the [GNU General Public License v3.0 or later](LICENSE).

@@ -3,6 +3,8 @@
 GitHub Action to download all GitHub release asset files, create a signature for
 all downloaded files and upload these signatures to the GitHub release.
 
+## Example
+
 ```yml
 name: Sign Release Files
 
@@ -31,6 +33,6 @@ jobs:
 | gpg-key         | GPG key, represented as a string. | Required |
 | gpg-passphrase  | GPG passphrase, represented as a string. | Required |
 | release-version | Set an explicit version, that should be released. | Optional |
-| release-series  | Allow to determine release versions for an older release series like '22.4'. | Optional |
-| versioning-scheme | What versioning scheme should be used for the release? Supported: `semver`, `pep440` | Optional (default is `pep440`) |
+| release-series  | Allow to determine release versions for an older release series like `"22.4"`. | Optional |
+| versioning-scheme | What versioning scheme should be used for the release? Supported: `"semver"`, `"pep440"` | Optional (default is `"pep440"`) |
 | github-token | Token with write rights for releases to download and upload release asset files. | Optional (default is `${{ github.token }}`) |

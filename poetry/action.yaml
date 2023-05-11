@@ -1,6 +1,7 @@
 name: "Python Poetry Action"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to install python and project dependencies via poetry"
+
 inputs:
   version:
     description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
@@ -25,6 +26,7 @@ inputs:
   python-version:
     description: "Python version that should be installed and used."
     default: "3.10"
+
 branding:
   icon: "package"
   color: "green"
