@@ -1,13 +1,11 @@
 # Mattermost notify
 
-- Sends workflow status messages to a Mattermost channel.
+Sends workflow status messages to a Mattermost channel.
 
-## Examples
+## Example
 
 - Create a yml file under /.github/workflows.
 - Add under "workflows:" the workflows you want to receive a status message about.
-
-#### Use Case
 
 ```yaml
 name: CI notify
@@ -34,3 +32,11 @@ jobs:
             MATTERMOST_CHANNEL: ${{ secrets.MATTERMOST_CHANNEL }}
             MATTERMOST_HIGHLIGHT: USER1 USER2
 ```
+
+## Action Configuration
+
+|Input Variable|Description| |
+|--------------|-----------|-|
+| MATTERMOST_WEBHOOK_URL | Mattermost webhook url | Required |
+| MATTERMOST_CHANNEL | Mattermost channel | Required |
+| MATTERMOST_HIGHLIGHT | List of space separated users to highlight in the channel | Optional |

@@ -5,7 +5,7 @@ description: "An action that locks the target branch and prevents pushing on it.
 inputs:
   github-token:
     description: "Github user token, that is legitimated to set the lock."
-    required: true
+    default: ${{ github.token }}
   lock:
     description: "Lock or unlock (Options: true, false)? Default: true"
     default: "true"

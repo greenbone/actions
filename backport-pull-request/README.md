@@ -2,6 +2,8 @@
 
 GitHub Action to backport pull requests.
 
+## Examples
+
 To run this action you need to add the following code to your workflow file
 (for example `.github/workflows/backport.yml`):
 

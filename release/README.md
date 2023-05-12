@@ -5,6 +5,7 @@ You can use the release action to release a project within a GitHub Action workf
 ## Supported Programming Languages
 
 Currently supported programming languages:
+
 * C/C++ (CMake)
 * GoLang
 * JavaScript
@@ -51,34 +52,108 @@ You can alternatively set an explicit `release-version`. It will overwrite the `
 | ref                  | This branch's/tag's HEAD will be candidate of the next release.                                                                 | No        | `""` (default branch) |
 | release-type         | What type of release should be executed? Supported: `alpha`, `beta`, `calendar`, `major`, `minor`, `patch`, `release-candidate` | No        | `patch`               |
 | release-version      | Set an explicit version, that should be released.                                                                               | No        | None                  |
+| release-series  | Allow to determine release versions for an older release series like '22.4'. | No | None |
 | versioning-scheme    | What versioning scheme should be used for the release? Supported: `semver`, `pep440`                                            | No        | `pep440`              |
+| sign-release-files | Create and upload release file signatures. Default is 'true'. Set to an other string then 'true' to disable the signatures. | No | `"true"` |
+| update-project | Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files. | No | `"true"` |
+
+## Output Arguments
+
+|Output Variable|Description|
+|---------------|-----------|
+| release-version      | Version of the release. Depending on the inputs it is calculated from the detected last release version. |
+| last-release-version | Detected version of the previous release. |
+| git-release-tag      | Git tag created for the release version |
+| next-version         | Version set after a successful release |
 
 
 ## Examples
 
 ```yml
-- name: Run release actions with release type
-  uses: greenbone/actions/release@v2
-  with:
-    github-user: ${{ secrets.FOO_BAR }}
-    github-user-mail: foo@bar.baz
-    github-user-token: bar
-    gpg-key: boo
-    gpg-passphrase: foo
-    gpg-fingerprint: baz
-    release-type: minor
+name: Release Project with CalVer
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Create a new release with pontos
+    # If the event is a workflow_dispatch or the label 'make release' is set and PR is closed because of a merge
+    if: (github.event_name == 'workflow_dispatch') || (contains( github.event.pull_request.labels.*.name, 'make release') && github.event.pull_request.merged == true)
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Run release actions with release type
+        uses: greenbone/actions/release@v2
+        with:
+          github-user: ${{ secrets.FOO_BAR }}
+          github-user-mail: foo@bar.baz
+          github-user-token: bar
+          gpg-key: boo
+          gpg-passphrase: foo
+          gpg-fingerprint: baz
+          release-type: "calendar"
 ```
 
 ```yml
-- name: Run release actions with release version
-  uses: greenbone/actions/release@v2
-  with:
-    github-user: ${{ secrets.FOO_BAR }}
-    github-user-mail: foo@bar.baz
-    github-user-token: bar
-    gpg-key: boo
-    gpg-passphrase: foo
-    gpg-fingerprint: baz
-    release-version: 2.0.0a1
-    ref: main
+name: Release Project
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Create a new release with pontos
+    # If the event is a workflow_dispatch or the label 'make release' is set and PR is closed because of a merge
+    if: (github.event_name == 'workflow_dispatch') || (contains( github.event.pull_request.labels.*.name, 'make release') && github.event.pull_request.merged == true)
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Run release actions with release version
+        uses: greenbone/actions/release@v2
+        with:
+          github-user: ${{ secrets.FOO_BAR }}
+          github-user-mail: foo@bar.baz
+          github-user-token: bar
+          gpg-key: boo
+          gpg-passphrase: foo
+          gpg-fingerprint: baz
+          release-version: 2.0.0a1
+          ref: "main"
+```
+
+```yml
+name: Release project and upload additional release files
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Create a new release with pontos
+    # If the event is a workflow_dispatch or the label 'make release' is set and PR is closed because of a merge
+    if: (github.event_name == 'workflow_dispatch') || (contains( github.event.pull_request.labels.*.name, 'make release') && github.event.pull_request.merged == true)
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Run release actions with release version
+        id: release
+        uses: greenbone/actions/release@v2
+        with:
+          release-type: "patch"
+          versioning-scheme: "semver"
+          sign-release-files: "false"
+      - name: Upload additional release files
+        run: |
+          gh release upload ${{ steps.release.outputs.git-release-tag }} some_files/*
+      - name: Sign all release files
+        uses: greenbone/actions/sign-release-files@v2
+          with:
+            gpg-key: ${{ secrets.GPG_KEY }}
+            gpg-fingerprint: ${{ secrets.GPG_FINGERPRINT }}
+            gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+            release-version: ${{ steps.release.outputs.release-version }}
 ```

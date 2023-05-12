@@ -1,4 +1,4 @@
-name: "Pontos Release Patch version"
+name: "Create GitHub Releases"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: |
   "An action that is able to create a release for a project"
@@ -6,6 +6,7 @@ description: |
 
 inputs:
   conventional-commits:
+    deprecationMessage: "conventional-commits input is obsolete. Using conventional commits is always expected."
     description: "Deprecated."
   github-user:
     description: "Github user name on behalf of whom the actions will be executed."
@@ -23,6 +24,7 @@ inputs:
   gpg-passphrase:
     description: "GPG passphrase, represented as a string. Required for signing assets of the release."
   strategy:
+    deprecationMessage: "strategy input is deprecated. Please use `release-type` instead."
     description: "Deprecated by release-type."
   python-version:
     description: "Python version used  to create the release. (Only important for python projects)"
@@ -49,6 +51,20 @@ inputs:
     description: "Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files."
     default: "true"
 
+outputs:
+  release-version:
+    description: "Version of the release. Depending on the inputs it is calculated from the detected last release version."
+    value: ${{ steps.release.outputs.release-version }}
+  last-release-version:
+    description: "Detected version of the previous release."
+    value: ${{ steps.release.outputs.last-release-version }}
+  git-release-tag:
+    description: "Git tag created for the release version"
+    value: ${{ steps.release.outputs.git-release-tag }}
+  next-version:
+    description: "Version set after a successful release"
+    value: ${{ steps.release.outputs.next-version }}
+
 branding:
   icon: "package"
   color: "green"
@@ -72,40 +88,17 @@ runs:
         fetch-depth: 0 #for conventional commits
         persist-credentials: false
         ref: ${{ inputs.ref }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      id: python
-      with:
-        python-version: ${{ inputs.python-version }}
-    - name: Virtual Environment
-      id: virtualenv
-      run: |
-        echo "path=${{ github.action_path }}/release-action-venv" >> $GITHUB_OUTPUT
-        echo "name=release-action-venv" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Cache Virtual Environment
-      id: cache-virtualenv
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ steps.virtualenv.outputs.name }}
-        path: ${{ steps.virtualenv.outputs.path }}
-    - name: Create virtual environment
-      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
-      run: |
-        python -m venv ${{ steps.virtualenv.outputs.path }}
-      shell: bash
-    - name: Install pontos
-      run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade pontos
-      shell: bash
     - name: Set git name, mail and origin
       uses: greenbone/actions/set-github-user@v2
       with:
         user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
+    - name: Set up Python and pontos
+      uses: greenbone/actions/setup-pontos@v2
+      id: virtualenv
+      with:
+        python-version: ${{ inputs.python-version }}
 
       # Input parsing
     - name: Parse release-type
@@ -153,8 +146,9 @@ runs:
 
       # Create release
     - name: Create automatic release
+      id: release
       run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
+        source ${{ steps.virtualenv.outputs.activate }}
         pontos-release release ${{ env.ARGS }} --versioning-scheme ${{ inputs.versioning-scheme }}
       shell: bash
       env:
@@ -181,4 +175,4 @@ runs:
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
         versioning-scheme: ${{ inputs.versioning-scheme }}
         release-series: ${{ inputs.release-series }}
-        release-version: ${{ inputs.release-version }}
+        release-version: ${{ steps.release.outputs.release-version }}
