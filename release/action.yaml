@@ -169,10 +169,11 @@ runs:
       uses: greenbone/actions/sign-release-files@v2
       if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       with:
-        python-version: ${{ inputs.poetry-version }}
+        python-version: ${{ inputs.python-version }}
         github-token: ${{ inputs.github-user-token }}
         gpg-fingerprint: ${{ inputs.gpg-fingerprint }}
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
+        gpg-key: ${{ inputs.gpg-key }}
         versioning-scheme: ${{ inputs.versioning-scheme }}
         release-series: ${{ inputs.release-series }}
         release-version: ${{ steps.release.outputs.release-version }}

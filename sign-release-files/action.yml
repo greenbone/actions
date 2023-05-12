@@ -48,7 +48,18 @@ runs:
         ARGS="${ARGS} --release-series ${{ inputs.release-series }}"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
-    - uses: actions/checkout@v3
+    - name: Checkout exists already
+      id: checkout
+      run: |
+        if [[ -d "${{ github.workspace }}/.git" ]]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+    - name: Checkout repository
+      if: steps.checkout.outputs.exists != 'true'
+      uses: actions/checkout@v3
     - name: Set up Python and pontos
       uses: greenbone/actions/setup-pontos@v2
       id: virtualenv
