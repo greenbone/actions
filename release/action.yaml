@@ -173,6 +173,7 @@ runs:
         github-token: ${{ inputs.github-user-token }}
         gpg-fingerprint: ${{ inputs.gpg-fingerprint }}
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
+        gpg-key: ${{ inputs.gpg-key }}
         versioning-scheme: ${{ inputs.versioning-scheme }}
         release-series: ${{ inputs.release-series }}
         release-version: ${{ steps.release.outputs.release-version }}
