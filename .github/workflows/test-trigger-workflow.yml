@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - "v*"
   pull_request:
 
 jobs:
@@ -15,12 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Determine Ref
+        id: ref
         run: |
           if [ -n "$GITHUB_HEAD_REF" ];
           then
-            echo "REF=${GITHUB_HEAD_REF}" >> $GITHUB_ENV;
+            echo "ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT;
           else
-            echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
+            echo "ref=${GITHUB_REF##refs/*/}" >> $GITHUB_OUTPUT;
           fi;
         shell: bash
       - name: Trigger Another Workflow
@@ -31,7 +31,7 @@ jobs:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-trigger-workflow-long-running-workflow.yml"
-          ref: ${{ env.REF }}
+          ref: ${{ steps.ref.outputs.ref }}
           wait-for-completion-timeout: 10
           wait-for-completion-interval: 10
       - name: Fail if not failed
@@ -47,12 +47,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Determine Ref
+        id: ref
         run: |
           if [ -n "$GITHUB_HEAD_REF" ];
           then
-            echo "REF=${GITHUB_HEAD_REF}" >> $GITHUB_ENV;
+            echo "ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT;
           else
-            echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
+            echo "ref=${GITHUB_REF##refs/*/}" >> $GITHUB_OUTPUT;
           fi;
         shell: bash
       - name: Trigger Another Workflow
@@ -61,7 +62,7 @@ jobs:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-trigger-workflow-test-workflow.yml"
-          ref: ${{ env.REF }}
+          ref: ${{ steps.ref.outputs.ref }}
           wait-for-completion-interval: 10
 
   test-failing-workflow:
@@ -71,12 +72,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Determine Ref
+        id: ref
         run: |
           if [ -n "$GITHUB_HEAD_REF" ];
           then
-            echo "REF=${GITHUB_HEAD_REF}" >> $GITHUB_ENV;
+            echo "ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT;
           else
-            echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
+            echo "ref=${GITHUB_REF##refs/*/}" >> $GITHUB_OUTPUT;
           fi;
         shell: bash
       - name: Trigger Another Workflow
@@ -87,7 +89,7 @@ jobs:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-trigger-workflow-failing-workflow.yml"
-          ref: ${{ env.REF }}
+          ref: ${{ steps.ref.outputs.ref }}
       - name: Fail if not failed
         if: ${{ success() && steps.test.outcome != 'failure' }}
         run: |
