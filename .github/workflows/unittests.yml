@@ -1,0 +1,23 @@
+name: Run unittests
+
+on:
+  push:
+    tags: [ "*" ]
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  run-backport-pull-request-tests:
+    runs-on: ubuntu-latest
+    name: Run unit tests for backport-pull-request action
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup project
+        uses: greenbone/actions/poetry@v2
+        with:
+          working-directory: backport-pull-request
+      - name: Run unit tests
+        run: poetry run python -m unittest
+        working-directory: backport-pull-request
