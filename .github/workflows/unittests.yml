@@ -2,7 +2,8 @@ name: Run unittests
 
 on:
   push:
-    tags: [ "*" ]
+    tags:
+      - "v*"
     branches:
       - main
   pull_request:

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - "v*"
   pull_request:
 
 jobs:
@@ -15,12 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Determine Branch
+        id: branch
         run: |
           if [ -n "$GITHUB_HEAD_REF" ];
           then
-            echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV;
+            echo "branch=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT;
           else
-            echo "BRANCH=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV;
+            echo "branch=${GITHUB_REF##refs/*/}" >> $GITHUB_OUTPUT;
           fi;
         shell: bash
       - name: Trigger Artifact Uploading
@@ -29,14 +29,14 @@ jobs:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
-          ref: ${{ env.BRANCH }}
+          ref: ${{ steps.branch.outputs.branch }}
       - name: Download Artifact
         uses: ./download-artifact
         with:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
-          branch: ${{ env.BRANCH }}
+          branch: ${{ steps.branch.outputs.branch }}
           name: artifact
       - name: Download Artifacts
         uses: ./download-artifact
@@ -44,14 +44,14 @@ jobs:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
-          branch: ${{ env.BRANCH }}
+          branch: ${{ steps.branch.outputs.branch }}
       - name: Ignore missing workflow
         uses: ./download-artifact
         with:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "foo-bar.yml"
-          branch: ${{ env.BRANCH }}
+          branch: ${{ steps.branch.outputs.branch }}
           name: artifact
           allow-not-found: true
       - name: Ignore missing artifact
@@ -60,6 +60,6 @@ jobs:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           repository: greenbone/actions
           workflow: "test-download-artifacts-test-workflow.yml"
-          branch: ${{ env.BRANCH }}
+          branch: ${{ steps.branch.outputs.branch }}
           name: foo
           allow-not-found: true
