@@ -15,7 +15,10 @@ inputs:
     required: true
   token:
     description: "The GitHub user's token (PAT)"
-    required: true
+    default: ${{ github.token }}
+  repository:
+    description: "GitHub repository to use"
+    default: ${{ github.repository }}
 
 runs:
   using: "composite"
@@ -26,5 +29,5 @@ runs:
       run: |
         git config --global user.name "${{ inputs.user }}"
         git config --global user.email "${{ inputs.mail }}"
-        git remote set-url origin https://${{ inputs.token }}@github.com/${{ github.repository }}
+        git remote set-url origin https://${{ inputs.token }}@github.com/${{ inputs.repository }}
       shell: bash

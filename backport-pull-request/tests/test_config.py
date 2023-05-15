@@ -33,7 +33,7 @@ class ConfigTestCase(unittest.TestCase):
         self.assertEqual(str(verify_issue), "No backport section found.")
 
         with self.assertRaises(StopIteration):
-            verify_issue = next(verify_iterator)
+            next(verify_iterator)
 
     @patch("pathlib.Path")
     def test_verify_missing_label(self, path_mock):
@@ -51,7 +51,7 @@ class ConfigTestCase(unittest.TestCase):
         )
 
         with self.assertRaises(StopIteration):
-            verify_issue = next(verify_iterator)
+            next(verify_iterator)
 
     @patch("pathlib.Path")
     def test_verify_missing_destination(self, path_mock):
@@ -70,7 +70,7 @@ class ConfigTestCase(unittest.TestCase):
         )
 
         with self.assertRaises(StopIteration):
-            verify_issue = next(verify_iterator)
+            next(verify_iterator)
 
     @patch("pathlib.Path")
     def test_verify_missing(self, path_mock):
@@ -97,7 +97,7 @@ class ConfigTestCase(unittest.TestCase):
         )
 
         with self.assertRaises(StopIteration):
-            verify_issue = next(verify_iterator)
+            next(verify_iterator)
 
     @patch("pathlib.Path")
     def test_load(self, path_mock):
