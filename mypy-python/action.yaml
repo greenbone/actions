@@ -5,10 +5,14 @@ description: "An action that verifies python type hints by using mypy"
 inputs:
   packages:
     description: "Python packages to check with mypy"
+    deprecationMessage: "packages input is deprecated. Please use `mypy-arguments` input instead."
     required: true
   version:
     description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
     deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
+  mypy-arguments:
+    description: "Additional arguments for running mypy"
+    default: ""
   python-version:
     description: "Python version that should be installed"
     default: "3.10"
@@ -32,15 +36,12 @@ runs:
     - name: Install poetry
       uses: greenbone/actions/poetry@v2
       with:
-        version: ${{ inputs.version }}
         python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
-    - run: echo "Running mypy"
-      shell: bash
-    - run: poetry run mypy ${{ inputs.packages }}
+    - run: poetry run mypy ${{ inputs.mypy-arguments }} ${{ inputs.packages }}
       shell: bash
       name: Check with mypy
       working-directory: ${{ github.workspace }}
