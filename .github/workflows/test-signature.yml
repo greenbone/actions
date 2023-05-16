@@ -2,10 +2,10 @@ name: Test Python Actions
 
 on:
   push:
-    tags: ["*"]
+    tags:
+      - "v*"
     branches:
       - main
-      - "v*"
   pull_request:
 
 jobs:
