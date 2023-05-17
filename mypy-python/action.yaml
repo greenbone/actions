@@ -1,12 +1,11 @@
 name: "Python Mypy Action"
-author: "Tom Ricciuti <tom.ricciuti@greenbone.net>"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action that verifies python type hints by using mypy"
 
 inputs:
   packages:
     description: "Python packages to check with mypy"
     deprecationMessage: "packages input is deprecated. Please use `mypy-arguments` input instead."
-    required: true
   version:
     description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
     deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
