@@ -39,4 +39,4 @@ runs:
         COSIGN_EXPERIMENTAL: "true"
       run: |
        echo "${{ inputs.docker-tags }}" | \
-         xargs -I {} cosign sign --recursive --force {}@${{ inputs.docker-digest }}
+         xargs -I {} cosign sign --recursive {}@${{ inputs.docker-digest }}
