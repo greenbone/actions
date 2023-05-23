@@ -1,0 +1,40 @@
+name: "Container signing"
+description: "Cosign based action to create container signatures."
+
+inputs:
+  docker-digest:
+    description: "Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest."
+    required: true
+  docker-tags:
+    description: "Set the tags from the docker meta action e.g the output of steps.meta.outputs.tags."
+    required: true
+  cosign-key-password:
+    description: "Set the cosign key password, it not set a keyless signature will be created."
+    required: false
+  cosign-key:
+    description: "Set the cosign key, it not set a keyless signature will be created."
+    required: false
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: sigstore/cosign-installer@main
+    - name: Sign container image (public/private keypair)
+      if: ${{ inputs.cosign-key-password }} && ${{ inputs.cosign-key }}
+      env:
+        COSIGN_PASSWORD: ${{ inputs.cosign-key-password }}
+        COSIGN_KEY: ${{ inputs.cosign-key }}
+      run: |
+        echo "${{ inputs.docker-tags }}" | \
+          xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}@${{ inputs.docker-digest }}
+    - name: Sign the published Container Image (Keyless)
+      if: !${{ inputs.cosign-key-password }} || !${{ inputs.cosign-key }}
+      env:
+        COSIGN_EXPERIMENTAL: "true"
+      run: |
+       echo "${{ inputs.docker-tags }}" | \
+         xargs -I {} cosign sign --recursive --force {}@${{ inputs.docker-digest }}
