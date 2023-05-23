@@ -25,6 +25,7 @@ runs:
     - uses: sigstore/cosign-installer@main
     - name: Sign container image (public/private keypair)
       if: ${{ inputs.cosign-key-password }} && ${{ inputs.cosign-key }}
+      shell: bash
       env:
         COSIGN_PASSWORD: ${{ inputs.cosign-key-password }}
         COSIGN_KEY: ${{ inputs.cosign-key }}
@@ -33,6 +34,7 @@ runs:
           xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}@${{ inputs.docker-digest }}
     - name: Sign the published Container Image (Keyless)
       if: !${{ inputs.cosign-key-password }} || !${{ inputs.cosign-key }}
+      shell: bash
       env:
         COSIGN_EXPERIMENTAL: "true"
       run: |
