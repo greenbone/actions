@@ -1,18 +1,18 @@
 name: "Container signing"
-description: "Cosign based action to create container signatures."
+description: "Cosign based action to create container signatures. Depending on the input public/private key or keyless signatures are created."
 
 inputs:
-  docker-digest:
+  image-digest:
     description: "Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest."
     required: true
-  docker-tags:
+  image-tags:
     description: "Set the tags from the docker meta action e.g the output of steps.meta.outputs.tags."
     required: true
   cosign-key-password:
-    description: "Set the cosign key password, it not set a keyless signature will be created."
+    description: "Set the cosign key password, if not set a keyless signature will be created."
     required: false
   cosign-key:
-    description: "Set the cosign key, it not set a keyless signature will be created."
+    description: "Set the cosign key, if not set a keyless signature will be created."
     required: false
 
 branding:
@@ -22,7 +22,7 @@ branding:
 runs:
   using: "composite"
   steps:
-    - uses: sigstore/cosign-installer@main
+    - uses: sigstore/cosign-installer@v3
     - name: Sign container image (public/private keypair)
       if: ${{ inputs.cosign-key-password && inputs.cosign-key }}
       shell: bash
@@ -30,13 +30,11 @@ runs:
         COSIGN_PASSWORD: ${{ inputs.cosign-key-password }}
         COSIGN_KEY: ${{ inputs.cosign-key }}
       run: |
-        echo "${{ inputs.docker-tags }}" | \
-          xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}@${{ inputs.docker-digest }}
+        echo "${{ inputs.image-tags }}" | \
+          xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}@${{ inputs.image-digest }}
     - name: Sign the published Container Image (Keyless)
       if: ${{ !inputs.cosign-key-password || !inputs.cosign-key }}
       shell: bash
-      env:
-        COSIGN_EXPERIMENTAL: "true"
       run: |
-       echo "${{ inputs.docker-tags }}" | \
-         xargs -I {} cosign sign --recursive {}@${{ inputs.docker-digest }}
+       echo "${{ inputs.image-tags }}" | \
+         xargs -I {} cosign sign --recursive {}@${{ inputs.image-digest }}
