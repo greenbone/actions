@@ -4,7 +4,7 @@ description: "Cosign based action to create container signatures. Depending on t
 inputs:
   image-digest:
     description: "Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest."
-    required: true
+    required: false
   image-tags:
     description: "Set the tags from the docker meta action e.g the output of steps.meta.outputs.tags."
     required: true
@@ -30,11 +30,21 @@ runs:
         COSIGN_PASSWORD: ${{ inputs.cosign-key-password }}
         COSIGN_KEY: ${{ inputs.cosign-key }}
       run: |
-        echo "${{ inputs.image-tags }}" | \
-          xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}@${{ inputs.image-digest }}
+        if [ "${{ inputs.image-digest }}" ]; then
+          echo "${{ inputs.image-tags }}" | \
+            xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}@${{ inputs.image-digest }}
+        else
+          echo "${{ inputs.image-tags }}" | \
+            xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}
+        fi
     - name: Sign the published Container Image (Keyless)
       if: ${{ !inputs.cosign-key-password || !inputs.cosign-key }}
       shell: bash
       run: |
-       echo "${{ inputs.image-tags }}" | \
-         xargs -I {} cosign sign --recursive {}@${{ inputs.image-digest }}
+       if [ "${{ inputs.image-digest }}" ]; then
+         echo "${{ inputs.image-tags }}" | \
+           xargs -I {} cosign sign --recursive {}@${{ inputs.image-digest }}
+       else
+         echo "${{ inputs.image-tags }}" | \
+           xargs -I {} cosign sign --recursive {}
+       fi
