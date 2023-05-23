@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: docker/login-action@v2
         ...
-      - name: Setup container meta information
+      - uses: docker/metadata-action@v4
         id: meta
         ...
       - uses: docker/build-push-action@v3
