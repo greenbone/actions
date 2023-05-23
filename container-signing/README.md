@@ -33,9 +33,9 @@ jobs:
 
 ## Action Configuration
 
-|Input Variable|Description|Optional|
+|Input Variable|Description| |
 |--------------|-----------|--------|
-|image-tags|Set the tags from the docker meta action e.g the output of steps.meta.outputs.tags.|false|
-|image-digest|Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest.|true|
-|cosign-key-password|Set the cosign key password, if not set a keyless signature will be created.|true|
-|cosign-key|Set the cosign key, if not set a keyless signature will be created.|true|
+|image-tags|Set the tags from the docker meta action e.g the output of steps.meta.outputs.tags.|Required|
+|image-digest|Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest.|Optional|
+|cosign-key-password|Set the cosign key password, if not set a keyless signature will be created.|Optional|
+|cosign-key|Set the cosign key, if not set a keyless signature will be created.|Optional|
