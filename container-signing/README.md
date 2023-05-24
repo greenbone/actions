@@ -6,6 +6,9 @@ Depending on the input public/private key or keyless signatures are created.
 
 ## Info
 
+The docker/setup-buildx-action action is needed or we get a wrong digest from
+ the docker/build-push-action action.
+
 For keyless signatures with ghcr.io you have to set this permissions.
 
 ```yml
@@ -46,6 +49,7 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v2
       - uses: docker/metadata-action@v4
         id: meta
         ...
@@ -63,6 +67,6 @@ jobs:
 |Input Variable|Description| |
 |--------------|-----------|--------|
 |image-tags|Set the tags from the docker meta action e.g the output of steps.meta.outputs.tags.|Required|
-|image-digest|Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest.|Optional|
+|image-digest|Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest.|Required|
 |cosign-key-password|Set the cosign key password, if not set a keyless signature will be created.|Optional|
 |cosign-key|Set the cosign key, if not set a keyless signature will be created.|Optional|
