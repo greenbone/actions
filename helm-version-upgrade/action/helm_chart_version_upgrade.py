@@ -20,31 +20,33 @@ Simple script that upgrades dependency versions in
 a Helm chart.
 """
 
+import asyncio
 import re
 import sys
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import Any, Optional
-from pontos.git import Git
+from pontos.github.api.api import GitHubAsyncRESTApi
 
 from ruamel.yaml import YAML
 
-r"^[0-9]+\.[0-9]+\.[0-9]+\-(a|b|alpha|beta)[0-9]+"
 
 PREFIX = "opensight-"
-DEPENDENCIES = [
+SERVICE_DEPENDENCIES = [
     "asset-management-backend",
     "asset-management-frontend",
-    "job-system-postgres",
     "job-system",
-    "keycloak",
-    "opensearch",
-    "postgres",
-    "rabbitmq",
     "user-management-backend",
     "user-management-frontend",
     "scan-management-backend",
     "scan-management-frontend",
+]
+INFRASTRUCURE_DEPENDENCIES = [
+    "job-system-postgres",
+    "keycloak",
+    "opensearch",
+    "postgres",
+    "rabbitmq",
     "scan-management-postgres",
 ]
 
@@ -73,6 +75,7 @@ def parse_arguments() -> Namespace:
         "--chart-path",
         required=True,
         type=str,
+        default="charts/",
         help="Set the path to chart folder",
     )
     parser.add_argument(
@@ -88,19 +91,15 @@ def parse_arguments() -> Namespace:
         "-a",
         "--auto",
         type=str,
-        help="Auto update by determining dependecies version by its lates tag",
+        help=(
+            "Auto update by determining dependecies version by its lates tag. "
+            "This will overwrite single dependencies passed as argument."
+        ),
         choices=['rc', 'alpha', 'all'],
         default=None
     )
-    deps = parser.add_mutually_exclusive_group()
-    deps.add_argument(
-        "-d",
-        "--dependencies",
-        nargs='*',
-        type=str,
-        help="Set dependencies to upgrade",
-    )
-    deps.add_argument(
+
+    parser.add_argument(
         "--dependency-name",
         required=False,
         type=str,
@@ -161,11 +160,12 @@ class ChartVersionUpgrade:
         app_version: Optional[str] = None,
         no_tag: Optional[bool] = False,
         release_type: Optional[str] = "all",
-        git: Optional[Git] = None,
+        api: Optional[GitHubAsyncRESTApi] = None,
         auto: Optional[str] = None,
     ) -> None:
         self.no_tag = no_tag
-        self.git: Git = git
+        self.api: GitHubAsyncRESTApi = api
+        self.auto = auto
         self.release_type = release_type
 
         self.chart_dir = Path(chart_dir)
@@ -190,17 +190,27 @@ class ChartVersionUpgrade:
         if app_version:
             self.app_version = app_version
 
-    def upgrade_all(self) -> None:
-        """Upgrade all dependencies """
-        for dependency in DEPENDENCIES:
+    def upgrade_all_services(self) -> None:
+        """Upgrade all service dependencies (only for product helm chart"""
+        for dependency in SERVICE_DEPENDENCIES:
             tag = self.determine_tag(dependency)
             self.update_dependency_version(dependency=dependency, version=tag)
 
 
-    def determine_tag(self, dependency: str) -> str:
-        if not self.git:
-            raise ChartVersionUpgradeError("Tags can't be determined without git")
-        git_tags = self.git.list_tags()
+    async def determine_tag(self, dependency: str) -> str:
+        """Get the tag of the given dependency by checking latest git tag
+        
+        Args:
+          dependency (str)  The dependency, that should be checked. 
+                            Needs to be a repository name
+            
+        Returns:
+            the tag in str
+        """
+        if not self.api:
+            raise ChartVersionUpgradeError("Tags can't be determined without connection to GitHub API")
+        async with self.api:
+            git_tags = self.api.tags.get_all(f"greenbone/{dependency}")
         for tag in git_tags:
             # check next tag, until tag matches the desired dependency release type
             if _check_tag(tag, self.release_type):
@@ -208,8 +218,12 @@ class ChartVersionUpgrade:
         raise ChartVersionUpgradeError("No matching tag found.")
 
 
-    def update_values_file(self, image_tag: str) -> None:
-        """Run values.yaml version upgrade"""
+    def update_values_file(self, version: str) -> None:
+        """Run values.yaml version upgrade
+
+        Args:
+          version: Version of the helm chart that should be loaded
+        """
 
         if self.no_tag:
             print("Image tag upgrade disabled", flush=True)
@@ -231,15 +245,15 @@ class ChartVersionUpgrade:
             raise ChartVersionUpgradeError(
                 f"{self.values_file} has not entry >tag< in entry >image<"
             )
-        values_data["image"]["tag"] = self.image_tag
+        values_data["image"]["tag"] = version
 
         return yaml_file_write(self.values_file, values_data)
 
-    def update_charts_file(self, dependency: str, version: str) -> None:
+    def update_charts_file(self, version: str) -> None:
         """Run Chart.yaml version upgrade
         
         Args:
-          chart_version: Version of the helm chart that should be loaded
+          version: Version of the helm chart that should be loaded
           
         """
 
@@ -306,24 +320,24 @@ class ChartVersionUpgrade:
 
         return yaml_file_write(self.chart_file, chart_data)
 
-    def run(self, chart_version: str,) -> None:
+    def run(self, version: str,) -> None:
         """Run Chart.yaml and values.yaml version upgrade"""
 
         if self.auto:
-            if self.auto == 'all':
-                self.upgrade_all()
+            asyncio.run(self.upgrade_all_services)
+            
         if (
             not self.dependency_name or not self.dependency_version
-        ) and not self.chart_version:
+        ) and not version:
             raise ChartVersionUpgradeError(
                 "Nothing to do! No chart version or dependency_version to upgrade"
             )
 
-        if chart_version:
+        if version:
             print("Upgrade Chart version", flush=True)
             self.update_charts_file()
             self.update_values_file()
-            print(f"Chart version upgraded to {self.chart_version}", flush=True)
+            print(f"Chart version upgraded to {version}", flush=True)
 
         if self.dependency_name and self.dependency_version:
             print("Upgrade Chart dependency", flush=True)
@@ -342,20 +356,20 @@ def main() -> int:
 
     args = parse_arguments()
     try:
-        git = Git()
-        git.init()
+        api = GitHubAsyncRESTApi(args.token)
         cvu = ChartVersionUpgrade(
             args.chart_path,
-            chart_version=args.chart_version,
             app_version=args.app_version,
             image_tag=args.image_tag,
             dependency_name=args.dependency_name,
             dependency_version=args.dependency_version,
             no_tag=args.no_tag,
-            git=git,
+            api=api,
             auto=args.auto,
         )
-        cvu.run()
+        if args.dependency_name and args.dependency_version:
+            cvu.run(version=args.version, )
+        cvu.run(version=args.version)
         return 0
     except ChartVersionUpgradeError as upgrade_error:
         print(upgrade_error, file=sys.stderr)

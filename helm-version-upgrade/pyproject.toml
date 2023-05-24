@@ -2,7 +2,7 @@
 name = "helm-chart-version-upgrade"
 version = "1.0.0"
 description = "A GitHub Action to upgrade a helm chart version"
-authors = ["Pascal Holthaus <pascal.holthaus@greenbone.net>"]
+authors = ["Pascal Holthaus <pascal.holthaus@greenbone.net>", "Jaspar Stach <jaspar.stach@greenbone.net>"]
 license = "GPL-3"
 packages = [
     { include = "action" },
@@ -11,6 +11,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.9"
 ruamel-yaml = "^0.17.21"
+pontos = ">=22.3.6"
 
 [tool.poetry.dev-dependencies]
 autohooks-plugin-pylint = ">=22.8.0"
