@@ -4,6 +4,26 @@ Cosign based action to create container signatures.
 
 Depending on the input public/private key or keyless signatures are created.
 
+## Info
+
+For keyless signatures with ghcr.io you have to set this permissions.
+
+```yml
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+```
+
+And use the docker/login-action action with this settings.
+
+```yml
+- uses: docker/login-action@v2
+  registry: ghcr.io
+  username: ${{ github.actor }}
+  password: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ## Examples
 
 ```yml
@@ -12,13 +32,20 @@ name: Container signing
 on:
   push:
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
   container-signing:
     name: Container signing
     runs-on: ubuntu-latest
     steps:
       - uses: docker/login-action@v2
-        ...
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/metadata-action@v4
         id: meta
         ...
