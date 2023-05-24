@@ -23,6 +23,16 @@ runs:
   using: "composite"
   steps:
     - uses: sigstore/cosign-installer@v3
+    - name: Get registry url from image tags
+      if: ${{ inputs.image-digest }}
+      id: registry-url
+      shell: bash
+      run: |
+        URL=$(echo "${{ inputs.image-tags }}" \
+          | head -1 \
+          | cut -d ':' -f 1
+        )
+        echo "url=$URL" >> $GITHUB_OUTPUT 
     - name: Sign container image (public/private keypair)
       if: ${{ inputs.cosign-key-password && inputs.cosign-key }}
       shell: bash
@@ -31,20 +41,20 @@ runs:
         COSIGN_KEY: ${{ inputs.cosign-key }}
       run: |
         if [ "${{ inputs.image-digest }}" ]; then
-          echo "${{ inputs.image-tags }}" | \
-            xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}@${{ inputs.image-digest }}
+            cosign sign -y -r --key env://COSIGN_KEY \
+              ${{steps.registry-url.outputs.url }}@${{ inputs.image-digest }}
         else
           echo "${{ inputs.image-tags }}" | \
-            xargs -I {} cosign sign --recursive --key env://COSIGN_KEY {}
+            xargs -I {} cosign sign -y -r --key env://COSIGN_KEY {}
         fi
     - name: Sign the published Container Image (Keyless)
       if: ${{ !inputs.cosign-key-password || !inputs.cosign-key }}
       shell: bash
       run: |
        if [ "${{ inputs.image-digest }}" ]; then
-         echo "${{ inputs.image-tags }}" | \
-           xargs -I {} cosign sign --recursive {}@${{ inputs.image-digest }}
+           cosign sign -y -r \
+             ${{steps.registry-url.outputs.url }}@${{ inputs.image-digest }}
        else
          echo "${{ inputs.image-tags }}" | \
-           xargs -I {} cosign sign --recursive {}
+           xargs -I {} cosign sign -y -r {}
        fi
