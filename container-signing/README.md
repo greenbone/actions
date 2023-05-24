@@ -60,6 +60,7 @@ jobs:
         uses: greenbone/actions/container-signing@v3
         with:
           image-tags: ${{ steps.meta.outputs.tags }}
+          image-digest: ${{ steps.build-and-push.outputs.digest }}
 ```
 
 ## Action Configuration
