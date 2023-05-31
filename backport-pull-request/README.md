@@ -51,7 +51,7 @@ workflow file of the backport action.
 
 |Input Variable|Description| |
 |--------------|-----------|-|
-| token          | Token required to create the backport pull request          | Required |
+| token          | Token required to create the backport pull request          | Optional (default is `${{ github.token }}`) |
 | config         | TOML based configuration file for backporting pull requests | Optional (default is `backport.toml`) |
 | username       | GitHub user name to use for the backported commits          | Optional (by default github.actor is used) |
 | python-version | Python version to use for running the action                | Optional (default is `3.10`) |
