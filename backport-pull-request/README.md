@@ -16,6 +16,10 @@ on:
       - closed
       - labeled
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   backport:
     name: Backport Pull Requests
