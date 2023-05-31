@@ -10,9 +10,9 @@ inputs:
     default: ${{ github.token }}
   username:
     description: "GitHub user name to use for the backported commits. By default github.actor is used."
+    default: ${{ github.actor }}
   python-version:
     description: "Python version to use for running the action"
-    required: false
     default: "3.10"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
