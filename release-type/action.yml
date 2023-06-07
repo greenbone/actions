@@ -1,0 +1,68 @@
+name: "Determine Release Type and Reference"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to determine the release type and release reference"
+
+inputs:
+  release-type-input:
+    description: "Release type for workflow dispatch based manual release. If not set the release type will be derived from the pull request labels."
+
+outputs:
+  release-type:
+    description: Determined release type based on input and set pull requests labels
+    value: ${{ steps.release.outputs.release-type }}
+  release-ref:
+    description: Determined release reference
+    value: ${{ steps.ref.outputs.ref }}
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Selecting the Release type
+      if: contains(github.event.pull_request.labels.*.name, 'major release')
+      run: |
+        echo "RELEASE_TYPE=major" >> $GITHUB_ENV
+      shell: bash
+    - if: contains(github.event.pull_request.labels.*.name, 'minor release')
+      run: |
+        echo "RELEASE_TYPE=minor" >> $GITHUB_ENV
+      shell: bash
+    - if: contains(github.event.pull_request.labels.*.name, 'patch release')
+      run: |
+        echo "RELEASE_TYPE=patch" >> $GITHUB_ENV
+      shell: bash
+    - if: contains(github.event.pull_request.labels.*.name, 'rc release')
+      run: |
+        echo "RELEASE_TYPE=release-candidate" >> $GITHUB_ENV
+      shell: bash
+    - if: contains(github.event.pull_request.labels.*.name, 'alpha release')
+      run: |
+        echo "RELEASE_TYPE=alpha" >> $GITHUB_ENV
+      shell: bash
+    - if: contains(github.event.pull_request.labels.*.name, 'beta release')
+      run: |
+        echo "RELEASE_TYPE=beta" >> $GITHUB_ENV
+      shell: bash
+    - name: Workflow_dispatch RELEASE_TYPE
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        echo "RELEASE_TYPE=${{ inputs.release-type-input }}" >> $GITHUB_ENV
+      shell: bash
+    - name: Echoing the release type
+      id: release
+      run: |
+        echo "Release type is $RELEASE_TYPE"
+        echo "release-type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Setting the Reference
+      id: ref
+      run: |
+        if [[ "${{ github.event_name }}" = "workflow_dispatch" ]]; then
+          echo "ref=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        else
+          echo "ref=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
