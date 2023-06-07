@@ -1,0 +1,40 @@
+name: "Check if a tag is the latest tag in a repository"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to check if a tag is the latest tag in a repository"
+
+outputs:
+  is-latest-tag:
+    description: Evaluates to true if the created tag is the latest git tag
+    value: ${{ steps.latest.outputs.is-latest-tag }}
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "set is-latest-tag"
+      id: latest
+      run: |
+        # find the latest version that is not ourself
+        export LATEST_VERSION=$(git tag -l | grep -v '${{ github.ref_name }}' | sort -r --version-sort)
+
+        # get major minor patch versions
+        IFS='.' read -r latest_major latest_minor latest_patch << EOF
+        $LATEST_VERSION
+        EOF
+
+        IFS='.' read -r tag_major tag_minor tag_patch << EOF
+        ${{ github.ref_name }}
+        EOF
+
+        # remove leading v
+        latest_major=$(echo $latest_major | cut -c2-)
+        tag_major=$(echo $tag_major | cut -c2-)
+
+        echo "$tag_major >= $latest_major"
+        if [[ $tag_major -ge $latest_major && ($tag_minor -ne 0 || $tag_patch -ne 0) ]]; then
+          echo "is-latest-tag=true" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
