@@ -23,12 +23,12 @@ runs:
 
           # get major minor patch versions
           IFS='.' read -r latest_major latest_minor latest_patch << EOF
-          $LATEST_VERSION
-          EOF
+        $LATEST_VERSION
+        EOF
 
           IFS='.' read -r tag_major tag_minor tag_patch << EOF
-          ${{ github.ref_name }}
-          EOF
+        ${{ github.ref_name }}
+        EOF
 
           # remove leading v
           latest_major=$(echo $latest_major | cut -c2-)
