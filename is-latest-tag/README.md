@@ -17,10 +17,14 @@ jobs:
     steps:
         - uses: greenbone/actions/is-latest-tag@v2
           id: latest
-        - name:
-          if: steps.latest.outputs.is-latest-tag
+        - name: Do something
+          if: steps.latest.outputs.is-latest-tag == 'true'
           run: |
             # do something if the current tag is the latest tag
+        - name: Do something else
+          if: steps.latest.outputs.is-latest-tag == 'false'
+          run: |
+            # do something else if the current tag is not the latest tag
 ```
 
 ## Output Arguments
