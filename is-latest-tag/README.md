@@ -1,6 +1,9 @@
 # Is Latest Tag
 
-GitHub Action to check if a git tag is the latest tag
+GitHub Action to check if a git tag is the latest tag.
+
+Please keep in mind that the full history (`checkout with fetch-depth 0`) is
+required for the `is-latest-tag` action.
 
 ## Example
 
@@ -15,6 +18,10 @@ jobs:
     name: Check Tag
     runs-on: ubuntu-latest
     steps:
+        # the full history is required for is-latest-tag
+        - uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
         - uses: greenbone/actions/is-latest-tag@v2
           id: latest
         - name: Do something
