@@ -15,6 +15,7 @@ runs:
         vulnerability-check: true
         license-check: true
         allow-licenses: |
+          0BSD,
           AGPL-3.0-or-later,
           GPL-3.0-or-later,
           LGPL-2.1,
