@@ -23,6 +23,7 @@ runs:
           Python-2.0,
           GPL-2.0-or-later,
           GPL-2.0-only,
+          GPL-3.0-or-later AND LGPL-2.1-only,
           MIT,
           ISC,
           Unlicense,
