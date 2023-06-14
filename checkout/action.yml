@@ -91,6 +91,9 @@ outputs:
   repository-name:
     description: "Name of the git repository (without leading github/)"
     value: ${{ steps.repository.outputs.name }}
+  ref:
+    description: "Reference of the last commit (HEAD). For example `my-branch`"
+    value: ${{ steps.git.outputs.ref}}
 
 branding:
   icon: "package"
@@ -120,10 +123,10 @@ runs:
     - name: Determine HEAD sha
       id: git
       run: |
-        ref=$(git symbolic-ref HEAD 2>/dev/null)
+        ref=$(git symbolic-ref -q HEAD | cut -d '/' -f 3 || echo "")
         head=$(git rev-parse HEAD)
+        echo "ref=$ref" >> $GITHUB_OUTPUT
         echo "head=$head" >> $GITHUB_OUTPUT
-        echo "ref=$(echo $head | cut -d '/' -f 3)" >> GITHUB_OUTPUT
       shell: bash
     - name: Determine repository name
       id: repository
