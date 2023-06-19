@@ -24,6 +24,7 @@ runs:
           GPL-2.0-or-later,
           GPL-2.0-only,
           GPL-3.0-or-later AND LGPL-2.1-only,
+          GPL-3.0-or-later AND LGPL-3.0 AND LGPL-3.0-only
           MIT,
           ISC,
           Unlicense,
