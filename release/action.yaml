@@ -167,7 +167,7 @@ runs:
       # Signing
     - name: Sign assets for released version
       uses: greenbone/actions/sign-release-files@v2
-      if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
+      if: inputs.sign-release-files == 'true' && inputs.gpg-key && inputs.gpg-fingerprint && inputs.gpg-passphrase
       with:
         python-version: ${{ inputs.python-version }}
         github-token: ${{ inputs.github-user-token }}
