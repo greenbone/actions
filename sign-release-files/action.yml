@@ -36,6 +36,24 @@ runs:
   using: "composite"
   steps:
     # Setup
+    - name: Check gpg-key input
+      if: inputs.gpg-key == ''
+      run: |
+        echo "::error ::gpg-key input is missing."
+        exit 1
+      shell: bash
+    - name: Check gpg-fingerprint input
+      if: inputs.gpg-fingerprint == ''
+      run: |
+        echo "::error ::gpg-fingerprint input is missing."
+        exit 1
+      shell: bash
+    - name: Check gpg-passphrase input
+      if: inputs.gpg-passphrase == ''
+      run: |
+        echo "::error ::gpg-passphrase input is missing."
+        exit 1
+      shell: bash
     - name: Parse release-version if set (overwrite release-type)
       if: ${{ inputs.release-version }}
       run: |
