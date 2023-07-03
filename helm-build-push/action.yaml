@@ -75,6 +75,12 @@ runs:
         fi
         # Get helm chart tgz file name
         chart_file="${output##*/}"
+        # Check if output is correct
+        if ! [ -f "$chart_file" ]; then
+          echo "$output"
+          echo "Chart filename: $chart_file"
+          exit 1
+        fi
         # Echo outputs
         echo "$chart_file"
         # Set outputs
