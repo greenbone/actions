@@ -85,6 +85,9 @@ runs:
         # Get helm path and helm digest
         pushed="$(echo "$output" | awk '/Pushed:/{print $2}')"
         digest="$(echo "$output" | awk '/Digest:/{print $2}')"
+        # Echo outputs
+        echo "tag: $pushed"
+        echo "digest: $digest"
         # Set outputs
         echo "tag=$pushed" >> "$GITHUB_OUTPUT"
         echo "digest=$digest" >> "$GITHUB_OUTPUT"
