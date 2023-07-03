@@ -31,3 +31,10 @@ jobs:
 | registry-token | Registry login password/token | Required |
 | gpg-secret-key | Base64 encoded gpg secret key for chart sign | Optional |
 | gpg-secret-name | Gpg secret key name from gpg secret key | Optional |
+
+## Action Outout
+
+|Output Variable|Description|
+|--------------|-----------|
+| tag | Helm chart url's with tag |
+| digest | The helm chart digest |
