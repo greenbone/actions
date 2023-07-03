@@ -54,6 +54,7 @@ runs:
         echo "${{ inputs.gpg-secret-key }}" | base64 -d > /tmp/secret-key.gpg
         chmod 0600 /tmp/secret-key.gpg
     - name: Build and signing
+      id: build
       shell: bash
       run: |
         chart="${{ inputs.charts-path }}/${{ inputs.chart-name }}"
@@ -62,20 +63,27 @@ runs:
         # Build helm chart
         if [ "${{ inputs.gpg-secret-name }}" ]; then
           echo "Sign used"
-          helm package \
+          output="$(helm package \
             --sign \
             --key "${{ inputs.gpg-secret-name }}" \
             --keyring /tmp/secret-key.gpg \
-            "$chart"
+            "$chart" \
+            2>&1)"
         else
           echo "No sign used"
-          helm package "$chart"
+          output="$(helm package "$chart" 2>&1)"
         fi
+        # Get helm chart tgz file name
+        chart_file="${output##*/}"
+        # Echo outputs
+        echo "$chart_file"
+        # Set outputs
+        echo "chart-file=$chart_file" >> "$GITHUB_OUTPUT"
     - name: Push
       id: push
       shell: bash
       run: |
-        cmd="push ${{ inputs.chart-name }}-*.tgz oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
+        cmd="push ${{ steps.build.outputs.chart-file }} oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
         # Add subpath if exist
         if [ "${{ inputs.registry-subpath }}" ]; then
           echo "Add subpath ${{ inputs.registry-subpath }}"
