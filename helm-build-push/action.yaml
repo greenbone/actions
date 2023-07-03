@@ -19,7 +19,7 @@ inputs:
     description: Registry login password/token
     required: true
   gpg-secret-key:
-    description: Gpg secret key for chart sign
+    description: Base64 encoded gpg secret key for chart sign
     required: false
   gpg-secret-name:
     description: Gpg secret key name from gpg secret key
@@ -49,7 +49,7 @@ runs:
       if: ${{ inputs.gpg-secret-name }}
       shell: bash
       run: |
-        echo "${{ inputs.gpg-secret-key }}" > /tmp/secret-key.gpg
+        echo "${{ inputs.gpg-secret-key }}" | base64 -d > /tmp/secret-key.gpg
         chmod 0600 /tmp/secret-key.gpg
     - name: Build and signing
       shell: bash

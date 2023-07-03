@@ -29,5 +29,5 @@ jobs:
 | registry-subpath| Registry subpath to place the helm chart in | Optional |
 | registry-user | Registry login user | Required |
 | registry-token | Registry login password/token | Required |
-| gpg-secret-key | Gpg secret key for chart sign | Optional |
+| gpg-secret-key | Base64 encoded gpg secret key for chart sign | Optional |
 | gpg-secret-name | Gpg secret key name from gpg secret key | Optional |
