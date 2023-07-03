@@ -19,6 +19,13 @@ inputs:
   registry-token:
     description: Registry login password/token
     required: true
+
+outputs:
+  tag:
+    description: Helm chart url's with tag.
+  digest:
+    description: The helm chart digest.
+
 branding:
   icon: "package"
   color: "green"
@@ -38,14 +45,25 @@ runs:
       run: |
         helm dependency update '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
         helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
-    - name: Push with subpath
+    - name: Push
+      id: push
       shell: bash
       if: ${{ inputs.registry-subpath }}
-      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/${{ inputs.registry-subpath }}'
-    - name: Push without subpath
-      shell: bash
-      if: ${{ !inputs.registry-subpath }}
-      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/'
+      run: |
+        cmd="helm push ${{ inputs.chart-name }}-*.tgz oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
+        if [ "${{ inputs.registry-subpath }}" ]; then
+          echo "Add subpath ${{ inputs.registry-subpath }}"
+          cmd+="${{ inputs.registry-subpath }}/"
+        fi
+        output="$(helm $cmd)"
+        echo "$output"
+        # Get helm path and helm digest
+        pushed=$(echo "$output" | grep -oP 'Pushed: \K.+')
+        digest=$(echo "$output" | grep -oP 'Digest: \K.+')
+        # Set outputs
+        # I renamed the pushed variable to tags based on the docker build acton
+        echo "tag=$pushed" >> "$GITHUB_OUTPUT"
+        echo "digest=$digest" >> "$GITHUB_OUTPUT"
     - name: Cleanup
       shell: bash
       run: rm -f "${{ inputs.chart-name }}-*.tgz"
