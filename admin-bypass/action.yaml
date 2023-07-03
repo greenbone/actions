@@ -42,8 +42,7 @@ runs:
     - name: Prepare release and store the version
       run: |
         source ${{ steps.virtualenv.outputs.activate }}
-        wget https://github.com/greenbone/pontos/raw/main/scripts/github/enforce-admins.py -O ~/enforce-admins.py
-        pontos-github-script ~/enforce-admins.py ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.ALLOW_OPT }}
+        pontos-github-script pontos.github.scripts.enforce-admins ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.ALLOW_OPT }}
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
