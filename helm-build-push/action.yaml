@@ -19,6 +19,12 @@ inputs:
   registry-token:
     description: Registry login password/token
     required: true
+  gpg-secret-key:
+    description: The gpg secret key.
+    required: false
+  gpg-secret-name:
+    description: The gpg secret key name.
+    required: false
 
 outputs:
   tag:
@@ -40,11 +46,28 @@ runs:
           -u '${{ inputs.registry-user }}' \
           -p '${{ inputs.registry-token }}' \
           '${{ inputs.registry }}'
-    - name: Helm build and upload package
+    - name: Set gpg secret key
+      if: ${{ inputs.gpg-secret-name }}
       shell: bash
       run: |
-        helm dependency update '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
-        helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
+        echo "${{ inputs.gpg-secret-key }}" > /tmp/secret-key.gpg
+        chmod 0600 /tmp/secret-key.gpg
+    - name: Build and signing
+      shell: bash
+      run: |
+        chart="${{ inputs.charts-path }}/${{ inputs.chart-name }}"
+        # Load helm chart dependency's
+        helm dependency update "$chart"
+        # Build helm chart
+        if [ "${{ inputs.gpg-secret-name }}" ]; then
+          helm package \
+            --sign \
+            --key "${{ inputs.gpg-secret-name }}" \
+            --keyring /tmp/secret-key.gpg \
+            "$chart"
+        else
+          helm package "$chart"
+        fi
     - name: Push
       id: push
       shell: bash
@@ -61,9 +84,12 @@ runs:
         pushed=$(echo "$output" | grep -oP 'Pushed: \K.+')
         digest=$(echo "$output" | grep -oP 'Digest: \K.+')
         # Set outputs
-        # I renamed the pushed variable to tags based on the docker build acton
+        # I renamed the pushed variable to tags based on the docker build acton.
         echo "tag=$pushed" >> "$GITHUB_OUTPUT"
         echo "digest=$digest" >> "$GITHUB_OUTPUT"
     - name: Cleanup
       shell: bash
-      run: rm -f "${{ inputs.chart-name }}-*.tgz"
+      run: |
+        rm -f "${{ inputs.chart-name }}-*.tgz"
+        rm -f "${{ inputs.chart-name }}-*.tgz.prov"
+        rm -f /tmp/secret-key.gpg
