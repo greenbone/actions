@@ -28,8 +28,10 @@ inputs:
 outputs:
   tag:
     description: Helm chart url's with tag.
+    value: ${{ steps.push.outputs.tag }}
   digest:
     description: The helm chart digest.
+    value: ${{ steps.push.outputs.digest }}
 
 branding:
   icon: "package"
@@ -68,6 +70,7 @@ runs:
           helm package "$chart"
         fi
     - name: Push
+      id: push
       shell: bash
       run: |
         cmd="push ${{ inputs.chart-name }}-*.tgz oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
@@ -80,10 +83,9 @@ runs:
         output="$(helm $cmd)"
         echo "$output"
         # Get helm path and helm digest
-        pushed=$(echo "$output" | grep -oP 'Pushed: \K.+')
-        digest=$(echo "$output" | grep -oP 'Digest: \K.+')
+        pushed="$(echo "$output" | grep -oP 'Pushed: \K.+')"
+        digest="$(echo "$output" | grep -oP 'Digest: \K.+')"
         # Set outputs
-        # Renamed the pushed variable to tag based on the docker build acton.
         echo "tag=$pushed" >> "$GITHUB_OUTPUT"
         echo "digest=$digest" >> "$GITHUB_OUTPUT"
     - name: Cleanup
