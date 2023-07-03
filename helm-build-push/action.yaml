@@ -103,6 +103,6 @@ runs:
     - name: Cleanup
       shell: bash
       run: |
-        rm -f "${{ inputs.chart-name }}-*.tgz"
-        rm -f "${{ inputs.chart-name }}-*.tgz.prov"
+        rm -f "${{ steps.build.outputs.chart-file }}"
+        rm -f "${{ steps.build.outputs.chart-file }}.prov"
         rm -f /tmp/secret-key.gpg
