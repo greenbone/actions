@@ -12,7 +12,6 @@ inputs:
     default: "ghcr.io"
   registry-subpath:
     description: Registry subpath to place the helm chart in
-    required: true
   registry-user:
     description: Registry login user
     required: true
@@ -20,10 +19,10 @@ inputs:
     description: Registry login password/token
     required: true
   gpg-secret-key:
-    description: The gpg secret key.
+    description: Gpg secret key for chart sign
     required: false
   gpg-secret-name:
-    description: The gpg secret key name.
+    description: Gpg secret key name from gpg secret key
     required: false
 
 outputs:
@@ -69,22 +68,22 @@ runs:
           helm package "$chart"
         fi
     - name: Push
-      id: push
       shell: bash
-      if: ${{ inputs.registry-subpath }}
       run: |
-        cmd="helm push ${{ inputs.chart-name }}-*.tgz oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
+        cmd="push ${{ inputs.chart-name }}-*.tgz oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
+        # Add subpath if exist
         if [ "${{ inputs.registry-subpath }}" ]; then
           echo "Add subpath ${{ inputs.registry-subpath }}"
           cmd+="${{ inputs.registry-subpath }}/"
         fi
+        # Run helm push
         output="$(helm $cmd)"
         echo "$output"
         # Get helm path and helm digest
         pushed=$(echo "$output" | grep -oP 'Pushed: \K.+')
         digest=$(echo "$output" | grep -oP 'Digest: \K.+')
         # Set outputs
-        # I renamed the pushed variable to tags based on the docker build acton.
+        # Renamed the pushed variable to tag based on the docker build acton.
         echo "tag=$pushed" >> "$GITHUB_OUTPUT"
         echo "digest=$digest" >> "$GITHUB_OUTPUT"
     - name: Cleanup
