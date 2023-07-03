@@ -61,12 +61,14 @@ runs:
         helm dependency update "$chart"
         # Build helm chart
         if [ "${{ inputs.gpg-secret-name }}" ]; then
+          echo "Sign used"
           helm package \
             --sign \
             --key "${{ inputs.gpg-secret-name }}" \
             --keyring /tmp/secret-key.gpg \
             "$chart"
         else
+          echo "No sign used"
           helm package "$chart"
         fi
     - name: Push
