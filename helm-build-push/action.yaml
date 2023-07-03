@@ -80,8 +80,7 @@ runs:
           cmd+="${{ inputs.registry-subpath }}/"
         fi
         # Run helm push
-        output="$(helm $cmd)"
-        echo "$output"
+        output="$(helm $cmd 2>&1)"
         # Get helm path and helm digest
         pushed="$(echo "$output" | awk '/Pushed:/{print $2}')"
         digest="$(echo "$output" | awk '/Digest:/{print $2}')"
