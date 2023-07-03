@@ -45,8 +45,7 @@ runs:
     - name: Prepare release and store the version
       run: |
         source ${{ steps.virtualenv.outputs.activate }}
-        wget https://github.com/greenbone/pontos/raw/main/scripts/github/lock-branch.py -O ~/lock-branch.py
-        pontos-github-script ~/lock-branch.py ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.LOCK_OPT }}
+        pontos-github-script pontos.github.scripts.lock-branch ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.LOCK_OPT }}
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
