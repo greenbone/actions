@@ -39,5 +39,4 @@ jobs:
 | image-labels        | Image labels.                                                  | Required |
 | image-url           | Image url/name without registry.                               | Required |
 | image-platforms     | Image platforms to build for. Default is 'linux/amd64'.        | Optional |
-| registry            | Registry domain. Default is 'ghcr.io'.                         | Optional |
 | registry-password   | Registry password.                                             | Required |

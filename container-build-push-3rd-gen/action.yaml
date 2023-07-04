@@ -34,10 +34,6 @@ inputs:
     description: "Image platforms to build for. Default is 'linux/amd64'."
     type: string
     default: linux/amd64
-  registry:
-    description: "Registry domain. Default is 'ghcr.io'."
-    type: string
-    default: 'ghcr.io'
   registry-password:
     description: "Registry password."
     type: string
@@ -68,6 +64,6 @@ runs:
         # use unstable for main branch
         type=raw,value=unstable,enable={{is_default_branch}}
       image-platforms: ${{ inputs.image-platforms }}
-      registry: ${{ inputs.registry }}
+      registry: "ghcr.io"
       registry-username: ${{ github.actor }}
       registry-password: ${{ inputs.registry-password }}
