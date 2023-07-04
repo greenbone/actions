@@ -59,6 +59,8 @@ runs:
       build-context: ${{ inputs.build-context }}
       build-docker-file: ${{ inputs.build-docker-file }}
       build-args: ${{ inputs.build-args }}
+      cosign-key: ${{ inputs.cosign-key }}
+      cosign-key-password: ${{ inputs.cosign-key-password }}
       image-url: ${{ inputs.image-url }}
       image-labels: ${{ inputs.image-labels }}
       image-tags: ${{ inputs.image-tags }}
@@ -66,5 +68,3 @@ runs:
       registry: "docker.io"
       registry-username: ${{ inputs.registry-username }}
       registry-password: ${{ inputs.registry-password }} 
-      cosign-key: ${{ inputs.cosign-key }}
-      cosign-key-password: ${{ inputs.cosign-key-password }}

@@ -53,6 +53,11 @@ runs:
   - name: Container build and push 3rd gen
     uses: greenbone/actions/container-build-push-generic@v2
     with:
+      build-context: ${{ inputs.build-context }}
+      build-docker-file: ${{ inputs.build-docker-file }}
+      build-args: ${{ inputs.build-args }}
+      cosign-key: ${{ inputs.cosign-key }}
+      cosign-key-password: ${{ inputs.cosign-key-password }}
       image-url: ${{ inputs.image-url }}
       image-labels: ${{ inputs.image-labels }}
       image-tags: |
@@ -62,12 +67,7 @@ runs:
         type=ref,event=pr
         # use unstable for main branch
         type=raw,value=unstable,enable={{is_default_branch}}
+      image-platforms: ${{ inputs.image-platforms }}
       registry: ${{ inputs.registry }}
       registry-username: ${{ github.actor }}
       registry-password: ${{ inputs.registry-password }}
-      image-platforms: ${{ inputs.image-platforms }}
-      build-context: ${{ inputs.build-context }}
-      build-docker-file: ${{ inputs.build-docker-file }}
-      build-args: ${{ inputs.build-args }}
-      cosign-key: ${{ inputs.cosign-key }}
-      cosign-key-password: ${{ inputs.cosign-key-password }}
