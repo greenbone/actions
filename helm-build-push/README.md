@@ -15,10 +15,26 @@ jobs:
         uses: greenbone/actions/helm-build-push@v2
         with:
           chart-name: Chart folder name
-          charts-path: Charts base folder || default ./charts
-          registry: Registry to use e.g ghcr.io
-          registry_url: Registry url to push to e.g oci://ghcr.io/greenbone/helm-charts/
           registry_user: Registry username
           registry_token: Registry user password/token
 ```
 
+## Action Configuration
+
+|Input Variable|Description| |
+|--------------|-----------|-|
+| charts-path | Path to charts base folder | Optional(default ./charts) |
+| chart-name | Chart to build and push | Required |
+| registry | registry to push | Optional(default ghcr.io) |
+| registry-subpath| Registry subpath to place the helm chart in | Optional |
+| registry-user | Registry login user | Required |
+| registry-token | Registry login password/token | Required |
+| gpg-secret-key | Base64 encoded gpg secret key for chart sign | Optional |
+| gpg-secret-name | Gpg secret key name from gpg secret key | Optional |
+
+## Action Outout
+
+|Output Variable|Description|
+|--------------|-----------|
+| tag | Helm chart url's with tag |
+| digest | The helm chart digest |
