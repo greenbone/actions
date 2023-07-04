@@ -12,13 +12,27 @@ inputs:
     default: "ghcr.io"
   registry-subpath:
     description: Registry subpath to place the helm chart in
-    required: true
   registry-user:
     description: Registry login user
     required: true
   registry-token:
     description: Registry login password/token
     required: true
+  gpg-secret-key:
+    description: Base64 encoded gpg secret key for chart sign
+    required: false
+  gpg-secret-name:
+    description: Gpg secret key name from gpg secret key
+    required: false
+
+outputs:
+  tag:
+    description: Helm chart url's with tag.
+    value: ${{ steps.push.outputs.tag }}
+  digest:
+    description: The helm chart digest.
+    value: ${{ steps.push.outputs.digest }}
+
 branding:
   icon: "package"
   color: "green"
@@ -33,19 +47,68 @@ runs:
           -u '${{ inputs.registry-user }}' \
           -p '${{ inputs.registry-token }}' \
           '${{ inputs.registry }}'
-    - name: Helm build and upload package
+    - name: Set gpg secret key
+      if: ${{ inputs.gpg-secret-name }}
       shell: bash
       run: |
-        helm dependency update '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
-        helm package '${{ inputs.charts-path }}/${{ inputs.chart-name }}'
-    - name: Push with subpath
+        echo "${{ inputs.gpg-secret-key }}" | base64 -d > /tmp/secret-key.gpg
+        chmod 0600 /tmp/secret-key.gpg
+    - name: Build and signing
+      id: build
       shell: bash
-      if: ${{ inputs.registry-subpath }}
-      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/${{ inputs.registry-subpath }}'
-    - name: Push without subpath
+      run: |
+        chart="${{ inputs.charts-path }}/${{ inputs.chart-name }}"
+        # Load helm chart dependency's
+        helm dependency update "$chart"
+        # Build helm chart
+        if [ "${{ inputs.gpg-secret-name }}" ]; then
+          echo "Sign used"
+          output="$(helm package \
+            --sign \
+            --key "${{ inputs.gpg-secret-name }}" \
+            --keyring /tmp/secret-key.gpg \
+            "$chart" \
+            2>&1)"
+        else
+          echo "No sign used"
+          output="$(helm package "$chart" 2>&1)"
+        fi
+        # Get helm chart tgz file name
+        chart_file="${output##*/}"
+        # Check if output is correct
+        if ! [ -f "$chart_file" ]; then
+          echo "$output"
+          echo "Chart filename: $chart_file"
+          exit 1
+        fi
+        # Echo outputs
+        echo "$chart_file"
+        # Set outputs
+        echo "chart-file=$chart_file" >> "$GITHUB_OUTPUT"
+    - name: Push
+      id: push
       shell: bash
-      if: ${{ !inputs.registry-subpath }}
-      run: helm push ${{ inputs.chart-name }}-*.tgz 'oci://${{ inputs.registry }}/${{ github.repository_owner }}/'
+      run: |
+        cmd="push ${{ steps.build.outputs.chart-file }} oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
+        # Add subpath if exist
+        if [ "${{ inputs.registry-subpath }}" ]; then
+          echo "Add subpath ${{ inputs.registry-subpath }}"
+          cmd+="${{ inputs.registry-subpath }}/"
+        fi
+        # Run helm push
+        output="$(helm $cmd 2>&1)"
+        # Get helm path and helm digest
+        pushed="$(echo "$output" | awk '/Pushed:/{print $2}')"
+        digest="$(echo "$output" | awk '/Digest:/{print $2}')"
+        # Echo outputs
+        echo "tag: $pushed"
+        echo "digest: $digest"
+        # Set outputs
+        echo "tag=$pushed" >> "$GITHUB_OUTPUT"
+        echo "digest=$digest" >> "$GITHUB_OUTPUT"
     - name: Cleanup
       shell: bash
-      run: rm -f "${{ inputs.chart-name }}-*.tgz"
+      run: |
+        rm -f "${{ steps.build.outputs.chart-file }}"
+        rm -f "${{ steps.build.outputs.chart-file }}.prov"
+        rm -f /tmp/secret-key.gpg
