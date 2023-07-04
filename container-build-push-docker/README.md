@@ -22,7 +22,7 @@ jobs:
       - name: Container build and push docker.io
         uses: greenbone/actions/container-build-push-docker@v2
         with:
-          image-url: docker.io/my-image
+          image-url: my/app
           image-labels: my-labels
           image-tags: |
             type=ref,event=branch

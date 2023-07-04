@@ -22,7 +22,7 @@ jobs:
       - name: Container build and push ghcr.io
         uses: greenbone/actions/container-build-push-ghcr@v2
         with:
-          image-url: ghcr.io/my-image
+          image-url: my/app
           image-labels: my-labels
           image-tags: |
             type=ref,event=branch
