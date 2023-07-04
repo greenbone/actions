@@ -54,7 +54,7 @@ runs:
   using: "composite"
   steps:
   - name: Container build and push docker.io
-    uses: greenbone/workflows/.github/actions/container-build-push-generic@main
+    uses: greenbone/actions/container-build-push-generic@v2
     with:
       build-context: ${{ inputs.build-context }}
       build-docker-file: ${{ inputs.build-docker-file }}

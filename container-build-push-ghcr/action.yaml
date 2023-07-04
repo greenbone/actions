@@ -55,7 +55,7 @@ runs:
   using: "composite"
   steps:
   - name: Container build and push ghcr.io
-    uses: greenbone/workflows/.github/actions/container-build-push-generic@main
+    uses: greenbone/actions/container-build-push-generic@v2
     with:
       image-url: ${{ inputs.image-url }}
       image-labels: ${{ inputs.image-labels }}
