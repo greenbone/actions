@@ -27,6 +27,9 @@ inputs:
   working-directory:
     description: "Working directory where to run the action"
     default: ${{ github.workspace }}
+  linter:
+    description: "Linter to use. Default is 'pylint'."
+    default: "pylint"
 
 branding:
   icon: "package"
@@ -46,15 +49,11 @@ runs:
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
         install-dependencies: ${{ inputs.install-dependencies }}
         working-directory: ${{ inputs.working-directory }}
-    - run: echo "Running black"
-      shell: bash
     - run: poetry run black --check --diff ${{ inputs.packages }}
       shell: bash
       name: Check with black
       working-directory: ${{ inputs.working-directory }}
-    - run: echo "Running pylint"
+    - run: poetry run ${{ inputs.linter }} ${{ inputs.packages }}
       shell: bash
-    - run: poetry run pylint ${{ inputs.packages }}
-      shell: bash
-      name: Check with pylint
+      name: Check with ${{ inputs.linter }}
       working-directory: ${{ inputs.working-directory }}

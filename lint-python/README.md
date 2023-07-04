@@ -30,6 +30,7 @@ jobs:
 | cache | Cache dependencies by setting it to `"true"`. Leave unset or set to an other string then `"true"` to disable the cache. | Optional |
 | cache-dependency-path | Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies. | Optional |
 | cache-poetry-installation | "Cache poetry and its dependencies. Default is `"true"`. Set to an other string then `"true"` to disable the cache." | Optional (default: `"true"`) |
-| install-dependencies | Install project dependencies. Default is `"true"`. Set to an other string then `"true"` to not install the dependencies. | Optional (default: `"true"`)
+| install-dependencies | Install project dependencies. Default is `"true"`. Set to an other string then `"true"` to not install the dependencies. | Optional (default: `"true"`) |
+| linter | Linter to use. Default is 'pylint'. \[pylint, ruff\]| Optional (default: `"pylint")`|
 | working-directory | Working directory where to run the action | Optional (default is `${{ github.workspace }}`) |
 

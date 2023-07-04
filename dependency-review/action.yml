@@ -32,6 +32,7 @@ runs:
           BSD-3-Clause,
           BSD-2-Clause,
           MPL-2.0,
+          CC-BY-4.0,
           CC-BY-SA-4.0,
           BSD-2-Clause AND BSD-3-Clause,
           MIT OR Apache-2.0,
