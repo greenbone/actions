@@ -29,7 +29,7 @@ jobs:
 
 ## Inputs
 
-| Name                | Description                                                    | Required |
+| Name                | Description                                                    |          |
 |---------------------|----------------------------------------------------------------|----------|
 | build-context       | Path to image build context. Default is the current directory. | Optional |
 | build-docker-file   | Path to the docker file. Default is './Dockerfile'.            | Optional |

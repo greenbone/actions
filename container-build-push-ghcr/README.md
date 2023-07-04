@@ -35,7 +35,7 @@ jobs:
 
 ## Inputs
 
-| Name                | Description                                         | Required |
+| Name                | Description                                         |          |
 |---------------------|-----------------------------------------------------|----------|
 | build-context       | Path to image build context. Default "."            | Optional |
 | build-ghcr-file     | Path to the docker file. Default "./Dockerfile"     | Optional |
