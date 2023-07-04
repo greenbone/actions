@@ -1,0 +1,69 @@
+name: Container build and push 3rd gen
+description: Container build and push action for 3rd gen.
+
+inputs:
+  build-context: 
+    description: "Path to image build context. Default is the current directory."
+    type: string
+    default: .
+  build-docker-file:
+    description: "Path to the docker file. Default is './Dockerfile'."
+    type: string
+    default: ./Dockerfile
+  build-args:
+    description: "Use these build-args for the docker build process."
+    type: string
+    default: ''
+  cosign-key:
+    description: "cosign key to sign the image."
+    type: string
+    default: ''
+  cosign-key-password:
+    description: "cosign key password."
+    type: string
+    default: ''
+  image-labels:
+    description: "Image labels."
+    type: string
+    required: true
+  image-url:
+    description: "Image url/name without registry."
+    type: string
+    required: true
+  image-platforms: 
+    description: "Image platforms to build for. Default is 'linux/amd64'."
+    type: string
+    default: linux/amd64
+  registry-password:
+    description: "Registry password."
+    type: string
+    required: true
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+  - name: Container build and push 3rd gen
+    uses: greenbone/actions/container-build-push-generic@v2
+    with:
+      build-context: ${{ inputs.build-context }}
+      build-docker-file: ${{ inputs.build-docker-file }}
+      build-args: ${{ inputs.build-args }}
+      cosign-key: ${{ inputs.cosign-key }}
+      cosign-key-password: ${{ inputs.cosign-key-password }}
+      image-url: ${{ inputs.image-url }}
+      image-labels: ${{ inputs.image-labels }}
+      image-tags: |
+        # create container tag for git tags
+        type=ref,event=tag,value=latest
+        type=match,pattern=v(.*),group=1
+        type=ref,event=pr
+        # use unstable for main branch
+        type=raw,value=unstable,enable={{is_default_branch}}
+      image-platforms: ${{ inputs.image-platforms }}
+      registry: "ghcr.io"
+      registry-username: ${{ github.actor }}
+      registry-password: ${{ inputs.registry-password }}

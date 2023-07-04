@@ -1,0 +1,70 @@
+name: Container build and push docker.io
+
+inputs:
+  build-context: 
+    description: "Path to image build context."
+    type: string
+    default: .
+  build-docker-file:
+    description: "Path to the docker file."
+    type: string
+    default: ./Dockerfile
+  build-args:
+    description: "Use these build-args for the docker build process."
+    type: string
+    default: ''
+  cosign-key:
+    description: "cosign key to sign the image."
+    type: string
+    default: ''
+  cosign-key-password:
+    description: "cosign key password."
+    type: string
+    default: ''
+  image-labels:
+    description: "Image labels."
+    type: string
+    required: true
+  image-url:
+    description: "Image url/name without registry."
+    type: string
+    required: true
+  image-tags:
+    description: "Image tags."
+    type: string
+    required: true
+  image-platforms: 
+    description: "Image platforms to build for."
+    type: string
+    default: linux/amd64
+  registry-username:
+    description: "Registry username for login."
+    type: string
+    required: true
+  registry-password:
+    description: "Registry password."
+    type: string
+    required: true
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+  - name: Container build and push docker.io
+    uses: greenbone/actions/container-build-push-generic@v2
+    with:
+      build-context: ${{ inputs.build-context }}
+      build-docker-file: ${{ inputs.build-docker-file }}
+      build-args: ${{ inputs.build-args }}
+      cosign-key: ${{ inputs.cosign-key }}
+      cosign-key-password: ${{ inputs.cosign-key-password }}
+      image-url: ${{ inputs.image-url }}
+      image-labels: ${{ inputs.image-labels }}
+      image-tags: ${{ inputs.image-tags }}
+      image-platforms: ${{ inputs.image-platforms }}
+      registry: "docker.io"
+      registry-username: ${{ inputs.registry-username }}
+      registry-password: ${{ inputs.registry-password }} 

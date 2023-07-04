@@ -1,0 +1,102 @@
+name: Container build and push
+description: Generic container build and push action.
+
+inputs:
+  build-context: 
+    description: "Path to image build context."
+    type: string
+    default: .
+  build-docker-file:
+    description: "Path to the docker file."
+    type: string
+    default: ./Dockerfile
+  build-args:
+    description: "Use these build-args for the docker build process."
+    type: string
+    default: ''
+  cosign-key:
+    description: "cosign key to sign the image."
+    type: string
+    default: ''
+  cosign-key-password:
+    description: "cosign key password."
+    type: string
+    default: ''
+  image-labels:
+    description: "Image labels."
+    type: string
+    required: true
+  image-url:
+    description: "Image url/name without registry."
+    type: string
+    required: true
+  image-tags:
+    description: "Image tags."
+    type: string
+    required: true
+  image-platforms: 
+    description: "Image platforms to build for."
+    type: string
+    default: linux/amd64
+  registry: 
+    description: "Registry url."
+    type: string
+    required: true
+  registry-username: 
+    description: "Login registry username."
+    type: string
+    required: true
+  registry-password: 
+    description: "Login registry password."
+    type: string
+    required: true
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup container meta information
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ inputs.image-url }}
+        labels: ${{ inputs.image-labels }}
+        tags: ${{ inputs.image-tags }}
+
+    - name: Login to Docker Registry
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.registry-username }}
+        password: ${{ inputs.registry-password }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and push Container image
+      id: build-and-push
+      uses: docker/build-push-action@v4
+      with:
+        context: ${{ inputs.build-context }}
+        push: ${{ github.event_name != 'pull_request' }}
+        platforms: ${{ inputs.image-platforms }}
+        file: ${{ inputs.build-docker-file }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        build-args: ${{ inputs.build-args }}
+
+    - name: Container signing
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: greenbone/actions/container-signing@v2
+      with:
+        image-tags: ${{ steps.meta.outputs.tags }}
+        image-digest: ${{ steps.build-and-push.outputs.digest }}
+        cosign-key: ${{ inputs.cosign-key }}
+        cosign-key-password: ${{ inputs.cosign-key-password }}
