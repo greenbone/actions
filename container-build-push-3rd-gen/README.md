@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     steps:
       - name: Container build and push 3rd gen
         uses: greenbone/actions/container-build-push-3rd-gen@v2

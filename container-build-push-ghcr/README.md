@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: "ubuntu-latest
+    runs-on: "ubuntu-latest"
     steps:
       - name: Container build and push ghcr.io
         uses: greenbone/actions/container-build-push-ghcr@v2
