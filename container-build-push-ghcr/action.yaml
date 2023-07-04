@@ -38,10 +38,6 @@ inputs:
     description: "Image platforms to build for."
     type: string
     default: linux/amd64
-  registry:
-    description: "Registry domain."
-    type: string
-    default: 'ghcr.io'
   registry-password:
     description: "Registry password."
     type: string
@@ -57,14 +53,14 @@ runs:
   - name: Container build and push ghcr.io
     uses: greenbone/actions/container-build-push-generic@v2
     with:
-      image-url: ${{ inputs.image-url }}
-      image-labels: ${{ inputs.image-labels }}
-      image-tags: ${{ inputs.image-tags }}
-      registry: ${{ inputs.registry }}
-      registry-password: ${{ inputs.registry-password }}
-      image-platforms: ${{ inputs.image-platforms }}
       build-context: ${{ inputs.build-context }}
       build-docker-file: ${{ inputs.build-docker-file }}
       build-args: ${{ inputs.build-args }}
       cosign-key: ${{ inputs.cosign-key }}
       cosign-key-password: ${{ inputs.cosign-key-password }}
+      image-url: ${{ inputs.image-url }}
+      image-labels: ${{ inputs.image-labels }}
+      image-tags: ${{ inputs.image-tags }}
+      image-platforms: ${{ inputs.image-platforms }}
+      registry: "ghcr.io"
+      registry-password: ${{ inputs.registry-password }}
