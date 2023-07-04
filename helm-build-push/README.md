@@ -32,7 +32,7 @@ jobs:
 | gpg-secret-key | Base64 encoded gpg secret key for chart sign | Optional |
 | gpg-secret-name | Gpg secret key name from gpg secret key | Optional |
 
-## Action Outout
+## Action Output
 
 |Output Variable|Description|
 |--------------|-----------|
