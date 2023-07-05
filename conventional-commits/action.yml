@@ -14,6 +14,11 @@ inputs:
   cache-poetry-installation:
     description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
     default: "true"
+  ref:
+    description: "The branch, tag or SHA to checkout."
+  base-ref:
+    description: "Use a specific base ref. Defaults to 'github.base_ref'."
+    default: ${{ github.base_ref }}
 
 runs:
   using: "composite"
@@ -22,6 +27,7 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+        ref: ${{ inputs.ref }}
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v2
       with:
@@ -37,7 +43,7 @@ runs:
       run: |
         poetry run conventional-commits \
           --token ${{ inputs.token }} \
-          --base-ref ${{ github.base_ref }} \
+          --base-ref ${{ inputs.base-ref }} \
           --event-path ${{ github.event_path }} \
           --repository ${{ github.repository }} \
           --working-directory ${{ github.workspace }}

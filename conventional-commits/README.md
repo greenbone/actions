@@ -51,3 +51,5 @@ jobs:
 | python-version | Python version to use for running the action. | Optional (default is `3.10`) |
 | poetry-version | Poetry version to use for running the action. | Optional (default is latest) |
 | cache-poetry-installation | Cache poetry and its dependencies. | Optional (default is `"true"`) |
+| ref | The branch, tag or SHA to checkout. | Optional. Default of [actions/checkout](https://github.com/actions/checkout). |
+| base-ref | Use a specific base ref. | Optional. (default is [`${{ github.base_ref }}`](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)) |
