@@ -9,6 +9,7 @@ Currently supported programming languages:
 * C/C++ (CMake)
 * GoLang
 * JavaScript
+* Java
 * Python
 * TypeScript
 
@@ -38,24 +39,25 @@ You can alternatively set an explicit `release-version`. It will overwrite the `
 
 ## Input arguments
 
-| Argument             | Description                                                                                                                     | Required? | Default               |
-|----------------------|---------------------------------------------------------------------------------------------------------------------------------|-----------|-----------------------|
-| conventional-commits | Deprecated                                                                                                                      | No        | None                  |
-| github-user          | Github user name on behalf of whom the actions will be executed.                                                                | Yes       | None                  |
-| github-user-mail     | Mail address for the given github user.                                                                                         | Yes       | None                  |
-| github-user-token    | Token with write rights required to create the release.                                                                         | Yes       | None                  |
-| gpg-fingerprint      | GPG fingerprint, represented as a string. Required for signing assets of the release.                                           | No        | None                  |
-| gpg-key              | GPG key, represented as a string. Required for signing assets of the release.                                                   | No        | None                  |
-| gpg-passphrase       | GPG passphrase, represented as a string. Required for signing assets of the release.                                            | No        | None                  |
-| strategy             | Deprecated by `release-type`.                                                                                                   | No        | None                  |
-| python-version       | Python version used to create the release. (Only important for python projects)                                                 | No        | `"3.10"`              |
-| ref                  | This branch's/tag's HEAD will be candidate of the next release.                                                                 | No        | `""` (default branch) |
-| release-type         | What type of release should be executed? Supported: `alpha`, `beta`, `calendar`, `major`, `minor`, `patch`, `release-candidate` | No        | `patch`               |
-| release-version      | Set an explicit version, that should be released.                                                                               | No        | None                  |
-| release-series  | Allow to determine release versions for an older release series like '22.4'. | No | None |
-| versioning-scheme    | What versioning scheme should be used for the release? Supported: `semver`, `pep440`                                            | No        | `pep440`              |
-| sign-release-files | Create and upload release file signatures. Default is 'true'. Set to an other string then 'true' to disable the signatures. | No | `"true"` |
-| update-project | Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files. | No | `"true"` |
+| Argument             | Description                                                                                                                     | Required? |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------|-----------|
+| conventional-commits | Deprecated                                                                                                                      | Optional  | 
+| git-tag-prefix      | Set git tag prefix to the passed input. Default: 'v'                                                                             | Optional (default is `v`) |
+| github-user          | Github user name on behalf of whom the actions will be executed.                                                                | Yes       | 
+| github-user-mail     | Mail address for the given github user.                                                                                         | Yes       | 
+| github-user-token    | Token with write rights required to create the release.                                                                         | Yes       | 
+| gpg-fingerprint      | GPG fingerprint, represented as a string. Required for signing assets of the release.                                           | Optional  | 
+| gpg-key              | GPG key, represented as a string. Required for signing assets of the release.                                                   | Optional  | 
+| gpg-passphrase       | GPG passphrase, represented as a string. Required for signing assets of the release.                                            | Optional  | 
+| strategy             | Deprecated by `release-type`.                                                                                                   | Optional  | 
+| python-version       | Python version used to create the release. (Only important for python projects)                                                 | Optional (default `"3.10"` ) |
+| ref                  | This branch's/tag's HEAD will be candidate of the next release.                                                                 | Optional (default branch) |
+| release-type         | What type of release should be executed? Supported: `alpha`, `beta`, `calendar`, `major`, `minor`, `patch`, `release-candidate` | Optional (default: `patch`) |
+| release-version      | Set an explicit version, that should be released.                                                                               | Optional  | 
+| release-series  | Allow to determine release versions for an older release series like '22.4'. | Optional | None |
+| versioning-scheme    | What versioning scheme should be used for the release? Supported: `semver`, `pep440`                                            | Optional (default: `pep440` ) |
+| sign-release-files | Create and upload release file signatures. Default is 'true'. Set to an other string then 'true' to disable the signatures. | Optional (default `"true"`) |
+| update-project | Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files. |  Optional (default `"true"`) |
 
 ## Output Arguments
 

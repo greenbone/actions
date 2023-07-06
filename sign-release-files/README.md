@@ -28,7 +28,8 @@ jobs:
 
 |Input Variable|Description| |
 |--------------|-----------|-|
-| python-version | Python version to use for running the action. | Optional (default is `3.10`) |
+| python-version  | Python version to use for running the action. | Optional (default is `3.10`) |
+| git-tag-prefix  | Set git tag prefix to the passed input. Default: 'v' | Optional (default is `v`) |
 | gpg-fingerprint | GPG fingerprint, represented as a string. | Required |
 | gpg-key         | GPG key, represented as a string. | Required |
 | gpg-passphrase  | GPG passphrase, represented as a string. | Required |
