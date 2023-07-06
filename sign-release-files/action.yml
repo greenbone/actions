@@ -8,6 +8,9 @@ inputs:
   python-version:
     description: "Python version that should be installed and used."
     default: "3.10"
+  git-tag-prefix:
+    description: "Set git tag prefix to the passed input. Default: 'v'"
+    default: "v"
   github-token:
     description: "Token with write rights required to create the release."
     default: ${{ github.token }}
@@ -95,7 +98,7 @@ runs:
       run: |
         echo "Signing release files"
         source ${{ steps.virtualenv.outputs.activate }}
-        pontos-release sign ${{ env.ARGS }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }}
+        pontos-release sign ${{ env.ARGS }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
       shell: bash
       if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:

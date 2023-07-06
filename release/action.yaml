@@ -8,6 +8,9 @@ inputs:
   conventional-commits:
     deprecationMessage: "conventional-commits input is obsolete. Using conventional commits is always expected."
     description: "Deprecated."
+  git-tag-prefix:
+    description: "Set git tag prefix to the passed input. Default: 'v'"
+    default: "v"
   github-user:
     description: "Github user name on behalf of whom the actions will be executed."
     required: true
@@ -149,7 +152,7 @@ runs:
       id: release
       run: |
         source ${{ steps.virtualenv.outputs.activate }}
-        pontos-release release ${{ env.ARGS }} --versioning-scheme ${{ inputs.versioning-scheme }}
+        pontos-release release ${{ env.ARGS }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
       shell: bash
       env:
         GITHUB_USER: ${{ inputs.github-user }}
@@ -170,6 +173,7 @@ runs:
       if: inputs.sign-release-files == 'true' && inputs.gpg-key && inputs.gpg-fingerprint && inputs.gpg-passphrase
       with:
         python-version: ${{ inputs.python-version }}
+        git-tag-prefix:  ${{ inputs.git-tag-prefix }}
         github-token: ${{ inputs.github-user-token }}
         gpg-fingerprint: ${{ inputs.gpg-fingerprint }}
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
