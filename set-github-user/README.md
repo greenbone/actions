@@ -28,7 +28,7 @@ jobs:
 
 |Input Variable|Description| |
 |--------------|-----------|-|
-| user | GitHub user name on behalf of whom the actions will be executed. | Required |
-| mail | Mail address for the given GitHub user. | Required |
+| user | GitHub user name on behalf of whom the actions will be executed. | Optional (default: `github-actions`) |
+| mail | Mail address for the given GitHub user. | Optional (default: `github-actions@github.com`) |
 | token | The GitHub user's token (PAT) | Optional (default: `${{ github.token }}`) |
 | repository | GitHub repository to use | Optional (default: `${{ github.repository }}`) |

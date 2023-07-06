@@ -8,16 +8,16 @@ description: |
 
 inputs:
   user:
-    description: "GitHub user name on behalf of whom the actions will be executed."
-    required: true
+    description: "GitHub user name on behalf of whom the actions will be executed. Default is 'github-actions'."
+    default: github-actions
   mail:
-    description: "Mail address for the given GitHub user."
-    required: true
+    description: "Mail address for the given GitHub user. Default is 'github-actions@github.com'."
+    default: github-actions@github.com
   token:
-    description: "The GitHub user's token (PAT)"
+    description: "The GitHub user's token (PAT). Default is github.token."
     default: ${{ github.token }}
   repository:
-    description: "GitHub repository to use"
+    description: "GitHub repository to use. Default is github.repository."
     default: ${{ github.repository }}
 
 runs:
