@@ -23,7 +23,7 @@ from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import NoReturn, Optional
 
-from pontos.changelog import ChangelogBuilder
+from pontos.changelog.conventional_commits import ConventionalCommits
 from pontos.github.actions import Console, GitHubEvent
 from pontos.github.api import GitHubAsyncRESTApi
 
@@ -34,6 +34,7 @@ def parse_arguments() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("--token", required=True)
     parser.add_argument("--base-ref", required=True)
+    parser.add_argument("--head-ref", required=True)
     parser.add_argument("--repository", required=True)
     parser.add_argument("--working-directory", type=Path, required=True)
     pr_group = parser.add_mutually_exclusive_group(required=True)
@@ -53,6 +54,7 @@ class Commits:
         repository: str,
         token: str,
         base_ref: str,
+        head_ref: str,
         working_directory: Path,
         event_path: Optional[Path] = None,
         pull_request: Optional[str] = None,
@@ -60,6 +62,7 @@ class Commits:
         self.repository = repository
         self.token = token
         self.base_ref = base_ref
+        self.head_ref = head_ref
         self.working_directory = working_directory
         self.api = GitHubAsyncRESTApi(token)
         if pull_request:
@@ -71,15 +74,13 @@ class Commits:
     async def run(self) -> int:
         os.chdir(self.working_directory)
 
-        space, project = self.repository.split("/", 1)
         config_file = (self.working_directory / "changelog.toml").absolute()
-        builder = ChangelogBuilder(
-            git_tag_prefix="",
-            space=space,
-            project=project,
+        collector = ConventionalCommits(
             config=config_file if config_file.exists() else None,
         )
-        commit_dict = builder.get_commits(f"origin/{self.base_ref}")
+        commit_dict = collector.get_commits(
+            from_ref=self.base_ref, to_ref=self.head_ref
+        )
 
         comment_lines = [
             CONVENTIONAL_COMMIT_REPORT_LINE,
@@ -103,7 +104,7 @@ class Commits:
             comment_lines.append("")
             # pylint: disable=line-too-long
             comment_lines.append(
-                ":point_right: [Learn more](https://github.com/greenbone/.github/blob/main/conventional-commits/README.md) "
+                ":point_right: [Learn more](https://github.com/greenbone/.github/blob/main/conventional-commits/README.md) "  # noqa: E501
                 "about the conventional commits usage at [Greenbone](https://github.com/greenbone/)."
             )
 
@@ -142,6 +143,7 @@ def main() -> NoReturn:
                 repository=args.repository,
                 token=args.token,
                 base_ref=args.base_ref,
+                head_ref=args.head_ref,
                 event_path=args.event_path,
                 pull_request=args.pull_request,
                 working_directory=args.working_directory,
