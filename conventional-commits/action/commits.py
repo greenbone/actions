@@ -73,6 +73,9 @@ class Commits:
             event = GitHubEvent(event_path)
             self.pull_request = event.pull_request.number
 
+            if os.environ.get("RUNNER_DEBUG") == "1":
+                Console.debug(event)
+
     async def run(self) -> int:
         os.chdir(self.working_directory)
 
