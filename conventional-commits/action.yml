@@ -35,7 +35,7 @@ runs:
       # fetch commits from head ref. It stops at base ref because we have a
       # shallow repo.
       run: |
-        git fetch ${{ inputs.head-ref }}
+        git fetch origin ${{ inputs.head-ref }}
       shell: bash
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v2
