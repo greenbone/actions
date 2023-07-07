@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pontos = ">=23.4.3"
+pontos = ">=23.7.4"
 
 [tool.poetry.dev-dependencies]
 autohooks = ">=21.7.0"
