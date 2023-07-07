@@ -1,6 +1,8 @@
 # Greenbone Conventional Commits Action
 
-GitHub Action to check for conventional commits
+GitHub Action to check for conventional commits. It looks for commits between
+a range of git references or git commit IDs. By default it starts looking at the
+base commit up to the head commit of a pull request.
 
 ## Examples
 
@@ -51,5 +53,5 @@ jobs:
 | python-version | Python version to use for running the action. | Optional (default is `3.10`) |
 | poetry-version | Poetry version to use for running the action. | Optional (default is latest) |
 | cache-poetry-installation | Cache poetry and its dependencies. | Optional (default is `"true"`) |
-| ref | The branch, tag or SHA to checkout. | Optional. Default of [actions/checkout](https://github.com/actions/checkout). |
-| base-ref | Use a specific base ref. | Optional. (default is [`${{ github.base_ref }}`](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)) |
+| head-ref | End ref where to look for conventional commits. | Optional (default is`${{ github.event.pull_request.head.sha }}`). |
+| base-ref | Start ref where to look for conventional commits. | Optional (default is `${{ github.event.pull_request.base.sha }}`). |

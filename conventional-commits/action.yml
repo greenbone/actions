@@ -1,5 +1,5 @@
 name: "Greenbone Conventional Commits Action"
-description: "A GitHub Action to check for conventional commits"
+description: "A GitHub Action to check for conventional commits. It looks for commits between base and head ref."
 author: "Björn Ricks"
 inputs:
   token:
@@ -14,11 +14,12 @@ inputs:
   cache-poetry-installation:
     description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
     default: "true"
-  ref:
-    description: "The branch, tag or SHA to checkout."
+  head-ref:
+    description: "Use as specific head ref. Defaults to 'github.event.pull_request.head.sha'"
+    default: ${{ github.event.pull_request.head.sha }}
   base-ref:
-    description: "Use a specific base ref. Defaults to 'github.base_ref'."
-    default: ${{ github.base_ref }}
+    description: "Use a specific base ref. Defaults to 'github.event.pull_request.base.sha'."
+    default: ${{ github.event.pull_request.base.sha }}
 
 runs:
   using: "composite"
@@ -26,8 +27,16 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0
-        ref: ${{ inputs.ref }}
+        # fetch-depth create a shallow clone https://www.git-scm.com/docs/shallow
+        # with inputs.base-ref as root ref of the repo
+        fetch-depth: 1
+        ref: ${{ inputs.base-ref }}
+    - name: Fetch commits
+      # fetch commits from head ref. It stops at base ref because we have a
+      # shallow repo.
+      run: |
+        git fetch origin ${{ inputs.head-ref }}
+      shell: bash
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v2
       with:
@@ -44,6 +53,7 @@ runs:
         poetry run conventional-commits \
           --token ${{ inputs.token }} \
           --base-ref ${{ inputs.base-ref }} \
+          --head-ref ${{ inputs.head-ref }} \
           --event-path ${{ github.event_path }} \
           --repository ${{ github.repository }} \
           --working-directory ${{ github.workspace }}
