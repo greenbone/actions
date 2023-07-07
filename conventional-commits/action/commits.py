@@ -20,9 +20,11 @@ import asyncio
 import os
 import sys
 from argparse import ArgumentParser, Namespace
+from json import JSONDecodeError
 from pathlib import Path
 from typing import NoReturn, Optional
 
+import httpx
 from pontos.changelog.conventional_commits import ConventionalCommits
 from pontos.github.actions import Console, GitHubEvent
 from pontos.github.api import GitHubAsyncRESTApi
@@ -119,18 +121,39 @@ class Commits:
                 ):
                     cc_report_comment = comment.id
 
-            if cc_report_comment is None:
-                await api.pull_requests.add_comment(
-                    self.repository,
-                    self.pull_request,
-                    "\n".join(comment_lines),
-                )
-            else:
-                await api.pull_requests.update_comment(
-                    self.repository,
-                    cc_report_comment,
-                    "\n".join(comment_lines),
-                )
+            try:
+                if cc_report_comment is None:
+                    await api.pull_requests.add_comment(
+                        self.repository,
+                        self.pull_request,
+                        "\n".join(comment_lines),
+                    )
+                else:
+                    await api.pull_requests.update_comment(
+                        self.repository,
+                        cc_report_comment,
+                        "\n".join(comment_lines),
+                    )
+            except httpx.HTTPStatusError as e:
+                try:
+                    json = e.response.json()
+                    message = json.get("message")
+                except JSONDecodeError:
+                    message = None
+
+                if message:
+                    raise CommitsError(
+                        "Could not create Pull Request comment. A HTTP "
+                        f"{e.response.status_code} error occurred while doing "
+                        f"a {e.request.method} request to {e.request.url}. "
+                        f"Error was {message}"
+                    ) from e
+                else:
+                    raise CommitsError(
+                        "Could not create Pull Request comment. A HTTP "
+                        f"{e.response.status_code} error occurred while doing a "
+                        f"{e.request.method} request to {e.request.url}."
+                    ) from e
 
         return 0 if has_cc else 1
 
@@ -151,7 +174,7 @@ def main() -> NoReturn:
         )
         sys.exit(0)
     except CommitsError as e:
-        Console.error(f"{e} ❌.")
+        Console.error(f"❌ {e}")
         sys.exit(1)
 
 
