@@ -141,6 +141,8 @@ class Commits:
                 try:
                     json = e.response.json()
                     message = json.get("message")
+                    # some response have links to the docs
+                    doc_url = json.get("documentation_url", "")
                 except JSONDecodeError:
                     message = None
 
@@ -149,7 +151,7 @@ class Commits:
                         "Could not create Pull Request comment. A HTTP "
                         f"{e.response.status_code} error occurred while doing "
                         f"a {e.request.method} request to {e.request.url}. "
-                        f"Error was {message}"
+                        f"Error was '{message}'. {doc_url}"
                     ) from e
                 else:
                     raise CommitsError(
