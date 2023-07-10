@@ -68,8 +68,8 @@ runs:
       run: |
         chart="${{ inputs.charts-path }}/${{ inputs.chart-name }}"
         # Build helm chart
-        ## The stderr into stdout redirection
-        ## is needed to get the chart file name
+        # The stderr into stdout redirection
+        # is needed to get the chart file name
         if [ "${{ inputs.gpg-secret-name }}" ]; then
           echo "Sign used"
           output="$(helm package \
