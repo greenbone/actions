@@ -21,16 +21,17 @@ jobs:
 
 ## Action Configuration
 
-|Input Variable|Description| |
-|--------------|-----------|-|
-| charts-path | Path to charts base folder | Optional(default ./charts) |
-| chart-name | Chart to build and push | Required |
-| registry | registry to push | Optional(default ghcr.io) |
-| registry-subpath| Registry subpath to place the helm chart in | Optional |
-| registry-user | Registry login user | Required |
-| registry-token | Registry login password/token | Required |
-| gpg-secret-key | Base64 encoded gpg secret key for chart sign | Optional |
-| gpg-secret-name | Gpg secret key name from gpg secret key | Optional |
+| Input Variable          | Description                                                                     |          |
+|-------------------------|---------------------------------------------------------------------------------|----------|
+| charts-path             | Path to charts base folder. Default: ./charts                                   | Optional |
+| chart-name              | Chart to build and push.                                                        | Required |
+| registry                | registry name. Default: ghcr.io                                                 | Optional |
+| registry-subpath        | Registry subpath to push the helm chart to.                                     | Optional |
+| registry-user           | Registry login user.                                                            | Required |
+| registry-token          | Registry login password/token.                                                  | Required |
+| gpg-secret-name         | Gpg secret key name from gpg secret key. Needed to use gpg sign.                | Optional |
+| gpg-secret-key          | Base64 encoded gpg secret key for chart sign. Needed if gpg-secret-name is set. | Optional |
+| gpg-secret-key-password | The password for the gpg secret key. Needed if gpg-secret-name is set.          | Optional |
 
 ## Action Output
 
