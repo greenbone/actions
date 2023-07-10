@@ -97,7 +97,7 @@ runs:
 
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' }}
-      uses: greenbone/actions/container-signing@v2
+      uses: greenbone/actions/container-signing@pholthaus/cosign_tlog
       with:
         cosign-key: ${{ inputs.cosign-key }}
         cosign-key-password: ${{ inputs.cosign-key-password }}
