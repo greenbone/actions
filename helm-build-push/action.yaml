@@ -2,27 +2,30 @@ name: Helm build and push chart
 description: Push helm chart to OCI-based registries
 inputs:
   charts-path:
-    description: Path to charts base folder
+    description: Path to charts base folder. Default: ./charts
     default: ./charts
   chart-name:
-    description: "Chart to build and push"
+    description: Chart to build and push.
     required: true
   registry:
-    description: Registry
+    description: Registry name. Default: ghcr.io
     default: "ghcr.io"
   registry-subpath:
-    description: Registry subpath to place the helm chart in
+    description: Registry subpath to push the helm chart to.
   registry-user:
-    description: Registry login user
+    description: Registry login user.
     required: true
   registry-token:
-    description: Registry login password/token
+    description: Registry login password/token.
     required: true
-  gpg-secret-key:
-    description: Base64 encoded gpg secret key for chart sign
-    required: false
   gpg-secret-name:
-    description: Gpg secret key name from gpg secret key
+    description: Gpg secret key name from gpg secret key. Needed to use gpg sign.
+    required: false
+  gpg-secret-key:
+    description: Base64 encoded gpg secret key for chart sign. Needed if gpg-secret-name is set.
+    required: false
+  gpg-secret-key-password:
+    description: The password for the gpg secret key. Needed if gpg-secret-name is set.
     required: false
 
 outputs:
@@ -52,33 +55,40 @@ runs:
       shell: bash
       run: |
         echo "${{ inputs.gpg-secret-key }}" | base64 -d > /tmp/secret-key.gpg
+        echo "${{ inputs.gpg-secret-key-password }}" > /tmp/secret-key-password
         chmod 0600 /tmp/secret-key.gpg
+        chmod 0600 /tmp/secret-key-password
+    - name: Update chart dependency's
+      shell: bash
+      run: |
+        helm dependency update "${{ inputs.charts-path }}/${{ inputs.chart-name }}"
     - name: Build and signing
       id: build
       shell: bash
       run: |
         chart="${{ inputs.charts-path }}/${{ inputs.chart-name }}"
-        # Load helm chart dependency's
-        helm dependency update "$chart"
         # Build helm chart
+        ## The stderr into stdout redirection
+        ## is needed to get the chart file name
         if [ "${{ inputs.gpg-secret-name }}" ]; then
           echo "Sign used"
           output="$(helm package \
             --sign \
-            --key "${{ inputs.gpg-secret-name }}" \
+            --key '${{ inputs.gpg-secret-name }}' \
             --keyring /tmp/secret-key.gpg \
+            --passphrase-file /tmp/secret-key-password \
             "$chart" \
             2>&1)"
         else
           echo "No sign used"
           output="$(helm package "$chart" 2>&1)"
         fi
+        echo "$output"
         # Get helm chart tgz file name
         chart_file="${output##*/}"
         # Check if output is correct
         if ! [ -f "$chart_file" ]; then
-          echo "$output"
-          echo "Chart filename: $chart_file"
+          echo "Chart filename: $chart_file not found."
           exit 1
         fi
         # Echo outputs
@@ -112,3 +122,4 @@ runs:
         rm -f "${{ steps.build.outputs.chart-file }}"
         rm -f "${{ steps.build.outputs.chart-file }}.prov"
         rm -f /tmp/secret-key.gpg
+        rm -f /tmp/secret-key-password
