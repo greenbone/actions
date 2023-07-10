@@ -54,6 +54,8 @@ runs:
       build-args: ${{ inputs.build-args }}
       cosign-key: ${{ inputs.cosign-key }}
       cosign-key-password: ${{ inputs.cosign-key-password }}
+      # The tlog function does not currently support an ed25519 key.
+      cosign-tlog-upload: "false"
       image-url: ${{ inputs.image-url }}
       image-labels: ${{ inputs.image-labels }}
       image-tags: |
