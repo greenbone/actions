@@ -10,13 +10,10 @@ inputs:
     required: true
   cosign-key-password:
     description: "Set the cosign key password, if not set a keyless signature will be created."
-    required: false
   cosign-key:
     description: "Set the cosign key, if not set a keyless signature will be created."
-    required: false
   cosign-tlog-upload:
     description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default: true"
-    required: false
     default: "true"
 
 branding:
