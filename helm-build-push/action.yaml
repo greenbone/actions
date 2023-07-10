@@ -22,10 +22,10 @@ inputs:
     description: "Gpg secret key name from gpg secret key. Needed to use gpg sign."
     required: false
   gpg-secret-key:
-    description: "Base64 encoded gpg secret key for chart sign. Needed if gpg-secret-name is set."
+    description: "Base64 encoded gpg secret key for chart sign. Required if gpg-secret-name is set."
     required: false
   gpg-secret-key-password:
-    description: "The password for the gpg secret key. Needed if gpg-secret-name is set."
+    description: "The password for the gpg secret key. Required if gpg-secret-name is set."
     required: false
 
 outputs:
@@ -58,7 +58,7 @@ runs:
         echo "${{ inputs.gpg-secret-key-password }}" > /tmp/secret-key-password
         chmod 0600 /tmp/secret-key.gpg
         chmod 0600 /tmp/secret-key-password
-    - name: Update chart dependency's
+    - name: Update chart dependencies
       shell: bash
       run: |
         helm dependency update "${{ inputs.charts-path }}/${{ inputs.chart-name }}"
