@@ -3,11 +3,11 @@ description: Generic container build and push action.
 
 inputs:
   build-context: 
-    description: "Path to image build context."
+    description: "Path to image build context. Default: ."
     type: string
     default: .
   build-docker-file:
-    description: "Path to the docker file."
+    description: "Path to the docker file. Default: ./Dockerfile"
     type: string
     default: ./Dockerfile
   build-args:
@@ -22,6 +22,9 @@ inputs:
     description: "cosign key password."
     type: string
     default: ''
+  cosign-tlog-upload:
+    description: "Turn on or turn off the cosign tlog upload function. Default: true"
+    default: "true"
   image-labels:
     description: "Image labels."
     type: string
@@ -35,7 +38,7 @@ inputs:
     type: string
     required: true
   image-platforms: 
-    description: "Image platforms to build for."
+    description: "Image platforms to build for. Default: linux/amd64"
     type: string
     default: linux/amd64
   registry: 
@@ -96,7 +99,8 @@ runs:
       if: ${{ github.event_name != 'pull_request' }}
       uses: greenbone/actions/container-signing@v2
       with:
-        image-tags: ${{ steps.meta.outputs.tags }}
-        image-digest: ${{ steps.build-and-push.outputs.digest }}
         cosign-key: ${{ inputs.cosign-key }}
         cosign-key-password: ${{ inputs.cosign-key-password }}
+        cosign-tlog-upload: ${{ inputs.cosign-tlog-upload }}
+        image-tags: ${{ steps.meta.outputs.tags }}
+        image-digest: ${{ steps.build-and-push.outputs.digest }}
