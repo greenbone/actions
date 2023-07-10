@@ -71,4 +71,4 @@ jobs:
 |image-digest|Set the digest from the docker build and push action e.g the output of steps.build-and-push.outputs.digest.|Required|
 |cosign-key-password|Set the cosign key password, if not set a keyless signature will be created.|Optional|
 |cosign-key|Set the cosign key, if not set a keyless signature will be created.|Optional|
-|cosign-tlog-upload|Turn on or turn off the cosign tlog upload function. Default: true|Optional|
+|cosign-tlog-upload|Turn on or turn off the cosign tlog upload function. Possible options: true/false Default: true|Optional|
