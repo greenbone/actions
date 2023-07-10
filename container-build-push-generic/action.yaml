@@ -23,7 +23,7 @@ inputs:
     type: string
     default: ''
   cosign-tlog-upload:
-    description: "Turn on or turn off the cosign tlog upload function. Default: true"
+    description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default: true"
     default: "true"
   image-labels:
     description: "Image labels."
