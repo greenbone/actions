@@ -14,6 +14,10 @@ inputs:
   cosign-key:
     description: "Set the cosign key, if not set a keyless signature will be created."
     required: false
+  cosign-tlog-upload:
+    description: "Turn on or turn off the cosign tlog upload function. Default: true"
+    required: false
+    default: "true"
 
 branding:
   icon: "package"
@@ -31,10 +35,21 @@ runs:
         COSIGN_KEY: ${{ inputs.cosign-key }}
       run: |
         echo "${{ inputs.image-tags }}" | \
-          xargs -I {} cosign sign -y -r --key env://COSIGN_KEY {}@${{ inputs.image-digest }}
+          xargs -I {} \
+          cosign sign \
+          --tlog-upload=${{ inputs.cosign-tlog-upload }} \
+          -y \
+          -r \
+          --key env://COSIGN_KEY \
+          {}@${{ inputs.image-digest }}
     - name: Sign the published Container Image (Keyless)
       if: ${{ !inputs.cosign-key-password || !inputs.cosign-key }}
       shell: bash
       run: |
-       echo "${{ inputs.image-tags }}" | \
-         xargs -I {} cosign sign -y -r {}@${{ inputs.image-digest }}
+        echo "${{ inputs.image-tags }}" | \
+          xargs -I {} \
+          cosign sign \
+          --tlog-upload=${{ inputs.cosign-tlog-upload }} \
+          -y \
+          -r \
+          {}@${{ inputs.image-digest }}
