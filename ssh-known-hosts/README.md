@@ -13,7 +13,7 @@ jobs:
       - self-hosted-generic
     steps:
       - name: Create ssh known hosts file
-        uses: greenbone/actions/ssh-known-hosts@v1
+        uses: greenbone/actions/ssh-known-hosts@v3
         with:
           known_hosts: ${{ secrets.KEYS }}
 ```

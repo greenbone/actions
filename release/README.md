@@ -87,7 +87,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Run release actions with release type
-        uses: greenbone/actions/release@v2
+        uses: greenbone/actions/release@v3
         with:
           github-user: ${{ secrets.FOO_BAR }}
           github-user-mail: foo@bar.baz
@@ -114,7 +114,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Run release actions with release version
-        uses: greenbone/actions/release@v2
+        uses: greenbone/actions/release@v3
         with:
           github-user: ${{ secrets.FOO_BAR }}
           github-user-mail: foo@bar.baz
@@ -143,7 +143,7 @@ jobs:
     steps:
       - name: Run release actions with release version
         id: release
-        uses: greenbone/actions/release@v2
+        uses: greenbone/actions/release@v3
         with:
           release-type: "patch"
           versioning-scheme: "semver"
@@ -152,7 +152,7 @@ jobs:
         run: |
           gh release upload ${{ steps.release.outputs.git-release-tag }} some_files/*
       - name: Sign all release files
-        uses: greenbone/actions/sign-release-files@v2
+        uses: greenbone/actions/sign-release-files@v3
           with:
             gpg-key: ${{ secrets.GPG_KEY }}
             gpg-fingerprint: ${{ secrets.GPG_FINGERPRINT }}

@@ -20,7 +20,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Container build and push ghcr.io
-        uses: greenbone/actions/container-build-push-ghcr@v2
+        uses: greenbone/actions/container-build-push-ghcr@v3
         with:
           image-url: my/app
           image-labels: my-labels

@@ -15,7 +15,7 @@ jobs:
   setup-python-project:
     name: Setup Python and install dependencies
     steps:
-      - uses: greenbone/actions/poetry@v2
+      - uses: greenbone/actions/poetry@v3
 ```
 
 ```yaml
@@ -29,7 +29,7 @@ jobs:
   setup-python-project:
     name: Setup Python and install main dependencies only
     steps:
-      - uses: greenbone/actions/poetry@v2
+      - uses: greenbone/actions/poetry@v3
         with:
           without-dev: "true"
 ```

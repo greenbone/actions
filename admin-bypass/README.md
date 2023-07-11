@@ -17,13 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: allow admin users bypassing protection on <target> branch on <repository>
-        uses: greenbone/actions/admin-bypass@v2
+        uses: greenbone/actions/admin-bypass@v3
         with:
           allow: "true"
           branch: <target>
           repository: <repository>
       - name: disable bypassing protection on <target> branch on <repository> for admin users
-        uses: greenbone/actions/admin-bypass@v2
+        uses: greenbone/actions/admin-bypass@v3
         with:
           allow: "false"
           branch: <target>

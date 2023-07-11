@@ -22,7 +22,7 @@ jobs:
         - uses: actions/checkout@v3
           with:
             fetch-depth: 0
-        - uses: greenbone/actions/is-latest-tag@v2
+        - uses: greenbone/actions/is-latest-tag@v3
           id: latest
         - name: Do something
           if: steps.latest.outputs.is-latest-tag == 'true'

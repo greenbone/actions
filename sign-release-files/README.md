@@ -17,7 +17,7 @@ jobs:
     name: Sign Release Files
     runs-on: ubuntu-latest
     steps:
-        - uses: greenbone/actions/sign-release-files@v2
+        - uses: greenbone/actions/sign-release-files@v3
           with:
             gpg-key: ${{ secrets.GPG_KEY }}
             gpg-fingerprint: ${{ secrets.GPG_FINGERPRINT }}

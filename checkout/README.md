@@ -16,7 +16,7 @@ jobs:
     name: Do Something
     runs-on: ubuntu-latest
     steps:
-        - uses: greenbone/checkout@v2
+        - uses: greenbone/checkout@v3
           id: checkout
         - run: |
           echo ${{ steps.checkout.outputs.sha }}

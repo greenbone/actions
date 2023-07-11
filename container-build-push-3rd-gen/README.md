@@ -20,7 +20,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Container build and push 3rd gen
-        uses: greenbone/actions/container-build-push-3rd-gen@v2
+        uses: greenbone/actions/container-build-push-3rd-gen@v3
         with:
           image-url: my/app
           image-labels: my-label

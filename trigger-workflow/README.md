@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Workflow
-        uses: greenbone/actions/trigger-workflow@v1
+        uses: greenbone/actions/trigger-workflow@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: "foo/bar"

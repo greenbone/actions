@@ -27,7 +27,7 @@ jobs:
     name: Determine Release Type and Ref
     runs-on: ubuntu-latest
     steps:
-        - uses: greenbone/actions/release-type@v2
+        - uses: greenbone/actions/release-type@v3
           id: release
           with:
             release-type-input: ${{ inputs.release-type }}

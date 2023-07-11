@@ -16,7 +16,7 @@ jobs:
     name: Check Versioning
     runs-on: ubuntu-latest
     steps:
-        - uses: greenbone/actions/check-version@v2
+        - uses: greenbone/actions/check-version@v3
 ```
 
 ## Action Configuration

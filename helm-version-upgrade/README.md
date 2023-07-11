@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: run helm-version-upgrade
-        uses: greenbone/actions/helm-version-upgrade@v2
+        uses: greenbone/actions/helm-version-upgrade@v3
         with:
           chart-path: ${{ github.workspace }}/charts/<YOUR-CHART>
           chart-version: <NEW-VERSION> e.g 0.1.1-a1
