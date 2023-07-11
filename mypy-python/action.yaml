@@ -6,9 +6,6 @@ inputs:
   packages:
     description: "Python packages to check with mypy"
     deprecationMessage: "packages input is deprecated. Please use `mypy-arguments` input instead."
-  version:
-    description: "Deprecated: Use `python-version` input instead. version input is ignored."
-    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
   mypy-arguments:
     description: "Additional arguments for running mypy"
     default: ""

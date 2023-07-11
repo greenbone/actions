@@ -3,9 +3,6 @@ author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to install python and project dependencies via poetry"
 
 inputs:
-  version:
-    description: "Python version that should be installed. Deprecated: Use `python-version` input instead."
-    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
   working-directory:
     description: "A working directory where to run poetry install"
   install-dependencies:
@@ -34,18 +31,6 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Set Python version
-      id: python-version
-      run: |
-        if [[ -n "${{ inputs.version }}" ]]; then
-          echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
-        else
-          echo "version=${{ inputs.python-version }}" >> $GITHUB_OUTPUT
-        fi
-      shell: bash
-    - run: |
-        echo "Using Python version ${{ steps.python-version.outputs.version }}"
-      shell: bash
     - name: Enable/Disable caching
       run: |
         if [[ "${{ inputs.cache }}" = "true" ]]; then
@@ -79,10 +64,10 @@ runs:
           python3 -m pip install --upgrade poetry
         fi
       shell: bash
-    - name: Set up Python ${{ steps.python-version.outputs.version }}
+    - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ steps.python-version.outputs.version }}
+        python-version: ${{ inputs.python-version }}
         cache: ${{ env.CACHE }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - name: Install pip
