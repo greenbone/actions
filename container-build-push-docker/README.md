@@ -20,7 +20,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Container build and push docker.io
-        uses: greenbone/actions/container-build-push-docker@v2
+        uses: greenbone/actions/container-build-push-docker@v3
         with:
           image-url: my/app
           image-labels: my-labels

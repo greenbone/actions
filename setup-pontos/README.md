@@ -16,7 +16,7 @@ jobs:
     name: Setup Pontos
     runs-on: ubuntu-latest
     steps:
-        - uses: greenbone/actions/setup-pontos@v2
+        - uses: greenbone/actions/setup-pontos@v3
 ```
 
 ## Action Configuration

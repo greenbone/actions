@@ -26,7 +26,7 @@ jobs:
       - self-hosted
       - self-hosted-generic
     steps:
-      - uses: greenbone/actions/mattermost-notify@v1
+      - uses: greenbone/actions/mattermost-notify@v3
         with:
             MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
             MATTERMOST_CHANNEL: ${{ secrets.MATTERMOST_CHANNEL }}

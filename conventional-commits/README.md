@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: Report Conventional Commits
-          uses: greenbone/actions/conventional-commits@v2
+          uses: greenbone/actions/conventional-commits@v3
 ```
 
 ```yml
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: Report Conventional Commits
-          uses: greenbone/actions/conventional-commits@v2
+          uses: greenbone/actions/conventional-commits@v3
 ```
 
 ## Action Configuration

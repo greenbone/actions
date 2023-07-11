@@ -15,7 +15,7 @@ jobs:
     name: Setup and lint project
     runs-on: ubuntu-latest
     steps:
-        - uses: greenbone/actions/mypy-python@v2
+        - uses: greenbone/actions/mypy-python@v3
           with:
             packages: my_project tests
 ```

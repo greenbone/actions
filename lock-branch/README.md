@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: lock <target> branch on <repository>
-        uses: greenbone/actions/lock-branch@v2
+        uses: greenbone/actions/lock-branch@v3
         with:
           lock: "true"
           branch: <target>
           repository: <repository>
       - name: unlock <target> branch on <repository>
-        uses: greenbone/actions/lock-branch@v2
+        uses: greenbone/actions/lock-branch@v3
         with:
           lock: "false"
           branch: <target>
@@ -41,11 +41,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: lock default branch
-        uses: greenbone/actions/lock-branch@v2
+        uses: greenbone/actions/lock-branch@v3
         with:
           lock: "true"
       - name: unlock default branch
-        uses: greenbone/actions/lock-branch@v2
+        uses: greenbone/actions/lock-branch@v3
         with:
           lock: "false"
 ```

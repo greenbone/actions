@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build and publish to PyPI
-        uses: greenbone/actions/pypi-upload@v2
+        uses: greenbone/actions/pypi-upload@v3
         with:
           pypi-token: ${{ secrets.PYPI_TOKEN }}
 ```

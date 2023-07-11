@@ -21,29 +21,29 @@ We offer several actions for linting, formatting, building and testing packages/
 
 ```yml
 - name: Install JavaScript and the project [npm]
-  uses: greenbone/actions/install-npm@v2
+  uses: greenbone/actions/install-npm@v3
   with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
 - name: Install and check Lint and Format in JavaScript Projects [npm]
-  uses: greenbone/actions/lint-npm@v2
+  uses: greenbone/actions/lint-npm@v3
   with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
 - name: Install, Build and Test JavaScript Projects [npm]
-  uses: greenbone/actions/test-npm@v2
+  uses: greenbone/actions/test-npm@v3
   with:
     version: 3.9
     token: ${{ secrets.FOO_BAR }}
 - name: Run coverage for javascript
-  uses: greenbone/actions/coverage-js@v2
+  uses: greenbone/actions/coverage-js@v3
 ```
 
 ### GoLang
 
 ```yml
 - name: Check Lint and Format in GoLang Projects
-  uses: greenbone/actions/lint-golang@v2
+  uses: greenbone/actions/lint-golang@v3
   with:
     version: "1.18"
     generate: go generate # mocks, docs, etc
@@ -54,7 +54,7 @@ We offer several actions for linting, formatting, building and testing packages/
 
 ```yml
 - name: upload documentation coverage to codecov.io for C Lang repository
-  uses: greenbone/actions/doc-coverage-clang@v2
+  uses: greenbone/actions/doc-coverage-clang@v3
 ```
 
 ## Language independent Actions
@@ -78,7 +78,7 @@ Update license header supporting many different filetypes
 
 ```yml
 - name: Run update header
-  uses: greenbone/actions/update-header@v2
+  uses: greenbone/actions/update-header@v3
   with:
     github-user: ${{ secrets.FOO_BAR }}
     github-user-mail: foo@bar.baz
@@ -91,12 +91,12 @@ SHA256 file or GPG signature generation
 
 ```yml
 - name: Create a sha256sums file for the foo directory
-  uses: greenbone/actions/hashsums@v2
+  uses: greenbone/actions/hashsums@v3
   with:
     directory: ./foo
 
 - name: Create a GPG signature
-  uses: greenbone/actions/signature@v2
+  uses: greenbone/actions/signature@v3
   with:
     gpg-key: ${{ secrets.FOO_BAR }}
     gpg-passphrase: ${{ secrets.FOO_BAZ }}

@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create Coverage Report
-        uses: greenbone/actions/coverage-python@v2
+        uses: greenbone/actions/coverage-python@v3
 ```
 
 ## Action Configuration

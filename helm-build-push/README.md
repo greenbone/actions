@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build and push chart
-        uses: greenbone/actions/helm-build-push@v2
+        uses: greenbone/actions/helm-build-push@v3
         with:
           chart-name: Chart folder name
           registry_user: Registry username
