@@ -4,7 +4,7 @@ A action to build and push container into ghcr.io.
 
 ## Example
 
-```yml 
+```yml
 name: Build Container Image
 
 on:

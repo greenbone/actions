@@ -4,7 +4,7 @@ A action to build and push container image for 3rd gen.
 
 ## Example
 
-```yml 
+```yml
 name: Build Container Image
 
 on:
