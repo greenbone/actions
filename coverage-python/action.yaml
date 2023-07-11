@@ -3,9 +3,6 @@ author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to upload coverage to codecov.io for Python package by using Poetry."
 
 inputs:
-  version:
-    description: "Deprecated: Use `python-version` input instead. version input is ignored."
-    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
   python-version:
     description: "Python version that should be installed"
     default: "3.10"

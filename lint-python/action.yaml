@@ -6,9 +6,6 @@ inputs:
   packages:
     description: "Python packages to lint"
     required: true
-  version:
-    description: "Deprecated: Use `python-version` input instead. version input is ignored."
-    deprecationMessage: "version input is deprecated. Please use `python-version` input instead."
   python-version:
     description: "Python version that should be installed"
     default: "3.10"
