@@ -28,7 +28,7 @@ runs:
   steps:
     - name: Set up Python and pontos
       id: virtualenv
-      uses: greenbone/actions/setup-pontos@v2
+      uses: greenbone/actions/setup-pontos@v3
     - name: lock/unlock?
       run: |
         if [[ "${{inputs.lock}}" == "true" ]];

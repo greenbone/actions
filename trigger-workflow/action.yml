@@ -41,7 +41,7 @@ runs:
   using: "composite"
   steps:
     - name: Set up Python and Poetry
-      uses: greenbone/actions/poetry@v2
+      uses: greenbone/actions/poetry@v3
       with:
         python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}

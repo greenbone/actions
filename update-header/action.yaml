@@ -42,7 +42,7 @@ runs:
         fetch-depth: ${{ env.FETCH_DEPTH }}
         ref: ${{ inputs.target }}
     - name: Set up Poetry, python and the project
-      uses: greenbone/actions/poetry@v2
+      uses: greenbone/actions/poetry@v3
       with:
         python-version: ${{ inputs.python-version }}
         poetry-version: ${{ inputs.poetry-version }}

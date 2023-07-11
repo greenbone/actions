@@ -38,7 +38,7 @@ runs:
   using: "composite"
   steps:
   - name: Container build and push 3rd gen
-    uses: greenbone/actions/container-build-push-generic@v2
+    uses: greenbone/actions/container-build-push-generic@v3
     with:
       build-context: ${{ inputs.build-context }}
       build-docker-file: ${{ inputs.build-docker-file }}

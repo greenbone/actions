@@ -19,7 +19,7 @@ runs:
   steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ inputs.python-version }} and pontos
-      uses: greenbone/actions/setup-pontos@v2
+      uses: greenbone/actions/setup-pontos@v3
       id: virtualenv
       with:
         python-version: ${{ inputs.python-version}}

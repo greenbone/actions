@@ -28,7 +28,7 @@ runs:
     - run: echo "Install project with ${{ inputs.dependency-manager }}"
       shell: bash
     - name: Install Project
-      uses: greenbone/actions/install-node@v2
+      uses: greenbone/actions/install-node@v3
       with:
         version: ${{ inputs.version }}
         token: ${{ inputs.token }}
