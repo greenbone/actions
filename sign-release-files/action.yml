@@ -82,7 +82,7 @@ runs:
       if: steps.checkout.outputs.exists != 'true'
       uses: actions/checkout@v3
     - name: Set up Python and pontos
-      uses: greenbone/actions/setup-pontos@v2
+      uses: greenbone/actions/setup-pontos@v3
       id: virtualenv
       with:
         python-version: ${{ inputs.python-version }}
