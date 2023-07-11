@@ -45,7 +45,7 @@ We offer several actions for linting, formatting, building and testing packages/
 - name: Check Lint and Format in GoLang Projects
   uses: greenbone/actions/lint-golang@v2
   with:
-    version: 3.9
+    version: "1.18"
     generate: go generate # mocks, docs, etc
     golangci-lint: v1.50 # specify golangci-lint version
 ```
