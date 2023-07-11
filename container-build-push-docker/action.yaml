@@ -57,4 +57,4 @@ runs:
       image-platforms: ${{ inputs.image-platforms }}
       registry: "docker.io"
       registry-username: ${{ inputs.registry-username }}
-      registry-password: ${{ inputs.registry-password }} 
+      registry-password: ${{ inputs.registry-password }}
