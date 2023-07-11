@@ -7,44 +7,31 @@ on:
     inputs:
       release-type:
         type: choice
-        description: Before setting a release type ensure that the workflow is run from the desired release branch (for example v2). What kind of release do you want to do (pontos --release-type argument)?
+        description: What kind of release do you want to do?
         options:
           - patch
           - minor
           - major
-          - alpha
-          - release-candidate
       release-version:
         type: string
-        description: Set an explicit version, that will overwrite release-type. Fails if version is not compliant.
+        description: Set an explicit version (without leading v), that will overwrite release-type. Fails if version is not semver compliant.
 
 jobs:
   create-release:
     name: Create release
     runs-on: 'ubuntu-latest'
     steps:
-      - name: Setting release type and release ref
-        id: release
-        run: |
-          echo "type=${{ inputs.release-type }}" >> $GITHUB_OUTPUT
-          echo "ref=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-      - name: Echoing the release type and release ref
-        run: |
-          echo "Release type: ${{ steps.release.outputs.type }}"
-          echo "Release ref: ${{ steps.release.outputs.ref }}"
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
           fetch-depth: 0 # for conventional commits
-          ref: ${{ steps.release.outputs.ref }}
+          ref: main
       - name: Set git name, mail and origin
         run: |
           git config --global user.name "${{ secrets.GREENBONE_BOT }}"
           git config --global user.email "${{ secrets.GREENBONE_BOT_MAIL }}"
-      - name: Merge changes from main into ${{ steps.release.outputs.ref }}
-        run: |
-          git merge origin/main -m "Merge main into ${{ steps.release.outputs.ref }}"
       - name: Release with release action
+        id: release
         uses: greenbone/actions/release@v2
         with:
           github-user: ${{ secrets.GREENBONE_BOT }}
@@ -53,8 +40,20 @@ jobs:
           gpg-key: ${{ secrets.GPG_KEY }}
           gpg-fingerprint: ${{ secrets.GPG_FINGERPRINT }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          release-type: ${{ steps.release.outputs.type }}
+          release-type: ${{ inputs.release-type }}
           release-version: ${{ inputs.release-version }}
-          ref: ${{ steps.release.outputs.ref }}
           versioning-scheme: "semver"
           update-project: false
+      - name:
+        id: version
+        run: |
+          # get major minor patch versions
+          IFS='.' read -r major minor patch << EOF
+          ${{ steps.release.outputs.git-release-tag }}
+          EOF
+
+          echo "major=$major" >> $GITHUB_OUTPUT
+      - name: Re-tag ${{ steps.version.outputs.major }}
+        run: |
+          git tag -f ${{ steps.version.outputs.major }} ${{ steps.release.outputs.git-release-tag }}^{}
+          git push --force origin ${{ steps.version.outputs.major }}
