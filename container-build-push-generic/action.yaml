@@ -2,56 +2,44 @@ name: Container build and push
 description: Generic container build and push action.
 
 inputs:
-  build-context: 
+  build-context:
     description: "Path to image build context. Default: ."
-    type: string
     default: .
   build-docker-file:
     description: "Path to the docker file. Default: ./Dockerfile"
-    type: string
     default: ./Dockerfile
   build-args:
     description: "Use these build-args for the docker build process."
-    type: string
     default: ''
   cosign-key:
     description: "cosign key to sign the image."
-    type: string
     default: ''
   cosign-key-password:
     description: "cosign key password."
-    type: string
     default: ''
   cosign-tlog-upload:
     description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default: true"
     default: "true"
   image-labels:
     description: "Image labels."
-    type: string
     required: true
   image-url:
     description: "Image url/name without registry."
-    type: string
     required: true
   image-tags:
     description: "Image tags."
-    type: string
     required: true
-  image-platforms: 
+  image-platforms:
     description: "Image platforms to build for. Default: linux/amd64"
-    type: string
     default: linux/amd64
-  registry: 
+  registry:
     description: "Registry url."
-    type: string
     required: true
-  registry-username: 
+  registry-username:
     description: "Login registry username."
-    type: string
     required: true
-  registry-password: 
+  registry-password:
     description: "Login registry password."
-    type: string
     required: true
 
 branding:
