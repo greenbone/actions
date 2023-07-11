@@ -31,17 +31,6 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Enable/Disable caching
-      run: |
-        if [[ "${{ inputs.cache }}" = "true" ]]; then
-          echo "Caching is enabled"
-          CACHE="poetry"
-        else
-          echo "Caching is disabled"
-          CACHE=""
-        fi
-        echo "CACHE=${CACHE}" >> $GITHUB_ENV
-      shell: bash
     - name: Get pip cache dir
       id: pip-cache
       if: ${{ inputs.cache-poetry-installation == 'true' }}
@@ -68,7 +57,7 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.python-version }}
-        cache: ${{ env.CACHE }}
+        cache: ${{ inputs.cache == 'true' && 'poetry' || '' }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - name: Install pip
       run: |
@@ -94,6 +83,7 @@ runs:
     - name: Parse inputs
       if: ${{ inputs.install-dependencies == 'true' }}
       run: |
+        ARGS=""
         if [[ -n "${{ inputs.no-root }}" ]]; then
           ARGS="--no-root"
         fi
