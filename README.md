@@ -12,7 +12,7 @@ We offer several actions for linting, formatting, building and testing packages/
 
 * [Install python, poetry and the project](https://github.com/greenbone/actions/tree/v2/poetry)
 * [Install python, poetry, project and run coverage to create a code coverage report](https://github.com/greenbone/actions/tree/v2/coverage-python)
-* [Install python, poetry, project and run pylint linter](https://github.com/greenbone/actions/tree/v2/lint-python)
+* [Install python, poetry, project and run linter](https://github.com/greenbone/actions/tree/v2/lint-python)
 * [Install python, poetry, project and and run mypy type checker](https://github.com/greenbone/actions/tree/v2/mypy-python)
 * [Install python, poetry, build python package and upload it to PyPI](https://github.com/greenbone/actions/tree/v2/pypi-upload)
 * [Setup python and pontos](https://github.com/greenbone/actions/tree/v2/setup-pontos)
