@@ -33,8 +33,8 @@ inputs:
     description: "Python version used  to create the release. (Only important for python projects)"
     default: "3.10"
   ref:
-    description: "This branch's/tag's HEAD will be candidate of the next release. Default: default branch"
-    default: ""
+    description: "This branch's/tag's HEAD will be candidate of the next release. Default: main branch"
+    default: "main"
   release-type:
     description: |
       "What type of release should be executed?"
@@ -145,7 +145,7 @@ runs:
       with:
         allow: "true"
         github-token: ${{ inputs.github-user-token }}
-        branch: ${{ inputs.ref}}
+        branch: ${{ inputs.ref }}
 
       # Create release
     - name: Create automatic release
