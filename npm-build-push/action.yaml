@@ -1,0 +1,50 @@
+name: Npm build and push
+description: Build and Push npm package to registry
+
+inputs:
+  version:
+    description: "Node version to setup. Set to empty to not run a setup. Default: 18.x"
+    default: "18.x"
+  packages:
+    description: "Space separated string of packages to build and push. If not set no package will build. Default: empty"
+  registry-url:
+    description: "The registry url used to push npm packages to. Default: https://npm.pkg.github.com"
+    default: "https://npm.pkg.github.com"
+  registry-token:
+    description: "Registry login password/token. If not set packages will not pushed to registry. Default: empty"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      if: inputs.version
+      uses: actions/setup-node@v3
+      with:
+          node-version: ${{ inputs.version }}
+          registry-url: ${{ inputs.registry-url }}
+
+    - name: Run npm ci
+      shell: bash
+      run: npm ci
+
+    - name: Build npm packages
+      if: inputs.packages
+      shell: bash
+      run: |
+        # Set IFS to space only
+        IFS=$' '
+        # Build all pkgs from the space separated string inputs.packages
+        for pkg in ${{ inputs.packages }} ; do
+          npm run "$pkg"
+        done
+
+    - name: Push npm packages to registry
+      if: inputs.registry-token
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.registry-token }}
+      run: npm publish
