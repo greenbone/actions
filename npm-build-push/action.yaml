@@ -8,8 +8,8 @@ inputs:
   run-ci:
     description: "Run node ci. Default: false Options: true/false"
     default: "false"
-  packages:
-    description: "Space separated string of packages to build and push. If not set no package will build. Default: empty"
+  scripts:
+    description: "Space separated string of script names to run the build. If not set no package will build. Default: empty"
   registry-url:
     description: "The registry url used to push npm packages to. Default: https://npm.pkg.github.com"
     default: "https://npm.pkg.github.com"
@@ -41,9 +41,9 @@ runs:
       run: |
         # Set IFS to space only
         IFS=$' '
-        # Build all pkgs from the space separated string inputs.packages
-        for pkg in ${{ inputs.packages }} ; do
-          npm run "$pkg"
+        # Run all npm scripts from the space separated string inputs.scripts
+        for script in ${{ inputs.scripts }} ; do
+          npm run "$script"
         done
 
     - name: Push npm packages to registry
