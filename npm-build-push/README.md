@@ -14,7 +14,7 @@ jobs:
       - name: Build and push npm pkg
         uses: greenbone/actions/npm-build-push@v3
         with:
-	  packages: "storybook:build build:source"
+          packages: "storybook:build build:source"
           registry-token: Registry user password/token
 ```
 
