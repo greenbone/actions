@@ -20,8 +20,8 @@ jobs:
 
 ## Action Configuration
 
-| Input Variable          | Description                                                                                   |          |
-|-------------------------|-----------------------------------------------------------------------------------------------|----------|
+| Input Variable | Description                                                                                            |          |
+|----------------|--------------------------------------------------------------------------------------------------------|----------|
 | version        | Node version to setup. Set to empty to not run a setup. Default: 18.x                                  | Optional |
 | packages       | Space separated string of packages to build and push. If not set no package will build. Default: empty | Optional |
 | registry-url   | The registry url used to push npm packages to. Default: https://npm.pkg.github.com                     | Optional |
