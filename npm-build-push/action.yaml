@@ -5,6 +5,9 @@ inputs:
   version:
     description: "Node version to setup. Set to empty to not run a setup. Default: 18.x"
     default: "18.x"
+  run-ci:
+    description: "Run node ci. Default: false Options: true/false"
+    default: "false"
   packages:
     description: "Space separated string of packages to build and push. If not set no package will build. Default: empty"
   registry-url:
@@ -28,6 +31,7 @@ runs:
           registry-url: ${{ inputs.registry-url }}
 
     - name: Run npm ci
+      if: inputs.run-ci == 'true'
       shell: bash
       run: npm ci
 
