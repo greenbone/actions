@@ -15,11 +15,11 @@ inputs:
     description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
     default: "true"
   head-ref:
-    description: "Use as specific head ref. Defaults to 'github.event.pull_request.head.sha'"
-    default: ${{ github.event.pull_request.head.sha }}
+    description: "Use as specific head ref. Defaults to 'github.head_ref'"
+    default: ${{ github.head_ref }}
   base-ref:
-    description: "Use a specific base ref. Defaults to 'github.event.pull_request.base.sha'."
-    default: ${{ github.event.pull_request.base.sha }}
+    description: "Use a specific base ref. Defaults to 'github.base_ref'."
+    default: ${{ github.base_ref }}
 
 runs:
   using: "composite"
@@ -27,13 +27,11 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        # fetch-depth create a shallow clone https://www.git-scm.com/docs/shallow
-        # with inputs.base-ref as root ref of the repo
-        fetch-depth: 1
+        # fetch all commits of the base-ref. without all commits it's not possible to find the common ancestor
+        fetch-depth: 0
         ref: ${{ inputs.base-ref }}
     - name: Fetch commits
-      # fetch commits from head ref. It stops at base ref because we have a
-      # shallow repo.
+      # fetch commits from head ref
       run: |
         git fetch origin ${{ inputs.head-ref }}
       shell: bash
