@@ -50,8 +50,8 @@ runs:
       run: |
         poetry run conventional-commits \
           --token ${{ inputs.token }} \
-          --base-ref ${{ inputs.base-ref }} \
-          --head-ref ${{ inputs.head-ref }} \
+          --base-ref origin/${{ inputs.base-ref }} \
+          --head-ref origin/${{ inputs.head-ref }} \
           --event-path ${{ github.event_path }} \
           --repository ${{ github.repository }} \
           --working-directory ${{ github.workspace }}
