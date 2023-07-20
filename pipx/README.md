@@ -43,6 +43,7 @@ jobs:
 |Input Variable|Description| |
 |--------------|-----------|-|
 | python-version | Setup a specific Python version | Optional |
+| python-path | Path to the Python binary to use. Passing python-path allows for setting up a Python version before using this action and running pipx with the set up Python version. | Optional |
 | install | Python application to install | |
 | install-version |  Use a specific version of the application to install. For example '1.2.3'. | Optional |
 | cache | Enable caching for the installed application. | Optional. Disabled by default. `true` to enable. |
