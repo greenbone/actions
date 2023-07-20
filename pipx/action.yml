@@ -5,6 +5,11 @@ author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 inputs:
   python-version:
     description: Setup a specific Python version
+  python-path:
+    description: |
+      Path to the Python binary to use. Passing python-path allows for setting
+      up a Python version before using this action and running pipx with the set
+      up Python version.
   cache:
     description: "Enable caching for the installed application. Disabled by default. 'true' to enable."
     default: "false"
@@ -57,18 +62,26 @@ runs:
         echo $PATH
       shell: bash
     - name: Cache pipx venv for the application
-      if: inputs.install && inputs.cache == 'true'
+      # cache venv only if an application will be installed and the user requested caching and no python path is set
+      if: inputs.install && inputs.cache == 'true' && !inputs.python-path
       id: cache
       uses: actions/cache@v3
       with:
         path: ${{ steps.settings.outputs.venvs }}/${{ inputs.install }}
         key: python-${{ steps.python.outputs.python-version }}-pipx-venv-${{ inputs.install }}-${{ inputs.install-version || 'latest' }}
     - name: Install application
-      if: inputs.install && inputs.cache == 'true' && steps.cache.outputs.cache-hit != 'true'
+      # install an application if an application should be installed and the user did not request caching, a python path is set or the cache was not hit
+      if: inputs.install && (inputs.python-path || inputs.cache != 'true' || steps.cache.outputs.cache-hit != 'true')
       run: |
+        if [ -n "${{ inputs.python-path }}" ]; then
+          PYTHON_BIN="${{ inputs.python-path }}"
+        else
+          PYTHON_BIN="${{ steps.python.outputs.python-path }}"
+        fi
+
         ARGS=""
-        if [ -n "${{ inputs.python-version }}" ]; then
-          ARGS="$ARGS --python ${{ steps.python.outputs.python-path }}"
+        if [ -n "$PYTHON_BIN" ]; then
+          ARGS="$ARGS --python $PYTHON_BIN"
         fi
 
         ARGS="$ARGS ${{ inputs.install }}"
@@ -81,8 +94,9 @@ runs:
 
         pipx install $ARGS
       shell: bash
-    - name: Upgrade poetry
-      if: inputs.install && !inputs.install-version && inputs.cache == 'true' && steps.cache.outputs.cache-hit == 'true'
+    - name: Upgrade application
+      # install an application if the latest version of the application should be installed and the user requested caching and the cache was hit and no python path was set
+      if: inputs.install && !inputs.install-version && inputs.cache == 'true' && steps.cache.outputs.cache-hit == 'true' && !inputs.python-path
       run: |
         pipx upgrade ${{ inputs.install }}
       shell: bash
