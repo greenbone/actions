@@ -55,7 +55,9 @@ runs:
       shell: bash
     - name: Ensure pipx bin directory is in PATH
       run: |
-        echo "${{ steps.settings.outputs.bin }}" >> $GITHUB_PATH
+        if [[ "$PATH" != *"${{ steps.settings.outputs.bin }}"* ]]; then
+          echo "${{ steps.settings.outputs.bin }}" >> $GITHUB_PATH
+        fi
       shell: bash
     - name: Show current PATH
       run: |
