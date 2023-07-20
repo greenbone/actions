@@ -1,0 +1,92 @@
+name: "pipx"
+description: "A GitHub Action for using pipx"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+
+inputs:
+  python-version:
+    description: Setup a specific Python version
+  cache:
+    description: "Enable caching for the installed application. Disabled by default. 'true' to enable."
+    default: "false"
+  install:
+    description: Python application to install
+  install-version:
+    description: Use a specific version of the application to install. For example '1.2.3'.
+
+outputs:
+  home:
+    description: Path to the pipx python application
+    value: ${{ steps.settings.outputs.home }}
+  bin:
+    description: Path to the bin directory where all applications can be run from
+    value: ${{ steps.settings.outputs.bin }}
+  venvs:
+    description: Path to the directory where the virtual environments are stored
+    value: ${{ steps.settings.outputs.venvs }}
+  shared:
+    description: Path where shared python packages like pip or wheel are installed
+    value: ${{ steps.settings.outputs.shared }}
+  cache-hit:
+    description: "'true' if the cache has been hit"
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Python
+      if: inputs.python-version
+      uses: actions/setup-python@v4
+      id: python
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Get pipx settings
+      id: settings
+      run: |
+        pipx environment
+        echo "home=$(pipx environment -v PIPX_HOME)" >> $GITHUB_OUTPUT
+        echo "bin=$(pipx environment -v PIPX_BIN_DIR)" >> $GITHUB_OUTPUT
+        echo "venvs=$(pipx environment -v PIPX_LOCAL_VENVS)" >> $GITHUB_OUTPUT
+        echo "shared=$(pipx environment -v PIPX_SHARED_LIBS)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Ensure pipx bin directory is in PATH
+      run: |
+        echo "${{ steps.settings.outputs.bin }}" >> $GITHUB_PATH
+      shell: bash
+    - name: Show current PATH
+      run: |
+        echo $PATH
+      shell: bash
+    - name: Cache pipx venv for the application
+      if: inputs.install && inputs.cache == 'true'
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.settings.outputs.venvs }}/${{ inputs.install }}
+        key: python-${{ steps.python.outputs.python-version }}-pipx-venv-${{ inputs.install }}-${{ inputs.install-version || 'latest' }}
+    - name: Install application
+      if: inputs.install && inputs.cache == 'true' && steps.cache.outputs.cache-hit != 'true'
+      run: |
+        ARGS=""
+        if [ -n "${{ inputs.python-version }}" ]; then
+          ARGS="$ARGS --python ${{ steps.python.outputs.python-path }}"
+        fi
+
+        ARGS="$ARGS ${{ inputs.install }}"
+
+        if [ -n "${{ inputs.install-version }}" ]; then
+          ARGS="$ARGS==${{ inputs.install-version }}"
+        fi
+
+        echo $ARGS
+
+        pipx install $ARGS
+      shell: bash
+    - name: Upgrade poetry
+      if: inputs.install && !inputs.install-version && inputs.cache == 'true' && steps.cache.outputs.cache-hit == 'true'
+      run: |
+        pipx upgrade ${{ inputs.install }}
+      shell: bash
+    - name: List installed applications
+      run: |
+        pipx list
+      shell: bash
