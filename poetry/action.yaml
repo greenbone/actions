@@ -14,10 +14,11 @@ inputs:
     description: "Do not install the development dependencies"
   cache:
     description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
+    default: "false"
   cache-dependency-path:
     description: "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies."
   cache-poetry-installation:
-    description: "Cache poetry and its dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
+    description: "Cache poetry and its dependencies by setting it to 'true'. Disabled by default."
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
   python-version:
@@ -31,55 +32,20 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Get pip cache dir
-      id: pip-cache
-      if: ${{ inputs.cache-poetry-installation == 'true' }}
-      run: |
-        echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Cache poetry installation
-      if: ${{ inputs.cache-poetry-installation == 'true' }}
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.pip-cache.outputs.dir }}
-        key: ${{ runner.os }}-poetry-install-cache
-    - name: Install poetry ${{ inputs.poetry-version }}
-      # poetry needs to be installed before using setup-python with poetry cache
-      if: ${{ inputs.cache == 'true' }}
-      run: |
-        if [[ -n "${{ inputs.poetry-version }}" ]]; then
-          python3 -m pip install --upgrade poetry==${{ inputs.poetry-version }}
-        else
-          python3 -m pip install --upgrade poetry
-        fi
-      shell: bash
-    - name: Set up Python ${{ inputs.python-version }}
+    - name: Set up poetry
       uses: actions/setup-python@v4
+      id: python
       with:
         python-version: ${{ inputs.python-version }}
         cache: ${{ inputs.cache == 'true' && 'poetry' || '' }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
-    - name: Install pip
-      run: |
-        python -m pip install --upgrade pip
-      shell: bash
-    - name: Install poetry ${{ inputs.poetry-version }}
-      # ensure that poetry is installed in the current set up python environment
-      # if poetry cache isn't used
-      if: ${{ inputs.cache != 'true' }}
-      run: |
-        if [[ -n "${{ inputs.poetry-version }}" ]]; then
-          python -m pip install --upgrade poetry==${{ inputs.poetry-version }}
-        else
-          python -m pip install --upgrade poetry
-        fi
-      shell: bash
-    - name: List installed
-      run: |
-        echo "Installed:"
-        echo " * $(poetry --version) $(which poetry)"
-        echo " * $(pip --version)"
-      shell: bash
+    - name: Set up poetry
+      uses: greenbone/actions/pipx@v3
+      with:
+        python-path: ${{ steps.python.outputs.python-path }}
+        cache: ${{ inputs.cache-poetry-installation }}
+        install: poetry
+        install-version: ${{ inputs.poetry-version }}
     - name: Parse inputs
       if: ${{ inputs.install-dependencies == 'true' }}
       run: |
