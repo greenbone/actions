@@ -44,3 +44,24 @@ jobs:
         with:
           working-directory: ${{ github.workspace }}/.github/workflows/test-python-project
           packages: project
+
+  test-pipx:
+    runs-on: ubuntu-latest
+    name: Test Pipx Install
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pyhton
+        uses: actions/setup-python@v4
+        id: python
+        with:
+          python-version: "3.11"
+      - name: Install poetry
+        uses: ./pipx
+        with:
+          install: mypy
+          install-version: "1.0.0"
+          python-path: ${{ steps.python.outputs.python-path }}
+      - name: Run mypy
+        run: |
+          mypy --version
