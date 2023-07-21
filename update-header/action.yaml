@@ -4,21 +4,20 @@ description: "An action that updates header year in all files of given directori
 
 inputs:
   github-user:
-    description: "Github user name."
-    required: true
+    description: "Github user name. Default is 'github-actions'."
+    default: github-actions
   github-user-mail:
-    description: "Mail address for the given github user."
-    required: true
+    description: "Mail address for the given github user. Default is 'github-actions@github.com'."
+    default: github-actions@github.com
   github-user-token:
-    description: "Token with write rights required to create the release."
-    required: true
+    description: "Token with write rights required to create the release. Default is github.token."
+    default: ${{ github.token }}
   python-version:
     description: "Python version that should be installed"
     default: "3.10"
     required: false
   target:
-    description: "Branch that should be released. Default: main"
-    default: "main"
+    description: "Branch that should be updated."
     required: false
   directories:
     description: "Specify the directories that should be updated, separated by space e.g. 'foo bar baz'"
@@ -29,6 +28,7 @@ inputs:
     required: false
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+    deprecationMessage: "poetry-version is deprecated and will be ignored."
 
 branding:
   icon: "package"
