@@ -46,11 +46,12 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
     - name: Set git name, mail and origin
-      run: |
-        git config --global user.name "${{ inputs.github-user }}"
-        git config --global user.email "${{ inputs.github-user-mail }}"
-        git remote set-url origin https://${{ inputs.github-user-token }}@github.com/${{ github.repository }}
-      shell: bash
+      uses: greenbone/actions/set-git-user@v3
+      with:
+        user: ${{ inputs.github-user }}
+        mail: ${{ inputs.github-user-mail }}
+        token: ${{ inputs.github-user-token }}
+        repository: ${{ github.repository }}
     - name: Store Branch name
       shell: bash
       run: |
