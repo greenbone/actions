@@ -54,22 +54,23 @@ runs:
         repository: ${{ github.repository }}
     - name: Store Branch name
       shell: bash
+      id: update
       run: |
-        echo "HEAD=devops/update-header-$(date +"%Y")" >> $GITHUB_ENV
-        echo "YEAR=$(date +"%Y")" >> $GITHUB_ENV
+        echo "HEAD=devops/update-header-$(date +"%Y")" >> $GITHUB_OUTPUT
+        echo "YEAR=$(date +"%Y")" >> $GITHUB_OUTPUT
     - name: Run commands to update headers
       run: |
-        git checkout -b ${{ env.HEAD }}
+        git checkout -b ${{ steps.update.outputs.HEAD }}
         pontos-update-header -d ${{ inputs.directories }}
       shell: bash
     - name: Run git commands for PR
       run: |
         git add -u
-        git commit -m "Update header to ${{ env.YEAR }}"
-        git push --set-upstream origin ${{ env.HEAD }}
-        pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} \
-          'Update year to ${{ env.YEAR }} in copyright header' \
-          --body "**What**:\n\nUpdate year to ${{ env.YEAR }} in \
+        git commit -m "Update header to ${{ steps.update.outputs.YEAR }}"
+        git push --set-upstream origin ${{ steps.update.outputs.HEAD }}
+        pontos-github pr ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
+          'Update year to ${{ steps.update.outputs.YEAR }} in copyright header' \
+          --body "**What**:\n\nUpdate year to ${{ steps.update.outputs.YEAR }} in \
           copyright header in all relevant files\n\n**Why**:* Files \
           should be up-to-date and we don't want to do it manually \
           in all projects\n\n**How**:\n\n* Automated process \
