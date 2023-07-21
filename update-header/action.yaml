@@ -41,34 +41,10 @@ runs:
       with:
         fetch-depth: ${{ env.FETCH_DEPTH }}
         ref: ${{ inputs.target }}
-    - name: Set up Poetry, python and the project
-      uses: greenbone/actions/poetry@v3
+    - name: Set up pontos
+      uses: greenbone/actions/setup-pontos@v3
       with:
         python-version: ${{ inputs.python-version }}
-        poetry-version: ${{ inputs.poetry-version }}
-    - name: Virtual Environment
-      id: virtualenv
-      run: |
-        echo "path=${{ github.action_path }}/${{ github.action }}-venv" >> $GITHUB_OUTPUT
-        echo "name=${{ github.action }}-venv" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Cache Virtual Environment
-      id: cache-virtualenv
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ inputs.python-version }}-${{ steps.virtualenv.outputs.name }}
-        path: ${{ steps.virtualenv.outputs.path }}
-    - name: Create virtual environment
-      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
-      run: |
-        python -m venv ${{ steps.virtualenv.outputs.path }}
-      shell: bash
-    - name: Install pontos
-      run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade pontos
-      shell: bash
     - name: Set git name, mail and origin
       run: |
         git config --global user.name "${{ inputs.github-user }}"
@@ -83,7 +59,6 @@ runs:
     - name: Run commands to update headers
       run: |
         git checkout -b ${{ env.HEAD }}
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         pontos-update-header -d ${{ inputs.directories }}
       shell: bash
     - name: Run git commands for PR
@@ -91,7 +66,6 @@ runs:
         git add -u
         git commit -m "Update header to ${{ env.YEAR }}"
         git push --set-upstream origin ${{ env.HEAD }}
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         pontos-github pr ${{ github.repository }} ${{ env.HEAD }} ${{ inputs.target }} \
           'Update year to ${{ env.YEAR }} in copyright header' \
           --body "**What**:\n\nUpdate year to ${{ env.YEAR }} in \
