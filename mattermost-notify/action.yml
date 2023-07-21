@@ -17,37 +17,15 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      id: python
+    - name: Install
+      uses: greenbone/actions/pipx@v3
+      id: pipx
       with:
         python-version: "3.10"
-    - name: Virtual Environment
-      id: virtualenv
-      run: |
-        echo "path=${{ github.action_path }}/mattermost-notify-venv" >> $GITHUB_OUTPUT
-        echo "name=mattermost-notify-venv" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Cache Virtual Environment
-      id: cache-virtualenv
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ steps.virtualenv.outputs.name }}
-        path: ${{ steps.virtualenv.outputs.path }}
-    - name: Create virtual environment
-      if: ${{ steps.cache-virtualenv.outputs.cache-hit != 'true' }}
-      run: |
-        python -m venv ${{ steps.virtualenv.outputs.path }}
-      shell: bash
-    - run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade mattermost-notify
-      shell: bash
+        install: mattermost-notify
     - name: Create the Mattermost Message
       shell: bash
       run: |
-        source ${{ steps.virtualenv.outputs.path }}/bin/activate
         if [ "${{ inputs.MATTERMOST_HIGHLIGHT }}" ] ; then
           mnotify-git ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }} \
             --highlight ${{ inputs.MATTERMOST_HIGHLIGHT }}
