@@ -151,7 +151,6 @@ runs:
     - name: Create automatic release
       id: release
       run: |
-        source ${{ steps.virtualenv.outputs.activate }}
         pontos-release release ${{ env.ARGS }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
       shell: bash
       env:

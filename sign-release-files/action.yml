@@ -83,7 +83,6 @@ runs:
       uses: actions/checkout@v3
     - name: Set up Python and pontos
       uses: greenbone/actions/setup-pontos@v3
-      id: virtualenv
       with:
         python-version: ${{ inputs.python-version }}
     - name: Import gpg key from secrets
@@ -97,7 +96,6 @@ runs:
     - name: Sign files for released version
       run: |
         echo "Signing release files"
-        source ${{ steps.virtualenv.outputs.activate }}
         pontos-release sign ${{ env.ARGS }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
       shell: bash
       if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
