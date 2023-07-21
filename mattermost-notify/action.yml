@@ -1,5 +1,6 @@
 name: "Send mattermost message"
 description: "Send a mattermost message"
+
 inputs:
   MATTERMOST_WEBHOOK_URL:
     description: "Mattermost webhook url"
@@ -8,8 +9,24 @@ inputs:
     description: "Mattermost channel"
     required: true
   MATTERMOST_HIGHLIGHT:
+    description: "highlight users in channel. Deprecated."
+    deprecationMessage: "Deprecated. Use highlight instead."
+  highlight:
     description: "highlight users in channel"
-    required: false
+  branch:
+    description: Git branch
+  commit:
+    description: Git commit
+  commit-message:
+    description: Git commit message to use
+  repository:
+    description: GitHub repository (org/repo). Default is github.repository
+    default: ${{ github.repository }}
+  workflow:
+    description: GitHub workflow ID
+  workflow-name:
+    description: GitHub workflow name
+
 branding:
   icon: "package"
   color: "green"
@@ -26,9 +43,27 @@ runs:
     - name: Create the Mattermost Message
       shell: bash
       run: |
-        if [ "${{ inputs.MATTERMOST_HIGHLIGHT }}" ] ; then
-          mnotify-git ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }} \
-            --highlight ${{ inputs.MATTERMOST_HIGHLIGHT }}
-        else
-          mnotify-git ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }}
+        ARGS=""
+        if [ -n "${{ inputs.commit }}" ]; then
+          ARGS="${ARGS} --commit ${{ inputs.commit }}"
         fi
+        if [ -n "${{ inputs.commit-message }}" ]; then
+          ARGS="${ARGS} --commit-message ${{ inputs.commit-message }}"
+        fi
+        if [ -n "${{ inputs.branch }}" ]; then
+          ARGS="${ARGS} --branch ${{ inputs.branch }}"
+        fi
+        if [ -n "${{ inputs.repository }}" ]; then
+          ARGS="${ARGS} --repository ${{ inputs.repository }}"
+        fi
+        if [ -n "${{ inputs.workflow }}" ]; then
+          ARGS="${ARGS} --workflow ${{ inputs.workflow }}"
+        fi
+        if [ -n "${{ inputs.workflow-name }}" ]; then
+          ARGS="${ARGS} --workflow_name ${{ inputs.workflow-name }}"
+        fi
+        if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" -o -n "${{ inputs.highlight }}" ] ; then
+          ARGS="--highlight ${{ inputs.MATTERMOST_HIGHLIGHT }} ${{ inputs.highlight }}"
+        fi
+
+        mnotify-git ${ARGS} "${{ inputs.MATTERMOST_WEBHOOK_URL }}" "${{ inputs.MATTERMOST_CHANNEL }}"
