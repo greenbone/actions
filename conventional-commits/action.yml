@@ -15,11 +15,11 @@ inputs:
     description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
     default: "true"
   head-ref:
-    description: "Use as specific head ref. Defaults to 'github.head_ref'"
-    default: ${{ github.head_ref }}
+    description: "Use as specific head ref. Defaults to 'github.event.pull_request.head.sha'"
+    default: ${{ github.event.pull_request.head.sha }}
   base-ref:
-    description: "Use a specific base ref. Defaults to 'github.base_ref'."
-    default: ${{ github.base_ref }}
+    description: "Use a specific base ref. Defaults to 'github.event.pull_request.base.sha'."
+    default: ${{ github.event.pull_request.base.sha }}
 
 runs:
   using: "composite"
