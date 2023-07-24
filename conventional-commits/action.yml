@@ -24,6 +24,19 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Refs
+      run: |
+        echo "::debug::ref: ${{ github.ref }}"
+        echo "::debug::ref_name: ${{ github.ref_name }}"
+        echo "::debug::head_ref: ${{ github.head_ref }}"
+        echo "::debug::base_ref: ${{ github.base_ref }}"
+        echo "::debug::pr number: ${{ github.event.pull_request.number }}"
+        echo "::debug::merge_commit_sha: ${{ github.event.pull_request.merge_commit_sha }}"
+        echo "::debug::PR head ref ${{ github.event.pull_request.head.ref }}"
+        echo "::debug::PR head sha ${{ github.event.pull_request.head.sha }}"
+        echo "::debug::PR base ref ${{ github.event.pull_request.base.ref }}"
+        echo "::debug::PR base sha ${{ github.event.pull_request.base.sha }}"
+      shell: bash
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
