@@ -42,13 +42,13 @@ wrapt = [
 
 [[package]]
 name = "autohooks"
-version = "23.4.0"
+version = "23.7.0"
 description = "Library for managing git hooks"
 optional = false
-python-versions = ">=3.7.2,<4.0.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "autohooks-23.4.0-py3-none-any.whl", hash = "sha256:2c3b8506890565ad8c9b690db9b70a9b65068ff9f1c2a2d601d2914ad576cfff"},
-    {file = "autohooks-23.4.0.tar.gz", hash = "sha256:6880ad263f0aaab607bbfc1d42afc407de6234320fcff10d75d4e89f4e711ccd"},
+    {file = "autohooks-23.7.0-py3-none-any.whl", hash = "sha256:1fa417891efc3681bdf109cb2e99688948d1f3587d91dab17f1ed9b4428590a4"},
+    {file = "autohooks-23.7.0.tar.gz", hash = "sha256:cf486581fc111122fc3ea394b60a26bc4da0844cf916b6e4fadf90ff97633fe5"},
 ]
 
 [package.dependencies]
