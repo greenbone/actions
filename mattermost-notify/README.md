@@ -30,7 +30,7 @@ jobs:
         with:
             MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
             MATTERMOST_CHANNEL: ${{ secrets.MATTERMOST_CHANNEL }}
-            MATTERMOST_HIGHLIGHT: USER1 USER2
+            highlight: USER1 USER2
 ```
 
 ## Action Configuration
@@ -39,4 +39,11 @@ jobs:
 |--------------|-----------|-|
 | MATTERMOST_WEBHOOK_URL | Mattermost webhook url | Required |
 | MATTERMOST_CHANNEL | Mattermost channel | Required |
-| MATTERMOST_HIGHLIGHT | List of space separated users to highlight in the channel | Optional |
+| MATTERMOST_HIGHLIGHT | List of space separated users to highlight in the channel | Deprecated. Use highlight instead |
+| highlight | List of space separated users to highlight in the channel | Optional |
+| branch | Git branch to use in the message | Optional. Will be derived from the event if not set. |
+| commit | Git commit to use in the message | Optional. Will be derived from the event if not set. |
+| commit-message | Git commit message to use in the message | Optional. Will be derived from the event if commit is not set. Otherwise it will be derived from the git log. |
+| repository | GitHub repository (org/repo) | Optional. Default is `${{ github.repository }}` |
+| workflow | GitHub workflow ID to use in the message | Optional |
+| workflow-name | GitHub workflow name to use in the message | Optional |

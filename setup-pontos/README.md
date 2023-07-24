@@ -24,8 +24,8 @@ jobs:
 |Input Variable|Description| |
 |--------------|-----------|-|
 | python-version | Python version to use for running the action. | Optional (default is `3.10`) |
-| virtualenv-path |  | Optional (default is `${{ github.workspace }}/pontos-env`) |
-| cache-key | Additional key to use for caching | Optional (default is `pontos-venv`) |
+| virtualenv-path |  | Deprecated and will be ignored. |
+| cache-key |  | Deprecated and will be ignored. |
 
 |Output Variable|Description|
 |---------------|-----------|

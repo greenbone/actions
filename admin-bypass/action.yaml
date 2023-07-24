@@ -24,7 +24,6 @@ runs:
   using: "composite"
   steps:
     - name: Set up Python and pontos
-      id: virtualenv
       uses: greenbone/actions/setup-pontos@v3
     - name: allow/not allow bypass?
       run: |
@@ -41,7 +40,6 @@ runs:
       # in case of blubber input let the branch be unlocked!
     - name: Prepare release and store the version
       run: |
-        source ${{ steps.virtualenv.outputs.activate }}
         pontos-github-script pontos.github.scripts.enforce-admins ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.ALLOW_OPT }}
       shell: bash
       env:

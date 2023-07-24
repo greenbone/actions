@@ -20,12 +20,10 @@ runs:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ inputs.python-version }} and pontos
       uses: greenbone/actions/setup-pontos@v3
-      id: virtualenv
       with:
         python-version: ${{ inputs.python-version}}
     - name: Check version information
       run: |
-        source ${{ steps.virtualenv.outputs.activate }}
-        python -m pontos.version verify current
+        pontos-version verify current
       shell: bash
       working-directory: ${{ inputs.working-directory }}
