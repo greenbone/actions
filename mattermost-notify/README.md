@@ -2,7 +2,37 @@
 
 Sends workflow status messages to a Mattermost channel.
 
-## Example
+## Examples
+
+### Usage with job needs
+
+```yml
+name: Some Workflow
+
+on:
+  pull_request:
+
+  jobs:
+    do-something:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do Something
+        run: |
+          echo "I am doing something"
+
+  notify:
+    needs: do-something
+    runs-on: ubuntu-latest
+    steps:
+      - uses: greenbone/actions/mattermost-notify@v3
+        with:
+            url: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+            channel: ${{ secrets.MATTERMOST_CHANNEL }}
+            highlight: USER1 USER2
+
+```
+
+### Usage with workflow_run event
 
 - Create a yml file under /.github/workflows.
 - Add under "workflows:" the workflows you want to receive a status message about.
@@ -28,22 +58,25 @@ jobs:
     steps:
       - uses: greenbone/actions/mattermost-notify@v3
         with:
-            MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-            MATTERMOST_CHANNEL: ${{ secrets.MATTERMOST_CHANNEL }}
+            url: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+            channel: ${{ secrets.MATTERMOST_CHANNEL }}
             highlight: USER1 USER2
 ```
+
 
 ## Action Configuration
 
 |Input Variable|Description| |
 |--------------|-----------|-|
-| MATTERMOST_WEBHOOK_URL | Mattermost webhook url | Required |
-| MATTERMOST_CHANNEL | Mattermost channel | Required |
+| url | Mattermost webhook url | Required. |
+| channel | Mattermost channel to post message in. | Required. |
+| highlight | List of space separated users to highlight in the channel | Optional. |
+| branch | Git branch to use in the message | Optional. Default is `${{ github.ref_name }}`. Will be derived from the event if empty. |
+| commit | Git commit to use in the message | Optional. Default is `${{ github.sha }}`. Will be derived from the event if empty. |
+| commit-message | Git commit message to use in the message | Optional. Will be derived from the event if commit is empty. Otherwise it will be derived from the git log. |
+| repository | GitHub repository (org/repo) | Optional. Default is `${{ github.repository }}`. |
+| workflow | GitHub workflow ID to use in the message | Optional. Default is `${{ github.run_id }}`. |
+| workflow-name | GitHub workflow name to use in the message | Optional. Default is `${{ github.workflow }}` |
+| MATTERMOST_WEBHOOK_URL | Mattermost webhook url | Deprecated. Use url instead. |
+| MATTERMOST_CHANNEL | Mattermost channel | Deprecated. Use channel instead. |
 | MATTERMOST_HIGHLIGHT | List of space separated users to highlight in the channel | Deprecated. Use highlight instead |
-| highlight | List of space separated users to highlight in the channel | Optional |
-| branch | Git branch to use in the message | Optional. Will be derived from the event if not set. |
-| commit | Git commit to use in the message | Optional. Will be derived from the event if not set. |
-| commit-message | Git commit message to use in the message | Optional. Will be derived from the event if commit is not set. Otherwise it will be derived from the git log. |
-| repository | GitHub repository (org/repo) | Optional. Default is `${{ github.repository }}` |
-| workflow | GitHub workflow ID to use in the message | Optional |
-| workflow-name | GitHub workflow name to use in the message | Optional |
