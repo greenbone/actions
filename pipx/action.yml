@@ -44,9 +44,29 @@ runs:
       id: python
       with:
         python-version: ${{ inputs.python-version }}
+    - name: Pipx version
+      id: version
+      run: |
+        PIPX_VERSION=$(pipx --version)
+
+        IFS='.' read -r major minor patch << EOF
+        $PIPX_VERSION
+        EOF
+
+        echo "version=$PIPX_VERSION" >> $GITHUB_OUTPUT
+        echo "major=$major" >> $GITHUB_OUTPUT
+        echo "minor=$minor" >> $GITHUB_OUTPUT
+        echo "patch=$patch" >> $GITHUB_OUTPUT
+      shell: bash
     - name: Get pipx settings
+      continue-on-error: true
       id: settings
       run: |
+        if [[ "${{ steps.version.outputs.major }}" -lt 1 || ( "${{ steps.version.outputs.major }}" -eq 1 && "${{ steps.version.outputs.minor }}" -lt 1 ) ]]; then
+          echo "::warning::pipx version ${{ steps.version.outputs.version}} is installed. At least version 1.1.0 is required to provide outputs in this action! Try to install newer version with pip."
+          python3 -m pip install "pipx>=1.1.0"
+        fi
+
         pipx environment
         echo "home=$(pipx environment -v PIPX_HOME)" >> $GITHUB_OUTPUT
         echo "bin=$(pipx environment -v PIPX_BIN_DIR)" >> $GITHUB_OUTPUT
