@@ -24,6 +24,6 @@ jobs:
 |----------------|-----------------------------------------------------------------------------------------------------------|----------|
 | version        | Node version to setup. Set to empty to not run a setup. Default: 18.x                                     | Optional |
 | run-ci         | Run node ci. Default: false Options: true/false                                                           | Optional |
-| scripts        | Space separated string of script names to run the build. If not set no package will build. Default: empty | Optional |
+| scripts        | Space separated string of script names to run the build. Set to empty to not run a script. Default: build | Optional |
 | registry-url   | The registry url used to push npm packages to. Default: https://npm.pkg.github.com                        | Optional |
 | registry-token | Registry login password/token. If not set packages will not pushed to registry. Default: empty            | Optional |
