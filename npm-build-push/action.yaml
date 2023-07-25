@@ -9,7 +9,8 @@ inputs:
     description: "Run node ci. Default: false Options: true/false"
     default: "false"
   scripts:
-    description: "Space separated string of script names to run the build. If not set no package will build. Default: empty"
+    description: "Space separated string of script names to run the build. Set to empty to not run a script. Default: build"
+    default: "build"
   registry-url:
     description: "The registry url used to push npm packages to. Default: https://npm.pkg.github.com"
     default: "https://npm.pkg.github.com"
