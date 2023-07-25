@@ -62,8 +62,11 @@ runs:
         if [ -n "${{ inputs.workflow-name }}" ]; then
           ARGS="${ARGS} --workflow_name ${{ inputs.workflow-name }}"
         fi
+
+        ARGS="${ARGS} ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }}"
+
         if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" -o -n "${{ inputs.highlight }}" ] ; then
           ARGS="--highlight ${{ inputs.MATTERMOST_HIGHLIGHT }} ${{ inputs.highlight }}"
         fi
 
-        mnotify-git ${ARGS} "${{ inputs.MATTERMOST_WEBHOOK_URL }}" "${{ inputs.MATTERMOST_CHANNEL }}"
+        mnotify-git ${ARGS}
