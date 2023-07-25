@@ -18,18 +18,22 @@ inputs:
   highlight:
     description: "highlight users in channel"
   branch:
-    description: Git branch
+    description: Git branch. Default is 'github.ref_name'.
+    default: ${{ github.ref_name }}
   commit:
-    description: Git commit
+    description: Git commit. Default is 'github.sha'.
+    default: ${{ github.sha }}
   commit-message:
     description: Git commit message to use
   repository:
-    description: GitHub repository (org/repo). Default is github.repository
+    description: GitHub repository (org/repo). Default is 'github.repository'
     default: ${{ github.repository }}
   workflow:
-    description: GitHub workflow ID
+    description: GitHub workflow ID. Default is 'github.run_id'.
+    default: ${{ github.run_id }}
   workflow-name:
-    description: GitHub workflow name
+    description: GitHub workflow name. Default is 'github.workflow'
+    default: ${{ github.workflow }}
 
 branding:
   icon: "package"
