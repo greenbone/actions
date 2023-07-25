@@ -4,13 +4,17 @@ description: "Send a mattermost message"
 inputs:
   MATTERMOST_WEBHOOK_URL:
     description: "Mattermost webhook url"
-    required: true
+    deprecationMessage: "Deprecated. Use url instead."
   MATTERMOST_CHANNEL:
     description: "Mattermost channel"
-    required: true
+    deprecationMessage: "Deprecated. Use channel instead."
   MATTERMOST_HIGHLIGHT:
     description: "highlight users in channel. Deprecated."
     deprecationMessage: "Deprecated. Use highlight instead."
+  url:
+    description: "Mattermost webhook url"
+  channel:
+    description: "Mattermost channel"
   highlight:
     description: "highlight users in channel"
   branch:
@@ -63,7 +67,7 @@ runs:
           ARGS="${ARGS} --workflow_name ${{ inputs.workflow-name }}"
         fi
 
-        ARGS="${ARGS} ${{ inputs.MATTERMOST_WEBHOOK_URL }} ${{ inputs.MATTERMOST_CHANNEL }}"
+        ARGS="${ARGS} ${{ inputs.MATTERMOST_WEBHOOK_URL }}${{ inputs.url }} ${{ inputs.MATTERMOST_CHANNEL }}${{ inputs.channel }}"
 
         if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" -o -n "${{ inputs.highlight }}" ] ; then
           ARGS="${ARGS} --highlight ${{ inputs.MATTERMOST_HIGHLIGHT }} ${{ inputs.highlight }}"
