@@ -70,7 +70,17 @@ updates:
 
     # PIP
   - package-ecosystem: pip
-    directory: "/trigger-workflow/"
+    directory: "/backport-pull-request/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    allow:
+      - dependency-type: direct
+      - dependency-type: indirect
+    commit-message:
+      prefix: "Deps"
+  - package-ecosystem: pip
+    directory: "/conventional-commits/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
@@ -90,7 +100,17 @@ updates:
     commit-message:
       prefix: "Deps"
   - package-ecosystem: pip
-    directory: "/backport-pull-request/"
+    directory: "/helm-version-upgrade/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    allow:
+      - dependency-type: direct
+      - dependency-type: indirect
+    commit-message:
+      prefix: "Deps"
+  - package-ecosystem: pip
+    directory: "/trigger-workflow/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
