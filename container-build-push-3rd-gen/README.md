@@ -40,3 +40,9 @@ jobs:
 | image-url           | Image url/name without registry.                               | Required |
 | image-platforms     | Image platforms to build for. Default is 'linux/amd64'.        | Optional |
 | registry-password   | Registry password.                                             | Required |
+
+## Action Output
+
+| Output Variable | Description          |
+|-----------------|----------------------|
+| digest          | The container digest |
