@@ -33,6 +33,11 @@ inputs:
     description: "Registry password."
     required: true
 
+outputs:
+  digest:
+    description: "The container digest."
+    value: ${{ steps.build-and-push.outputs.digest }}
+
 branding:
   icon: "package"
   color: "green"
@@ -41,6 +46,7 @@ runs:
   using: "composite"
   steps:
   - name: Container build and push ghcr.io
+    id: build-and-push
     uses: greenbone/actions/container-build-push-generic@v3
     with:
       build-context: ${{ inputs.build-context }}

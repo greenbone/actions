@@ -48,3 +48,9 @@ jobs:
 | image-tags          | Image tags.                                         | Required |
 | registry-username   | Login registry username.                            | Required |
 | registry-password   | Login registry password.                            | Required |
+
+## Action Output
+
+| Output Variable | Description          |
+|-----------------|----------------------|
+| digest          | The container digest |
