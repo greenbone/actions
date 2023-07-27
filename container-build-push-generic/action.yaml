@@ -42,6 +42,11 @@ inputs:
     description: "Login registry password."
     required: true
 
+outputs:
+  digest:
+    description: "The container digest."
+    value: ${{ steps.build-and-push.outputs.digest }}
+
 branding:
   icon: "package"
   color: "green"
