@@ -58,30 +58,36 @@ runs:
     - name: Create the Mattermost Message
       shell: bash
       run: |
-        ARGS=""
+        ARGS=()
+
         if [ -n "${{ inputs.commit }}" ]; then
-          ARGS="${ARGS} --commit \"${{ inputs.commit }}\""
+          ARGS+=(--commit "${{ inputs.commit }}")
         fi
+
         if [ -n "${{ inputs.commit-message }}" ]; then
-          ARGS="${ARGS} --commit-message \"${{ inputs.commit-message }}\""
+          ARGS+=(--commit-message "${{ inputs.commit-message }}")
         fi
+
         if [ -n "${{ inputs.branch }}" ]; then
-          ARGS="${ARGS} --branch \"${{ inputs.branch }}\""
+          ARGS+=(--branch "${{ inputs.branch }}")
         fi
+
         if [ -n "${{ inputs.repository }}" ]; then
-          ARGS="${ARGS} --repository \"${{ inputs.repository }}\""
+          ARGS+=(--repository "${{ inputs.repository }}")
         fi
+
         if [ -n "${{ inputs.workflow }}" ]; then
-          ARGS="${ARGS} --workflow \"${{ inputs.workflow }}\""
+          ARGS+=(--workflow "${{ inputs.workflow }}")
         fi
+
         if [ -n "${{ inputs.workflow-name }}" ]; then
-          ARGS="${ARGS} --workflow_name \"${{ inputs.workflow-name }}\""
+          ARGS+=(--workflow_name "${{ inputs.workflow-name }}")
         fi
 
-        ARGS="${ARGS} \"${{ inputs.MATTERMOST_WEBHOOK_URL }}${{ inputs.url }}\" \"${{ inputs.MATTERMOST_CHANNEL }}${{ inputs.channel }}\""
+        ARGS+=("${{ inputs.MATTERMOST_WEBHOOK_URL }}${{ inputs.url }}" "${{ inputs.MATTERMOST_CHANNEL }}${{ inputs.channel }}")
 
-        if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" -o -n "${{ inputs.highlight }}" ] ; then
-          ARGS="${ARGS} --highlight \"${{ inputs.MATTERMOST_HIGHLIGHT }}\" \"${{ inputs.highlight }}\""
+        if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" -o -n "${{ inputs.highlight }}" ]; then
+          ARGS+=(--highlight "${{ inputs.MATTERMOST_HIGHLIGHT }}" "${{ inputs.highlight }}")
         fi
 
-        mnotify-git ${ARGS}
+        mnotify-git "${ARGS[@]}"
