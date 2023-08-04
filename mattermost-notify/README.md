@@ -74,7 +74,7 @@ jobs:
 | branch | Git branch to use in the message | Optional. Default is `${{ github.ref_name }}`. Will be derived from the event if empty. |
 | commit | Git commit to use in the message | Optional. Default is `${{ github.sha }}`. Will be derived from the event if empty. |
 | commit-message | Git commit message to use in the message | Optional. Will be derived from the event if commit is empty. Otherwise it will be derived from the git log. |
-| status | Specifies the notification status. Options success or failure. Default is automatic detected by 'GITHUB_EVENT_PATH' json. | Optional. |
+| status | Specifies the notification status. Options success or failure. Default is automatic detected by `GITHUB_EVENT_PATH` json. | Optional. |
 | repository | GitHub repository (org/repo) | Optional. Default is `${{ github.repository }}`. |
 | workflow | GitHub workflow ID to use in the message | Optional. Default is `${{ github.run_id }}`. |
 | workflow-name | GitHub workflow name to use in the message | Optional. Default is `${{ github.workflow }}` |
