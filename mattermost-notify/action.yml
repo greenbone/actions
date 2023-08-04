@@ -25,6 +25,8 @@ inputs:
     default: ${{ github.sha }}
   commit-message:
     description: Git commit message to use
+  status:
+    description: Specifies the notification status. Options success or failure. Default is automatic detected by 'GITHUB_EVENT_PATH' json.
   repository:
     description: GitHub repository (org/repo). Default is 'github.repository'
     default: ${{ github.repository }}
@@ -70,6 +72,10 @@ runs:
 
         if [ -n "${{ inputs.branch }}" ]; then
           ARGS+=(--branch "${{ inputs.branch }}")
+        fi
+
+        if [ -n "${{ inputs.status }}" ]; then
+          ARGS+=(--status "${{ inputs.status }}")
         fi
 
         if [ -n "${{ inputs.repository }}" ]; then
