@@ -27,9 +27,9 @@ jobs:
 | python-version | Python version that should be installed | Optional (default: "3.10") |
 | test-command | Command to run the unit tests | Optional (default: `"-m unittest"`)
 | poetry-version | Use a specific poetry version. By default the latest release is used. | Optional |
-| cache | Cache dependencies by setting it to `"true"`. Leave unset or set to an other string then `"true"` to disable the cache. | Optional |
+| cache | Cache dependencies by setting it to `"true"`. | Optional |
 | cache-dependency-path | "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies. | Optional |
-| cache-poetry-installation | Cache poetry and its dependencies. Default is `"true"`. Set to an other string then `"true"` to disable the cache. | Optional (default is `"true"`) |
+| cache-poetry-installation | Cache poetry and its dependencies by setting it to `"true"`. | Optional |
 | install-dependencies | Install project dependencies. Default is `"true"`. Set to an other string then `"true"` to not install the dependencies. | Optional (default: `"true"`) |
 | working-directory | Working directory where to run the action | Optional (default is `${{ github.workspace }}`) |
 | codecov-upload | "Upload coverage to codecov.io. Default is `"true"`. Set to an other string then `"true"` to disable the upload. | Optional (default: `"true"`)
