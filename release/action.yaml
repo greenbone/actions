@@ -141,6 +141,7 @@ runs:
 
       # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
+      if: inputs.ref == 'main'
       uses: greenbone/actions/admin-bypass@v3
       with:
         allow: "true"
@@ -160,7 +161,7 @@ runs:
 
       # Disable admin bypass
     - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
-      if: always()
+      if: inputs.ref == 'main' && always()
       uses: greenbone/actions/admin-bypass@v3
       with:
         allow: "false"
