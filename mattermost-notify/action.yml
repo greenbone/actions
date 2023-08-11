@@ -95,7 +95,7 @@ runs:
         if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" ] || [ -n "${{ inputs.highlight }}" ]; then
           ARGS+=(--highlight)
           # Add every highlight element as its own string
-          IFS=' ' read -ra HIGHLIGHTS <<< "${{ inputs.MATTERMOST_HIGHLIGHT }}" ${{ inputs.highlight }}"
+          IFS=' ' read -ra HIGHLIGHTS <<< "${{ inputs.MATTERMOST_HIGHLIGHT }} ${{ inputs.highlight }}"
           for HIGHLIGHT in "${HIGHLIGHTS[@]}"; do
             ARGS+=("$HIGHLIGHT")
           done
