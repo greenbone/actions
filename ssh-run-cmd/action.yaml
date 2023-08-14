@@ -1,0 +1,44 @@
+name: "SSH run cmd"
+description: "Run bash cmd on remote host"
+
+inputs:
+  cmd:
+    description: "Bash cmd string. Single quotes are not allowed."
+    required: true
+  known-hosts:
+    description: "SSH known hosts string."
+    required: true
+  ssh-user:
+    description: "SSH login user. Default: root."
+    default: "root"
+  ssh-remote-host:
+    description: "SSH remote host IP/DNS."
+    required: true
+  ssh-private-key:
+    description: "SSH private key string."
+    required: true
+  ssh-tmp:
+    description: "SSH private key storage folder path. Default: /tmp/ssh."
+    default: "/tmp/ssh"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup ssh key
+      shell: bash
+      run: |
+        mkdir -p '${{ inputs.ssh-tmp }}' && chmod 0700 '${{ inputs.ssh-tmp }}'
+        echo '${{ inputs.ssh-private-key }}' > '${{ inputs.ssh-tmp }}/key.ssh'
+        chmod 0600 '${{ inputs.ssh-tmp }}/key.ssh'
+    - name: Create ssh known hosts file
+      uses: greenbone/actions/ssh-known-hosts@v2
+      with:
+        known_hosts: ${{ inputs.known-hosts }}
+    - name: Run bash cmd on remote host
+      shell: bash
+      run: |
+        echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash
