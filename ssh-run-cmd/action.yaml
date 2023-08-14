@@ -35,7 +35,7 @@ runs:
         echo '${{ inputs.ssh-private-key }}' > '${{ inputs.ssh-tmp }}/key.ssh'
         chmod 0600 '${{ inputs.ssh-tmp }}/key.ssh'
     - name: Create ssh known hosts file
-      uses: greenbone/actions/ssh-known-hosts@v2
+      uses: greenbone/actions/ssh-known-hosts@v3
       with:
         known_hosts: ${{ inputs.known-hosts }}
     - name: Run bash cmd on remote host
