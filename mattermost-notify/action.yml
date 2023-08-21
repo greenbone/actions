@@ -55,7 +55,7 @@ runs:
       with:
         ref: ${{ inputs.commit }}
     - name: Install
-      if: ${{ !startsWith(runner.name, 'self-hosted-generic') }}
+      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       uses: greenbone/actions/pipx@v3
       id: pipx
       with:
