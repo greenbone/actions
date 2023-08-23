@@ -49,6 +49,8 @@ runs:
         branch: ${{ inputs.bypass-branch-protection }}
     - name: Push sbom
       if: inputs.git-user && inputs.git-user-email && inputs.token
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
       shell: bash
       run: |
         cp _manifest/spdx_2.2/manifest.spdx.json ${{ github.event.repository.name }}.spdx
