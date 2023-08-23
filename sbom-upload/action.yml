@@ -42,7 +42,7 @@ runs:
       if: inputs.git-user && inputs.git-user-email && inputs.token
       shell: bash
       run: |
-        cp _manifest/spdx_2.2/manifest.spdx.json sbom.spdx.json
-        git add sbom.spdx.json
-        git commit -m "Change: Update sbom file sbom.spdx.json"
+        cp _manifest/spdx_2.2/manifest.spdx.json ${{ github.repository }}.spdx
+        git add ${{ github.repository }}.spdx
+        git commit -m "Change: Update sbom file ${{ github.repository }}.spdx"
         git push
