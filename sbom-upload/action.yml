@@ -7,7 +7,8 @@ inputs:
   git-user-email:
     description: "Git user email for commit, set only if autocommit is desired. Default: empty"
   token:
-    description: "Github token for commit, set only if autocommit is desired. Default: empty"
+    description: "Github token for commit, set only if autocommit is desired. Default: github.token"
+    default: ${{ github.token }}
   bypass-branch-protection:
     description: "Branch name to bypass protection for admin user, set only if autocommit is desired. Default: empty"
 
