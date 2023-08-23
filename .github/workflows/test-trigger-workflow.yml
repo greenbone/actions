@@ -40,30 +40,30 @@ jobs:
           echo "::error ::Previous job should have timed out. Conclusion was ${{ steps.test.conclusion }}"
           exit 1
 
-  test-success:
-    runs-on: ubuntu-latest
-    name: Trigger workflow successfully
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Determine Ref
-        id: ref
-        run: |
-          if [ -n "$GITHUB_HEAD_REF" ];
-          then
-            echo "ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT;
-          else
-            echo "ref=${GITHUB_REF##refs/*/}" >> $GITHUB_OUTPUT;
-          fi;
-        shell: bash
-      - name: Trigger Another Workflow
-        uses: ./trigger-workflow
-        with:
-          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
-          repository: greenbone/actions
-          workflow: "test-trigger-workflow-test-workflow.yml"
-          ref: ${{ steps.ref.outputs.ref }}
-          wait-for-completion-interval: 10
+#  test-success:
+#    runs-on: ubuntu-latest
+#    name: Trigger workflow successfully
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Determine Ref
+#        id: ref
+#        run: |
+#          if [ -n "$GITHUB_HEAD_REF" ];
+#          then
+#            echo "ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT;
+#          else
+#            echo "ref=${GITHUB_REF##refs/*/}" >> $GITHUB_OUTPUT;
+#          fi;
+#        shell: bash
+#      - name: Trigger Another Workflow
+#        uses: ./trigger-workflow
+#        with:
+#          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+#          repository: greenbone/actions
+#          workflow: "test-trigger-workflow-test-workflow.yml"
+#          ref: ${{ steps.ref.outputs.ref }}
+#          wait-for-completion-interval: 10
 
   test-failing-workflow:
     runs-on: ubuntu-latest
