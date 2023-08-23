@@ -8,6 +8,8 @@ inputs:
     description: "Git user email for commit, set only if autocommit is desired. Default: empty"
   token:
     description: "Github token for commit, set only if autocommit is desired. Default: empty"
+  bypass-branch-protection:
+    description: "Branch name to bypass protection for admin user, set only if autocommit is desired. Default: empty"
 
 branding:
   icon: "box"
@@ -38,6 +40,13 @@ runs:
         user: ${{ inputs.git-user }}
         mail: ${{ inputs.git-user-email }}
         token: ${{ inputs.token }}
+    - name: Disable branch protection for admin user
+      if: always() && inputs.bypass-branch-protection && inputs.git-user && inputs.git-user-email && inputs.token
+      uses: greenbone/actions/admin-bypass@v3
+      with:
+        allow: "true"
+        github-token: ${{ inputs.token }}
+        branch: ${{ inputs.bypass-branch-protection }}
     - name: Push sbom
       if: inputs.git-user && inputs.git-user-email && inputs.token
       shell: bash
@@ -46,3 +55,10 @@ runs:
         git add ${{ github.event.repository.name }}.spdx
         git commit -m "Change: Update sbom file ${{ github.event.repository.name }}.spdx"
         git push
+    - name: Enable branch protection for admin user
+      if: always() && inputs.bypass-branch-protection && inputs.git-user && inputs.git-user-email && inputs.token
+      uses: greenbone/actions/admin-bypass@v3
+      with:
+        allow: "false"
+        github-token: ${{ inputs.token }}
+        branch: ${{ inputs.bypass-branch-protection }}
