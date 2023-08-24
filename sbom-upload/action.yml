@@ -54,9 +54,13 @@ runs:
       if: inputs.git-user && inputs.git-user-email && inputs.token
       shell: bash
       run: |
+        commit_msg="Change: Update sbom file ${{ github.event.repository.name }}.spdx"
+        if [ "${{ github.ref }}" == 'refs/heads/main' ]; then
+          commit_msg+=" [skip actions]"
+        fi
         cp _manifest/spdx_2.2/manifest.spdx.json ${{ github.event.repository.name }}.spdx
         git add ${{ github.event.repository.name }}.spdx
-        git commit -m "Change: Update sbom file ${{ github.event.repository.name }}.spdx"
+        git commit -m "$commit_msg"
         git push
     - name: Enable branch protection for admin user
       if: always() && inputs.bypass-branch-protection && inputs.git-user && inputs.git-user-email && inputs.token
