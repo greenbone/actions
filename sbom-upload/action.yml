@@ -1,12 +1,27 @@
 name: "SBOM upload"
 description: "Receive Dependabot alerts for package manifests"
+
+inputs:
+  git-user:
+    description: "Git user name for commit, set only if autocommit is desired. Default: empty"
+  git-user-email:
+    description: "Git user email for commit, set only if autocommit is desired. Default: empty"
+  token:
+    description: "Github token for commit, set only if autocommit is desired. Default: github.token"
+    default: ${{ github.token }}
+  bypass-branch-protection:
+    description: "Branch name to bypass protection for admin user, set only if autocommit is desired. Default: empty"
+
 branding:
   icon: "box"
   color: "green"
+
 runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v3
+      with:
+        token: ${{ inputs.token }}
     - name: Generate SBOM
       run: |
         curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/download/v1.1.2/sbom-tool-linux-x64
@@ -21,3 +36,32 @@ runs:
       uses: advanced-security/spdx-dependency-submission-action@v0.0.1
       with:
         filePath: "_manifest/spdx_2.2/"
+    - name: Setup github user
+      if: inputs.git-user && inputs.git-user-email && inputs.token
+      uses: greenbone/actions/set-github-user@v3
+      with:
+        user: ${{ inputs.git-user }}
+        mail: ${{ inputs.git-user-email }}
+        token: ${{ inputs.token }}
+    - name: Disable branch protection for admin user
+      if: always() && inputs.bypass-branch-protection && inputs.git-user && inputs.git-user-email && inputs.token
+      uses: greenbone/actions/admin-bypass@v3
+      with:
+        allow: "true"
+        github-token: ${{ inputs.token }}
+        branch: ${{ inputs.bypass-branch-protection }}
+    - name: Push sbom
+      if: inputs.git-user && inputs.git-user-email && inputs.token
+      shell: bash
+      run: |
+        cp _manifest/spdx_2.2/manifest.spdx.json ${{ github.event.repository.name }}.spdx
+        git add ${{ github.event.repository.name }}.spdx
+        git commit -m "Change: Update sbom file ${{ github.event.repository.name }}.spdx [skip ci]"
+        git push
+    - name: Enable branch protection for admin user
+      if: always() && inputs.bypass-branch-protection && inputs.git-user && inputs.git-user-email && inputs.token
+      uses: greenbone/actions/admin-bypass@v3
+      with:
+        allow: "false"
+        github-token: ${{ inputs.token }}
+        branch: ${{ inputs.bypass-branch-protection }}

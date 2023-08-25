@@ -23,3 +23,12 @@ jobs:
       - name: 'SBOM upload'
         uses: greenbone/actions/sbom-upload@v3
 ```
+
+## Inputs
+
+| Name                      | Description                                                                                        |          |
+|---------------------------|----------------------------------------------------------------------------------------------------|----------|
+| git-user                  | Git user name for commit, set only if autocommit is desired. Default: empty                        | Optional |
+| git-user-email            | Git user email for commit, set only if autocommit is desired. Default: empty                       | Optional |
+| token                     | Github token for commit, set only if autocommit is desired. Default: github.token                  | Optional |
+| bypass-branch-protection  | Branch name to bypass protection for admin user, set only if autocommit is desired. Default: empty | Optional |
