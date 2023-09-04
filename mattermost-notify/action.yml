@@ -51,7 +51,7 @@ runs:
       # we need a checkout to determine the commit-message per git
       # if commit is set but commit-message is not
       if: inputs.commit && !inputs.commit-message
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ inputs.commit }}
     - name: Install
