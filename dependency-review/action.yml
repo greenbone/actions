@@ -42,4 +42,5 @@ runs:
           MIT OR Apache-2.0,
           MIT AND Python-2.0,
           (Apache-2.0 AND BSD-3-Clause) OR (Apache-2.0 AND MIT),
-          (MIT OR Apache-2.0) AND Unicode-DFS-2016
+          (MIT OR Apache-2.0) AND Unicode-DFS-2016,
+          Unlicense/MIT
