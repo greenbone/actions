@@ -12,7 +12,7 @@ jobs:
     name: Test Artifact Downloading
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Determine Branch
         id: branch
         run: |

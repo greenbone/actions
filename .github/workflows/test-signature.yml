@@ -14,7 +14,7 @@ jobs:
     name: Test creating signature file
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Create a signature file
         uses: ./signature
         with:
