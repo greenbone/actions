@@ -9,7 +9,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/poetry/"
     schedule:
@@ -18,7 +19,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/release/"
     schedule:
@@ -27,7 +29,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/release-python/"
     schedule:
@@ -36,7 +39,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/coverage-python/"
     schedule:
@@ -45,7 +49,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/lint-python/"
     schedule:
@@ -54,7 +59,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/mypy-python/"
     schedule:
@@ -63,7 +69,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/mattermost-notify/"
     schedule:
@@ -72,7 +79,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/install-npm/"
     schedule:
@@ -81,7 +89,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/lint-javascript/"
     schedule:
@@ -90,7 +99,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/test-javascript/"
     schedule:
@@ -99,7 +109,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
 
     # PIP
   - package-ecosystem: pip
@@ -114,7 +125,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: pip
     directory: "/conventional-commits/"
     schedule:
@@ -127,7 +139,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: pip
     directory: "/download-artifact/"
     schedule:
@@ -140,7 +153,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: pip
     directory: "/helm-version-upgrade/"
     schedule:
@@ -153,7 +167,8 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
   - package-ecosystem: pip
     directory: "/trigger-workflow/"
     schedule:
@@ -166,4 +181,5 @@ updates:
       prefix: "Deps"
     groups:
       dependencies:
-        - patterns: "*"
+        patterns:
+          - "*"
