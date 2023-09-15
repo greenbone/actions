@@ -7,99 +7,77 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/poetry/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/release/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/release-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/coverage-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/lint-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/mypy-python/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/mattermost-notify/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/install-npm/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/lint-javascript/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: "github-actions"
     directory: "/test-javascript/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
 
     # PIP
   - package-ecosystem: pip
@@ -112,9 +90,7 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: pip
     directory: "/conventional-commits/"
     schedule:
@@ -125,9 +101,7 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: pip
     directory: "/download-artifact/"
     schedule:
@@ -138,9 +112,7 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: pip
     directory: "/helm-version-upgrade/"
     schedule:
@@ -151,9 +123,7 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+
   - package-ecosystem: pip
     directory: "/trigger-workflow/"
     schedule:
@@ -164,6 +134,6 @@ updates:
       - dependency-type: indirect
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-      - patterns: "*"
+groups:
+  dependencies:
+  - patterns: "*"
