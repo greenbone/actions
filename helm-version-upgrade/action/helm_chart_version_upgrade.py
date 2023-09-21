@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Simple script that upgrades 
+Simple script that upgrades
 a Helm chart version.
 """
 
@@ -58,6 +58,13 @@ def parse_arguments() -> Namespace:
         "--chart-version", required=False, type=str, help="Set chart version"
     )
     parser.add_argument(
+        "--chart-version-increase",
+        required=False,
+        default=False,
+        action="store_true",
+        help="Increase chart version patch level by one",
+    )
+    parser.add_argument(
         "--app-version", required=False, type=str, help="Set appVersion"
     )
     parser.add_argument(
@@ -82,6 +89,13 @@ def parse_arguments() -> Namespace:
         action="store_true",
         help="Do not upgrade image tag",
     )
+    parser.add_argument(
+        "--overwrite-parent-key-image-tag",
+        required=False,
+        default="image",
+        type=str,
+        help="Overwrite parent image key name",
+    )
     return parser.parse_args()
 
 
@@ -99,13 +113,17 @@ class ChartVersionUpgrade:
         self,
         chart_dir: str,
         chart_version: str = None,
+        chart_version_increase: bool = False,
         app_version: str = None,
         image_tag: str = None,
         dependency_name: str = None,
         dependency_version: str = None,
         no_tag: bool = False,
+        parent_key_image_tag: str = "image",
     ) -> None:
         self.no_tag = no_tag
+        self.chart_version_increase = chart_version_increase
+        self.parent_key_image_tag = parent_key_image_tag
 
         self.chart_dir = Path(chart_dir)
         if not self.chart_dir.is_dir():
@@ -141,6 +159,36 @@ class ChartVersionUpgrade:
         self.dependency_name = dependency_name
         self.dependency_version = dependency_version
 
+    def chart_increase_run(self) -> None:
+        """Run Chart.yaml version upgrade"""
+
+        chart_data = yaml_file_read(self.chart_file)
+        if not chart_data:
+            raise ChartVersionUpgradeError(f"{self.chart_file} is empty")
+        if not isinstance(chart_data, dict):
+            raise ChartVersionUpgradeError(
+                f"{self.chart_file} is not type dict"
+            )
+
+        if not "version" in chart_data:
+            raise ChartVersionUpgradeError(
+                f"{self.chart_file} has not entry >version<"
+            )
+
+        varray = chart_data["version"].split(".")
+
+        if len(varray) != 3 or not varray[2].isnumeric():
+            raise ChartVersionUpgradeError(
+                f"{self.chart_file} has wrong version format."
+                f" Need X.X.X, has {chart_data['version']}"
+            )
+        varray[2] = int(varray[2]) + 1
+        chart_data["version"] = f"{varray[0]}.{varray[1]}.{varray[2]}"
+
+        self.chart_version = chart_data["version"]
+
+        return yaml_file_write(self.chart_file, chart_data)
+
     def values_run(self) -> None:
         """run values.yaml version upgrade"""
 
@@ -152,19 +200,19 @@ class ChartVersionUpgrade:
         if not values_data:
             raise ChartVersionUpgradeError(f"{self.values_file} is empty")
 
-        if not "image" in values_data:
+        if not self.parent_key_image_tag in values_data:
             raise ChartVersionUpgradeError(
-                f"{self.values_file} has not entry >image<"
+                f"{self.values_file} has not entry >{self.parent_key_image_tag}<"
             )
-        if not isinstance(values_data["image"], dict):
+        if not isinstance(values_data[self.parent_key_image_tag], dict):
             raise ChartVersionUpgradeError(
                 f"entry >image< in {self.values_file} is not type dict"
             )
-        if not "tag" in values_data["image"]:
+        if not "tag" in values_data[self.parent_key_image_tag]:
             raise ChartVersionUpgradeError(
                 f"{self.values_file} has not entry >tag< in entry >image<"
             )
-        values_data["image"]["tag"] = self.image_tag
+        values_data[self.parent_key_image_tag]["tag"] = self.image_tag
 
         return yaml_file_write(self.values_file, values_data)
 
@@ -238,8 +286,10 @@ class ChartVersionUpgrade:
         """Run Chart.yaml and values.yaml version upgrade"""
 
         if (
-            not self.dependency_name or not self.dependency_version
-        ) and not self.chart_version:
+            (not self.dependency_name or not self.dependency_version)
+            and not self.chart_version
+            and not self.chart_version_increase
+        ):
             raise ChartVersionUpgradeError(
                 "Nothing to do! No chart version or dependency_version to upgrade"
             )
@@ -261,6 +311,11 @@ class ChartVersionUpgrade:
                 flush=True,
             )
 
+        if self.chart_version_increase:
+            print("Increase Chart version", flush=True)
+            self.chart_increase_run()
+            print(f"Chart version increase to {self.chart_version}", flush=True)
+
 
 def main() -> int:
     """Upgrade Helm chart version"""
@@ -270,11 +325,13 @@ def main() -> int:
         cvu = ChartVersionUpgrade(
             args.chart_path,
             chart_version=args.chart_version,
+            chart_version_increase=args.chart_version_increase,
             app_version=args.app_version,
             image_tag=args.image_tag,
             dependency_name=args.dependency_name,
             dependency_version=args.dependency_version,
             no_tag=args.no_tag,
+            parent_key_image_tag=args.overwrite_parent_key_image_tag,
         )
         cvu.run()
         return 0
