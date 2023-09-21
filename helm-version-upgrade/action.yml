@@ -18,6 +18,9 @@ inputs:
   no-tag:
     description: "Do not upgrade an image tag in values.yaml"
     required: false
+  overwrite-parent-key-image-tag:
+    description: "Overwrite parent image key name, optional default empty"
+    required: false
   dependency-name:
     description: "Helm chart dependency to upgrade"
     required: false
@@ -75,6 +78,10 @@ runs:
 
         if [ "${{ inputs.image-tag }}" ]; then
           cmd+=(--image-tag "${{ inputs.image-tag }}")
+        fi
+
+        if [ "${{ inputs.overwrite-parent-key-image-tag }}" ]; then
+          cmd+=(--overwrite-parent-key-image-tag "${{ inputs.overwrite-parent-key-image-tag }}")
         fi
 
         if [ "${{ inputs.no-tag }}" == 'true' ]; then
