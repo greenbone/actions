@@ -202,7 +202,7 @@ class ChartVersionUpgrade:
 
         if not self.parent_key_image_tag in values_data:
             raise ChartVersionUpgradeError(
-                f"{self.values_file} has not entry >image<"
+                f"{self.values_file} has not entry >{self.parent_key_image_tag}<"
             )
         if not isinstance(values_data[self.parent_key_image_tag], dict):
             raise ChartVersionUpgradeError(
