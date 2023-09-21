@@ -89,6 +89,13 @@ def parse_arguments() -> Namespace:
         action="store_true",
         help="Do not upgrade image tag",
     )
+    parser.add_argument(
+        "--overwrite-parent-key-image-tag",
+        required=False,
+        default="image",
+        type=str,
+        help="Overwrite parent image key name",
+    )
     return parser.parse_args()
 
 
@@ -112,9 +119,11 @@ class ChartVersionUpgrade:
         dependency_name: str = None,
         dependency_version: str = None,
         no_tag: bool = False,
+        parent_key_image_tag: str = "image",
     ) -> None:
         self.no_tag = no_tag
         self.chart_version_increase = chart_version_increase
+        self.parent_key_image_tag = parent_key_image_tag
 
         self.chart_dir = Path(chart_dir)
         if not self.chart_dir.is_dir():
@@ -191,19 +200,19 @@ class ChartVersionUpgrade:
         if not values_data:
             raise ChartVersionUpgradeError(f"{self.values_file} is empty")
 
-        if not "image" in values_data:
+        if not self.parent_key_image_tag in values_data:
             raise ChartVersionUpgradeError(
                 f"{self.values_file} has not entry >image<"
             )
-        if not isinstance(values_data["image"], dict):
+        if not isinstance(values_data[self.parent_key_image_tag], dict):
             raise ChartVersionUpgradeError(
                 f"entry >image< in {self.values_file} is not type dict"
             )
-        if not "tag" in values_data["image"]:
+        if not "tag" in values_data[self.parent_key_image_tag]:
             raise ChartVersionUpgradeError(
                 f"{self.values_file} has not entry >tag< in entry >image<"
             )
-        values_data["image"]["tag"] = self.image_tag
+        values_data[self.parent_key_image_tag]["tag"] = self.image_tag
 
         return yaml_file_write(self.values_file, values_data)
 
@@ -322,6 +331,7 @@ def main() -> int:
             dependency_name=args.dependency_name,
             dependency_version=args.dependency_version,
             no_tag=args.no_tag,
+            parent_key_image_tag=args.overwrite_parent_key_image_tag,
         )
         cvu.run()
         return 0
