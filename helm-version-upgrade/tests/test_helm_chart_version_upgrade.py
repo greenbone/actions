@@ -2,7 +2,6 @@ import unittest
 import tempfile
 import shutil
 from pathlib import Path
-from argparse import Namespace
 from action.helm_chart_version_upgrade import (
     yaml_file_read,
     yaml_file_write,
