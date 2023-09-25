@@ -124,6 +124,9 @@ class ChartVersionUpgrade:
         self.no_tag = no_tag
         self.chart_version_increase = chart_version_increase
         self.parent_key_image_tag = parent_key_image_tag
+        self.chart_version = chart_version
+        self.dependency_name = dependency_name
+        self.dependency_version = dependency_version
 
         self.chart_dir = Path(chart_dir)
         if not self.chart_dir.is_dir():
@@ -136,8 +139,6 @@ class ChartVersionUpgrade:
             raise ChartVersionUpgradeError(
                 f"{self.chart_file} does not exist, or is not a file."
             )
-
-        self.chart_version = chart_version
 
         self.values_file = self.chart_dir / "values.yaml"
         if self.chart_version and not self.no_tag:
@@ -156,11 +157,8 @@ class ChartVersionUpgrade:
         else:
             self.image_tag = self.chart_version
 
-        self.dependency_name = dependency_name
-        self.dependency_version = dependency_version
-
     def chart_increase_run(self) -> None:
-        """Run Chart.yaml version upgrade"""
+        """Run Chart.yaml version increase"""
 
         chart_data = yaml_file_read(self.chart_file)
         if not chart_data:
@@ -174,27 +172,23 @@ class ChartVersionUpgrade:
             raise ChartVersionUpgradeError(
                 f"{self.chart_file} has not entry >version<"
             )
+        if not "appVersion" in chart_data:
+            raise ChartVersionUpgradeError(
+                f"{self.chart_file} has not entry >appVersion<"
+            )
 
         varray = chart_data["version"].split(".")
-
         if len(varray) != 3 or not varray[2].isnumeric():
             raise ChartVersionUpgradeError(
                 f"{self.chart_file} has wrong version format."
                 f" Need X.X.X, has {chart_data['version']}"
             )
         varray[2] = int(varray[2]) + 1
-        chart_data["version"] = f"{varray[0]}.{varray[1]}.{varray[2]}"
-
-        self.chart_version = chart_data["version"]
-
-        return yaml_file_write(self.chart_file, chart_data)
+        self.chart_version = f"{varray[0]}.{varray[1]}.{varray[2]}"
+        self.app_version = self.chart_version
 
     def values_run(self) -> None:
-        """run values.yaml version upgrade"""
-
-        if self.no_tag:
-            print("Image tag upgrade disabled", flush=True)
-            return None
+        """Run values.yaml version upgrade"""
 
         values_data = yaml_file_read(self.values_file)
         if not values_data:
@@ -297,7 +291,8 @@ class ChartVersionUpgrade:
         if self.chart_version:
             print("Upgrade Chart version", flush=True)
             self.chart_run()
-            self.values_run()
+            if not self.no_tag:
+                self.values_run()
             print(f"Chart version upgraded to {self.chart_version}", flush=True)
 
         if self.dependency_name and self.dependency_version:
@@ -314,6 +309,7 @@ class ChartVersionUpgrade:
         if self.chart_version_increase:
             print("Increase Chart version", flush=True)
             self.chart_increase_run()
+            self.chart_run()
             print(f"Chart version increase to {self.chart_version}", flush=True)
 
 
