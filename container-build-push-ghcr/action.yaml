@@ -3,19 +3,22 @@ description: Container build and push action for ghcr.io.
 
 inputs:
   build-context:
-    description: "Path to image build context."
+    description: "Path to image build context. Defualt is ."
     default: .
   build-docker-file:
-    description: "Path to the docker file."
+    description: "Path to the docker file. Default is ./Dockerfile"
     default: ./Dockerfile
   build-args:
-    description: "Use these build-args for the docker build process."
+    description: "Use these build-args for the docker build process. Default is empty"
+    default: ''
+  build-secrets:
+    description: "Use these build-secrets for the docker build process. Default is empty"
     default: ''
   cosign-key:
-    description: "cosign key to sign the image."
+    description: "cosign key to sign the image. Default is empty"
     default: ''
   cosign-key-password:
-    description: "cosign key password."
+    description: "cosign key password. Default is empty"
     default: ''
   image-labels:
     description: "Image labels."
@@ -27,7 +30,7 @@ inputs:
     description: "Image tags."
     required: true
   image-platforms:
-    description: "Image platforms to build for."
+    description: "Image platforms to build for. Default is linux/amd64"
     default: linux/amd64
   registry-password:
     description: "Registry password."
@@ -52,6 +55,7 @@ runs:
       build-context: ${{ inputs.build-context }}
       build-docker-file: ${{ inputs.build-docker-file }}
       build-args: ${{ inputs.build-args }}
+      build-secrets: ${{ inputs.build-secrets }}
       cosign-key: ${{ inputs.cosign-key }}
       cosign-key-password: ${{ inputs.cosign-key-password }}
       image-url: ${{ inputs.image-url }}
