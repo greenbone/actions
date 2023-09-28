@@ -35,20 +35,20 @@ jobs:
 
 ## Inputs
 
-| Name                | Description                                          |          |
-|---------------------|------------------------------------------------------|----------|
-| build-context       | Path to image build context. Default "."             | Optional |
-| build-docker-file   | Path to the docker file. Default "./Dockerfile"      | Optional |
-| build-args          | Use these build-args for the docker build process.   | Optional |
-| build-secrets       | Use these build-secrets for the docker build process.| Optional |
-| cosign-key          | cosign key to sign the image.                        | Optional |
-| cosign-key-password | cosign key password.                                 | Optional |
-| image-labels        | Image labels.                                        | Required |
-| image-url           | Image url/name without registry.                     | Required |
-| image-platforms     | Image platforms to build for. Default "linux/amd64"  | Optional |
-| image-tags          | Image tags.                                          | Required |
-| registry-username   | Login registry username.                             | Required |
-| registry-password   | Login registry password.                             | Required |
+| Name                | Description                                                            |          |
+|---------------------|------------------------------------------------------------------------|----------|
+| build-context       | Path to image build context. Default is "."                            | Optional |
+| build-docker-file   | Path to the docker file. Default is "./Dockerfile"                     | Optional |
+| build-args          | Use these build-args for the docker build process. Default is empty    | Optional |
+| build-secrets       | Use these build-secrets for the docker build process. Default is empty | Optional |
+| cosign-key          | cosign key to sign the image. Default is empty                         | Optional |
+| cosign-key-password | cosign key password. Default is empty                                  | Optional |
+| image-labels        | Image labels.                                                          | Required |
+| image-url           | Image url/name without registry.                                       | Required |
+| image-platforms     | Image platforms to build for. Default is "linux/amd64"                 | Optional |
+| image-tags          | Image tags.                                                            | Required |
+| registry-username   | Login registry username.                                               | Required |
+| registry-password   | Login registry password.                                               | Required |
 
 ## Action Output
 
