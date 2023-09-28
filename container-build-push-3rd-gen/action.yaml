@@ -9,13 +9,16 @@ inputs:
     description: "Path to the docker file. Default is './Dockerfile'."
     default: ./Dockerfile
   build-args:
-    description: "Use these build-args for the docker build process."
+    description: "Use these build-args for the docker build process. Default is empty"
+    default: ''
+  build-secrets:
+    description: "Use these build-secrets for the docker build process. Default is empty"
     default: ''
   cosign-key:
-    description: "cosign key to sign the image."
+    description: "cosign key to sign the image. Default is empty"
     default: ''
   cosign-key-password:
-    description: "cosign key password."
+    description: "cosign key password. Default is empty"
     default: ''
   image-labels:
     description: "Image labels."
@@ -49,6 +52,7 @@ runs:
       build-context: ${{ inputs.build-context }}
       build-docker-file: ${{ inputs.build-docker-file }}
       build-args: ${{ inputs.build-args }}
+      build-secrets: ${{ inputs.build-secrets }}
       cosign-key: ${{ inputs.cosign-key }}
       cosign-key-password: ${{ inputs.cosign-key-password }}
       # The tlog function does not currently support an ed25519 key.

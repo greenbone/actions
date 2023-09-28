@@ -3,22 +3,25 @@ description: Generic container build and push action.
 
 inputs:
   build-context:
-    description: "Path to image build context. Default: ."
+    description: "Path to image build context. Default is ."
     default: .
   build-docker-file:
-    description: "Path to the docker file. Default: ./Dockerfile"
+    description: "Path to the docker file. Default is./Dockerfile"
     default: ./Dockerfile
   build-args:
-    description: "Use these build-args for the docker build process."
+    description: "Use these build-args for the docker build process. Default is empty"
+    default: ''
+  build-secrets:
+    description: "Use these build-secrets for the docker build process. Default is empty"
     default: ''
   cosign-key:
-    description: "cosign key to sign the image."
+    description: "cosign key to sign the image. Default is empty"
     default: ''
   cosign-key-password:
-    description: "cosign key password."
+    description: "cosign key password. Default is empty"
     default: ''
   cosign-tlog-upload:
-    description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default: true"
+    description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default is true"
     default: "true"
   image-labels:
     description: "Image labels."
@@ -30,7 +33,7 @@ inputs:
     description: "Image tags."
     required: true
   image-platforms:
-    description: "Image platforms to build for. Default: linux/amd64"
+    description: "Image platforms to build for. Default is linux/amd64"
     default: linux/amd64
   registry:
     description: "Registry url."
@@ -83,6 +86,7 @@ runs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: ${{ inputs.build-args }}
+        secrets: ${{ inputs.build-secrets }}
 
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' }}

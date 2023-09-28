@@ -40,6 +40,7 @@ jobs:
 | build-context       | Path to image build context. Default "."            | Optional |
 | build-ghcr-file     | Path to the docker file. Default "./Dockerfile"     | Optional |
 | build-args          | Use these build-args for the ghcr build process.    | Optional |
+| build-secrets       | Use these build-secrets for the ghcr build process. | Optional |
 | cosign-key          | cosign key to sign the image.                       | Optional |
 | cosign-key-password | cosign key password.                                | Optional |
 | image-labels        | Image labels.                                       | Required |
