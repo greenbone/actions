@@ -1,4 +1,4 @@
-name: Create new release
+name: Release
 # We will push the action to the correct branch
 # and can use it afterwards with the `@v2` tag
 
@@ -17,8 +17,8 @@ on:
         description: Set an explicit version (without leading v), that will overwrite release-type. Fails if version is not semver compliant.
 
 jobs:
-  create-release:
-    name: Create release
+  release:
+    name: Actions
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v4
