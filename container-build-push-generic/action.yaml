@@ -97,3 +97,12 @@ runs:
         cosign-tlog-upload: ${{ inputs.cosign-tlog-upload }}
         image-tags: ${{ steps.meta.outputs.tags }}
         image-digest: ${{ steps.build-and-push.outputs.digest }}
+
+    - name: Sbom Container image
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: docker/scout-action@v0.18.1
+      with:
+        command: quickview
+        image: ${{ steps.meta.outputs.tags }}
+        write-comment: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
