@@ -113,11 +113,11 @@ runs:
         image: ${{ steps.meta.outputs.tags }}
         dockerhub-user: ${{ inputs.scout-user }}
         dockerhub-password: ${{ inputs.scout-password }}
-        sarif-file: /tmp/${{ steps.meta.outputs.tags }}
+        sarif-file: /tmp/sarif
 
     - name: Upload sbom sarif file
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
       uses: actions/upload-artifact@v3
       with:
-        name: sarif-${{ steps.meta.outputs.tags }}
-        path: /tmp/${{ steps.meta.outputs.tags }}
+        name: sarif
+        path: /tmp/sarif
