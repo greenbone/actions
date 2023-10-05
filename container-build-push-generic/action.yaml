@@ -126,6 +126,7 @@ runs:
       uses: anchore/scan-action@v3
       with:
         sbom: "${{ github.event.repository.name }}-sbom.spdx.json"
+        output-format: table
 
     - name: Upload sarif file as artifact
       uses: actions/upload-artifact@v3
