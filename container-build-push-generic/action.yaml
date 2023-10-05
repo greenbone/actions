@@ -92,7 +92,7 @@ runs:
       uses: docker/scout-action@v0.18.1
       with:
         command: quickview
-        image: ${{ steps.meta.outputs.tags }}
+        image: local://${{ steps.meta.outputs.tags }}
 
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' }}
