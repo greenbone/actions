@@ -47,7 +47,7 @@ runs:
   steps:
   - name: Container build and push 3rd gen
     id: build-and-push
-    uses: greenbone/actions/container-build-push-generic@v3
+    uses: greenbone/actions/container-build-push-generic@pholthaus/docker-scout
     with:
       build-context: ${{ inputs.build-context }}
       build-docker-file: ${{ inputs.build-docker-file }}
