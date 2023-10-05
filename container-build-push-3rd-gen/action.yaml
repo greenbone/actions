@@ -32,6 +32,13 @@ inputs:
   registry-password:
     description: "Registry password."
     required: true
+  scout:
+    description: "Enable docker scout. Default is false"
+    default: "false"
+  scout-user:
+    description: "Dockerhub user for docker scout. Default is empty"
+  scout-password:
+    description: "Dockerhub user password for docker scout. Default is empty"
 
 outputs:
   digest:
@@ -70,3 +77,6 @@ runs:
       registry: "ghcr.io"
       registry-username: ${{ github.actor }}
       registry-password: ${{ inputs.registry-password }}
+      scout: ${{ inputs.scout }}
+      scout-user: ${{ inputs.scout-user }}
+      scout-password: ${{ inputs.scout-password }}
