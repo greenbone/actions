@@ -95,7 +95,6 @@ runs:
       with:
         command: cves,sbom
         image: ${{ steps.meta.outputs.tags }}
-        sarif-file: /tmp/sarif
 
     - name: Upload sarif file as artifact
       uses: actions/upload-artifact@v3
