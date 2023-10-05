@@ -87,6 +87,7 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         build-args: ${{ inputs.build-args }}
         secrets: ${{ inputs.build-secrets }}
+        load: true
 
     - name: Sbom Container image
       uses: docker/scout-action@v0.18.1
