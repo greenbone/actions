@@ -93,7 +93,7 @@ runs:
       if: ${{ github.event_name == 'pull_request' }}
       uses: docker/scout-action@v0.18.1
       with:
-        command: cves
+        command: cves,sbom
         image: ${{ steps.meta.outputs.tags }}
 
     - name: Container signing
