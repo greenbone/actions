@@ -115,11 +115,17 @@ runs:
         dockerhub-password: ${{ inputs.scout-password }}
         sarif-file: /tmp/sarif
 
+    - name: Create SBOM
+      uses: anchore/sbom-action@v0
+      with:
+        image: ${{ steps.meta.outputs.tags }}
+        format: spdx-json
+        output-file: "${{ github.event.repository.name }}-sbom.spdx.json"
+
     - name: Scan image
       uses: anchore/scan-action@v3
       with:
-        image: ${{ steps.meta.outputs.tags }}
-        add-cpes-if-none: true
+        sbom: "${{ github.event.repository.name }}-sbom.spdx.json"
 
     - name: Upload sarif file as artifact
       uses: actions/upload-artifact@v3
