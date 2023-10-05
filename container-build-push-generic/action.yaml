@@ -117,8 +117,8 @@ runs:
 
     - name: Scan image
       uses: anchore/scan-action@v3
-        with:
-          image: ${{ steps.meta.outputs.tags }}
+      with:
+        image: ${{ steps.meta.outputs.tags }}
 
     - name: Upload sarif file as artifact
       uses: actions/upload-artifact@v3
