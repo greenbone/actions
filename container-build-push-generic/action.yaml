@@ -44,6 +44,12 @@ inputs:
   registry-password:
     description: "Login registry password."
     required: true
+  scout-user:
+    description: "Dockerhub user for docker scout."
+    required: true
+  scout-password:
+    description: "Dockerhub user password for docker scout."
+    required: true
 
 outputs:
   digest:
@@ -89,19 +95,6 @@ runs:
         secrets: ${{ inputs.build-secrets }}
         load: true
 
-    - name: Sbom Container image
-      if: ${{ github.event_name == 'pull_request' }}
-      uses: docker/scout-action@v0.23.4
-      with:
-        command: cves,sbom
-        image: ${{ steps.meta.outputs.tags }}
-
-    - name: Upload sarif file as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: sarif-file
-        path: /tmp/sarif
-
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' }}
       uses: greenbone/actions/container-signing@v3
@@ -112,3 +105,18 @@ runs:
         image-tags: ${{ steps.meta.outputs.tags }}
         image-digest: ${{ steps.build-and-push.outputs.digest }}
 
+    - name: Sbom Container image
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: docker/scout-action@v0.23.4
+      with:
+        command: cves,sbom
+        image: ${{ steps.meta.outputs.tags }}
+        dockerhub-user: ${{ inputs.scout-user }}
+        dockerhub-password: ${{ inputs.scout-password }}
+        sarif-file: /tmp/sarif
+
+    - name: Upload sarif file as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: sarif-file
+        path: /tmp/sarif
