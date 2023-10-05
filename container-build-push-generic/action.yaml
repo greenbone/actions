@@ -88,6 +88,12 @@ runs:
         build-args: ${{ inputs.build-args }}
         secrets: ${{ inputs.build-secrets }}
 
+    - name: Sbom Container image
+      uses: docker/scout-action@v0.18.1
+      with:
+        command: quickview
+        image: ${{ steps.meta.outputs.tags }}
+
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' }}
       uses: greenbone/actions/container-signing@v3
@@ -98,11 +104,3 @@ runs:
         image-tags: ${{ steps.meta.outputs.tags }}
         image-digest: ${{ steps.build-and-push.outputs.digest }}
 
-    - name: Sbom Container image
-      if: ${{ github.event_name == 'pull_request' }}
-      uses: docker/scout-action@v0.18.1
-      with:
-        command: quickview
-        image: ${{ steps.meta.outputs.tags }}
-        write-comment: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
