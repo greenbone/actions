@@ -91,7 +91,7 @@ runs:
 
     - name: Sbom Container image
       if: ${{ github.event_name == 'pull_request' }}
-      uses: docker/scout-action@v0.18.1
+      uses: docker/scout-action@v0.23.4
       with:
         command: cves,sbom
         image: ${{ steps.meta.outputs.tags }}
