@@ -90,9 +90,10 @@ runs:
         load: true
 
     - name: Sbom Container image
+      if: ${{ github.event_name == 'pull_request' }}
       uses: docker/scout-action@v0.18.1
       with:
-        command: quickview
+        command: cves
         image: ${{ steps.meta.outputs.tags }}
 
     - name: Container signing
