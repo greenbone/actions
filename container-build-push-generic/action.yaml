@@ -10,16 +10,16 @@ inputs:
     default: ./Dockerfile
   build-args:
     description: "Use these build-args for the docker build process. Default is empty"
-    default: ''
+    default: ""
   build-secrets:
     description: "Use these build-secrets for the docker build process. Default is empty"
-    default: ''
+    default: ""
   cosign-key:
     description: "cosign key to sign the image. Default is empty"
-    default: ''
+    default: ""
   cosign-key-password:
     description: "cosign key password. Default is empty"
-    default: ''
+    default: ""
   cosign-tlog-upload:
     description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default is true"
     default: "true"
@@ -44,6 +44,13 @@ inputs:
   registry-password:
     description: "Login registry password."
     required: true
+  scout:
+    description: "Enable docker scout. Default is false"
+    default: "false"
+  scout-user:
+    description: "Dockerhub user for docker scout. Default is empty"
+  scout-password:
+    description: "Dockerhub user password for docker scout. Default is empty"
 
 outputs:
   digest:
@@ -65,17 +72,17 @@ runs:
         labels: ${{ inputs.image-labels }}
         tags: ${{ inputs.image-tags }}
 
-    - name: Login to Docker Registry
+    - name: Login to docker registry
       uses: docker/login-action@v2
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.registry-username }}
         password: ${{ inputs.registry-password }}
 
-    - name: Set up Docker Buildx
+    - name: Set up docker buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build and push Container image
+    - name: Build and push container image
       id: build-and-push
       uses: docker/build-push-action@v4
       with:
@@ -87,6 +94,7 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         build-args: ${{ inputs.build-args }}
         secrets: ${{ inputs.build-secrets }}
+        load: true
 
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' }}
@@ -97,3 +105,20 @@ runs:
         cosign-tlog-upload: ${{ inputs.cosign-tlog-upload }}
         image-tags: ${{ steps.meta.outputs.tags }}
         image-digest: ${{ steps.build-and-push.outputs.digest }}
+
+    - name: Container sbom
+      if: ${{ github.event_name == 'pull_request' && inputs.scout == 'true' }}
+      uses: docker/scout-action@v0.23.4
+      with:
+        command: cves,sbom
+        image: ${{ steps.meta.outputs.tags }}
+        dockerhub-user: ${{ inputs.scout-user }}
+        dockerhub-password: ${{ inputs.scout-password }}
+        sarif-file: /tmp/${{ steps.meta.outputs.tags }}
+
+    - name: Upload sbom sarif file
+      if: ${{ github.event_name == 'pull_request' && inputs.scout == 'true' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: sarif-${{ steps.meta.outputs.tags }}
+        path: /tmp/${{ steps.meta.outputs.tags }}
