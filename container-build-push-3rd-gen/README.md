@@ -14,6 +14,7 @@ permissions:
   contents: read
   packages: write
   id-token: write
+  pull-requests: write
 
 jobs:
   build:
@@ -41,7 +42,6 @@ jobs:
 | image-url           | Image url/name without registry.                                       | Required |
 | image-platforms     | Image platforms to build for. Default is 'linux/amd64'.                | Optional |
 | registry-password   | Registry password.                                                     | Required |
-| scout               | Enable docker scout. Default is false                                  | Optional |
 | scout-user          | Dockerhub user for docker scout. Default is empty                      | Optional |
 | scout-password      | Dockerhub user password for docker scout. Default is empty             | Optional |
 

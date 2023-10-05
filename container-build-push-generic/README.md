@@ -14,6 +14,7 @@ permissions:
   contents: read
   packages: write
   id-token: write
+  pull-requests: write
 
 jobs:
   build:
@@ -52,7 +53,6 @@ jobs:
 | registry            | Registry url.                                                                                     | Required |
 | registry-username   | Login registry username.                                                                          | Required |
 | registry-password   | Login registry password.                                                                          | Required |
-| scout               | Enable docker scout. Default is false                                                             | Optional |
 | scout-user          | Dockerhub user for docker scout. Default is empty                                                 | Optional |
 | scout-password      | Dockerhub user password for docker scout. Default is empty                                        | Optional |
 

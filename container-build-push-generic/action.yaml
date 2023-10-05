@@ -44,13 +44,12 @@ inputs:
   registry-password:
     description: "Login registry password."
     required: true
-  scout:
-    description: "Enable docker scout. Default is false"
-    default: "false"
   scout-user:
     description: "Dockerhub user for docker scout. Default is empty"
+    default: ""
   scout-password:
     description: "Dockerhub user password for docker scout. Default is empty"
+    default: ""
 
 outputs:
   digest:
@@ -107,7 +106,7 @@ runs:
         image-digest: ${{ steps.build-and-push.outputs.digest }}
 
     - name: Container sbom
-      if: ${{ github.event_name == 'pull_request' && inputs.scout == 'true' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
       uses: docker/scout-action@v0.23.4
       with:
         command: cves,sbom
@@ -117,7 +116,7 @@ runs:
         sarif-file: /tmp/${{ steps.meta.outputs.tags }}
 
     - name: Upload sbom sarif file
-      if: ${{ github.event_name == 'pull_request' && inputs.scout == 'true' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
       uses: actions/upload-artifact@v3
       with:
         name: sarif-${{ steps.meta.outputs.tags }}
