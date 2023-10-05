@@ -119,6 +119,7 @@ runs:
       uses: anchore/scan-action@v3
       with:
         image: ${{ steps.meta.outputs.tags }}
+        add-cpes-if-none: true
 
     - name: Upload sarif file as artifact
       uses: actions/upload-artifact@v3
