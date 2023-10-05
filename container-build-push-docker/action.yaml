@@ -73,6 +73,6 @@ runs:
       image-platforms: ${{ inputs.image-platforms }}
       registry: "docker.io"
       registry-username: ${{ inputs.registry-username }}
-      registrypassword: ${{ inputs.registry-password }}
+      registry-password: ${{ inputs.registry-password }}
       scout-user: ${{ inputs.scout-user }}
       scout-password: ${{ inputs.scout-password }}
