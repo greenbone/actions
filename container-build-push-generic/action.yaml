@@ -127,6 +127,7 @@ runs:
       with:
         sbom: "${{ github.event.repository.name }}-sbom.spdx.json"
         output-format: table
+        add-cpes-if-none: true
 
     - name: Upload sarif file as artifact
       uses: actions/upload-artifact@v3
