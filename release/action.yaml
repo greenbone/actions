@@ -79,6 +79,8 @@ runs:
     - name: Checkout exists already
       id: checkout
       run: |
+        echo "Check for existing repository checkout"
+
         if [[ -d "${{ github.workspace }}/.git" ]]; then
           echo "exists=true" >> $GITHUB_OUTPUT
         else
@@ -106,6 +108,8 @@ runs:
       # Input parsing
     - name: Parse release-type
       run: |
+        echo "Determine release type"
+
         case ${{ inputs.release-type }} in
           alpha | beta | calendar | major | minor | patch | release-candidate)
             ARGS="--release-type ${{ inputs.release-type }}"
