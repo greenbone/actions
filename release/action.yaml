@@ -159,7 +159,7 @@ runs:
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - name: Enforce pre-release"
-      if: ${{ inputs.pre-release == 'true' }}
+      if: ${{ inputs.github-pre-release == 'true' }}
       run: |
         ARGS="${ARGS} --github-pre-release"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
