@@ -63,6 +63,13 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Get image name
+      id: image
+      shell: bash
+      run: |
+        name="$(echo '${{ inputs.image-url }}' | awk -F'/' '{print $NF}')"
+        echo "name=$name" >> "$GITHUB_OUTPUT"
+
     - name: Setup container meta information
       id: meta
       uses: docker/metadata-action@v4
@@ -113,11 +120,11 @@ runs:
         image: ${{ steps.meta.outputs.tags }}
         dockerhub-user: ${{ inputs.scout-user }}
         dockerhub-password: ${{ inputs.scout-password }}
-        sarif-file: /tmp/sarif
+        sarif-file: /tmp/${{ steps.image.outputs.name }}.sarif
 
     - name: Upload sbom sarif file
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
       uses: actions/upload-artifact@v3
       with:
-        name: sarif
-        path: /tmp/sarif
+        name: ${{ steps.image.outputs.name }}.sarif
+        path: /tmp/${{ steps.image.outputs.name }}.sarif
