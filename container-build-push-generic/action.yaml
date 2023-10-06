@@ -103,7 +103,7 @@ runs:
         load: true
 
     - name: Container signing
-      if: ${{ github.event_name != 'pull_request' }}
+      if: ${{ github.event_name != 'pull_request' && inputs.cosign-key && inputs.cosign-key-password }}
       uses: greenbone/actions/container-signing@v3
       with:
         cosign-key: ${{ inputs.cosign-key }}
