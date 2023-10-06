@@ -100,7 +100,7 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         build-args: ${{ inputs.build-args }}
         secrets: ${{ inputs.build-secrets }}
-        load: true
+        load: ${{ github.event_name == 'pull_request' }}
 
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' && inputs.cosign-key && inputs.cosign-key-password }}
