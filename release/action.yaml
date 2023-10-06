@@ -53,6 +53,12 @@ inputs:
   update-project:
     description: "Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files."
     default: "true"
+  next-version:
+    description: |
+      "Set an explicit version that should be used after the release. Leave empty for determining the next version automatically. Set to 'false' for not updating "
+      "the version after a release."
+  github-pre-release:
+    description: "Set to 'true' to enforce uploading the release to GitHub as a pre-release"
 
 outputs:
   release-version:
@@ -142,6 +148,22 @@ runs:
         ARGS="${ARGS} --no-update-project"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
+    - name: Determine next version
+      if: ${{ inputs.next-version }}
+      run: |
+        if [[ "${{ inputs.next-version }}" = "false" ]]; then
+          ARGS="${ARGS} --no-next-version"
+        else
+          ARGS="${ARGS} --next-version ${{ inputs.next-version }}"
+        fi
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Enforce pre-release"
+      if: ${{ inputs.pre-release == 'true' }}
+      run: |
+        ARGS="${ARGS} --github-pre-release"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
 
       # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
@@ -177,7 +199,7 @@ runs:
       if: inputs.sign-release-files == 'true' && inputs.gpg-key && inputs.gpg-fingerprint && inputs.gpg-passphrase
       with:
         python-version: ${{ inputs.python-version }}
-        git-tag-prefix:  ${{ inputs.git-tag-prefix }}
+        git-tag-prefix: ${{ inputs.git-tag-prefix }}
         github-token: ${{ inputs.github-user-token }}
         gpg-fingerprint: ${{ inputs.gpg-fingerprint }}
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
