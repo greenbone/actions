@@ -30,20 +30,20 @@ jobs:
 
 ## Inputs
 
-| Name                | Description                                                            |          |
-|---------------------|------------------------------------------------------------------------|----------|
-| build-context       | Path to image build context. Default is the current directory.         | Optional |
-| build-docker-file   | Path to the docker file. Default is './Dockerfile'.                    | Optional |
-| build-args          | Use these build-args for the docker build process. Default is empty    | Optional |
-| build-secrets       | Use these build-secrets for the docker build process. Default is empty | Optional |
-| cosign-key          | cosign key to sign the image. Default is empty                         | Optional |
-| cosign-key-password | cosign key password. Default is empty                                  | Optional |
-| image-labels        | Image labels.                                                          | Required |
-| image-url           | Image url/name without registry.                                       | Required |
-| image-platforms     | Image platforms to build for. Default is 'linux/amd64'.                | Optional |
-| registry-password   | Registry password.                                                     | Required |
-| scout-user          | Dockerhub user for docker scout. Default is empty                      | Optional |
-| scout-password      | Dockerhub user password for docker scout. Default is empty             | Optional |
+| Name                | Description                                                                          |          |
+|---------------------|--------------------------------------------------------------------------------------|----------|
+| build-context       | Path to image build context. Default is the current directory.                       | Optional |
+| build-docker-file   | Path to the docker file. Default is './Dockerfile'.                                  | Optional |
+| build-args          | Use these build-args for the docker build process. Default is empty                  | Optional |
+| build-secrets       | Use these build-secrets for the docker build process. Default is empty               | Optional |
+| cosign-key          | Cosign key to sign the image. Will be skipped if empty. Default is empty             | Optional |
+| cosign-key-password | Cosign key password. Will be skipped if empty. Default is empty                      | Optional |
+| image-labels        | Image labels.                                                                        | Required |
+| image-url           | Image url/name without registry.                                                     | Required |
+| image-platforms     | Image platforms to build for. Default is 'linux/amd64'.                              | Optional |
+| registry-password   | Registry password.                                                                   | Required |
+| scout-user          | Dockerhub user for docker scout. Will be skipped if empty. Default is empty          | Optional |
+| scout-password      | Dockerhub user password for docker scout. Will be skipped if empty. Default is empty | Optional |
 
 ## Action Output
 

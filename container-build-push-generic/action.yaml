@@ -15,10 +15,10 @@ inputs:
     description: "Use these build-secrets for the docker build process. Default is empty"
     default: ""
   cosign-key:
-    description: "cosign key to sign the image. Default is empty"
+    description: "Cosign key to sign the image. Will be skipped if empty. Default is empty"
     default: ""
   cosign-key-password:
-    description: "cosign key password. Default is empty"
+    description: "Cosign key password. Will be skipped if empty. Default is empty"
     default: ""
   cosign-tlog-upload:
     description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default is true"
@@ -45,10 +45,10 @@ inputs:
     description: "Login registry password."
     required: true
   scout-user:
-    description: "Dockerhub user for docker scout. Default is empty"
+    description: "Dockerhub user for docker scout. Will be skipped if empty. Default is empty"
     default: ""
   scout-password:
-    description: "Dockerhub user password for docker scout. Default is empty"
+    description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty"
     default: ""
 
 outputs:
