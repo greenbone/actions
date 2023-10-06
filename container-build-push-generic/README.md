@@ -14,6 +14,7 @@ permissions:
   contents: read
   packages: write
   id-token: write
+  pull-requests: write
 
 jobs:
   build:
@@ -42,8 +43,8 @@ jobs:
 | build-docker-file   | Path to the docker file. Default is "./Dockerfile"                                                | Optional |
 | build-args          | Use these build-args for the docker build process. Default is empty                               | Optional |
 | build-secrets       | Use these build-secrets for the docker build process. Default is empty                            | Optional |
-| cosign-key          | cosign key to sign the image.                                                                     | Optional |
-| cosign-key-password | cosign key password.                                                                              | Optional |
+| cosign-key          | Cosign key to sign the image. Will be skipped if empty. Default is empty                          | Optional |
+| cosign-key-password | Cosign key password. Will be skipped if empty. Default is empty                                   | Optional |
 | cosign-tlog-upload  | Turn on or turn off the cosign tlog upload function. Possible options: true/false Default is true | Optional |
 | image-labels        | Image labels.                                                                                     | Required |
 | image-url           | Image url/name without registry.                                                                  | Required |
@@ -52,6 +53,8 @@ jobs:
 | registry            | Registry url.                                                                                     | Required |
 | registry-username   | Login registry username.                                                                          | Required |
 | registry-password   | Login registry password.                                                                          | Required |
+| scout-user          | Dockerhub user for docker scout. Will be skipped if empty. Default is empty                       | Optional |
+| scout-password      | Dockerhub user password for docker scout. Will be skipped if empty. Default is empty              | Optional |
 
 ## Action Output
 
