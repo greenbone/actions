@@ -45,6 +45,7 @@ jobs:
 | scout-user          | Dockerhub user for docker scout. Will be skipped if empty. Default is empty          | Optional |
 | scout-password      | Dockerhub user password for docker scout. Will be skipped if empty. Default is empty | Optional |
 | sarif-retention-days| Days to store the sarif artifact. Default is 1                                       | Optional |
+
 ## Action Output
 
 | Output Variable | Description          |
