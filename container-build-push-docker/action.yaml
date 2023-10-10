@@ -44,6 +44,9 @@ inputs:
   scout-password:
     description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty"
     default: ""
+  sarif-retention-days:
+    description: "Days to store the sarif artifact. Default is 1"
+    default: 1
 
 outputs:
   digest:
@@ -76,3 +79,4 @@ runs:
       registry-password: ${{ inputs.registry-password }}
       scout-user: ${{ inputs.scout-user }}
       scout-password: ${{ inputs.scout-password }}
+      sarif-retention-days: ${{ inputs.sarif-retention-days }}

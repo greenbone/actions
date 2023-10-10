@@ -50,6 +50,9 @@ inputs:
   scout-password:
     description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty"
     default: ""
+  sarif-retention-days:
+    description: "Days to store the sarif artifact. Default is 1"
+    default: 1
 
 outputs:
   digest:
@@ -128,3 +131,4 @@ runs:
       with:
         name: ${{ steps.image.outputs.name }}.sarif
         path: /tmp/${{ steps.image.outputs.name }}.sarif
+        retention-days: ${{ inputs.sarif-retention-days }}
