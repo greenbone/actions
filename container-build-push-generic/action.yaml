@@ -124,6 +124,7 @@ runs:
         dockerhub-user: ${{ inputs.scout-user }}
         dockerhub-password: ${{ inputs.scout-password }}
         sarif-file: /tmp/${{ steps.image.outputs.name }}.sarif
+        keep-previous-comments: true
 
     - name: Upload sbom sarif file
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
