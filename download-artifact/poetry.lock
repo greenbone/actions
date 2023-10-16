@@ -23,13 +23,13 @@ trio = ["trio (>=0.22)"]
 
 [[package]]
 name = "astroid"
-version = "3.0.0"
+version = "3.0.1"
 description = "An abstract syntax tree for Python with inference support."
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "astroid-3.0.0-py3-none-any.whl", hash = "sha256:f2510e7fdcd6cfda4ec50014726d4857abf79acfc010084ce8c26091913f1b25"},
-    {file = "astroid-3.0.0.tar.gz", hash = "sha256:1defdbca052635dd29657ea674edfc45e4b5be9cd53630c5b084fcfed94344a8"},
+    {file = "astroid-3.0.1-py3-none-any.whl", hash = "sha256:7d5895c9825e18079c5aeac0572bc2e4c83205c95d416e0b4fee8bc361d2d9ca"},
+    {file = "astroid-3.0.1.tar.gz", hash = "sha256:86b0bb7d7da0be1a7c4aedb7974e391b32d4ed89e33de6ed6902b4b15c97577e"},
 ]
 
 [package.dependencies]
@@ -544,13 +544,13 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4)", "pytest-co
 
 [[package]]
 name = "pontos"
-version = "23.10.1"
+version = "23.10.2"
 description = "Common utilities and tools maintained by Greenbone Networks"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "pontos-23.10.1-py3-none-any.whl", hash = "sha256:a65dd8470655bb9ac786dd712135ae161b4efe52d6e5d2ced5a7b76154d01a92"},
-    {file = "pontos-23.10.1.tar.gz", hash = "sha256:05fb220c68faf0c84d7a4332d40ea30574656acb71a6fffa1fe6eb27c41929e1"},
+    {file = "pontos-23.10.2-py3-none-any.whl", hash = "sha256:6537ea876b09b6c2cd4f26c15a14b13f51de431007e76d2b9bad6cde5a138af6"},
+    {file = "pontos-23.10.2.tar.gz", hash = "sha256:4f426b87f87e2d88e6967f3c5aa854f2f841e37efe4a5e41c8b60e94fe31077c"},
 ]
 
 [package.dependencies]
