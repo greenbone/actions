@@ -51,7 +51,7 @@ inputs:
     description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty"
     default: ""
   scout-keep-previous-comments:
-    description: "Keep but hide previous comment. If not set, keep and update one single comment per job."
+    description: "Keep but hide previous comment. If not set, keep and update one single comment per job. Default is empty"
     default: ""
   sarif-retention-days:
     description: "Days to store the sarif artifact. Default is 1"
