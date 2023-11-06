@@ -55,7 +55,7 @@ jobs:
 | registry-password            | Login registry password.                                                                                           | Required |
 | scout-user                   | Dockerhub user for docker scout. Will be skipped if empty. Default is empty                                        | Optional |
 | scout-password               | Dockerhub user password for docker scout. Will be skipped if empty. Default is empty                               | Optional |
-| scout-keep-previous-comments | Keep but hide previous comment. If not set, keep and update one single comment per job. Default is empty           | Optional |
+| scout-keep-previous-comments | Keep but hide previous comment. If not set, keep and update one single comment per job. Default is `false`           | Optional |
 | sarif-retention-days         | Days to store the sarif artifact. Default is 1                                                                     | Optional |
 
 ## Action Output
