@@ -37,14 +37,6 @@ runs:
         token: ${{ inputs.token }}
         dependency-manager: ${{ inputs.dependency-manager }}
         registry-url: ${{ inputs.registry-url }}
-    - name: Build with npm
-      if: ${{ inputs.dependency-manager == 'npm' }}
-      run: npm run build
-      shell: bash
-    - name: Build with yarn
-      if: ${{ inputs.dependency-manager == 'yarn' }}
-      run: yarn build
-      shell: bash
     - name: Run Tests
       if: ${{ inputs.dependency-manager == 'npm' }}
       run: npm run test:ci
