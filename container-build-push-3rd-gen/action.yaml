@@ -23,9 +23,12 @@ inputs:
   image-url:
     description: "Image url/name without registry."
     required: true
-  impage-registry:
+  image-registry:
     description: "Image registry url."
     default: "ghcr.io"
+  image-registry-user:
+    description: "Image registry username."
+    default: ${{ github.actor }}
   image-platforms:
     description: "Image platforms to build for. Default is 'linux/amd64'."
     default: linux/amd64
@@ -61,5 +64,5 @@ runs:
         type=raw,value=unstable,enable={{is_default_branch}}
       image-platforms: ${{ inputs.image-platforms }}
       registry: ${{ inputs.image-registry }}
-      registry-username: ${{ github.actor }}
+      registry-username: ${{ inputs.image-registry-user }}
       registry-password: ${{ inputs.registry-password }}
