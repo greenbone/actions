@@ -38,6 +38,6 @@ jobs:
 | cosign-key-password | cosign key password.                                           | Optional |
 | image-labels        | Image labels.                                                  | Required |
 | image-url           | Image url/name without registry.                               | Required |
-| image-regsitry      | "Image registry url."                  | Optional |
+| image-registry      | "Image registry url."                  | Optional |
 | image-platforms     | Image platforms to build for. Default is 'linux/amd64'.        | Optional |
 | registry-password   | Registry password.                                             | Required |
