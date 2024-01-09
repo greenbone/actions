@@ -1,0 +1,24 @@
+name: "Validate Helm Chart"
+description: "GitHub Action to validate a Helm chart using Helm template"
+inputs:
+  chart-path:
+    description: "Path to the Helm chart to validate"
+    required: true
+  chart-name:
+    description: "Chart to validate"
+    required: true
+
+outputs:
+  test-result:
+    description: "The result of the Helm chart test"
+    value: ${{ steps.test-helm-chart.outputs.result }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Helm Chart
+      id: test-helm-chart
+      shell: bash
+      run: |
+        RESULT=$(helm template test "${{ inputs.chart-path }}/${{ inputs.chart-name }}" --debug)
+        echo "result=$RESULT" >> $GITHUB_OUTPUT
