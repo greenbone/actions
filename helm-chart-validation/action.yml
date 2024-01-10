@@ -16,6 +16,10 @@ inputs:
   registry-token:
     description: "Registry login password/token."
     required: true
+  values-path:
+    description: "Optional path to values.yaml file"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -31,4 +35,8 @@ runs:
       id: test-helm-chart
       shell: bash
       run: |
-        helm template test "${{ inputs.chart-path }}/${{ inputs.chart-name }}" --debug
+        HELM_COMMAND="helm template test ${{ inputs.chart-path }}/${{ inputs.chart-name }} --debug"
+        if [ -n "${{ inputs.extra-values-path }}" ]; then
+          HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.extra-values-path }}"
+        fi
+        $HELM_COMMAND

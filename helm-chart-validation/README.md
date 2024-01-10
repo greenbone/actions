@@ -11,6 +11,7 @@ This GitHub Action validates Helm charts by executing the `helm template test` c
 | `registry`     | Registry name                                    | No       | `ghcr.io`|
 | `registry-user`| Registry login user                              | Yes      | N/A      |
 | `registry-token`| Registry login password/token                   | Yes      | N/A      |
+| `values-path` | path to values.yaml file                          | No       | N/A      |
 
 ## Example Usage
 
