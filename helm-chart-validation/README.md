@@ -1,23 +1,16 @@
-# Validate Helm Chart
-
-GitHub Action to validate a Helm chart using the Helm template command.
-
-## Description
+# Validate Helm Chart Action
 
 This GitHub Action validates Helm charts by executing the `helm template test` command on the specified chart. It is designed to ensure that the chart is valid and adheres to Helm's standards.
 
 ## Inputs
 
-| Input Variable | Description                               | Required |
-| -------------- | ----------------------------------------- | -------- |
-| chart-path     | Path to the directory containing Helm charts | Yes      |
-| chart-name     | Name of the Helm chart to validate        | Yes      |
-
-## Outputs
-
-| Output Variable | Description                               |
-| --------------- | ----------------------------------------- |
-| test-result     | The result of the Helm chart test         |
+| Input          | Description                                      | Required | Default  |
+|----------------|--------------------------------------------------|----------|----------|
+| `chart-path`   | Path to the Helm chart to validate               | Yes      | N/A      |
+| `chart-name`   | Chart to validate                                | Yes      | N/A      |
+| `registry`     | Registry name                                    | No       | `ghcr.io`|
+| `registry-user`| Registry login user                              | Yes      | N/A      |
+| `registry-token`| Registry login password/token                   | Yes      | N/A      |
 
 ## Example Usage
 
@@ -30,10 +23,14 @@ jobs:
     name: helm-chart-validation
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
-      - name: run helm-chart-validation
+
+      - name: Validate Helm Chart
         uses: greenbone/actions/helm-chart-validation@v3
         with:
-          chart-path: 'path-to-charts'
-          chart-name: 'my-chart'
+          chart-path: 'path/to/charts'
+          chart-name: 'helm-chart-path'
+          registry-user: ${{ secrets.REGISTRY_USER }}
+          registry-token: ${{ secrets.REGISTRY_TOKEN }}
+          
