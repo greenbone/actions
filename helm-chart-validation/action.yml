@@ -36,7 +36,7 @@ runs:
       shell: bash
       run: |
         HELM_COMMAND="helm template test ${{ inputs.chart-path }}/${{ inputs.chart-name }} --debug"
-        if [ -n "${{ inputs.extra-values-path }}" ]; then
-          HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.extra-values-path }}"
+        if [ -n "${{ inputs.values-path }}" ]; then
+          HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.values-path }}"
         fi
         $HELM_COMMAND
