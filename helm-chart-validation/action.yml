@@ -7,7 +7,15 @@ inputs:
   chart-name:
     description: "Chart to validate"
     required: true
-
+  registry:
+    description: "Registry name. Default: ghcr.io"
+    default: "ghcr.io"
+  registry-user:
+    description: "Registry login user."
+    required: true
+  registry-token:
+    description: "Registry login password/token."
+    required: true
 outputs:
   test-result:
     description: "The result of the Helm chart test"
@@ -16,6 +24,13 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Helm registry login 
+      shell: bash
+      run: |
+        helm registry login \
+          -u '${{ inputs.registry-user }}' \
+          -p '${{ inputs.registry-token }}' \
+          '${{ inputs.registry }}'
     - name: Check Helm Chart
       id: test-helm-chart
       shell: bash
