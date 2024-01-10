@@ -39,4 +39,5 @@ runs:
         if [ -n "${{ inputs.chart-values-path }}" ]; then
           HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.chart-values-path }}"
         fi
+        echo $HELM_COMMAND
         $HELM_COMMAND
