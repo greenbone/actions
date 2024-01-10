@@ -16,10 +16,6 @@ inputs:
   registry-token:
     description: "Registry login password/token."
     required: true
-outputs:
-  test-result:
-    description: "The result of the Helm chart test"
-    value: ${{ steps.test-helm-chart.outputs.result }}
 
 runs:
   using: "composite"
@@ -35,5 +31,4 @@ runs:
       id: test-helm-chart
       shell: bash
       run: |
-        RESULT=$(helm template test "${{ inputs.chart-path }}/${{ inputs.chart-name }}" --debug)
-        echo "result=$RESULT" >> $GITHUB_OUTPUT
+        helm template test "${{ inputs.chart-path }}/${{ inputs.chart-name }}" --debug
