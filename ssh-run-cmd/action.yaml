@@ -4,7 +4,8 @@ description: "Run bash cmd on remote host"
 inputs:
   cmd:
     description: "Bash cmd string. Single quotes are not allowed."
-    required: true
+  file:
+    description: "Use file instead of cmd."
   known-hosts:
     description: "SSH known hosts string."
     required: true
@@ -20,6 +21,7 @@ inputs:
   ssh-tmp:
     description: "SSH private key storage folder path. Default: /tmp/ssh."
     default: "/tmp/ssh"
+  
 
 branding:
   icon: "package"
@@ -39,6 +41,12 @@ runs:
       with:
         known_hosts: ${{ inputs.known-hosts }}
     - name: Run bash cmd on remote host
+      if ${{ inputs.cmd }}
       shell: bash
       run: |
         echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash
+    - name: Run bash cmd on remote host
+      if ${{ inputs.file }}
+      shell: bash
+      run: |
+        ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }} 
