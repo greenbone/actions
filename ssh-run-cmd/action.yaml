@@ -40,13 +40,15 @@ runs:
       uses: greenbone/actions/ssh-known-hosts@v3
       with:
         known_hosts: ${{ inputs.known-hosts }}
-    - name: Run bash cmd on remote host
-      if ${{ inputs.cmd }}
+    - run: pwd
       shell: bash
+    - name: Run bash cmd on remote host
+      if: ${{ inputs.cmd }}
       run: |
         echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash
-    - name: Run bash cmd on remote host
-      if ${{ inputs.file }}
       shell: bash
+    - name: Run bash cmd on remote host
+      if: ${{ inputs.file }}
       run: |
         ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }} 
+      shell: bash
