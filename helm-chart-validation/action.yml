@@ -43,7 +43,6 @@ runs:
         repository: ${{ inputs.repository-name }}
         path: additional-repo
         ref: ${{ inputs.repository-branch }}
-        token: ${{ secrets.GREENBONE_BOT_TOKEN }}
 
     - name: Helm registry login 
       shell: bash
