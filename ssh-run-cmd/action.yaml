@@ -40,8 +40,6 @@ runs:
       uses: greenbone/actions/ssh-known-hosts@v3
       with:
         known_hosts: ${{ inputs.known-hosts }}
-    - run: pwd
-      shell: bash
     - name: Run bash cmd on remote host
       if: ${{ inputs.cmd }}
       run: |
