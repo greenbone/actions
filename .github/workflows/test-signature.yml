@@ -7,6 +7,7 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test-creating-signature-file:
@@ -20,7 +21,7 @@ jobs:
         with:
           gpg-key: ${{ secrets.TEST_GPG_KEY }}
           gpg-passphrase: ${{ secrets.TEST_GPG_PASSPHRASE }}
-          gpg-fingerprint: ${{ secrets.TEST_GPG_FINGERPRINT }}
+          gpg-fingerprint: ${{ vars.TEST_GPG_FINGERPRINT }}
           file: ./signature/action.yml
           signature-file: test.asc
       - name: Check the signature
@@ -31,7 +32,7 @@ jobs:
         with:
           gpg-key: ${{ secrets.TEST_GPG_KEY }}
           gpg-passphrase: ${{ secrets.TEST_GPG_PASSPHRASE }}
-          gpg-fingerprint: ${{ secrets.TEST_GPG_FINGERPRINT }}
+          gpg-fingerprint: ${{ vars.TEST_GPG_FINGERPRINT }}
           file: ./signature/action.yml
       - name: Check the signature
         run: |
