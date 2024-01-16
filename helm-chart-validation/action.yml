@@ -34,15 +34,16 @@ runs:
   using: "composite"
   steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Clone Additional Repository
       if: inputs.repository-name && inputs.repository-branch
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ inputs.repository-name }}
         path: additional-repo
         ref: ${{ inputs.repository-branch }}
+        token: ${{ secrets.GREENBONE_BOT_TOKEN }}
 
     - name: Helm registry login 
       shell: bash
