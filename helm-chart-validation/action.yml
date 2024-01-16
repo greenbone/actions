@@ -20,12 +20,15 @@ inputs:
     description: "Optional path to values.yaml file"
     required: false
     default: ""
-  additional-chart-values-url:
-    description: "URL to the additional values.yaml file"
-    required: false
   repository-url:
-    description: "URL of the repository to clone"
-    required: true
+    description: "URL of the repository to clone (optional)"
+    required: false
+  repository-branch:
+    description: "Branch of the repository to clone (optional)"
+    required: false
+  additional-chart-values-path:
+    description: "Path to the additional values.yaml file within the cloned repository (optional)"
+    required: false
 
 runs:
   using: "composite"
@@ -34,9 +37,10 @@ runs:
       uses: greenbone/actions/set-github-user@v3
 
     - name: Clone Repository
+      if: inputs.repository-url && inputs.repository-branch
       shell: bash
       run: |
-        git clone ${{ inputs.repository-url }}
+        git clone --branch ${{ inputs.repository-branch }} ${{ inputs.repository-url }}
 
     - name: Helm registry login 
       shell: bash
@@ -52,14 +56,14 @@ runs:
       run: |
         HELM_COMMAND="helm template test ${{ inputs.chart-path }}/${{ inputs.chart-name }} --debug"
         
-        # Check if additional-chart-values-url is provided and download the file
-        if [ -n "${{ inputs.additional-chart-values-url }}" ]; then
-          curl -o additional_values.yaml "${{ inputs.additional-chart-values-url }}"
-          HELM_COMMAND="$HELM_COMMAND -f additional_values.yaml"
+        # Include additional chart values from the cloned repository if provided
+        if [ -n "${{ inputs.repository-url }}" ] && [ -n "${{ inputs.additional-chart-values-path }}" ]; then
+          HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.additional-chart-values-path }}"
         fi
 
         # Include chart values path if provided
         if [ -n "${{ inputs.chart-values-path }}" ]; then
           HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.chart-values-path }}"
         fi
+
         $HELM_COMMAND
