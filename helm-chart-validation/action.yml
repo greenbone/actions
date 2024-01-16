@@ -20,10 +20,24 @@ inputs:
     description: "Optional path to values.yaml file"
     required: false
     default: ""
+  additional-chart-values-url:
+    description: "URL to the additional values.yaml file"
+    required: false
+  repository-url:
+    description: "URL of the repository to clone"
+    required: true
 
 runs:
   using: "composite"
   steps:
+    - name: Setup Git credentials 
+      uses: greenbone/actions/set-github-user@v3
+
+    - name: Clone Repository
+      shell: bash
+      run: |
+        git clone ${{ inputs.repository-url }}
+
     - name: Helm registry login 
       shell: bash
       run: |
@@ -31,12 +45,22 @@ runs:
           -u '${{ inputs.registry-user }}' \
           -p '${{ inputs.registry-token }}' \
           '${{ inputs.registry }}'
+
     - name: Check Helm Chart
       id: test-helm-chart
       shell: bash
       run: |
         HELM_COMMAND="helm template test ${{ inputs.chart-path }}/${{ inputs.chart-name }} --debug"
+        
+        # Check if additional-chart-values-url is provided and download the file
+        if [ -n "${{ inputs.additional-chart-values-url }}" ]; then
+          curl -o additional_values.yaml "${{ inputs.additional-chart-values-url }}"
+          HELM_COMMAND="$HELM_COMMAND -f additional_values.yaml"
+        fi
+
+        # Include chart values path if provided
         if [ -n "${{ inputs.chart-values-path }}" ]; then
           HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.chart-values-path }}"
         fi
+
         $HELM_COMMAND
