@@ -36,15 +36,13 @@ runs:
     - name: Setup Git credentials 
       uses: greenbone/actions/set-github-user@v3
 
-    - name: Clone Repository
+    - name: Clone Additional Repository
       if: inputs.repository-url && inputs.repository-branch
-      shell: bash
-      run: |
-        # Ensure Git uses credentials set by the previous step
-        git config --global credential.helper store
-
-        # Clone the repository
-        git clone --branch ${{ inputs.repository-branch }} ${{ inputs.repository-url }}
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ inputs.repository-url }}
+        path: additional-repo
+        ref: ${{ inputs.repository-branch }}
 
     - name: Helm registry login 
       shell: bash
@@ -61,8 +59,8 @@ runs:
         HELM_COMMAND="helm template test ${{ inputs.chart-path }}/${{ inputs.chart-name }} --debug"
         
         # Include additional chart values from the cloned repository if provided
-        if [ -n "${{ inputs.repository-url }}" ] && [ -n "${{ inputs.additional-chart-values-path }}" ]; then
-          HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.additional-chart-values-path }}"
+        if [ -n "${{ inputs.additional-chart-values-path }}" ]; then
+          HELM_COMMAND="$HELM_COMMAND -f additional-repo/${{ inputs.additional-chart-values-path }}"
         fi
 
         # Include chart values path if provided
