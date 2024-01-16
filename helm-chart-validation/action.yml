@@ -29,24 +29,24 @@ inputs:
   additional-chart-values-path:
     description: "Path to the additional values.yaml file within the cloned repository (optional)"
     required: false
+  token:
+    description: "Token for cloning repositories"
+    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout Main Repository
-      uses: actions/checkout@v3
-
-    - name: Setup Git credentials 
-      uses: greenbone/actions/set-github-user@v3
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
     - name: Clone Additional Repository
       if: inputs.repository-name && inputs.repository-branch
-      uses: actions/checkout@v
+      uses: actions/checkout@v4
       with:
         repository: ${{ inputs.repository-name }}
         path: additional-repo
         ref: ${{ inputs.repository-branch }}
-        token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+        token: ${{ inputs.token }} # Token used for cloning
 
     - name: Helm registry login 
       shell: bash
