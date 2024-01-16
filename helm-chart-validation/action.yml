@@ -40,6 +40,10 @@ runs:
       if: inputs.repository-url && inputs.repository-branch
       shell: bash
       run: |
+        # Ensure Git uses credentials set by the previous step
+        git config --global credential.helper store
+
+        # Clone the repository
         git clone --branch ${{ inputs.repository-branch }} ${{ inputs.repository-url }}
 
     - name: Helm registry login 
