@@ -33,7 +33,7 @@ runs:
   using: "composite"
   steps:
     - name: Set up poetry
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       id: python
       with:
         python-version: ${{ inputs.python-version }}

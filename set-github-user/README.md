@@ -16,7 +16,7 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     steps:
-        - uses: greenbone/actions/setup-github-user@v3
+        - uses: greenbone/actions/set-github-user@v3
           with:
             user: ${{ vars.user }}
             mail: ${{ vars.mail }}

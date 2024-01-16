@@ -68,10 +68,10 @@ runs:
         fi
 
         pipx environment
-        echo "home=$(pipx environment -v PIPX_HOME)" >> $GITHUB_OUTPUT
-        echo "bin=$(pipx environment -v PIPX_BIN_DIR)" >> $GITHUB_OUTPUT
-        echo "venvs=$(pipx environment -v PIPX_LOCAL_VENVS)" >> $GITHUB_OUTPUT
-        echo "shared=$(pipx environment -v PIPX_SHARED_LIBS)" >> $GITHUB_OUTPUT
+        echo "home=$(pipx environment --value PIPX_HOME)" >> $GITHUB_OUTPUT
+        echo "bin=$(pipx environment --value PIPX_BIN_DIR)" >> $GITHUB_OUTPUT
+        echo "venvs=$(pipx environment --value PIPX_LOCAL_VENVS)" >> $GITHUB_OUTPUT
+        echo "shared=$(pipx environment --value PIPX_SHARED_LIBS)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Ensure pipx bin directory is in PATH
       run: |
