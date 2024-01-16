@@ -33,12 +33,15 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
     - name: Setup Git credentials 
       uses: greenbone/actions/set-github-user@v3
 
     - name: Clone Additional Repository
       if: inputs.repository-name && inputs.repository-branch
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ inputs.repository-name }}
         path: additional-repo
