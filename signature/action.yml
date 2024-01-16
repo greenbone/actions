@@ -29,13 +29,13 @@ runs:
       shell: bash
       run: |
         echo -e "${{ inputs.gpg-key }}" >> tmp.file
-        gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
+        gpg --pinentry-mode loopback --passphrase '${{ inputs.gpg-passphrase }}' --import tmp.file
         rm tmp.file
     - name: "Create a GPG signature"
       shell: bash
       run: |
         if [ -z "${{ inputs.signature-file }}"]; then
-          gpg --pinentry-mode loopback --local-user ${{ inputs.gpg-fingerprint }} --yes --detach-sign --passphrase ${{ inputs.gpg-passphrase }} --armor ${{ inputs.file }}
+          gpg --pinentry-mode loopback --local-user '${{ inputs.gpg-fingerprint }}' --yes --detach-sign --passphrase '${{ inputs.gpg-passphrase }}' --armor '${{ inputs.file }}'
         else
-          gpg --pinentry-mode loopback --local-user ${{ inputs.gpg-fingerprint }} --yes --detach-sign --passphrase ${{ inputs.gpg-passphrase }} --armor --output ${{ inputs.signature-file }} ${{ inputs.file }}
+          gpg --pinentry-mode loopback --local-user '${{ inputs.gpg-fingerprint }}' --yes --detach-sign --passphrase '${{ inputs.gpg-passphrase }}' --armor --output ${{ inputs.signature-file }} '${{ inputs.file }}'
         fi
