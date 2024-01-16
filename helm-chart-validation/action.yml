@@ -20,8 +20,8 @@ inputs:
     description: "Optional path to values.yaml file"
     required: false
     default: ""
-  repository-url:
-    description: "URL of the repository to clone (optional)"
+  repository-name:
+    description: "Name of the repository to clone (in the format {owner}/{repo})"
     required: false
   repository-branch:
     description: "Branch of the repository to clone (optional)"
@@ -37,10 +37,10 @@ runs:
       uses: greenbone/actions/set-github-user@v3
 
     - name: Clone Additional Repository
-      if: inputs.repository-url && inputs.repository-branch
+      if: inputs.repository-name && inputs.repository-branch
       uses: actions/checkout@v2
       with:
-        repository: ${{ inputs.repository-url }}
+        repository: ${{ inputs.repository-name }}
         path: additional-repo
         ref: ${{ inputs.repository-branch }}
 
