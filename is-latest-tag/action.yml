@@ -34,8 +34,11 @@ runs:
           latest_major=$(echo $latest_major | cut -c2-)
           tag_major=$(echo $tag_major | cut -c2-)
 
-          echo "$tag_major >= $latest_major"
-          if [[ $tag_major -ge $latest_major && ($tag_minor -ne 0 || $tag_patch -ne 0) ]]; then
+          if [[ $tag_major -gt $latest_major ]];
+            echo "is-latest-tag=true" >> $GITHUB_OUTPUT
+          elif [[ $tag_major -eq $latest_major && $tag_minor -gt $latest_minor ]]; then
+            echo "is-latest-tag=true" >> $GITHUB_OUTPUT
+          elif [[ $tag_major -eq $latest_major && $tag_minor -eq $latest_minor && $tag_patch -gt $latest_patch ]]; then
             echo "is-latest-tag=true" >> $GITHUB_OUTPUT
           else
             echo "is-latest-tag=false" >> $GITHUB_OUTPUT
