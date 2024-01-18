@@ -1,53 +1,51 @@
-name: "Validate Helm Chart"
-description: "GitHub Action to validate a Helm chart using Helm template"
+name: Helm build and push chart
+description: Push helm chart to OCI-based registries
 inputs:
-  chart-path:
-    description: "Path to the Helm chart to validate"
-    required: true
+  charts-path:
+    description: "Path to charts base folder. Default: ./charts"
+    default: ./charts
   chart-name:
-    description: "Chart to validate"
+    description: "Chart to build and push."
     required: true
   registry:
     description: "Registry name. Default: ghcr.io"
     default: "ghcr.io"
+  registry-subpath:
+    description: "Registry subpath to push the helm chart to."
   registry-user:
     description: "Registry login user."
     required: true
   registry-token:
     description: "Registry login password/token."
     required: true
-  chart-values-path:
-    description: "Optional path to values.yaml file"
+  gpg-secret-name:
+    description: "Gpg secret key name from gpg secret key. Needed to use gpg sign."
     required: false
-    default: ""
-  repository-name:
-    description: "Name of the repository to clone (in the format {owner}/{repo})"
+  gpg-secret-key:
+    description: "Base64 encoded gpg secret key for chart sign. Required if gpg-secret-name is set."
     required: false
-  repository-branch:
-    description: "Branch of the repository to clone (optional)"
+  gpg-secret-key-password:
+    description: "The password for the gpg secret key. Required if gpg-secret-name is set."
     required: false
-  additional-chart-values-path:
-    description: "Path to the additional values.yaml file within the cloned repository (optional)"
+  enable-chart-test:
+    description: "Enable testing of Helm charts. Default: true"
     required: false
-  token:
-    description: "Token for cloning repositories"
-    required: true
+    default: 'true'
+outputs:
+  tag:
+    description: "Helm chart url's with tag."
+    value: ${{ steps.push.outputs.tag }}
+  digest:
+    description: "The helm chart digest."
+    value: ${{ steps.push.outputs.digest }}
+
+branding:
+  icon: "package"
+  color: "green"
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    - name: Clone Additional Repository
-      if: inputs.repository-name && inputs.repository-branch
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.repository-name }}
-        path: additional-repo
-        ref: ${{ inputs.repository-branch }}
-        token: ${{ inputs.token }} # Token used for cloning
-
     - name: Helm registry login 
       shell: bash
       run: |
@@ -55,21 +53,81 @@ runs:
           -u '${{ inputs.registry-user }}' \
           -p '${{ inputs.registry-token }}' \
           '${{ inputs.registry }}'
-
-    - name: Check Helm Chart
-      id: test-helm-chart
+    - name: Set gpg secret key
+      if: ${{ inputs.gpg-secret-name }}
       shell: bash
       run: |
-        HELM_COMMAND="helm template test ${{ inputs.chart-path }}/${{ inputs.chart-name }} --debug"
-        
-        # Include additional chart values from the cloned repository if provided
-        if [ -n "${{ inputs.additional-chart-values-path }}" ]; then
-          HELM_COMMAND="$HELM_COMMAND -f additional-repo/${{ inputs.additional-chart-values-path }}"
+        echo "${{ inputs.gpg-secret-key }}" | base64 -d > /tmp/secret-key.gpg
+        echo "${{ inputs.gpg-secret-key-password }}" > /tmp/secret-key-password
+        chmod 0600 /tmp/secret-key.gpg
+        chmod 0600 /tmp/secret-key-password
+    - name: Update chart dependencies
+      shell: bash
+      run: |
+        helm dependency update "${{ inputs.charts-path }}/${{ inputs.chart-name }}"
+    - name: Validate Helm Charts
+      if: ${{ inputs.enable-chart-test == 'true' }}
+      shell: bash
+      run: |
+          helm template test "${{ inputs.charts-path }}/${{ inputs.chart-name }}" -f "opensight/integration/values.yml" --debug
+    - name: Build and signing
+      id: build
+      shell: bash
+      run: |
+        chart="${{ inputs.charts-path }}/${{ inputs.chart-name }}"
+        # Build helm chart
+        # The stderr into stdout redirection
+        # is needed to get the chart file name
+        if [ "${{ inputs.gpg-secret-name }}" ]; then
+          echo "Sign used"
+          output="$(helm package \
+            --sign \
+            --key '${{ inputs.gpg-secret-name }}' \
+            --keyring /tmp/secret-key.gpg \
+            --passphrase-file /tmp/secret-key-password \
+            "$chart" \
+            2>&1)"
+        else
+          echo "No sign used"
+          output="$(helm package "$chart" 2>&1)"
         fi
-
-        # Include chart values path if provided
-        if [ -n "${{ inputs.chart-values-path }}" ]; then
-          HELM_COMMAND="$HELM_COMMAND -f ${{ inputs.chart-values-path }}"
+        echo "$output"
+        # Get helm chart tgz file name
+        chart_file="${output##*/}"
+        # Check if output is correct
+        if ! [ -f "$chart_file" ]; then
+          echo "Chart filename: $chart_file not found."
+          exit 1
         fi
-
-        $HELM_COMMAND
+        # Echo outputs
+        echo "$chart_file"
+        # Set outputs
+        echo "chart-file=$chart_file" >> "$GITHUB_OUTPUT"
+    - name: Push
+      id: push
+      shell: bash
+      run: |
+        cmd="push ${{ steps.build.outputs.chart-file }} oci://${{ inputs.registry }}/${{ github.repository_owner }}/"
+        # Add subpath if exist
+        if [ "${{ inputs.registry-subpath }}" ]; then
+          echo "Add subpath ${{ inputs.registry-subpath }}"
+          cmd+="${{ inputs.registry-subpath }}/"
+        fi
+        # Run helm push
+        output="$(helm $cmd 2>&1)"
+        # Get helm path and helm digest
+        pushed="$(echo "$output" | awk '/Pushed:/{print $2}')"
+        digest="$(echo "$output" | awk '/Digest:/{print $2}')"
+        # Echo outputs
+        echo "tag: $pushed"
+        echo "digest: $digest"
+        # Set outputs
+        echo "tag=$pushed" >> "$GITHUB_OUTPUT"
+        echo "digest=$digest" >> "$GITHUB_OUTPUT"
+    - name: Cleanup
+      shell: bash
+      run: |
+        rm -f "${{ steps.build.outputs.chart-file }}"
+        rm -f "${{ steps.build.outputs.chart-file }}.prov"
+        rm -f /tmp/secret-key.gpg
+        rm -f /tmp/secret-key-password
