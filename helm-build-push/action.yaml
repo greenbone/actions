@@ -46,8 +46,6 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
     - name: Helm registry login 
       shell: bash
       run: |
@@ -71,10 +69,7 @@ runs:
       if: ${{ inputs.enable-chart-test == 'true' }}
       shell: bash
       run: |
-        chart_path="${GITHUB_WORKSPACE}/${{ inputs.charts-path }}/${{ inputs.chart-name }}"
-        values_path="${GITHUB_WORKSPACE}/opensight/integration/values.yml"
-        echo "Testing Helm Chart: ${chart_path} with additional values: ${values_path}"
-        helm template test "$chart_path" -f "$values_path" --debug 
+          helm template test "${{ inputs.charts-path }}/${{ inputs.chart-name }}" -f "opensight/integration/values.yml" --debug
     - name: Build and signing
       id: build
       shell: bash
