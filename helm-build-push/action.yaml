@@ -27,7 +27,10 @@ inputs:
   gpg-secret-key-password:
     description: "The password for the gpg secret key. Required if gpg-secret-name is set."
     required: false
-
+  enable-chart-test:
+    description: "Enable testing of Helm charts. Default: true"
+    required: false
+    default: 'true'
 outputs:
   tag:
     description: "Helm chart url's with tag."
@@ -43,6 +46,8 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
     - name: Helm registry login 
       shell: bash
       run: |
@@ -62,6 +67,14 @@ runs:
       shell: bash
       run: |
         helm dependency update "${{ inputs.charts-path }}/${{ inputs.chart-name }}"
+    - name: Test Helm Charts
+      if: ${{ inputs.enable-chart-test == 'true' }}
+      shell: bash
+      run: |
+        chart_path="${GITHUB_WORKSPACE}/${{ inputs.charts-path }}/${{ inputs.chart-name }}"
+        values_path="${GITHUB_WORKSPACE}/opensight/integration/values.yml"
+        echo "Testing Helm Chart: ${chart_path} with additional values: ${values_path}"
+        helm template test "$chart_path" -f "$values_path" --debug 
     - name: Build and signing
       id: build
       shell: bash

@@ -21,7 +21,7 @@ jobs:
 
 ## Action Configuration
 
-| Input Variable          | Description                                                                     |          |
+| Input Variable          | Description                                                                     | Required |
 |-------------------------|---------------------------------------------------------------------------------|----------|
 | charts-path             | Path to charts base folder. Default: ./charts                                   | Optional |
 | chart-name              | Chart to build and push.                                                        | Required |
@@ -32,6 +32,8 @@ jobs:
 | gpg-secret-name         | Gpg secret key name from gpg secret key. Needed to use gpg sign.                | Optional |
 | gpg-secret-key          | Base64 encoded gpg secret key for chart sign. Needed if gpg-secret-name is set. | Optional |
 | gpg-secret-key-password | The password for the gpg secret key. Needed if gpg-secret-name is set.          | Optional |
+| gpg-secret-key-password | The password for the gpg secret key. Needed if gpg-secret-name is set.          | Optional |
+| enable-chart-test       | Enable testing of Helm charts ('true' or 'false'). Default: 'true'              | Optional |
 
 ## Action Output
 
