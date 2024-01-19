@@ -45,7 +45,7 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
     - name: Set git name, mail and origin
-      uses: greenbone/actions/set-git-user@v3
+      uses: greenbone/actions/set-github-user@v3
       with:
         user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
