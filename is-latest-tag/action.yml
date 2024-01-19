@@ -34,7 +34,7 @@ runs:
           latest_major=$(echo $latest_major | cut -c2-)
           tag_major=$(echo $tag_major | cut -c2-)
 
-          if [[ $tag_major -gt $latest_major ]];
+          if [[ $tag_major -gt $latest_major ]]; then
             echo "is-latest-tag=true" >> $GITHUB_OUTPUT
           elif [[ $tag_major -eq $latest_major && $tag_minor -gt $latest_minor ]]; then
             echo "is-latest-tag=true" >> $GITHUB_OUTPUT
