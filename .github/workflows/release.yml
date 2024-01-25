@@ -20,6 +20,9 @@ jobs:
   release:
     name: Actions
     runs-on: 'ubuntu-latest'
+    environment:
+      name: release
+      url: https://github.com/greenbone/actions/releases
     steps:
       - uses: actions/checkout@v4
         with:
