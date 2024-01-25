@@ -27,7 +27,10 @@ inputs:
   gpg-secret-key-password:
     description: "The password for the gpg secret key. Required if gpg-secret-name is set."
     required: false
-
+  enable-chart-test:
+    description: "Enable testing of Helm charts. Default is true"
+    required: false
+    default: 'true'
 outputs:
   tag:
     description: "Helm chart url's with tag."
@@ -62,6 +65,11 @@ runs:
       shell: bash
       run: |
         helm dependency update "${{ inputs.charts-path }}/${{ inputs.chart-name }}"
+    - name: Test Helm Charts
+      if: ${{ inputs.enable-chart-test == 'true' }}
+      shell: bash
+      run: |
+        helm template test "${{ inputs.charts-path }}/${{ inputs.chart-name }}" --debug
     - name: Build and signing
       id: build
       shell: bash
