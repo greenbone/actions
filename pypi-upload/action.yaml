@@ -8,7 +8,7 @@ inputs:
     default: "3.10"
   pypi-token:
     description: "Token for uploading the build to PyPI"
-    required: true
+    required: false
   ref:
     description: The branch, tag or SHA to checkout. Default depends on the event (https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows).
 
@@ -32,10 +32,11 @@ runs:
         python -m pip install --upgrade pip
         python -m pip install --upgrade poetry
       shell: bash
-    - name: Build and publish
+    - name: Build
       run: |
         poetry build
-        poetry publish
       shell: bash
-      env:
-        POETRY_PYPI_TOKEN_PYPI: ${{ inputs.pypi-token }}
+    - name: Upload
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ inputs.pypi-token }}
