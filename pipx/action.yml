@@ -87,7 +87,7 @@ runs:
       # cache venv only if an application will be installed and the user requested caching and no python path is set
       if: inputs.install && inputs.cache == 'true' && !inputs.python-path
       id: cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.settings.outputs.venvs }}/${{ inputs.install }}
         key: python-${{ steps.python.outputs.python-version }}-pipx-venv-${{ inputs.install }}-${{ inputs.install-version || 'latest' }}
