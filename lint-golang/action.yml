@@ -19,7 +19,7 @@ branding:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-go@v3
       with:
         go-version: ${{ inputs.version }}

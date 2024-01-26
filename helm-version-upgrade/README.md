@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: run helm-version-upgrade
         uses: greenbone/actions/helm-version-upgrade@v3
         with:
