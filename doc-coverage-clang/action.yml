@@ -1,6 +1,6 @@
-name: 'Build XML documentation and upload coverage'
+name: "Build XML documentation and upload coverage"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
-description: 'An action to upload documentation coverage to codecov.io for C Lang repository. Requires to run with the greenbone/doxygen docker image.'
+description: "An action to upload documentation coverage to codecov.io for C Lang repository. Requires to run with the greenbone/doxygen docker image."
 branding:
   icon: "package"
   color: "green"
@@ -12,10 +12,10 @@ runs:
     - name: Install coverxygen and codecov
       shell: bash
       run: |
-          python3 -m venv .venv
-          . .venv/bin/activate
-          pip install setuptools --upgrade
-          pip install 'coverxygen>=1.3.1' codecov
+        python3 -m venv .venv
+        . .venv/bin/activate
+        pip install setuptools --upgrade
+        pip install 'coverxygen>=1.3.1' codecov
     - name: Generate documentation (XML)
       shell: bash
       run: |
@@ -26,9 +26,9 @@ runs:
     - name: Establish documentation coverage
       shell: bash
       run: |
-          . .venv/bin/activate
-          python -m coverxygen --src-dir ${{ github.workspace }} \
-          --xml-dir build/doc/generated/xml/ --output lcov.info
+        . .venv/bin/activate
+        python -m coverxygen --src-dir ${{ github.workspace }} \
+        --xml-dir build/doc/generated/xml/ --output lcov.info
     - name: Upload documentation coverage to codecov
       uses: codecov/codecov-action@v1
       with:
