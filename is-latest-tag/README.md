@@ -36,6 +36,6 @@ jobs:
 
 ## Output Arguments
 
-|Output Variable|Description|
-|---------------|-----------|
-| is-latest-tag | Evaluates to true if the created tag is the latest git tag |
+| Output Variable | Description                                                |
+| --------------- | ---------------------------------------------------------- |
+| is-latest-tag   | Evaluates to true if the created tag is the latest git tag |

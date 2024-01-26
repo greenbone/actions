@@ -22,7 +22,7 @@ jobs:
 ## Action Configuration
 
 | Input Variable          | Description                                                                     |          |
-|-------------------------|---------------------------------------------------------------------------------|----------|
+| ----------------------- | ------------------------------------------------------------------------------- | -------- |
 | charts-path             | Path to charts base folder. Default: ./charts                                   | Optional |
 | chart-name              | Chart to build and push.                                                        | Required |
 | registry                | registry name. Default: ghcr.io                                                 | Optional |
@@ -36,7 +36,7 @@ jobs:
 
 ## Action Output
 
-|Output Variable|Description|
-|--------------|-----------|
-| tag | Helm chart url's with tag |
-| digest | The helm chart digest |
+| Output Variable | Description               |
+| --------------- | ------------------------- |
+| tag             | Helm chart url's with tag |
+| digest          | The helm chart digest     |
