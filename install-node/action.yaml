@@ -27,7 +27,7 @@ runs:
       shell: bash
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ inputs.version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.version }}
         cache: ${{ inputs.dependency-manager }}

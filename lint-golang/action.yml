@@ -20,7 +20,7 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-go@v3
+    - uses: actions/setup-go@v5
       with:
         go-version: ${{ inputs.version }}
     - name: Generate code
