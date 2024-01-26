@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         # the full history is required for is-latest-tag
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
           with:
             fetch-depth: 0
         - uses: greenbone/actions/is-latest-tag@v3

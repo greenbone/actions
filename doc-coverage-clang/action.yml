@@ -8,7 +8,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout the repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Install coverxygen and codecov
       shell: bash
       run: |

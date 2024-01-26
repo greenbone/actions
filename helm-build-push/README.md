@@ -10,7 +10,7 @@ jobs:
     name: Build and push helm chart
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build and push chart
         uses: greenbone/actions/helm-build-push@v3
         with:
