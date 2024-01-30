@@ -7,6 +7,8 @@ description: |
 # Never look up these commands again. :)
 
 inputs:
+  working-directory:
+    description: "A working directory where to run poetry install"
   user:
     description: "GitHub user name on behalf of whom the actions will be executed. Default is 'github-actions'."
     default: github-actions
@@ -31,3 +33,4 @@ runs:
         git config --global user.email "${{ inputs.mail }}"
         git remote set-url origin https://${{ inputs.token }}@github.com/${{ inputs.repository }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
