@@ -28,6 +28,7 @@ jobs:
 
 |Input Variable|Description| |
 |--------------|-----------|-|
+| working-directory | A working directory where to run poetry install | Optional |
 | user | GitHub user name on behalf of whom the actions will be executed. | Optional (default: `github-actions`) |
 | mail | Mail address for the given GitHub user. | Optional (default: `github-actions@github.com`) |
 | token | The GitHub user's token (PAT) | Optional (default: `${{ github.token }}`) |
