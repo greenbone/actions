@@ -1,0 +1,12 @@
+name: "Use HTTPS for GitHub data transfer"
+description: "Use Git over HTTPS with OAuth instead of SSH to transfer data to GitHub"
+inputs:
+  token:
+    description: "OAuth 2.0 token to use for authentication"
+    required: True
+runs:
+  using: "composite"
+  steps:
+    - name: "Fix"
+      shell: bash
+      run: git config --global url."https://oauth2:${{ inputs.token }}@github.com".insteadOf "ssh://git@github.com"
