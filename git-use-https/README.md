@@ -14,7 +14,7 @@ jobs:
       - name: "Use HTTPS for GitHub data transfer"
         uses: greenbone/actions/git-use-https@v3
         with:
-          token: ${{ secrets.GREENBONE_BOT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Poetry with private GitHub repository as dependency
         uses: greenbone/actions/poetry@v3
 ```
