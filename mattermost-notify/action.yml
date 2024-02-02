@@ -115,7 +115,7 @@ runs:
     - name: Free input
       if: ${{ inputs.free }} 
       shell: bash
-      run: echo "ARGS=--free \"${{ inputs.free }}"" >> $GITHUB_ENV
+      run: echo "ARGS=--free \"${{ inputs.free }}\"" >> $GITHUB_ENV
       
     - name: Execute Mattermost-Notify
       shell: bash
