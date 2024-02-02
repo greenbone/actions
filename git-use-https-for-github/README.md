@@ -1,4 +1,4 @@
-# Use HTTPS for Git data transfer
+# Use HTTPS for Git data transfer to GitHub
 
 GitHub Action to use Git over HTTPS with OAuth instead of SSH to transfer data to GitHub. This fixes cloning private GitHub repositories, when unable to use `actions/checkout`.
 
