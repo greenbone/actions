@@ -112,6 +112,8 @@ runs:
           done
         fi
 
+        echo "ARGS=${ARGS[@]}" >> $GITHUB_ENV
+
     - name: Free input
       if: ${{ inputs.free }} 
       shell: bash
