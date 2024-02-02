@@ -56,6 +56,7 @@ runs:
       uses: actions/checkout@v4
       with:
         ref: ${{ inputs.commit }}
+
     - name: Install
       if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       uses: greenbone/actions/pipx@v3
@@ -63,7 +64,13 @@ runs:
       with:
         python-version: "3.10"
         install: mattermost-notify
-    - name: Create the Mattermost Message
+
+    - name: Set Channel and Webhook
+      shell: bash
+      run: |
+        echo "POS_ARGS=${{ inputs.MATTERMOST_WEBHOOK_URL }}${{ inputs.url }} ${{ inputs.MATTERMOST_CHANNEL }}${{ inputs.channel }}" >> $GITHUB_ENV
+      
+    - name: Inputs for Github success notifications
       shell: bash
       run: |
         ARGS=()
@@ -96,8 +103,6 @@ runs:
           ARGS+=(--workflow_name "${{ inputs.workflow-name }}")
         fi
 
-        ARGS+=("${{ inputs.MATTERMOST_WEBHOOK_URL }}${{ inputs.url }}" "${{ inputs.MATTERMOST_CHANNEL }}${{ inputs.channel }}")
-
         if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" ] || [ -n "${{ inputs.highlight }}" ]; then
           ARGS+=(--highlight)
           # Add every highlight element as its own string
@@ -107,8 +112,11 @@ runs:
           done
         fi
 
-        if [ -n "${{ inputs.free }}" ]; then
-          ARGS+=(--free "${{ inputs.free }}")
-        fi
-
-        mnotify-git "${ARGS[@]}"
+    - name: Free input
+      if: ${{ inputs.free == 'true' }} 
+      shell: bash
+      run: echo "ARGS=--free \"${{ inputs.free }}"" >> $GITHUB_ENV
+      
+    - name: Execute Mattermost-Notify
+      shell: bash
+      run: mnotify-git ${{ env.POS_ARGS }} ${{ env.ARGS }}
