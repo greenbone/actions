@@ -25,6 +25,8 @@ inputs:
     default: ${{ github.sha }}
   commit-message:
     description: Git commit message to use
+  free:
+    description: Free textmessage
   repository:
     description: GitHub repository (org/repo). Default is 'github.repository'
     default: ${{ github.repository }}
@@ -103,6 +105,10 @@ runs:
           for HIGHLIGHT in "${HIGHLIGHTS[@]}"; do
             ARGS+=("$HIGHLIGHT")
           done
+        fi
+
+        if [ -n "${{ inputs.free }}" ]; then
+          ARGS+=(--free "${{ inputs.free }}")
         fi
 
         mnotify-git "${ARGS[@]}"
