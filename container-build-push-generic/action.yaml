@@ -27,8 +27,8 @@ inputs:
     description: "Image labels."
     required: true
   image-url:
-    description: "Image url/name without registry."
-    required: true
+    description: "Image url/name without registry. Default is github.repository"
+    default: "${{ github.repository }}"
   image-tags:
     description: "Image tags."
     required: true
