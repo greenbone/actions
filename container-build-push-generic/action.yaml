@@ -80,7 +80,7 @@ runs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ${{ inputs.image-url }}
+        images: "${{ inputs.registry}}/${{ inputs.image-url }}"
         labels: ${{ inputs.image-labels }}
         tags: ${{ inputs.image-tags }}
 
