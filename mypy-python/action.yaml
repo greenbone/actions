@@ -48,4 +48,4 @@ runs:
     - run: poetry run mypy ${{ inputs.mypy-arguments }} ${{ inputs.packages }}
       shell: bash
       name: Check with mypy
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}
