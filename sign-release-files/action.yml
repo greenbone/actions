@@ -30,6 +30,9 @@ inputs:
     description: "Set an explicit release version, that should be used. Otherwise it will be determined from the tags."
   release-series:
     description: "Allow to determine release versions for an older release series like '22.4'."
+  repository:
+    description: "GitHub repository (owner/name) to download the release files from."
+    default: ${{ github.repository }}
 
 branding:
   icon: "package"
@@ -81,6 +84,8 @@ runs:
     - name: Checkout repository
       if: steps.checkout.outputs.exists != 'true'
       uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.repository }}
     - name: Set up Python and pontos
       uses: greenbone/actions/setup-pontos@v3
       with:
@@ -96,7 +101,7 @@ runs:
     - name: Sign files for released version
       run: |
         echo "Signing release files"
-        pontos-release sign ${{ env.ARGS }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
+        pontos-release sign ${{ env.ARGS }} --repository ${{ inputs.repository }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
       shell: bash
       if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:

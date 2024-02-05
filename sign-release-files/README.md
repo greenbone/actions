@@ -26,14 +26,15 @@ jobs:
 
 ## Action Configuration
 
-|Input Variable|Description| |
-|--------------|-----------|-|
-| python-version  | Python version to use for running the action. | Optional (default is `3.10`) |
-| git-tag-prefix  | Set git tag prefix to the passed input. Default: 'v' | Optional (default is `v`) |
-| gpg-fingerprint | GPG fingerprint, represented as a string. | Required |
-| gpg-key         | GPG key, represented as a string. | Required |
-| gpg-passphrase  | GPG passphrase, represented as a string. | Required |
-| release-version | Set an explicit version, that should be released. | Optional |
-| release-series  | Allow to determine release versions for an older release series like `"22.4"`. | Optional |
-| versioning-scheme | What versioning scheme should be used for the release? Supported: `"semver"`, `"pep440"` | Optional (default is `"pep440"`) |
-| github-token | Token with write rights for releases to download and upload release asset files. | Optional (default is `${{ github.token }}`) |
+| Input Variable    | Description                                                                              |                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| python-version    | Python version to use for running the action.                                            | Optional (default is `3.10`)                     |
+| git-tag-prefix    | Set git tag prefix to the passed input. Default: 'v'                                     | Optional (default is `v`)                        |
+| gpg-fingerprint   | GPG fingerprint, represented as a string.                                                | Required                                         |
+| gpg-key           | GPG key, represented as a string.                                                        | Required                                         |
+| gpg-passphrase    | GPG passphrase, represented as a string.                                                 | Required                                         |
+| release-version   | Set an explicit version, that should be released.                                        | Optional                                         |
+| release-series    | Allow to determine release versions for an older release series like `"22.4"`.           | Optional                                         |
+| versioning-scheme | What versioning scheme should be used for the release? Supported: `"semver"`, `"pep440"` | Optional (default is `"pep440"`)                 |
+| github-token      | Token with write rights for releases to download and upload release asset files.         | Optional (default is `${{ github.token }}`)      |
+| repository        | GitHub repository (owner/name) to download the release files from.                       | Optional (default is `${{ github.repository }}`) |
