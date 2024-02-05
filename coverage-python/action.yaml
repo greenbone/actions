@@ -55,7 +55,7 @@ runs:
       shell: bash
       name: Create coverage XML report
       working-directory: ${{ inputs.working-directory }}
-    - uses: codecov/codecov-action@v3
+    - uses: codecov/codecov-action@v4
       if: ${{ inputs.codecov-upload == 'true' }}
       with:
         token: ${{ inputs.token }}
