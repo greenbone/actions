@@ -98,6 +98,7 @@ runs:
       id: build-and-push
       uses: docker/build-push-action@v4
       with:
+        annotations: ${{ steps.meta.outputs.annotations }}
         context: ${{ inputs.build-context }}
         push: ${{ github.event_name != 'pull_request' }}
         platforms: ${{ inputs.image-platforms }}
