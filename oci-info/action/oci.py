@@ -149,7 +149,6 @@ class Oci(httpx.Client):
         Returns:
             Optional[OciAnnotations]: Object containing OCI annotations if found, else None.
         """
-        # pylint: disable=inconsistent-return-statements
 
         for manifest in self.get_manifests(repository, tag).manifests:
             if (
@@ -166,3 +165,4 @@ class Oci(httpx.Client):
                     raise OciAnnotationsError(
                         f"Failed to get OCI annotations from repository {repository} on tag {tag}."
                     ) from exc
+        return None
