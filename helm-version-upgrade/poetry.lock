@@ -531,13 +531,13 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4.3)", "pytest-
 
 [[package]]
 name = "pontos"
-version = "24.2.0"
+version = "24.2.1"
 description = "Common utilities and tools maintained by Greenbone Networks"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "pontos-24.2.0-py3-none-any.whl", hash = "sha256:582ddd97cfb5372b9fd8cd830c63b1d295a5ee595614740063d844e8636e5b34"},
-    {file = "pontos-24.2.0.tar.gz", hash = "sha256:bc60eef49c36d0ddecc50fede93032c191d9223d8a2b229e85c663c0ee029af3"},
+    {file = "pontos-24.2.1-py3-none-any.whl", hash = "sha256:386b117ea30651b95018339d112337ff7f69c183b72c6437549718dc63fb1bdf"},
+    {file = "pontos-24.2.1.tar.gz", hash = "sha256:c42c2c3c53ae11491e72952b1a7835203f8e23dff6b14d03245714afd1e1f1b4"},
 ]
 
 [package.dependencies]
@@ -630,13 +630,13 @@ jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "ruamel-yaml"
-version = "0.18.5"
+version = "0.18.6"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "ruamel.yaml-0.18.5-py3-none-any.whl", hash = "sha256:a013ac02f99a69cdd6277d9664689eb1acba07069f912823177c5eced21a6ada"},
-    {file = "ruamel.yaml-0.18.5.tar.gz", hash = "sha256:61917e3a35a569c1133a8f772e1226961bf5a1198bea7e23f06a0841dea1ab0e"},
+    {file = "ruamel.yaml-0.18.6-py3-none-any.whl", hash = "sha256:57b53ba33def16c4f3d807c0ccbc00f8a6081827e81ba2491691b76882d0c636"},
+    {file = "ruamel.yaml-0.18.6.tar.gz", hash = "sha256:8b27e6a217e786c6fbe5634d8f3f11bc63e0f80f6a5890f28863d9c45aac311b"},
 ]
 
 [package.dependencies]
@@ -788,4 +788,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "5e7fdb7fdf1ce285344e1077518e17274eceba0c7e01d554a97c16c0d40c7d5a"
+content-hash = "6eb46c63dcb0fc486afb7a438fbdcafa24456f4ae4cc7ded2f41bd40bf0aaf66"
