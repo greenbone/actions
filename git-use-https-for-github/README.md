@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: "Use HTTPS for GitHub data transfer"
-        uses: greenbone/actions/git-use-https@v3
+        uses: greenbone/actions/git-use-https-for-github@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Poetry with private GitHub repository as dependency
