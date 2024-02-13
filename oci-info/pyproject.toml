@@ -28,6 +28,7 @@ packages = [
 python = "^3.9"
 shtab = ">=1.6.5"
 pydantic = ">=2.0.0"
+httpx = ">=0.22.0"
 
 [tool.poetry.group.dev.dependencies]
 pontos = ">=22.10.0"
