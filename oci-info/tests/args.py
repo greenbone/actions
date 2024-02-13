@@ -28,14 +28,14 @@ class TestArgparse(unittest.TestCase):
                 "test_repo",
                 "--namespace",
                 "test_namespace",
-                "compare-tags",
+                "compare-tag-annotation",
                 "--tag",
                 "test_tag",
                 "--compare-repository",
                 "test_compare_repo",
             ]
         )
-        self.assertEqual(args.command, "compare-tags")
+        self.assertEqual(args.command, "compare-tag-annotation")
         self.assertEqual(args.repository, "test_repo")
         self.assertEqual(args.namespace, "test_namespace")
         self.assertEqual(args.tag, "test_tag")
@@ -63,7 +63,7 @@ class TestArgparse(unittest.TestCase):
                 "test_repo",
                 "--namespace",
                 "test_namespace",
-                "compare-tags",
+                "compare-tag-annotation",
                 "--tag",
                 "test_tag",
                 "--compare-repository",
