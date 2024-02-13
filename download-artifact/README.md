@@ -55,7 +55,7 @@ jobs:
 | workflow-events | Consider only workflow runs triggered by the specified events. | Optional (default is `"schedule, workflow_dispatch"`) |
 | repository | Repository of the workflow to trigger | Optional (default is `${{ github.repository }}` (current repository)) |
 | branch | The git branch for the workflow. | Optional (default is `"main"`) |
-| path | Destination path for the to be downloaded artifact of parent directory if name is not set. | Optional (default is `.` (Current directory)) |
+| path | Destination path for the to be downloaded artifact of parent directory if name is not set. | Optional (default is `${{ github.workspace }}`) |
 | name | Name of the artifact to be downloaded. If not set all artifacts will be downloaded. | Optional |
 | allow-not-found | Set to `"true"` to not fail if workflow or artifact can not be found. | Optional |
 | user | User ID for ownership of the downloaded artifacts. | Optional |
