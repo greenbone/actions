@@ -106,7 +106,7 @@ runs:
         fi
 
         if [ "${{ inputs.command }}" ]; then
-          cmd+=(--command "${{ inputs.command }}")
+          cmd+=("${{ inputs.command }}")
         fi
 
         if [ "${{ inputs.tag }}" ]; then
