@@ -3,9 +3,9 @@ description: "GitHub Action to interacting with OCI (Open Container Initiative) 
 
 inputs:
   command:
-    description: "Available commands"
+    description: "Available commands are list-tags, compare-tags. Default is list-tags ."
     required: true
-    default: "compare-tags"
+    default: "list-tags"
     options: ["list-tags", "compare-tags"]
   repository:
     description: "Repository name."
