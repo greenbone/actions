@@ -7,7 +7,6 @@ Module for interacting with OCI (Open Container Initiative) registries.
 """
 
 from enum import Enum
-from typing import Optional
 
 import httpx
 from pydantic import ValidationError
@@ -72,16 +71,16 @@ class Oci(httpx.Client):
         """
         # pylint: disable=too-many-arguments
 
-        super().__init__(base_url=f"https://{reg_domain}", timeout=timeout)
+        super().__init__(
+            base_url=f"https://{reg_domain}",
+            timeout=timeout,
+            auth=(user, password) if user else None,
+            headers={"accept": ",".join([h.value for h in OciMediaTypes])},
+        )
         self.reg_domain = reg_domain
         self.reg_auth_domain = reg_auth_domain
         self.reg_auth_service = reg_auth_service
         self.namespace = namespace
-        if user:
-            self._auth = (user, password)
-        else:
-            self._auth = None
-        self.headers = {"accept": ",".join([h.value for h in OciMediaTypes])}
 
     def _get_data_as_dict(self, url: str) -> dict:
         res = self.get(url)
@@ -91,8 +90,7 @@ class Oci(httpx.Client):
     def _get_token(self, repository) -> None:
         res = self.get(
             f"https://{self.reg_auth_domain}/token?service={self.reg_auth_service}"
-            f"&scope=repository:{self.namespace}/{repository}:pull",
-            auth=self._auth,
+            f"&scope=repository:{self.namespace}/{repository}:pull"
         )
         res.raise_for_status()
         self.headers["authorization"] = f"Bearer {res.json()['token']}"
@@ -137,7 +135,7 @@ class Oci(httpx.Client):
 
     def get_oci_annotations(
         self, repository: str, tag: str, architecture: str
-    ) -> Optional[OciAnnotations]:
+    ) -> OciAnnotations:
         """
         Retrieve OCI annotations for a given repository, tag, and architecture.
 
@@ -152,17 +150,18 @@ class Oci(httpx.Client):
 
         for manifest in self.get_manifests(repository, tag).manifests:
             if (
-                manifest.mediaType == OciMediaTypes.OCI_MANIFEST_V1_JSON.value
+                manifest.annotations
+                and manifest.mediaType
+                == OciMediaTypes.OCI_MANIFEST_V1_JSON.value
+                and manifest.platform
                 and manifest.platform.architecture == architecture
             ):
                 try:
-                    if not manifest.annotations:
-                        raise OciAnnotationsError(
-                            f"No OCI annotations exist in repository {repository} on tag {tag}."
-                        )
                     return OciAnnotations(**manifest.annotations)
                 except ValidationError as exc:
                     raise OciAnnotationsError(
                         f"Failed to get OCI annotations from repository {repository} on tag {tag}."
                     ) from exc
-        return None
+        raise OciAnnotationsError(
+            f"No OCI annotations exist in repository {repository} on tag {tag}."
+        )
