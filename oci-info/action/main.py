@@ -53,20 +53,11 @@ def main() -> int:
         ).dict(by_alias=True)
 
         if arg.mode == "eq":
-            if ano[arg.annotation] == ano_com[arg.annotation]:
-                print("True")
-            else:
-                print("False")
+            print(ano[arg.annotation] == ano_com[arg.annotation])
         elif arg.mode == "lt":
-            if ano[arg.annotation] < ano_com[arg.annotation]:
-                print("True")
-            else:
-                print("False")
+            print(ano[arg.annotation] < ano_com[arg.annotation])
         elif arg.mode == "gt":
-            if ano[arg.annotation] > ano_com[arg.annotation]:
-                print("True")
-            else:
-                print("False")
+            print(ano[arg.annotation] > ano_com[arg.annotation])
 
     return 0
 

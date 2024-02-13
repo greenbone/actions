@@ -40,7 +40,7 @@ def exclude_undefined_keys(cls) -> Callable:
 @exclude_undefined_keys
 class OciAnnotations(BaseModel):
     """
-    Model representing base OCI image annotations.
+    Model representing standardized OCI image annotations.
 
     Args:
         created (datetime): The creation datetime of the image.
@@ -118,6 +118,11 @@ class OciPlatform(BaseModel):
 class OciManifest(BaseModel):
     """
     Model representing OCI manifest.
+
+    Info:
+        The OciAnnotations model is not utilized for 'annotations' because
+        custom annotations are allowed, while this model is specifically
+        designed to parse only standard ones.
 
     Args:
         mediaType (str): The media type of the manifest.
