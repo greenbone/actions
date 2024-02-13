@@ -3,8 +3,28 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import unittest
+from pydantic import BaseModel
+from action.oci_model import (
+    OciImageTags,
+    OciIndex,
+    OciManifest,
+    OciPlatform,
+    exclude_undefined_keys,
+)
 
-from action.oci_model import OciImageTags, OciIndex, OciManifest, OciPlatform
+
+class TestExcludeUndefinedKeysDecorator(unittest.TestCase):
+    def test_exclude_undefined_keys(self):
+        @exclude_undefined_keys
+        class TestUser(BaseModel):
+            my: str
+            age: int
+
+        instance = TestUser(**{"my": "peter", "age": 55, "hobby": "eat"})
+
+        self.assertNotIn("city", instance.dict())
+        self.assertEqual(instance.my, "peter")
+        self.assertEqual(instance.age, 55)
 
 
 class TestOciModels(unittest.TestCase):
