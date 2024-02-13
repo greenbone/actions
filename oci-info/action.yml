@@ -1,0 +1,152 @@
+name: "OCI Info"
+description: "GitHub Action to interacting with OCI (Open Container Initiative) registries."
+
+inputs:
+  command:
+    description: "Available commands"
+    required: true
+    default: "t1"
+    options: ["list-tags", "compare-tags"]
+  repository:
+    description: "Repository name."
+    required: true
+  namespace:
+    description: "Namespace for the registry."
+    required: true
+  user:
+    description: "User for the registry login."
+  password:
+    description: "Password/token for the registry login."
+  reg-domain:
+    description: "Registry domain. Default is ghcr.io ."
+  reg-auth-domain:
+    description: "Registry authentication domain. Default is ghcr.io ."
+  reg-auth-service:
+    description: "Registry authentication service. Default is ghcr.io ."
+  tag:
+    description: "Tag to compare. Required if command is compare-tags."
+  architecture:
+    description: "Annotation from architecture to compare. Default is amd64 ."
+  compare-repository:
+    description: "Compare repository name. Required if command is compare-tags."
+  annotation:
+    description: "Annotation to compare. Default is org.opencontainers.image.created ."
+  compare-namespace:
+    description: "Compare registry Namespace. Default is library ."
+  compare-reg-domain:
+    description: "Compare registry domain. Default is registry-1.docker.io ."
+  compare-reg-auth-domain:
+    description: "Compare registry authentication domain. Default is auth.docker.io ."
+  compare-reg-auth-service:
+    description: "Compare registry authentication service. Default is registry.docker.io ."
+  compare-user:
+    description: "User for the compare registry login."
+  compare-password:
+    description: "Password for the compare registry login."
+  python-version:
+    description: "Python version to use for running the action. Default is 3.11 ."
+    default: "3.11"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
+    default: "true"
+
+outputs:
+  output:
+    description: "The oci-info stdout output."
+    value: ${{ steps.oci-info.outputs.output }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python and Poetry
+      uses: greenbone/actions/poetry@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+        working-directory: ${{ github.action_path }}
+        without-dev: "true"
+        poetry-version: ${{ inputs.poetry-version }}
+        cache-dependency-path: ${{ github.action_path }}/poetry.lock
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
+
+    - name: Run helm-chart-version-upgrade
+      working-directory: ${{ github.action_path }}
+      shell: bash
+      id: oci-info
+      run: |
+        cmd=()
+
+        if [ "${{ inputs.repository }}" ]; then
+          cmd+=(--repository "${{ inputs.repository }}")
+        fi
+
+        if [ "${{ inputs.namespace }}" ]; then
+          cmd+=(--namespace "${{ inputs.namespace }}")
+        fi
+
+        if [ "${{ inputs.user }}" ]; then
+          cmd+=(--user "${{ inputs.user }}")
+        fi
+
+        if [ "${{ inputs.password }}" ]; then
+          cmd+=(--password "${{ inputs.password }}")
+        fi
+
+        if [ "${{ inputs.reg-domain }}" ]; then
+          cmd+=(--reg-domain "${{ inputs.reg-domain }}")
+        fi
+
+        if [ "${{ inputs.reg-auth-domain }}" ]; then
+          cmd+=(--reg-auth-domain "${{ inputs.reg-auth-domain }}")
+        fi
+
+        if [ "${{ inputs.reg-auth-service }}" ]; then
+          cmd+=(--reg-auth-service "${{ inputs.reg-auth-service }}")
+        fi
+
+        if [ "${{ inputs.command }}" ]; then
+          cmd+=(--command "${{ inputs.command }}")
+        fi
+
+        if [ "${{ inputs.tag }}" ]; then
+          cmd+=(--tag "${{ inputs.tag }}")
+        fi
+
+        if [ "${{ inputs.architecture }}" ]; then
+          cmd+=(--architecture "${{ inputs.architecture }}")
+        fi
+
+        if [ "${{ inputs.compare-repository }}" ]; then
+          cmd+=(--compare-repository "${{ inputs.compare-repository }}")
+        fi
+
+        if [ "${{ inputs.annotation }}" ]; then
+          cmd+=(--annotation "${{ inputs.annotation }}")
+        fi
+
+        if [ "${{ inputs.compare-namespace }}" ]; then
+          cmd+=(--compare-namespace "${{ inputs.compare-namespace }}")
+        fi
+
+        if [ "${{ inputs.compare-reg-domain }}" ]; then
+          cmd+=(--compare-reg-domain "${{ inputs.compare-reg-domain }}")
+        fi
+
+        if [ "${{ inputs.compare-reg-auth-domain }}" ]; then
+          cmd+=(--compare-reg-auth-domain "${{ inputs.compare-reg-auth-domain }}")
+        fi
+
+        if [ "${{ inputs.compare-reg-auth-service }}" ]; then
+          cmd+=(--compare-reg-auth-service "${{ inputs.compare-reg-auth-service }}")
+        fi
+
+        if [ "${{ inputs.compare-user }}" ]; then
+          cmd+=(--compare-user "${{ inputs.compare-user }}")
+        fi
+
+        if [ "${{ inputs.compare-password }}" ]; then
+          cmd+=(--compare-password "${{ inputs.compare-password }}")
+        fi
+
+        echo "output=$(poetry run oci-helm "${cmd[@]}")" >> "$GITHUB_OUTPUT"
