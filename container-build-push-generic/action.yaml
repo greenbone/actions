@@ -78,25 +78,25 @@ runs:
 
     - name: Setup container meta information
       id: meta
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: "${{ inputs.registry}}/${{ inputs.image-url }}"
         labels: ${{ inputs.image-labels }}
         tags: ${{ inputs.image-tags }}
 
     - name: Login to docker registry
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.registry-username }}
         password: ${{ inputs.registry-password }}
 
     - name: Set up docker buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
 
     - name: Build and push container image
       id: build-and-push
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         annotations: ${{ steps.meta.outputs.annotations }}
         context: ${{ inputs.build-context }}
