@@ -26,7 +26,7 @@ inputs:
     description: "Set to 'true' to not fail if workflow or artifact could not be found."
     default: "false"
   path:
-    description: "Path where to store the downloaded artifacts (default is `${{ github.workspace }}`)."
+    description: "Path where to store the downloaded artifacts."
     required: false
     default: ${{ github.workspace }}
   user:
