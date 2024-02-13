@@ -11,6 +11,7 @@ from typing import Optional, Sequence
 
 import shtab
 
+
 def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
     """
     Parse command-line arguments.
@@ -83,7 +84,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
     # compare_annotations_parser
     compare_annotations_parser = subparsers.add_parser(
-        "compare-tags",
+        "compare-tag-annotation",
         help="Compare repository annotations in different registries",
     )
     compare_annotations_parser.add_argument(
@@ -108,6 +109,14 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
         type=str,
         required=False,
         default="org.opencontainers.image.created",
+    )
+    compare_annotations_parser.add_argument(
+        "--mode",
+        help="Annotation to compare",
+        type=str,
+        required=False,
+        default="eq",
+        choices=["eq", "lt", "gt"],
     )
     compare_annotations_parser.add_argument(
         "--compare-namespace",

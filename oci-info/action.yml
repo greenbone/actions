@@ -3,10 +3,10 @@ description: "GitHub Action to interacting with OCI (Open Container Initiative) 
 
 inputs:
   command:
-    description: "Available commands are list-tags, compare-tags. Default is list-tags ."
+    description: "Available commands are list-tags, compare-tag-annotation. Default is list-tags ."
     required: true
     default: "list-tags"
-    options: ["list-tags", "compare-tags"]
+    options: ["list-tags", "compare-tag-annotation"]
   repository:
     description: "Repository name."
     required: true
@@ -24,13 +24,16 @@ inputs:
   reg-auth-service:
     description: "Registry authentication service. Default is ghcr.io ."
   tag:
-    description: "Tag to compare. Required if command is compare-tags."
+    description: "Tag to compare. Required if command is compare-tag-annotation."
   architecture:
     description: "Annotation from architecture to compare. Default is amd64 ."
   compare-repository:
-    description: "Compare repository name. Required if command is compare-tags."
+    description: "Compare repository name. Required if command is compare-tag-annotation."
   annotation:
     description: "Annotation to compare. Default is org.opencontainers.image.created ."
+  mode:
+    description: "Compare mode. Available commands are eq, lt and gt. Default is eq ."
+    options: ["eq", "lt", "gt"]
   compare-namespace:
     description: "Compare registry Namespace. Default is library ."
   compare-reg-domain:
@@ -117,6 +120,10 @@ runs:
           cmd+=(--architecture "${{ inputs.architecture }}")
         fi
 
+        if [ "${{ inputs.mode }}" ]; then
+          cmd+=(--mode "${{ inputs.mode }}")
+        fi
+
         if [ "${{ inputs.compare-repository }}" ]; then
           cmd+=(--compare-repository "${{ inputs.compare-repository }}")
         fi
@@ -149,4 +156,6 @@ runs:
           cmd+=(--compare-password "${{ inputs.compare-password }}")
         fi
 
-        echo "output=$(poetry run oci-info "${cmd[@]}")" >> "$GITHUB_OUTPUT"
+        # We need a clear exit code
+        output=$(poetry run oci-info "${cmd[@]}")
+        echo "output=$output" >> "$GITHUB_OUTPUT"
