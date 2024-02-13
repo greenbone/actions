@@ -60,18 +60,32 @@ class OciAnnotations(BaseModel):
     created: datetime = Field(..., alias="org.opencontainers.image.created")
     url: str = Field(..., alias="org.opencontainers.image.url")
     source: str = Field(..., alias="org.opencontainers.image.source")
-    authors: Optional[str] = Field(alias="org.opencontainers.image.authors")
-    documentation: Optional[str] = Field(
-        alias="org.opencontainers.image.documentation"
+    authors: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.authors"
     )
-    version: Optional[str] = Field(alias="org.opencontainers.image.version")
-    revision: Optional[str] = Field(alias="org.opencontainers.image.revision")
-    vendor: Optional[str] = Field(alias="org.opencontainers.image.vendor")
-    licenses: Optional[str] = Field(alias="org.opencontainers.image.licenses")
-    ref_name: Optional[str] = Field(alias="org.opencontainers.image.ref_name")
-    title: Optional[str] = Field(alias="org.opencontainers.image.title")
+    documentation: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.documentation"
+    )
+    version: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.version"
+    )
+    revision: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.revision"
+    )
+    vendor: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.vendor"
+    )
+    licenses: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.licenses"
+    )
+    ref_name: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.ref_name"
+    )
+    title: Optional[str] = Field(
+        default=None, alias="org.opencontainers.image.title"
+    )
     description: Optional[str] = Field(
-        alias="org.opencontainers.image.description"
+        default=None, alias="org.opencontainers.image.description"
     )
 
 
