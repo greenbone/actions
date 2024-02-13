@@ -149,4 +149,4 @@ runs:
           cmd+=(--compare-password "${{ inputs.compare-password }}")
         fi
 
-        echo "output=$(poetry run oci-helm "${cmd[@]}")" >> "$GITHUB_OUTPUT"
+        echo "output=$(poetry run oci-info "${cmd[@]}")" >> "$GITHUB_OUTPUT"
