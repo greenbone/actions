@@ -83,6 +83,8 @@ runs:
         images: "${{ inputs.registry}}/${{ inputs.image-url }}"
         labels: ${{ inputs.image-labels }}
         tags: ${{ inputs.image-tags }}
+      env:
+        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,manifest-descriptor
 
     - name: Login to docker registry
       uses: docker/login-action@v3
