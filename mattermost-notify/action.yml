@@ -69,7 +69,7 @@ runs:
       shell: bash
       run: |
         echo "POS_ARGS=${{ inputs.MATTERMOST_WEBHOOK_URL }}${{ inputs.url }} ${{ inputs.MATTERMOST_CHANNEL }}${{ inputs.channel }}" >> $GITHUB_ENV
-      
+
     - name: Inputs for Github success notifications
       shell: bash
       run: |
@@ -100,7 +100,7 @@ runs:
         fi
 
         if [ -n "${{ inputs.workflow-name }}" ]; then
-          ARGS+=(--workflow_name "${{ inputs.workflow-name }}")
+          ARGS+=(--workflow_name \""${{ inputs.workflow-name }}\"")
         fi
 
         if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" ] || [ -n "${{ inputs.highlight }}" ]; then
@@ -115,7 +115,7 @@ runs:
         echo "ARGS=${ARGS[@]}" >> $GITHUB_ENV
 
     - name: Free input
-      if: ${{ inputs.free }} 
+      if: ${{ inputs.free }}
       shell: bash
       run: echo "ARGS=--free \"${{ inputs.free }}\"" >> $GITHUB_ENV
       
