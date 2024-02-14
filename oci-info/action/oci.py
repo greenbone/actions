@@ -81,7 +81,7 @@ class Oci(httpx.Client):
         self.reg_auth_service = reg_auth_service
         self.namespace = namespace
 
-    def _get_data_as_dict(self, url: str) -> dict:
+    def _get_data_as_dict(self, url: str) -> dict[str, Any]:
         res = self.get(url)
         res.raise_for_status()
         return res.json()
