@@ -22,7 +22,7 @@ def main() -> int:
         Exit status code.
     """
 
-    arg = parse_args(sys.argv[1:])
+    arg = parse_args()
 
     reg = Oci(
         namespace=arg.namespace,
