@@ -73,7 +73,7 @@ jobs:
 | highlight | List of space separated users to highlight in the channel | Optional. |
 | branch | Git branch to use in the message | Optional. Default is `${{ github.ref_name }}`. Will be derived from the event if empty. |
 | commit | Git commit to use in the message | Optional. Default is `${{ github.sha }}`. Will be derived from the event if empty. |
-| commit-message | Git commit message to use in the message | Optional. Will be derived from the event if commit is empty. Otherwise it will be derived from the git log. |
+| commit-message | Git commit message to use in the message | Deprecated. Connected commit message to commit will be used |
 | repository | GitHub repository (org/repo) | Optional. Default is `${{ github.repository }}`. |
 | status | Specifies the notification status. Options success or failure. Default is automatic detected by `GITHUB_EVENT_PATH` json. | Optional. |
 | skip-installation-on | Skip mn-notify installation on selected runner. Default is self-hosted-generic. | Optional. |
