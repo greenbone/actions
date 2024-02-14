@@ -33,19 +33,19 @@ runs:
   using: "composite"
   steps:
     - name: Set up poetry
-      uses: actions/setup-python@v5
-      id: python
-      with:
-        python-version: ${{ inputs.python-version }}
-        cache: ${{ inputs.cache == 'true' && 'poetry' || '' }}
-        cache-dependency-path: ${{ inputs.cache-dependency-path }}
-    - name: Set up poetry
       uses: greenbone/actions/pipx@v3
       with:
         python-path: ${{ steps.python.outputs.python-path }}
         cache: ${{ inputs.cache-poetry-installation }}
         install: poetry
         install-version: ${{ inputs.poetry-version }}
+    - name: Set up poetry
+      uses: actions/setup-python@v5
+      id: python
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: ${{ inputs.cache == 'true' && 'poetry' || '' }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - name: Parse inputs
       if: ${{ inputs.install-dependencies == 'true' }}
       run: |
