@@ -8,7 +8,7 @@ of the Open Container Initiative specifications.
 """
 
 from datetime import datetime
-from typing import Callable, Optional
+from typing import Callable, Optional, Type, TypeVar
 
 from pydantic import BaseModel, Field
 

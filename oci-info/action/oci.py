@@ -86,7 +86,7 @@ class Oci(httpx.Client):
         res.raise_for_status()
         return res.json()
 
-    def _get_token(self, repository) -> None:
+    def _set_auth_token(self, repository) -> None:
         res = self.get(
             f"https://{self.reg_auth_domain}/token?service={self.reg_auth_service}"
             f"&scope=repository:{self.namespace}/{repository}:pull"
@@ -108,7 +108,7 @@ class Oci(httpx.Client):
             Object containing image tags.
         """
 
-        self._get_token(repository)
+        self._set_auth_token(repository)
         url = f"/v2/{self.namespace}/{repository}/tags/list"
         return OciImageTags(**self._get_data_as_dict(url))
 
@@ -128,7 +128,7 @@ class Oci(httpx.Client):
             Object containing image manifests.
         """
 
-        self._get_token(repository)
+        self._set_auth_token(repository)
         url = f"/v2/{self.namespace}/{repository}/manifests/{tag}"
         return OciIndex(**self._get_data_as_dict(url))
 
