@@ -79,8 +79,6 @@ runs:
         if [ -n "${{ inputs.commit }}" ]; then
           ARGS+=(--commit "${{ inputs.commit }}")
         fi
-
-        ARGS+=(--commit-message "${{ inputs.commit-message }}")
       
         if [ -n "${{ inputs.branch }}" ]; then
           ARGS+=(--branch "${{ inputs.branch }}")
