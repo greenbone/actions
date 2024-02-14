@@ -25,6 +25,7 @@ inputs:
     default: ${{ github.sha }}
   commit-message:
     description: Git commit message to use
+    deprecationMessage: "Deprecated. Connected commit message to commit will be used"
   free:
     description: Free textmessage
   repository:
@@ -79,9 +80,9 @@ runs:
           ARGS+=(--commit "${{ inputs.commit }}")
         fi
 
-        if [ -n "${{ inputs.commit-message }}" ]; then
-          ARGS+=(--commit-message "${{ inputs.commit-message }}")
-        fi
+#        if [ -n "${{ inputs.commit-message }}" ]; then
+#          ARGS+=(--commit-message "${{ inputs.commit-message }}")
+#        fi
 
         if [ -n "${{ inputs.branch }}" ]; then
           ARGS+=(--branch "${{ inputs.branch }}")
