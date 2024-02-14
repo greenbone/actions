@@ -27,7 +27,7 @@ inputs:
     description: Git commit. Default is 'github.sha'.
     default: ${{ github.sha }}
   message:
-    description: Enter a markdown formatted text message. Note: Setting a string in this argument ignores all other arguments.
+    description: "Enter a markdown formatted text message. Note: Setting a string in this argument ignores all other arguments."
   repository:
     description: GitHub repository (org/repo). Default is 'github.repository'
     default: ${{ github.repository }}
