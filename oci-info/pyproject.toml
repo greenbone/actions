@@ -1,0 +1,87 @@
+[tool.poetry]
+name = "oci-info"
+version = "0.1.0"
+description = "Request oci manifest's"
+authors = ["Greenbone <info@greenbone.net>"]
+license = "AGPL-3.0-or-later"
+readme = "README.md"
+
+classifiers = [
+  # Full list: https://pypi.org/pypi?%3Aaction=list_classifiers
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)", # pylint: disable=line-too-long
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+packages = [
+  { include = "action" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+shtab = ">=1.6.5"
+pydantic = ">=2.0.0"
+httpx = ">=0.22.0"
+
+[tool.poetry.group.dev.dependencies]
+pontos = ">=22.10.0"
+autohooks-plugin-black = ">=23.10.0"
+autohooks-plugin-ruff = ">=23.10.0"
+autohooks-plugin-mypy = ">=23.10.0"
+coverage = ">=7.2.7"
+
+[tool.black]
+line-length = 80
+target-version = ["py39", "py310", "py311", "py312"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.autohooks]
+mode = "poetry"
+pre-commit = [
+  "autohooks.plugins.black",
+  "autohooks.plugins.ruff",
+  "autohooks.plugins.mypy",
+]
+
+[tool.pontos.version]
+version-module-file = "action/__version__.py"
+
+[tool.ruff]
+line-length = 80
+target-version = "py39"
+extend-select = ["I", "PLE", "PLW"]
+
+[tool.poetry.scripts]
+oci-info = 'action.main:main'
+
+[tool.mypy]
+files = "action"
+ignore_missing_imports = true
+explicit_package_bases = true
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*", "*/__init__.py"]
+source = ["action"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
