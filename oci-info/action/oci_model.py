@@ -15,7 +15,9 @@ from typing import Callable, Optional
 from pydantic import BaseModel, Field
 
 
-def exclude_undefined_keys(cls) -> Callable:
+_T = TypeVar("_T", bound=BaseModel)
+
+def exclude_undefined_keys(cls: Type[_T]) -> Callable[..., _T]:
     """
     A decorator to exclude undefined keys from keyword arguments
     passed to the constructor of a Pydantic model.
