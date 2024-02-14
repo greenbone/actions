@@ -69,7 +69,6 @@ class Oci(httpx.Client):
             reg_auth_service: Authentication service (default is 'registry.docker.io').
             namespace: Namespace within the registry (default is 'library').
         """
-        # pylint: disable=too-many-arguments
 
         super().__init__(
             base_url=f"https://{reg_domain}",
@@ -106,7 +105,7 @@ class Oci(httpx.Client):
             repository: Name of the repository.
 
         Returns:
-            OciImageTags: Object containing image tags.
+            Object containing image tags.
         """
 
         self._get_token(repository)
@@ -126,7 +125,7 @@ class Oci(httpx.Client):
             tag: Tag of the image.
 
         Returns:
-            OciManifestIndex: Object containing image manifests.
+            Object containing image manifests.
         """
 
         self._get_token(repository)
@@ -145,7 +144,8 @@ class Oci(httpx.Client):
             architecture: Architecture of the platform.
 
         Returns:
-            Optional[OciAnnotations]: Object containing OCI annotations if found, else None.
+            Object containing OCI annotations if found,
+            otherwise an OciAnnotationsError is raised.
         """
 
         for manifest in self.get_manifests(repository, tag).manifests:

@@ -7,8 +7,6 @@ This module provides models representing various components
 of the Open Container Initiative specifications.
 """
 
-# pylint: disable=too-few-public-methods
-
 from datetime import datetime
 from typing import Callable, Optional
 
@@ -17,16 +15,17 @@ from pydantic import BaseModel, Field
 
 _T = TypeVar("_T", bound=BaseModel)
 
+
 def exclude_undefined_keys(cls: Type[_T]) -> Callable[..., _T]:
     """
     A decorator to exclude undefined keys from keyword arguments
     passed to the constructor of a Pydantic model.
 
     Args:
-        cls: The Pydantic model class.
+        The Pydantic model class.
 
     Returns:
-        Callable: The wrapper function.
+        The wrapper function.
     """
 
     def wrapper(**kwargs):

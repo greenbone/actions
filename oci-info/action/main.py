@@ -19,7 +19,7 @@ def main() -> int:
     Parses command-line arguments and performs actions accordingly.
 
     Returns:
-        int: Exit status code.
+        Exit status code.
     """
 
     arg = parse_args(sys.argv[1:])
