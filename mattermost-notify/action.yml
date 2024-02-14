@@ -13,7 +13,7 @@ inputs:
     deprecationMessage: "Deprecated. Use highlight instead."
   commit-message:
     description: Git commit message to use
-    deprecationMessage: "Deprecated. Will use the right one"
+    deprecationMessage: "Deprecated. Connected commit message to commit will be used"
   url:
     description: "Mattermost webhook url"
   channel:

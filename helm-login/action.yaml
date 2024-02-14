@@ -1,0 +1,47 @@
+name: Helm login and installation
+description: "Helm registry login and optional installation"
+
+inputs:
+  registry:
+    description: "Registry name. Default: ghcr.io ."
+    default: "ghcr.io"
+  registry-user:
+    description: "Registry login user. Default is github.actor ."
+    default: ${{ github.actor }}
+  registry-token:
+    description: "Registry login password/token. Default is github.token ."
+    default: ${{ github.token }}
+  helm-version:
+    description: "The Helm version for installation must be specified. If left unset, Helm will not be installed. Note that Helm is preinstalled on all GitHub runners."
+    required: false
+  helm-token:
+    description: "GitHub token required if the Helm version is set to 'latest'. Default is github.token ."
+    default: ${{ github.token }}
+
+outputs:
+  helm-path:
+    description: 'Helm binary path.'
+    value: ${{ steps.helm.outputs.helm-path }}
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install helm
+      if: inputs.helm-version
+      id: helm
+      uses: azure/setup-helm@v3
+      with:
+        version: ${{ inputs.helm-version }}
+        token: ${{ inputs.helm-token }}
+
+    - name: Helm registry login
+      shell: bash
+      run: |
+        helm registry login \
+          -u '${{ inputs.registry-user }}' \
+          -p '${{ inputs.registry-token }}' \
+          '${{ inputs.registry }}'

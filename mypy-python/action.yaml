@@ -14,6 +14,12 @@ inputs:
     default: "3.10"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+  install-dependencies:
+    description: "Install project dependencies. Default is 'true'. Set to an other string then 'true' to not install the dependencies."
+    default: "true"
+  working-directory:
+    description: "Working directory where to run the action"
+    default: ${{ github.workspace }}
   cache:
     description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   cache-dependency-path:
@@ -37,7 +43,9 @@ runs:
         cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
+        install-dependencies: ${{ inputs.install-dependencies }}
+        working-directory: ${{ inputs.working-directory }}
     - run: poetry run mypy ${{ inputs.mypy-arguments }} ${{ inputs.packages }}
       shell: bash
       name: Check with mypy
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ inputs.working-directory }}

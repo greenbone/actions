@@ -28,7 +28,7 @@ inputs:
   path:
     description: "Path where to store the downloaded artifacts."
     required: false
-    default: "."
+    default: ${{ github.workspace }}
   user:
     description: "User ID for ownership of the downloaded artifacts."
     required: false
