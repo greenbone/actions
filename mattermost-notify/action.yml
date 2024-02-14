@@ -13,7 +13,7 @@ inputs:
     deprecationMessage: "Deprecated. Use highlight instead."
   commit-message:
     description: Git commit message to use
-    deprecationMessage: "Deprecated. Connected commit message to commit will be used"  
+    deprecationMessage: "Deprecated. Will use the right one"
   url:
     description: "Mattermost webhook url"
   channel:
@@ -27,7 +27,8 @@ inputs:
     description: Git commit. Default is 'github.sha'.
     default: ${{ github.sha }}
   message:
-    description: Enter markeddown formated text
+    description: Enter a markeddown formated text message.
+    Note: Setting a string in this argument ignores all other arguments
   repository:
     description: GitHub repository (org/repo). Default is 'github.repository'
     default: ${{ github.repository }}
@@ -79,7 +80,7 @@ runs:
         if [ -n "${{ inputs.commit }}" ]; then
           ARGS+=(--commit "${{ inputs.commit }}")
         fi
-      
+
         if [ -n "${{ inputs.branch }}" ]; then
           ARGS+=(--branch "${{ inputs.branch }}")
         fi
@@ -111,11 +112,11 @@ runs:
 
         echo "ARGS=${ARGS[@]}" >> $GITHUB_ENV
 
-    - name: Free input
+    - name: Use markdown formatted message, if it is set.
       if: ${{ inputs.free }}
       shell: bash
       run: echo "ARGS=--free \"${{ inputs.free }}\"" >> $GITHUB_ENV
-      
+
     - name: Execute Mattermost-Notify
       shell: bash
       run: mnotify-git ${{ env.POS_ARGS }} ${{ env.ARGS }}
