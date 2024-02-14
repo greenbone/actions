@@ -26,8 +26,8 @@ inputs:
   commit-message:
     description: Git commit message to use
     deprecationMessage: "Deprecated. Connected commit message to commit will be used"
-  free:
-    description: Free textmessage
+  message:
+    description: Enter markeddown formated text
   repository:
     description: GitHub repository (org/repo). Default is 'github.repository'
     default: ${{ github.repository }}
