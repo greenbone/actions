@@ -27,7 +27,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
         description="Interact with OCI (Open Container Initiative) compliant registries."
     )
     subparsers = parser.add_subparsers(
-        dest="command", help="Available commands"
+        dest="command", help="Available commands", required=True
     )
     shtab.add_argument_to(parser)
 

@@ -34,7 +34,8 @@ def main() -> int:
     )
 
     if arg.command == "list-tags":
-        print(reg.get_tags(arg.repository))
+        for tag in reg.get_tags(arg.repository).tags:
+            print(tag)
     elif arg.command == "compare-tag-annotation":
         reg_com = Oci(
             namespace=arg.compare_namespace,
