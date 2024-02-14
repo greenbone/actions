@@ -18,11 +18,11 @@ class OciMediaTypes(Enum):
     Enumeration of different media types for OCI registries.
 
     Attributes:
-        DOCKER_MANIFEST_V2_JSON (str): Media type for Docker manifest v2.
-        DOCKER_MANIFEST_LIST_V2_JSON (str): Media type for Docker manifest list v2.
-        OCI_MANIFEST_V1_JSON (str): Media type for OCI image manifest v1.
-        OCI_IMAGE_INDEX_V1_JSON (str): Media type for OCI image index v1.
-        JSON (str): Media type for JSON.
+        DOCKER_MANIFEST_V2_JSON: Media type for Docker manifest v2.
+        DOCKER_MANIFEST_LIST_V2_JSON: Media type for Docker manifest list v2.
+        OCI_MANIFEST_V1_JSON: Media type for OCI image manifest v1.
+        OCI_IMAGE_INDEX_V1_JSON: Media type for OCI image index v1.
+        JSON: Media type for JSON.
     """
 
     DOCKER_MANIFEST_V2_JSON = (
@@ -61,13 +61,13 @@ class Oci(httpx.Client):
         Initialize an instance of the Oci class.
 
         Args:
-            user (str): User for authentication.
-            password (str): Password for authentication.
-            timeout (int): Timeout in seconds for HTTP requests (default is 10).
-            reg_domain (str): Domain of the registry (default is 'registry-1.docker.io').
-            reg_auth_domain (str): Domain for authentication (default is 'auth.docker.io').
-            reg_auth_service (str): Authentication service (default is 'registry.docker.io').
-            namespace (str): Namespace within the registry (default is 'library').
+            user: User for authentication.
+            password: Password for authentication.
+            timeout: Timeout in seconds for HTTP requests (default is 10).
+            reg_domain: Domain of the registry (default is 'registry-1.docker.io').
+            reg_auth_domain: Domain for authentication (default is 'auth.docker.io').
+            reg_auth_service: Authentication service (default is 'registry.docker.io').
+            namespace: Namespace within the registry (default is 'library').
         """
         # pylint: disable=too-many-arguments
 
@@ -103,7 +103,7 @@ class Oci(httpx.Client):
         Retrieve tags for a given repository.
 
         Args:
-            repository (str): Name of the repository.
+            repository: Name of the repository.
 
         Returns:
             OciImageTags: Object containing image tags.
@@ -122,8 +122,8 @@ class Oci(httpx.Client):
         Retrieve manifests for a given repository and tag.
 
         Args:
-            repository (str): Name of the repository.
-            tag (str): Tag of the image.
+            repository: Name of the repository.
+            tag: Tag of the image.
 
         Returns:
             OciManifestIndex: Object containing image manifests.
@@ -140,9 +140,9 @@ class Oci(httpx.Client):
         Retrieve OCI annotations for a given repository, tag, and architecture.
 
         Args:
-            repository (str): Name of the repository.
-            tag (str): Tag of the image.
-            architecture (str): Architecture of the platform.
+            repository: Name of the repository.
+            tag: Tag of the image.
+            architecture: Architecture of the platform.
 
         Returns:
             Optional[OciAnnotations]: Object containing OCI annotations if found, else None.

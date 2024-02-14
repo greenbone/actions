@@ -17,7 +17,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
     Parse command-line arguments.
 
     Args:
-        args (Optional[Sequence[str]]): List of command-line arguments.
+        args: List of command-line arguments.
 
     Returns:
         Namespace: Parsed arguments.

@@ -43,18 +43,18 @@ class OciAnnotations(BaseModel):
     Model representing standardized OCI image annotations.
 
     Args:
-        created (datetime): The creation datetime of the image.
-        url (str): The URL of the image.
-        source (str): The source of the image.
-        authors (Optional[str]): Authors of the image.
-        documentation (Optional[str]): Documentation URL of the image.
-        version (Optional[str]): Version of the image.
-        revision (Optional[str]): Revision of the image.
-        vendor (Optional[str]): Vendor of the image.
-        licenses (Optional[str]): Licenses of the image.
-        ref_name (Optional[str]): Reference name of the image.
-        title (Optional[str]): Title of the image.
-        description (Optional[str]): Description of the image.
+        created: The creation datetime of the image.
+        url: The URL of the image.
+        source: The source of the image.
+        authors: Authors of the image.
+        documentation: Documentation URL of the image.
+        version: Version of the image.
+        revision: Revision of the image.
+        vendor: Vendor of the image.
+        licenses: Licenses of the image.
+        ref_name: Reference name of the image.
+        title: Title of the image.
+        description: Description of the image.
     """
 
     created: datetime = Field(..., alias="org.opencontainers.image.created")
@@ -94,8 +94,8 @@ class OciImageTags(BaseModel):
     Model representing OCI image tags.
 
     Args:
-        name (str): The name of the image.
-        tags (List[str]): The list of tags associated with the image.
+        name: The name of the image.
+        tags: The list of tags associated with the image.
     """
 
     name: str
@@ -107,8 +107,8 @@ class OciPlatform(BaseModel):
     Model representing OCI platform information.
 
     Args:
-        architecture (str): The architecture of the platform.
-        os (str): The operating system of the platform.
+        architecture: The architecture of the platform.
+        os: The operating system of the platform.
     """
 
     architecture: str
@@ -125,11 +125,11 @@ class OciManifest(BaseModel):
         designed to parse only standard ones.
 
     Args:
-        mediaType (str): The media type of the manifest.
-        digest (str): The digest of the image.
-        size (int): The size of the image.
-        annotations (Optional[Dict[str, str]]): Annotations associated with the manifest.
-        platform (Optional[OciPlatform]): Platform information associated with the manifest.
+        mediaType: The media type of the manifest.
+        digest: The digest of the image.
+        size: The size of the image.
+        annotations: Annotations associated with the manifest.
+        platform: Platform information associated with the manifest.
     """
 
     mediaType: str
@@ -144,9 +144,9 @@ class OciIndex(BaseModel):
     Model representing OCI index.
 
     Args:
-        schemaVersion (int): The schema version of the index.
-        mediaType (str): The media type of the index.
-        manifests (List[OciManifest]): List of manifests associated with the index.
+        schemaVersion: The schema version of the index.
+        mediaType: The media type of the index.
+        manifests: List of manifests associated with the index.
     """
 
     schemaVersion: int
