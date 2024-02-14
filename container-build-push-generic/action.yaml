@@ -47,6 +47,9 @@ inputs:
   registry-password:
     description: "Login registry password."
     required: true
+  scout-command:
+    description: "Comma separated list to run several commands. Options are quickview, compare, cves, recommendations, sbom, environment. Default is cves,sbom"
+    default: "cves,sbom"
   scout-user:
     description: "Dockerhub user for docker scout. Will be skipped if empty. Default is empty"
     default: ""
@@ -128,7 +131,7 @@ runs:
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
       uses: docker/scout-action@v0.23.4
       with:
-        command: cves,sbom
+        command: ${{ inputs.scout-command }}
         image: ${{ steps.meta.outputs.tags }}
         dockerhub-user: ${{ inputs.scout-user }}
         dockerhub-password: ${{ inputs.scout-password }}
@@ -136,7 +139,7 @@ runs:
         keep-previous-comments: ${{ inputs.scout-keep-previous-comments }}
 
     - name: Upload sbom sarif file
-      if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
+      if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password && contains(inputs.scout-command, 'sbom') }}
       uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.image.outputs.name }}.sarif
