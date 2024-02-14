@@ -119,4 +119,3 @@ runs:
     - name: Execute Mattermost-Notify
       shell: bash
       run: mnotify-git ${{ env.POS_ARGS }} ${{ env.ARGS }}
-
