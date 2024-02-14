@@ -80,10 +80,8 @@ runs:
           ARGS+=(--commit "${{ inputs.commit }}")
         fi
 
-        if [ -n "${{ inputs.commit-message }}" ]; then
-          ARGS+=(--commit-message "${{ inputs.commit-message }}")
-        fi
-
+        ARGS+=(--commit-message "${{ inputs.commit-message }}")
+      
         if [ -n "${{ inputs.branch }}" ]; then
           ARGS+=(--branch "${{ inputs.branch }}")
         fi
