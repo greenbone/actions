@@ -11,6 +11,9 @@ inputs:
   MATTERMOST_HIGHLIGHT:
     description: "highlight users in channel. Deprecated."
     deprecationMessage: "Deprecated. Use highlight instead."
+  commit-message:
+    description: Git commit message to use
+    deprecationMessage: "Deprecated. Connected commit message to commit will be used"  
   url:
     description: "Mattermost webhook url"
   channel:
@@ -23,9 +26,6 @@ inputs:
   commit:
     description: Git commit. Default is 'github.sha'.
     default: ${{ github.sha }}
-  commit-message:
-    description: Git commit message to use
-    deprecationMessage: "Deprecated. Connected commit message to commit will be used"
   message:
     description: Enter markeddown formated text
   repository:
