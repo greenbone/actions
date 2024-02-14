@@ -32,7 +32,7 @@ inputs:
     description: "Image platforms to build for. Default is linux/amd64"
     default: "linux/amd64"
   meta-annotations-levels:
-    description: "Comma separated list of annotations levels. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor ."
+    description: "Comma separated list. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor ."
     default: "manifest,manifest-descriptor"
   registry:
     description: "Registry url."
@@ -57,7 +57,7 @@ inputs:
     description: "Days to store the sarif artifact. Default is 1"
     default: 1
   qemu-platforms:
-    description: "Comma separated list of platforms to install. Options are amd64, arm64, arm, riscv64, s390x, 386. Default is arm64. We don't need amd64 because it is the default arch."
+    description: "Comma separated list of platforms to install. Options are amd64, arm64, arm, riscv64, s390x, 386. Default is arm64 (amd64 is default arch)."
     default: "arm64"
 
 outputs:
