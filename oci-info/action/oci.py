@@ -7,6 +7,7 @@ Module for interacting with OCI (Open Container Initiative) registries.
 """
 
 from enum import Enum
+from typing import Any
 
 import httpx
 from pydantic import ValidationError
