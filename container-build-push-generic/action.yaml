@@ -7,7 +7,7 @@ inputs:
     default: .
   build-docker-file:
     description: "Path to the docker file. Default is./Dockerfile"
-    default: ./Dockerfile
+    default: "./Dockerfile"
   build-args:
     description: "Use these build-args for the docker build process. Default is empty"
     default: ""
@@ -34,7 +34,10 @@ inputs:
     required: true
   image-platforms:
     description: "Image platforms to build for. Default is linux/amd64"
-    default: linux/amd64
+    default: "linux/amd64"
+  meta-annotations-levels:
+    description: "Comma separated list of annotations levels. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor ."
+    default: "manifest,manifest-descriptor"
   registry:
     description: "Registry url."
     required: true
@@ -84,7 +87,7 @@ runs:
         labels: ${{ inputs.image-labels }}
         tags: ${{ inputs.image-tags }}
       env:
-        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,manifest-descriptor
+        DOCKER_METADATA_ANNOTATIONS_LEVELS: ${{ inputs.meta-annotations-levels }}
 
     - name: Login to docker registry
       uses: docker/login-action@v3
