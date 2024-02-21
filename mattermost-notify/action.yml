@@ -114,7 +114,7 @@ runs:
     - name: Use markdown formatted message, if it is set.
       if: ${{ inputs.message }}
       shell: bash
-      run: echo "ARGS=--free \"${{ inputs.message }}\"" >> $GITHUB_ENV
+      run: printf "ARGS=--free %q" '${{ inputs.message }}' >> $GITHUB_ENV
     - name: Execute Mattermost-Notify
       shell: bash
       run: mnotify-git ${{ env.POS_ARGS }} ${{ env.ARGS }}
