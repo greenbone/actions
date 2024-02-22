@@ -1,0 +1,78 @@
+name: "Run AWX job or upgrade project"
+description: "Run and wait for an AWX job and or update an AWX project."
+
+inputs:
+  controller-host:
+    description: "AWX server DNS or IP address."
+    required: true
+  controller-username:
+    description: "User name to login."
+    required: true
+  controller-password:
+    description: "Password to login."
+    required: true
+  validate-certs:
+    description: "Validate AWX tls certs. Default is false ."
+    default: "false"
+  job-template:
+    description: "AWX job to run. If not set no job will be started. Default: empty ."
+  project-name:
+    description: "AWX project to update. If not set no project will be updated. Default: empty ."
+  job-extra-vars:
+    description: "Json string with extra vars for job template. Default is a empty json."
+    default: "{}"
+  job-wait-retries:
+    description: "Retries to check if a job still running. Default: is 240 ."
+    default: "240"
+  job-wait-retry-delay:
+    description: "Delay between job wait retries. Default: is 30 ."
+    default: "30"
+  python-version:
+    description: "Python version to use for running the action. Default is 3.11 ."
+    default: "3.11"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Python
+      if: ${{ !startsWith(runner.name, 'self-hosted-generic') }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install Ansible
+      if: ${{ !startsWith(runner.name, 'self-hosted-generic') }}
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade ansible
+    - name: Install Ansible Galaxy Collection
+      shell: bash
+      run: |
+        ansible-galaxy collection install awx.awx
+    - name: Run AWX project update
+      if: inputs.project
+      shell: bash
+      run: |
+        ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-project.yml" \
+          -e 'controller_host=${{ inputs.controller-host }}' \
+          -e 'controller_username=${{ inputs.controller-username }}' \
+          -e 'controller_password=${{ inputs.controller-password }}' \
+          -e 'validate_certs=${{ inputs.validate-certs }}' \
+          -e 'project_name=${{ inputs.project-name }}'
+    - name: Run AWX job
+      if: inputs.job
+      shell: bash
+      run: |
+        ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-job.yml" \
+          -e 'controller_host=${{ inputs.controller-host }}' \
+          -e 'controller_username=${{ inputs.controller-username }}' \
+          -e 'controller_password=${{ inputs.controller-password }}' \
+          -e 'validate_certs=${{ inputs.validate-certs }}' \
+          -e 'job_extra_vars=${{ inputs.job_extra-vars }}' \
+          -e 'job_wait_retries=${{ inputs.job-wait-retries }}' \
+          -e 'job_wait_retry_delay=${{ inputs.job-wait-retry-delay }}' \
+          -e 'job_template=${{ inputs.job-template }}'
