@@ -7,7 +7,7 @@
   ignore_errors: false
   serial: 1
   tasks:
-    - name: "Start job {{ JOB_NAME }}"
+    - name: "Start job {{ job_template }}"
       awx.awx.job_launch:
         controller_host: "{{ controller_host }}"
         controller_username: "{{ controller_username }}"
@@ -17,7 +17,7 @@
         extra_vars: "{{ job_extra_vars | default('{}') | from_json }}"
       register: job
 
-    - name: "Wait for job {{ JOB_NAME }}"
+    - name: "Wait for job {{ job_template }}"
       awx.awx.job_wait:
         controller_host: "{{ controller_host }}"
         controller_username: "{{ controller_username }}"
