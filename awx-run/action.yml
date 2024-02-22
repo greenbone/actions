@@ -30,6 +30,9 @@ inputs:
   python-version:
     description: "Python version to use for running the action. Default is 3.11 ."
     default: "3.11"
+  skip-installation-on:
+    description: Skip installation on selected runner. Default is self-hosted-generic.
+    default: "self-hosted-generic"
 
 branding:
   icon: "package"
@@ -39,12 +42,12 @@ runs:
   using: "composite"
   steps:
     - name: Install Python
-      if: ${{ !startsWith(runner.name, 'self-hosted-generic') }}
+      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.python-version }}
     - name: Install Ansible
-      if: ${{ !startsWith(runner.name, 'self-hosted-generic') }}
+      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       shell: bash
       run: |
         python -m pip install --upgrade pip
@@ -54,7 +57,7 @@ runs:
       run: |
         ansible-galaxy collection install awx.awx
     - name: Run AWX project update
-      if: inputs.project
+      if: inputs.project-name
       shell: bash
       run: |
         ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-project.yml" \
@@ -64,7 +67,7 @@ runs:
           -e 'validate_certs=${{ inputs.validate-certs }}' \
           -e 'project_name=${{ inputs.project-name }}'
     - name: Run AWX job
-      if: inputs.job
+      if: inputs.job-template
       shell: bash
       run: |
         ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-job.yml" \

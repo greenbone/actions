@@ -36,3 +36,4 @@ jobs:
 | job-wait-retries     | Retries to check if a job still running. Default: is 240 .                   | Optional |
 | job-wait-retry-delay | Delay between job wait retries. Default: is 30 .                             | Optional |
 | python-version       | Python version to use for running the action. Default is 3.11 .              | Optional |
+| skip-installation-on | Skip installation on selected runner. Default is self-hosted-generic.        | Optional |
