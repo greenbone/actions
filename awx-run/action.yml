@@ -75,7 +75,7 @@ runs:
           -e 'controller_username=${{ inputs.controller-username }}' \
           -e 'controller_password=${{ inputs.controller-password }}' \
           -e 'controller_validate_certs=${{ inputs.controller-validate-certs }}' \
-          -e 'job_extra_vars=${{ inputs.job_extra-vars }}' \
+          -e 'job_extra_vars=${{ inputs.job-extra-vars }}' \
           -e 'job_wait_retries=${{ inputs.job-wait-retries }}' \
           -e 'job_wait_retry_delay=${{ inputs.job-wait-retry-delay }}' \
           -e 'job_template=${{ inputs.job-template }}'
