@@ -11,7 +11,7 @@ inputs:
   controller-password:
     description: "Password to login."
     required: true
-  validate-certs:
+  controller-validate-certs:
     description: "Validate AWX tls certs. Default is false ."
     default: "false"
   job-template:
@@ -64,7 +64,7 @@ runs:
           -e 'controller_host=${{ inputs.controller-host }}' \
           -e 'controller_username=${{ inputs.controller-username }}' \
           -e 'controller_password=${{ inputs.controller-password }}' \
-          -e 'validate_certs=${{ inputs.validate-certs }}' \
+          -e 'controller_validate_certs=${{ inputs.controller-validate-certs }}' \
           -e 'project_name=${{ inputs.project-name }}'
     - name: Run AWX job
       if: inputs.job-template
@@ -74,7 +74,7 @@ runs:
           -e 'controller_host=${{ inputs.controller-host }}' \
           -e 'controller_username=${{ inputs.controller-username }}' \
           -e 'controller_password=${{ inputs.controller-password }}' \
-          -e 'validate_certs=${{ inputs.validate-certs }}' \
+          -e 'controller_validate_certs=${{ inputs.controller-validate-certs }}' \
           -e 'job_extra_vars=${{ inputs.job_extra-vars }}' \
           -e 'job_wait_retries=${{ inputs.job-wait-retries }}' \
           -e 'job_wait_retry_delay=${{ inputs.job-wait-retry-delay }}' \
