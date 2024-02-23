@@ -25,7 +25,7 @@
         controller_username: "{{ controller_username }}"
         controller_password: "{{ controller_password }}"
         validate_certs: "{{ controller_validate_certs }}"
-        workflow_id: "{{ workflow.id }}"
+        workflow_job_id: "{{ workflow.id }}"
         name: "{{ workflow_node }}"
         timeout: "{{ workflow_timeout | default('3600') }}"
       when: workflow_node | default('') != ''
