@@ -1,0 +1,33 @@
+---
+
+- name: Start and wait for an AWX workflow
+  hosts: localhost
+  gather_facts: false
+  any_errors_fatal: true
+  ignore_errors: false
+  serial: 1
+  tasks:
+    - name: "Start workflow {{ workflow_template }}"
+      awx.awx.workflow_launch:
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        workflow_template: "{{ workflow_template }}"
+        extra_vars: "{{ workflow_extra_vars | default('{}') | from_json }}"
+        wait: false
+      register: workflow
+
+    - name: "Wait for workflow {{ workflow_template }}"
+      awx.awx.workflow_node_wait:
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        workflow_id: "{{ workflow.id }}"
+        timeout: 10
+      register: workflow_status
+      failed_when: workflow_status.status != 'successful'
+      until: workflow_status.status != 'running'
+      retries: "{{ workflow_wait_retries | default('240') }}"
+      delay: "{{ workflow_wait_retry_delay | default('30') }}"

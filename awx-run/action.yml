@@ -14,10 +14,10 @@ inputs:
   controller-validate-certs:
     description: "Validate AWX tls certs. Default is false ."
     default: "false"
-  job-template:
-    description: "AWX job to run. If not set no job will be started. Default: empty ."
   project-name:
     description: "AWX project to update. If not set no project will be updated. Default: empty ."
+  job-template:
+    description: "AWX job to run. If not set no job will be started. Default: empty ."
   job-extra-vars:
     description: "Json string with extra vars for job template. Default is a empty json."
     default: "{}"
@@ -26,6 +26,17 @@ inputs:
     default: "240"
   job-wait-retry-delay:
     description: "Delay between job wait retries. Default: is 30 ."
+    default: "30"
+  workflow-template:
+    description: "AWX workflow to run. If not set no job will be started. Default: empty ."
+  workflow-extra-vars:
+    description: "Json string with extra vars for workflow template. Default is a empty json."
+    default: "{}"
+  workflow-wait-retries:
+    description: "Retries to check if a workflow still running. Default: is 240 ."
+    default: "240"
+  workflow-wait-retry-delay:
+    description: "Delay between workflow wait retries. Default: is 30 ."
     default: "30"
   python-version:
     description: "Python version to use for running the action. Default is 3.11 ."
@@ -46,16 +57,19 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.python-version }}
+
     - name: Install Ansible
       if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       shell: bash
       run: |
         python -m pip install --upgrade pip
         python -m pip install --upgrade ansible
+
     - name: Install Ansible Galaxy Collection
       shell: bash
       run: |
         ansible-galaxy collection install awx.awx
+
     - name: Run AWX project update
       if: inputs.project-name
       shell: bash
@@ -66,6 +80,7 @@ runs:
           -e 'controller_password="${{ inputs.controller-password }}"' \
           -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
           -e 'project_name="${{ inputs.project-name }}"'
+
     - name: Run AWX job
       if: inputs.job-template
       shell: bash
@@ -79,3 +94,17 @@ runs:
           -e 'job_wait_retries="${{ inputs.job-wait-retries }}"' \
           -e 'job_wait_retry_delay="${{ inputs.job-wait-retry-delay }}"' \
           -e 'job_template="${{ inputs.job-template }}"'
+
+    - name: Run AWX workflow
+      if: inputs.workflow-template
+      shell: bash
+      run: |
+        ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-workflow.yml" \
+          -e 'controller_host="${{ inputs.controller-host }}"' \
+          -e 'controller_username="${{ inputs.controller-username }}"' \
+          -e 'controller_password="${{ inputs.controller-password }}"' \
+          -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
+          -e 'job_extra_vars="${{ inputs.job-extra-vars }}"' \
+          -e 'job_wait_retries="${{ inputs.job-wait-retries }}"' \
+          -e 'job_wait_retry_delay="${{ inputs.job-wait-retry-delay }}"' \
+          -e 'workflow_template="${{ inputs.workflow-template }}"'
