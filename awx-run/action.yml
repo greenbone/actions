@@ -29,6 +29,8 @@ inputs:
     default: "30"
   workflow-template:
     description: "AWX workflow to run. If not set no job will be started. Default: empty ."
+  workflow-node:
+    description: "AWX workflow node to wait for. Default: empty ."
   workflow-extra-vars:
     description: "Json string with extra vars for workflow template. Default is a empty json."
     default: "{}"
@@ -107,4 +109,5 @@ runs:
           -e 'job_extra_vars="${{ inputs.job-extra-vars }}"' \
           -e 'job_wait_retries="${{ inputs.job-wait-retries }}"' \
           -e 'job_wait_retry_delay="${{ inputs.job-wait-retry-delay }}"' \
+          -e 'workflow_node="${{ inputs.workflow-node }}"' \
           -e 'workflow_template="${{ inputs.workflow-template }}"'

@@ -18,13 +18,14 @@
         wait: false
       register: workflow
 
-    - name: "Wait for workflow {{ workflow_template }}"
+    - name: "Wait for workflow {{ workflow_template }} node {{ workflow_node }}"
       awx.awx.workflow_node_wait:
         controller_host: "{{ controller_host }}"
         controller_username: "{{ controller_username }}"
         controller_password: "{{ controller_password }}"
         validate_certs: "{{ controller_validate_certs }}"
         workflow_id: "{{ workflow.id }}"
+        name: "{{ workflow_node }}"
         timeout: 10
       register: workflow_status
       failed_when: workflow_status.status != 'successful'

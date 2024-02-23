@@ -36,6 +36,7 @@ jobs:
 | job-wait-retries          | Retries to check if a job still running. Default: is 240 .                   | Optional |
 | job-wait-retry-delay      | Delay between job wait retries. Default: is 30 .                             | Optional |
 | workflow-template         | AWX workflow to run. If not set no job will be started. Default: empty.      | Optional |
+| workflow-node             | AWX workflow node to wait for Default: empty.                                | Optional |
 | workflow-extra-vars       | Json string with extra vars for workflow template. Default is a empty json.  | Optional |
 | workflow-wait-retries     | Retries to check if a workflow still running. Default: is 240 .              | Optional |
 | workflow-wait-retry-delay | Delay between workflow wait retries. Default: is 30 .                        | Optional |
