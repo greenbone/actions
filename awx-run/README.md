@@ -13,7 +13,7 @@ jobs:
       - self-hosted-generic
     steps:
       - name: Start and wait for a AWX job template
-        uses: ./.github/actions/awx-run
+        uses: greenbone/actions/awx-run@v3
         with:
           controller-host: 192.168.1.1
           controller-username: TEST
