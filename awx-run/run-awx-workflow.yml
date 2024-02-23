@@ -27,5 +27,10 @@
         validate_certs: "{{ controller_validate_certs }}"
         workflow_job_id: "{{ workflow.id }}"
         name: "{{ workflow_node }}"
-        timeout: "{{ workflow_timeout | default('3600') }}"
+        timeout: 10
+      register: workflow_node_status
+      failed_when: workflow_node_status.status != 'successful'
+      until: workflow_node_status.status != 'running'
+      retries: "{{ workflow_node_wait_retries | default('240') }}"
+      delay: "{{ workflow_node_wait_retry_delay | default('30') }}"
       when: workflow_node | default('') != ''

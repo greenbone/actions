@@ -35,8 +35,14 @@ inputs:
     description: "Json string with extra vars for workflow template. Default is a empty json."
     default: "{}"
   workflow-timeout:
-    description: "Timeout to wait for an workflow or an workflow node to finish in seconds. Default: is 3600 ."
+    description: "Timeout to wait for an workflow finish in seconds. If not workflow-node is set. Default: is 3600 ."
     default: "3600"
+  workflow-node-wait-retries:
+    description: "Retries to check if a workflow node still running. Default: is 240 ."
+    default: "240"
+  workflow-node-wait-retry-delay:
+    description: "Delay between workflow node wait retries. Default: is 30 ."
+    default: "30"
   python-version:
     description: "Python version to use for running the action. Default is 3.11 ."
     default: "3.11"
@@ -105,5 +111,7 @@ runs:
           -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
           -e 'workflow_extra_vars="${{ inputs.workflow-extra-vars }}"' \
           -e 'workflow_timeout="${{ inputs.workflow-timeout }}"' \
+          -e 'workflow_node_wait_retries="${{ inputs.workflow-node-wait-retries }}"' \
+          -e 'workflow_node_wait_retry_delay="${{ inputs.workflow-node-wait-retry-delay }}"' \
           -e 'workflow_node="${{ inputs.workflow-node }}"' \
           -e 'workflow_template="${{ inputs.workflow-template }}"'
