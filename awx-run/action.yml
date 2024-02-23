@@ -19,7 +19,7 @@ inputs:
   job-template:
     description: "AWX job to run. If not set no job will be started. Default: empty ."
   job-extra-vars:
-    description: "Json string with extra vars for job template. Default is a empty json."
+    description: "Json string with extra vars. Default is a empty json. INFO in AWX job Prompt on launch has to be enabled for variables."
     default: "{}"
   job-wait-retries:
     description: "Retries to check if a job still running. Default: is 240 ."
@@ -32,7 +32,7 @@ inputs:
   workflow-node:
     description: "AWX workflow node to wait for. Default: empty ."
   workflow-extra-vars:
-    description: "Json string with extra vars for workflow template. Default is a empty json."
+    description: "Json string with extra vars. Default is a empty json. INFO in AWX workflows Prompt on launch has to be enabled for variables."
     default: "{}"
   workflow-timeout:
     description: "Timeout to wait for an workflow finish in seconds. If not workflow-node is set. Default: is 3600 ."
