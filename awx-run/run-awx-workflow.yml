@@ -15,7 +15,8 @@
         validate_certs: "{{ controller_validate_certs }}"
         workflow_template: "{{ workflow_template }}"
         extra_vars: "{{ workflow_extra_vars | default('{}') | from_json }}"
-        wait: false
+        wait: "{{ 'false' if workflow_node | default('') != '' else 'true' }}"
+        timeout: "{{ workflow_timeout | default('3600') }}"
       register: workflow
 
     - name: "Wait for workflow {{ workflow_template }} node {{ workflow_node }}"
@@ -26,9 +27,5 @@
         validate_certs: "{{ controller_validate_certs }}"
         workflow_id: "{{ workflow.id }}"
         name: "{{ workflow_node }}"
-        timeout: 10
-      register: workflow_status
-      failed_when: workflow_status.status != 'successful'
-      until: workflow_status.status != 'running'
-      retries: "{{ workflow_wait_retries | default('240') }}"
-      delay: "{{ workflow_wait_retry_delay | default('30') }}"
+        timeout: "{{ workflow_timeout | default('3600') }}"
+      when: workflow_node | default('') != ''
