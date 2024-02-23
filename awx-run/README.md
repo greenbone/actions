@@ -24,7 +24,7 @@ jobs:
 
 ## Inputs
 
-| Name                           |                                                                                                                               |          |
+| Name                           | Description                                                                                                                   |          |
 |--------------------------------|-------------------------------------------------------------------------------------------------------------------------------|----------|
 | controller-host                | AWX DNS or IP address.                                                                                                        | Required |
 | controller-username            | AWX User name to login.                                                                                                       | Required |
