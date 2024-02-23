@@ -61,21 +61,21 @@ runs:
       shell: bash
       run: |
         ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-project.yml" \
-          -e 'controller_host=${{ inputs.controller-host }}' \
-          -e 'controller_username=${{ inputs.controller-username }}' \
-          -e 'controller_password=${{ inputs.controller-password }}' \
-          -e 'controller_validate_certs=${{ inputs.controller-validate-certs }}' \
-          -e 'project_name=${{ inputs.project-name }}'
+          -e 'controller_host="${{ inputs.controller-host }}"' \
+          -e 'controller_username="${{ inputs.controller-username }}"' \
+          -e 'controller_password="${{ inputs.controller-password }}"' \
+          -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
+          -e 'project_name="${{ inputs.project-name }}"'
     - name: Run AWX job
       if: inputs.job-template
       shell: bash
       run: |
         ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-job.yml" \
-          -e 'controller_host=${{ inputs.controller-host }}' \
-          -e 'controller_username=${{ inputs.controller-username }}' \
-          -e 'controller_password=${{ inputs.controller-password }}' \
-          -e 'controller_validate_certs=${{ inputs.controller-validate-certs }}' \
-          -e 'job_extra_vars=${{ inputs.job-extra-vars }}' \
-          -e 'job_wait_retries=${{ inputs.job-wait-retries }}' \
-          -e 'job_wait_retry_delay=${{ inputs.job-wait-retry-delay }}' \
-          -e 'job_template=${{ inputs.job-template }}'
+          -e 'controller_host="${{ inputs.controller-host }}"' \
+          -e 'controller_username="${{ inputs.controller-username }}"' \
+          -e 'controller_password="${{ inputs.controller-password }}"' \
+          -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
+          -e 'job_extra_vars="${{ inputs.job-extra-vars }}"' \
+          -e 'job_wait_retries="${{ inputs.job-wait-retries }}"' \
+          -e 'job_wait_retry_delay="${{ inputs.job-wait-retry-delay }}"' \
+          -e 'job_template="${{ inputs.job-template }}"'
