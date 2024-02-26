@@ -1,0 +1,32 @@
+---
+
+- name: Start and wait for an AWX job
+  hosts: localhost
+  gather_facts: false
+  any_errors_fatal: true
+  ignore_errors: false
+  serial: 1
+  tasks:
+    - name: "Start job {{ job_template }}"
+      awx.awx.job_launch:
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        job_template: "{{ job_template }}"
+        extra_vars: "{{ job_extra_vars | default('{}') | from_json }}"
+      register: job
+
+    - name: "Wait for job {{ job_template }}"
+      awx.awx.job_wait:
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        job_id: "{{ job.id }}"
+        timeout: 10
+      register: job_status
+      failed_when: job_status.status != 'successful'
+      until: job_status.status != 'running'
+      retries: "{{ job_wait_retries | default('240') }}"
+      delay: "{{ job_wait_retry_delay | default('30') }}"

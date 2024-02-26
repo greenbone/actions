@@ -1,0 +1,112 @@
+name: "Run AWX job or upgrade project"
+description: "Run and wait for an AWX job and or update an AWX project."
+
+inputs:
+  controller-host:
+    description: "AWX server DNS or IP address."
+    required: true
+  controller-username:
+    description: "User name to login."
+    required: true
+  controller-password:
+    description: "Password to login."
+    required: true
+  controller-validate-certs:
+    description: "Validate AWX tls certs. Default is false ."
+    default: "false"
+  project-name:
+    description: "AWX project to update. If not set no project will be updated. Default: empty ."
+  job-template:
+    description: "AWX job to run. If not set no job will be started. Default: empty ."
+  job-extra-vars:
+    description: "Json string with extra vars. Default is a empty json. INFO in AWX job Prompt on launch has to be enabled for variables."
+    default: "{}"
+  job-wait-retries:
+    description: "Retries to check if a job still running. Default: is 240 ."
+    default: "240"
+  job-wait-retry-delay:
+    description: "Delay between job wait retries. Default: is 30 ."
+    default: "30"
+  workflow-template:
+    description: "AWX workflow to run. If not set no job will be started. Default: empty ."
+  workflow-node:
+    description: "AWX workflow node to wait for. Default: empty ."
+  workflow-extra-vars:
+    description: "Json string with extra vars. Default is a empty json. INFO in AWX workflows Prompt on launch has to be enabled for variables."
+    default: "{}"
+  workflow-timeout:
+    description: "Timeout to wait for an workflow finish in seconds. If not workflow-node is set. Default: is 3600 ."
+    default: "3600"
+  workflow-node-wait-retries:
+    description: "Retries to check if a workflow node still running. Default: is 240 ."
+    default: "240"
+  workflow-node-wait-retry-delay:
+    description: "Delay between workflow node wait retries. Default: is 30 ."
+    default: "30"
+  python-version:
+    description: "Python version to use for running the action. Default is 3.11 ."
+    default: "3.11"
+  skip-installation-on:
+    description: Skip installation on selected runner. Default is self-hosted-generic.
+    default: "self-hosted-generic"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Ansible
+      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
+      uses: greenbone/actions/pipx@v3
+      with:
+        install: ansible
+        include-deps: true
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Ansible Galaxy Collection
+      shell: bash
+      run: |
+        ansible-galaxy collection install awx.awx
+
+    - name: Run AWX project update
+      if: inputs.project-name
+      shell: bash
+      run: |
+        ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-project.yml" \
+          -e 'controller_host="${{ inputs.controller-host }}"' \
+          -e 'controller_username="${{ inputs.controller-username }}"' \
+          -e 'controller_password="${{ inputs.controller-password }}"' \
+          -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
+          -e 'project_name="${{ inputs.project-name }}"'
+
+    - name: Run AWX job
+      if: inputs.job-template
+      shell: bash
+      run: |
+        ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-job.yml" \
+          -e 'controller_host="${{ inputs.controller-host }}"' \
+          -e 'controller_username="${{ inputs.controller-username }}"' \
+          -e 'controller_password="${{ inputs.controller-password }}"' \
+          -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
+          -e 'job_extra_vars="${{ inputs.job-extra-vars }}"' \
+          -e 'job_wait_retries="${{ inputs.job-wait-retries }}"' \
+          -e 'job_wait_retry_delay="${{ inputs.job-wait-retry-delay }}"' \
+          -e 'job_template="${{ inputs.job-template }}"'
+
+    - name: Run AWX workflow
+      if: inputs.workflow-template
+      shell: bash
+      run: |
+        ansible-playbook -v "$GITHUB_ACTION_PATH/run-awx-workflow.yml" \
+          -e 'controller_host="${{ inputs.controller-host }}"' \
+          -e 'controller_username="${{ inputs.controller-username }}"' \
+          -e 'controller_password="${{ inputs.controller-password }}"' \
+          -e 'controller_validate_certs="${{ inputs.controller-validate-certs }}"' \
+          -e 'workflow_extra_vars="${{ inputs.workflow-extra-vars }}"' \
+          -e 'workflow_timeout="${{ inputs.workflow-timeout }}"' \
+          -e 'workflow_node_wait_retries="${{ inputs.workflow-node-wait-retries }}"' \
+          -e 'workflow_node_wait_retry_delay="${{ inputs.workflow-node-wait-retry-delay }}"' \
+          -e 'workflow_node="${{ inputs.workflow-node }}"' \
+          -e 'workflow_template="${{ inputs.workflow-template }}"'

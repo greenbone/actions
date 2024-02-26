@@ -1,0 +1,16 @@
+---
+
+- name: Update an AWX project
+  hosts: localhost
+  gather_facts: false
+  any_errors_fatal: true
+  ignore_errors: false
+  serial: 1
+  tasks:
+    - name: "Start project update {{ project_name }}"
+      awx.awx.project_update:
+        controller_host: "{{ controller_host }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        validate_certs: "{{ controller_validate_certs }}"
+        name: "{{ project_name }}"
