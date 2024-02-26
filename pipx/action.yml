@@ -17,6 +17,8 @@ inputs:
     description: Python application to install
   install-version:
     description: Use a specific version of the application to install. For example '1.2.3'.
+  include-deps:
+    description: "Enable dependency installations for pipx applications. Disabled by default. 'true' to enable."
 
 outputs:
   home:
@@ -95,26 +97,26 @@ runs:
       # install an application if an application should be installed and the user did not request caching, a python path is set or the cache was not hit
       if: inputs.install && (inputs.python-path || inputs.cache != 'true' || steps.cache.outputs.cache-hit != 'true')
       run: |
+        ARGS=()
+
         if [ -n "${{ inputs.python-path }}" ]; then
-          PYTHON_BIN="${{ inputs.python-path }}"
+          ARGS+=( "--python" "${{ inputs.python-path }}" )
         else
-          PYTHON_BIN="${{ steps.python.outputs.python-path }}"
+          ARGS+=( "--python" "${{ steps.python.outputs.python-path }}" )
         fi
 
-        ARGS=""
-        if [ -n "$PYTHON_BIN" ]; then
-          ARGS="$ARGS --python $PYTHON_BIN"
+        if [ -n "${{ inputs.include-deps }}" ]; then
+          ARGS+=( "--include-deps" )
         fi
-
-        ARGS="$ARGS ${{ inputs.install }}"
 
         if [ -n "${{ inputs.install-version }}" ]; then
-          ARGS="$ARGS==${{ inputs.install-version }}"
+          ARGS+=( "${{ inputs.install }}==${{ inputs.install-version }}" )
+        else
+          ARGS+=( "${{ inputs.install }}" )
         fi
 
-        echo $ARGS
-
-        pipx install $ARGS
+        echo "${ARGS[@]}"
+        pipx install "${ARGS[@]}"
       shell: bash
     - name: Upgrade application
       # install an application if the latest version of the application should be installed and the user requested caching and the cache was hit and no python path was set
