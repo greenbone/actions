@@ -57,18 +57,13 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Install Python
-      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ inputs.python-version }}
-
     - name: Install Ansible
       if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
-      shell: bash
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade ansible
+      uses: greenbone/actions/pipx@v3
+      with:
+        install: ansible
+        include-deps: true
+        python-version: ${{ inputs.python-version }}
 
     - name: Install Ansible Galaxy Collection
       shell: bash
