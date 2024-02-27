@@ -158,4 +158,4 @@ runs:
 
         # We need a clear exit code
         output="$(poetry run oci-info "${cmd[@]}")"
-        echo "output=$output" >> "$GITHUB_OUTPUT"
+        echo "output<<EOF"$'\n'"$output"$'\n'EOF >> $GITHUB_OUTPUT
