@@ -65,8 +65,8 @@ runs:
             '${{ inputs.ssh-user }}@${{ inputs.ssh-host }}:${{ inputs.remote-path }}'
         fi
 
-  post:
     - name: Remove ssh key
+      if: always()
       shell: bash
       run: |
         rm -rf '${{ inputs.ssh-tmp }}'
