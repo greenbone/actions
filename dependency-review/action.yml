@@ -14,9 +14,6 @@ runs:
         fail-on-severity: high
         comment-summary-in-pr: true
         vulnerability-check: true
-        # we still do not have a possiblity to have "invalid" licenses
-        # that we can ignore ...
-        # warn-only: true
         license-check: true
         allow-licenses: |
           0BSD,
