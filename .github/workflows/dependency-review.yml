@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dependency Review
-        uses: greenbone/actions/dependency-review@main
+        uses: greenbone/actions/dependency-review@y0urself-patch-4
