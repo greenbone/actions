@@ -51,5 +51,3 @@ runs:
           BSL-1.0,
           Python-2.0.1,
           MIT AND PSF-2.0
-        allow-dependencies-licenses: |
-          GPL-3.0-or-later AND NOASSERTION AND Zlib
