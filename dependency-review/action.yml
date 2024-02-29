@@ -12,7 +12,11 @@ runs:
       uses: actions/dependency-review-action@v4
       with:
         fail-on-severity: high
+        comment-summary-in-pr: true
         vulnerability-check: true
+        # we still do not have a possiblity to have "invalid" licenses
+        # that we can ignore ...
+        # warn-only: true
         license-check: true
         allow-licenses: |
           0BSD,
@@ -49,5 +53,6 @@ runs:
           BlueOak-1.0.0,
           BSL-1.0,
           Python-2.0.1,
-          MIT AND PSF-2.0,
+          MIT AND PSF-2.0
+        allow-dependencies-licenses: |
           GPL-3.0-or-later AND NOASSERTION AND Zlib
