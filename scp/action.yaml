@@ -1,0 +1,72 @@
+name: "Scp files/folder"
+description: "Copy files/folder from/to a remote host."
+
+inputs:
+  mode:
+    description: "Push or pull files/folder from remote host. Default is pull."
+    default: "pull"
+    options: ["pull", "push"]
+  local-path:
+    description: "Local files/folder path."
+    required: true
+  remote-path:
+    description: "Remote files/folder path."
+    required: true
+  known-hosts:
+    description: "SSH known hosts string."
+    required: true
+  ssh-user:
+    description: "SSH login user. Default is root."
+    default: "root"
+  ssh-host:
+    description: "SSH remote host IP/DNS."
+    required: true
+  ssh-private-key:
+    description: "SSH private key string."
+    required: true
+  ssh-tmp:
+    description: "SSH private key storage folder path. Default is /tmp/ssh."
+    default: "/tmp/ssh"
+
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup ssh key
+      shell: bash
+      run: |
+        mkdir -p '${{ inputs.ssh-tmp }}' && chmod 0700 '${{ inputs.ssh-tmp }}'
+        echo '${{ inputs.ssh-private-key }}' > '${{ inputs.ssh-tmp }}/key.ssh'
+        chmod 0600 '${{ inputs.ssh-tmp }}/key.ssh'
+
+    - name: Create ssh known hosts file
+      uses: greenbone/actions/ssh-known-hosts@v3
+      with:
+        known_hosts: ${{ inputs.known-hosts }}
+
+    - name: Copy files/folder
+      shell: bash
+      run: |
+        if [ "${{ inputs.mode }}" == "pull" ]; then
+          scp \
+            -i '${{ inputs.ssh-tmp }}/key.ssh' \
+            -r \
+            '${{ inputs.ssh-user }}@${{ inputs.ssh-host }}:${{ inputs.remote-path }}' \
+            '${{ inputs.local-path }}'
+        else
+          scp \
+            -i '${{ inputs.ssh-tmp }}/key.ssh' \
+            -r \
+            '${{ inputs.local-path }}' \
+            '${{ inputs.ssh-user }}@${{ inputs.ssh-host }}:${{ inputs.remote-path }}'
+        fi
+
+    - name: Remove ssh key
+      if: always()
+      shell: bash
+      run: |
+        rm -rf '${{ inputs.ssh-tmp }}'
