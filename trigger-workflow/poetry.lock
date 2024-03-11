@@ -494,13 +494,13 @@ files = [
 
 [[package]]
 name = "packaging"
-version = "23.2"
+version = "24.0"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7"},
-    {file = "packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5"},
+    {file = "packaging-24.0-py3-none-any.whl", hash = "sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5"},
+    {file = "packaging-24.0.tar.gz", hash = "sha256:eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9"},
 ]
 
 [[package]]
@@ -531,13 +531,13 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4.3)", "pytest-
 
 [[package]]
 name = "pontos"
-version = "24.3.0"
+version = "24.3.1"
 description = "Common utilities and tools maintained by Greenbone Networks"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "pontos-24.3.0-py3-none-any.whl", hash = "sha256:006511ee5eea4df21d91181a64bc6c659630c060e9a9a275d4c3c6042092b566"},
-    {file = "pontos-24.3.0.tar.gz", hash = "sha256:1566c4fba3b4c7e1618906539727079a6c693c08c22d3e39dae5599d956d17f4"},
+    {file = "pontos-24.3.1-py3-none-any.whl", hash = "sha256:9561fd69a0a0e14b9cb802dece0c3d090d88094363a6b8df526e2fcff3c48255"},
+    {file = "pontos-24.3.1.tar.gz", hash = "sha256:df05a7703686b227053750c4855dcb622640a598103538fcc8691b1624678aa0"},
 ]
 
 [package.dependencies]
@@ -641,13 +641,13 @@ files = [
 
 [[package]]
 name = "shtab"
-version = "1.7.0"
+version = "1.7.1"
 description = "Automagic shell tab completion for Python CLI applications"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "shtab-1.7.0-py3-none-any.whl", hash = "sha256:0824f6f965cf5b6466d8870289c15a8973518820231a84f4422a0b8377261375"},
-    {file = "shtab-1.7.0.tar.gz", hash = "sha256:6661c2835d0214e259ab74d09bdb9a863752e898bcf2e75ad8cf7ebd7c35bc7e"},
+    {file = "shtab-1.7.1-py3-none-any.whl", hash = "sha256:32d3d2ff9022d4c77a62492b6ec875527883891e33c6b479ba4d41a51e259983"},
+    {file = "shtab-1.7.1.tar.gz", hash = "sha256:4e4bcb02eeb82ec45920a5d0add92eac9c9b63b2804c9196c1f1fdc2d039243c"},
 ]
 
 [package.extras]
