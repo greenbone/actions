@@ -3,7 +3,8 @@
 GitHub Action to check if a git tag is the latest tag.
 
 Please keep in mind that the full history (`checkout with fetch-depth 0`) is
-required for the `is-latest-tag` action.
+required for the `is-latest-tag` action. A tag is considered latest if its
+version is greater or equal as the latest existing tag.
 
 ## Example
 
@@ -33,6 +34,13 @@ jobs:
           run: |
             # do something else if the current tag is not the latest tag
 ```
+
+## Input Arguments
+
+| Input Variable    | Description                                                                       | Default                   |
+| ----------------- | --------------------------------------------------------------------------------- | ------------------------- |
+| tag-name          | Name of the tag to check if it is the latest tag                                  | `${{ github.ref_name }}`  |
+| working-directory | Working directory for the action. Has to reference the directory of the checkout. | `${{ github.workspace }}` |
 
 ## Output Arguments
 
