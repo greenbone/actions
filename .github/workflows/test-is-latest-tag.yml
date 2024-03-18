@@ -1,0 +1,165 @@
+name: Test Is Latest Tag Action
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-older-tag:
+    runs-on: ubuntu-latest
+    name: Test older Tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Repo and Tag
+        run: |
+          mkdir -p /tmp/repo
+          cd /tmp/repo
+          git config --global init.defaultBranch main
+          git config --global user.email "you@example.com"
+          git config --global user.name "Some User"
+          git init
+          touch some.file
+          git add some.file
+          git commit -m "Initial commit"
+          git tag v1.2.3
+      - name: Test is-latest-tag
+        uses: ./is-latest-tag
+        id: is-latest-tag
+        with:
+          tag-name: v1.2.2
+          working-directory: /tmp/repo
+      - name: Assert
+        run: |
+            if [[ "${{ steps.is-latest-tag.outputs.is-latest-tag }}" = "true" ]]; then
+              echo "::error::The tag 1.2.2 is not the latest tag"
+              exit 1
+            fi
+
+  test-newer-tag:
+    runs-on: ubuntu-latest
+    name: Test newer Tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Repo and Tag
+        run: |
+          mkdir -p /tmp/repo
+          cd /tmp/repo
+          git config --global init.defaultBranch main
+          git config --global user.email "you@example.com"
+          git config --global user.name "Some User"
+          git init
+          touch some.file
+          git add some.file
+          git commit -m "Initial commit"
+          git tag v1.2.3
+      - name: Test is-latest-tag
+        uses: ./is-latest-tag
+        id: is-latest-tag
+        with:
+          tag-name: v1.2.4
+          working-directory: /tmp/repo
+      - name: Assert
+        run: |
+            if [[ "${{ steps.is-latest-tag.outputs.is-latest-tag }}" != "true" ]]; then
+              echo "::error::The tag 1.2.4 is the latest tag"
+              exit 1
+            fi
+
+  test-is-latest-tag:
+    runs-on: ubuntu-latest
+    name: Test is latest Tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Repo and Tag
+        run: |
+          mkdir -p /tmp/repo
+          cd /tmp/repo
+          git config --global init.defaultBranch main
+          git config --global user.email "you@example.com"
+          git config --global user.name "Some User"
+          git init
+          touch some.file
+          git add some.file
+          git commit -m "Initial commit"
+          git tag v1.2.3
+      - name: Test is-latest-tag
+        uses: ./is-latest-tag
+        id: is-latest-tag
+        with:
+          tag-name: v1.2.3
+          working-directory: /tmp/repo
+      - name: Assert
+        run: |
+            if [[ "${{ steps.is-latest-tag.outputs.is-latest-tag }}" != "true" ]]; then
+              echo "::error::The tag 1.2.3 is the latest tag"
+              exit 1
+            fi
+
+  test-branch-as-tag-name:
+    runs-on: ubuntu-latest
+    name: Test branch as latest Tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Repo and Tag
+        run: |
+          mkdir -p /tmp/repo
+          cd /tmp/repo
+          git config --global init.defaultBranch main
+          git config --global user.email "you@example.com"
+          git config --global user.name "Some User"
+          git init
+          touch some.file
+          git add some.file
+          git commit -m "Initial commit"
+          git tag v1.2.3
+      - name: Test is-latest-tag
+        uses: ./is-latest-tag
+        id: is-latest-tag
+        with:
+          tag-name: some-branch
+          working-directory: /tmp/repo
+      - name: Assert
+        run: |
+            if [[ "${{ steps.is-latest-tag.outputs.is-latest-tag }}" = "true" ]]; then
+              echo "::error::The branch some-branch is not the latest tag"
+              exit 1
+            fi
+
+  test-empty-tag-name:
+    runs-on: ubuntu-latest
+    name: Test empty tag name as latest Tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Repo and Tag
+        run: |
+          mkdir -p /tmp/repo
+          cd /tmp/repo
+          git config --global init.defaultBranch main
+          git config --global user.email "you@example.com"
+          git config --global user.name "Some User"
+          git init
+          touch some.file
+          git add some.file
+          git commit -m "Initial commit"
+          git tag v1.2.3
+      - name: Test is-latest-tag
+        uses: ./is-latest-tag
+        id: is-latest-tag
+        with:
+          tag-name: ""
+          working-directory: /tmp/repo
+      - name: Assert
+        run: |
+            if [[ "${{ steps.is-latest-tag.outputs.is-latest-tag }}" = "true" ]]; then
+              echo "::error::An empty tag name is not the latest tag"
+              exit 1
+            fi

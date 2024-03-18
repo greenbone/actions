@@ -2,6 +2,13 @@ name: "Check if a tag is the latest tag in a repository"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
 description: "An action to check if a tag is the latest tag in a repository"
 
+inputs:
+  tag-name:
+    description: "Name of the tag to check. Defaults to `github.ref_name`."
+    default: ${{ github.ref_name }}
+  working-directory:
+    description: "Working directory for the action. Defaults to `github.workspace`."
+    default: ${{ github.workspace }}
 outputs:
   is-latest-tag:
     description: Evaluates to true if the created tag is the latest git tag
@@ -17,33 +24,36 @@ runs:
     - name: "set is-latest-tag"
       id: latest
       run: |
-        if [ "${{ github.ref_type }}" = "tag" ]; then
-          # find the latest version that is not ourself
-          export LATEST_VERSION=$(git tag -l | grep -v '${{ github.ref_name }}' | sort -r --version-sort | head -n 1)
+        # no tag name given
+        if [[ -z "${{ inputs.tag-name }}" ]]; then
+          echo "is-latest-tag=false" >> $GITHUB_OUTPUT
+        fi
 
-          # get major minor patch versions
-          IFS='.' read -r latest_major latest_minor latest_patch << EOF
+        # find the latest version that is not ourself
+        TAGS=$(git tag -l)
+        export LATEST_VERSION=$(echo $TAGS | grep -v '${{ inputs.tag-name }}' | sort -r --version-sort | head -n 1)
+
+        # get major minor patch versions
+        IFS='.' read -r latest_major latest_minor latest_patch << EOF
         $LATEST_VERSION
         EOF
 
-          IFS='.' read -r tag_major tag_minor tag_patch << EOF
-        ${{ github.ref_name }}
+        IFS='.' read -r tag_major tag_minor tag_patch << EOF
+        ${{ inputs.tag-name }}
         EOF
 
-          # remove leading v
-          latest_major=$(echo $latest_major | cut -c2-)
-          tag_major=$(echo $tag_major | cut -c2-)
+        # remove leading v
+        latest_major=$(echo $latest_major | cut -c2-)
+        tag_major=$(echo $tag_major | cut -c2-)
 
-          if [[ $tag_major -gt $latest_major ]]; then
-            echo "is-latest-tag=true" >> $GITHUB_OUTPUT
-          elif [[ $tag_major -eq $latest_major && $tag_minor -gt $latest_minor ]]; then
-            echo "is-latest-tag=true" >> $GITHUB_OUTPUT
-          elif [[ $tag_major -eq $latest_major && $tag_minor -eq $latest_minor && $tag_patch -gt $latest_patch ]]; then
-            echo "is-latest-tag=true" >> $GITHUB_OUTPUT
-          else
-            echo "is-latest-tag=false" >> $GITHUB_OUTPUT
-          fi
+        if [[ $tag_major -gt $latest_major ]]; then
+          echo "is-latest-tag=true" >> $GITHUB_OUTPUT
+        elif [[ $tag_major -eq $latest_major && $tag_minor -gt $latest_minor ]]; then
+          echo "is-latest-tag=true" >> $GITHUB_OUTPUT
+        elif [[ $tag_major -eq $latest_major && $tag_minor -eq $latest_minor && $tag_patch -gt $latest_patch ]]; then
+          echo "is-latest-tag=true" >> $GITHUB_OUTPUT
         else
-            echo "is-latest-tag=false" >> $GITHUB_OUTPUT
+          echo "is-latest-tag=false" >> $GITHUB_OUTPUT
         fi
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
