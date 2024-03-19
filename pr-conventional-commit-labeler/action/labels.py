@@ -19,6 +19,7 @@
 import asyncio
 import re
 import os
+from sre_compile import dis
 import sys
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
@@ -81,6 +82,7 @@ class Labels:
         cclc = tomlkit.parse(ccl_config.read_text(encoding="utf-8"))
         labels = cclc.get("labels", [])
         groups = cclc.get("groups", [])
+        disable_on = cclc.get("disable_on")
         labels_key = set(map(lambda x: x.get("name", ""), labels))
         only_highest = cclc.get("only_highest_priority", False)
         # verify that groups and labels are known
@@ -119,6 +121,11 @@ class Labels:
                     )
                 ]
             )
+            if disable_on and any(disable_on in x for x in original_pr_labels):
+                Console.log(
+                    f"skipping because {self.pull_request} contains {disable_on}"
+                )
+                return
             unique_labels = original_pr_labels.difference(labels_key)
             if unique_labels:
                 Console.debug(f"keeping labels: {unique_labels}")

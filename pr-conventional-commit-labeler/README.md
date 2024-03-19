@@ -11,12 +11,17 @@ Additionally the configuration.toml must have a list  of `groups` containing ele
 
 To control if all found labels or just one label based on the highest priority number will be added to a PR you can set the `only_highest_priority` field to either `true` or `false`.
 
+To exclude PR from auto labeling there is the possibility to set a `disable_on` label. When `disable_on` is configured and a PR contains the specified label the PR will be skipped.
+
 
 ## Examples
 
 As an example we define a configuration for labels as `release_tag.toml`:
 
 ```toml
+# disables labeling when a PR contains the following label
+disable_on = "no_release"
+
 # the name functions as a key and should be unique.
 # The priority is used when only_highest_priority is set to true
 labels = [
