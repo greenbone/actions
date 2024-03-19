@@ -1,0 +1,54 @@
+description: "A action to set tags on PR on found conventional commits."
+name: "conventional-commit-tag"
+inputs:
+  token:
+    description: "GitHub Token for authentication"
+    default: ${{ github.token }}
+  python-version:
+    description: "Python version to use for running the action"
+    required: false
+    default: "3.10"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
+    default: "true"
+  pr:
+    description: "The pull_request to label"
+    default: ${{ github.event.pull_request.number }}
+  configuration_toml:
+    description: "Path to the configuration toml"
+    required: true
+
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Refs
+      run: |
+        echo "::debug::ref: ${{ github.ref }}"
+        echo "::debug::ref_name: ${{ github.ref_name }}"
+        echo "::debug::pr number: ${{ github.event.pull_request.number }}"
+      shell: bash
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Set up Python and Poetry
+      uses: greenbone/actions/poetry@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+        poetry-version: ${{ inputs.poetry-version }}
+        working-directory: ${{ github.action_path }}
+        without-dev: "true"
+        cache-dependency-path: ${{ github.action_path }}/poetry.lock
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
+    - name: Run conventional commit labeler
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        poetry run pr-conventional-commit-labeler \
+          --token ${{ inputs.token }} \
+          --repository ${{ github.repository }} \
+          --working-directory ${{ github.workspace }} \
+          --label-config ${{ inputs.configuration_toml }} \
+          --pull-request ${{ inputs.pr }}
