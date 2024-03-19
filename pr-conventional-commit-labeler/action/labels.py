@@ -19,7 +19,6 @@
 import asyncio
 import re
 import os
-from sre_compile import dis
 import sys
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
@@ -150,17 +149,9 @@ class Labels:
             labels = set(l["name"] for l in labels)
             labels.update(unique_labels)
             Console.log(f"set labels: {labels}")
-            # unlike the descriptions hints they're not overridden
-            # TODO replace with
-            # await api.labels.delete_all(
-            #    self.repository, self.pull_request
-            # )
-            # once
-            # https://github.com/greenbone/pontos/pull/996
-            # is merged
-            u = f"/repos/{self.repository}/issues/{self.pull_request}/labels"
-            response = await api.labels._client.delete(u)
-            response.raise_for_status()
+            await api.labels.delete_all(
+               self.repository, self.pull_request
+            )
             await api.labels.set_all(
                 self.repository, self.pull_request, list(labels)
             )
