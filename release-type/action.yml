@@ -46,6 +46,10 @@ runs:
       run: |
         echo "RELEASE_TYPE=beta" >> $GITHUB_ENV
       shell: bash
+    - if: contains(github.event.pull_request.labels.*.name, 'make release')
+      run: |
+        echo "RELEASE_TYPE=calendar" >> $GITHUB_ENV
+      shell: bash
     - name: Workflow_dispatch RELEASE_TYPE
       if: github.event_name == 'workflow_dispatch'
       run: |
