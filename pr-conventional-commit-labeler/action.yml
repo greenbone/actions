@@ -16,7 +16,7 @@ inputs:
   pr:
     description: "The pull_request to label"
     default: ${{ github.event.pull_request.number }}
-  configuration_toml:
+  configuration-toml:
     description: "Path to the configuration toml"
     required: true
 
@@ -50,5 +50,5 @@ runs:
           --token ${{ inputs.token }} \
           --repository ${{ github.repository }} \
           --working-directory ${{ github.workspace }} \
-          --label-config ${{ inputs.configuration_toml }} \
+          --label-config ${{ inputs.configuration-toml }} \
           --pull-request ${{ inputs.pr }}

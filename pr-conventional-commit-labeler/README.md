@@ -62,7 +62,7 @@ jobs:
     steps:
         - uses: greenbone/actions/pr-conventional-commit-labeler@main
           with:
-            configuration_toml: release_tag.toml
+            configuration-toml: release_tag.toml
 ```
 
 
