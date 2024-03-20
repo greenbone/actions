@@ -74,5 +74,5 @@ jobs:
 | python-version | Python version to use for running the action. | Optional (default is `3.10`) |
 | poetry-version | Poetry version to use for running the action. | Optional (default is latest) |
 | cache-poetry-installation | Cache poetry and its dependencies. | Optional (default is `"true"`) |
-| configuration-toml| Name of the configuration file, must be relative to `github.working_directoy` | Required  |
+| configuration-toml| Name of the configuration file, must be relative to `github.workspace` | Required  |
 | pr | Number of the Pull Request (PR) | Optional (default is ${{ github.event.pull_request.number }} |
