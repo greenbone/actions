@@ -46,7 +46,7 @@ runs:
       run: |
         echo "RELEASE_TYPE=beta" >> $GITHUB_ENV
       shell: bash
-    - if: contains(github.event.pull_request.labels.*.name, 'make release')
+    - if: contains(github.event.pull_request.labels.*.name, 'make release') || contains(github.event.pull_request.labels.*.name, 'calendar release')
       run: |
         echo "RELEASE_TYPE=calendar" >> $GITHUB_ENV
       shell: bash
