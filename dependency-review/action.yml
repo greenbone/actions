@@ -50,4 +50,5 @@ runs:
           BlueOak-1.0.0,
           BSL-1.0,
           Python-2.0.1,
-          MIT AND PSF-2.0
+          MIT AND PSF-2.0,
+          CAL-1.0
