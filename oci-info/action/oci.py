@@ -74,9 +74,10 @@ class Oci(httpx.Client):
         super().__init__(
             base_url=f"https://{reg_domain}",
             timeout=timeout,
-            auth=(user, password) if user else None,
             headers={"accept": ",".join([h.value for h in OciMediaTypes])},
         )
+
+        self.user_auth = (user, password) if user else None
         self.reg_domain = reg_domain
         self.reg_auth_domain = reg_auth_domain
         self.reg_auth_service = reg_auth_service
@@ -90,7 +91,8 @@ class Oci(httpx.Client):
     def _set_auth_token(self, repository) -> None:
         res = self.get(
             f"https://{self.reg_auth_domain}/token?service={self.reg_auth_service}"
-            f"&scope=repository:{self.namespace}/{repository}:pull"
+            f"&scope=repository:{self.namespace}/{repository}:pull",
+            auth=self.user_auth,  # type: ignore
         )
         res.raise_for_status()
         self.headers["authorization"] = f"Bearer {res.json()['token']}"
@@ -158,7 +160,7 @@ class Oci(httpx.Client):
                 and manifest.platform.architecture == architecture
             ):
                 try:
-                    return OciAnnotations(**manifest.annotations)
+                    return OciAnnotations(**manifest.annotations)  # type: ignore
                 except ValidationError as exc:
                     raise OciAnnotationsError(
                         f"Failed to get OCI annotations from repository {repository} on tag {tag}."
