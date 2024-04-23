@@ -77,7 +77,7 @@ class Oci(httpx.Client):
             headers={"accept": ",".join([h.value for h in OciMediaTypes])},
         )
 
-        self.user_auth = (user, password) if user else None
+        self.user_auth = (user, password) if user and password else None
         self.reg_domain = reg_domain
         self.reg_auth_domain = reg_auth_domain
         self.reg_auth_service = reg_auth_service
