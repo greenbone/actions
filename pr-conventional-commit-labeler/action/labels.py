@@ -139,9 +139,10 @@ class Labels:
             await api.labels.delete_all(
                self.repository, self.pull_request
             )
-            await api.labels.set_all(
-                self.repository, self.pull_request, list(labels)
-            )
+            if labels:
+                await api.labels.set_all(
+                    self.repository, self.pull_request, list(labels)
+                )
 
 
 def main() -> NoReturn:
