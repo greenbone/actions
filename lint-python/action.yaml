@@ -50,6 +50,12 @@ runs:
       name: Check with black
       working-directory: ${{ inputs.working-directory }}
     - run: poetry run ${{ inputs.linter }} ${{ inputs.packages }}
+      if: ${{ inputs.linter != 'ruff' }}
       shell: bash
       name: Check with ${{ inputs.linter }}
+      working-directory: ${{ inputs.working-directory }}
+    - run: poetry run ruff check ${{ inputs.packages }}
+      if: ${{ inputs.linter == 'ruff' }}
+      shell: bash
+      name: Check with ruff
       working-directory: ${{ inputs.working-directory }}
