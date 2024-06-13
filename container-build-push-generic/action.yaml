@@ -131,7 +131,7 @@ runs:
 
     - name: Container sbom
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
-      uses: docker/scout-action@v0.23.4
+      uses: docker/scout-action@v1
       with:
         command: ${{ inputs.scout-command }}
         image: ${{ steps.meta.outputs.tags }}
