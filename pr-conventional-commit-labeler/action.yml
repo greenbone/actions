@@ -32,7 +32,7 @@ runs:
         echo "::debug::pr number: ${{ github.event.pull_request.number }}"
       shell: bash
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v3
       with:

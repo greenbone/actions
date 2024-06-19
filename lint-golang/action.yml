@@ -27,6 +27,6 @@ runs:
       shell: bash
       run: ${{ inputs.generate }}
     - name: Use the linter
-      uses: golangci/golangci-lint-action@v3
+      uses: golangci/golangci-lint-action@v6
       with:
         version: ${{ inputs.golangci-lint-version }}

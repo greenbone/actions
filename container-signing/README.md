@@ -53,7 +53,7 @@ jobs:
       - uses: docker/metadata-action@v4
         id: meta
         ...
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v6
         id: build-and-push
         ...
       - name: Container signing

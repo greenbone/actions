@@ -26,7 +26,7 @@ runs:
   steps:
     - name: Setup Node.js
       if: inputs.version
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
           node-version: ${{ inputs.version }}
           registry-url: ${{ inputs.registry-url }}
