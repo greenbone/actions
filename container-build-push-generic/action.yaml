@@ -106,7 +106,7 @@ runs:
 
     - name: Build and push container image
       id: build-and-push
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         annotations: ${{ steps.meta.outputs.annotations }}
         context: ${{ inputs.build-context }}
@@ -142,7 +142,7 @@ runs:
 
     - name: Upload sbom sarif file
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password && contains(inputs.scout-command, 'sbom') }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.image.outputs.name }}.sarif
         path: /tmp/${{ steps.image.outputs.name }}.sarif

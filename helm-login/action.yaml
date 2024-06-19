@@ -33,7 +33,7 @@ runs:
     - name: Install helm
       if: inputs.helm-version
       id: helm
-      uses: azure/setup-helm@v3
+      uses: azure/setup-helm@v4
       with:
         version: ${{ inputs.helm-version }}
         token: ${{ inputs.helm-token }}
