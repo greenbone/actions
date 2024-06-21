@@ -3,36 +3,36 @@ description: Generic container build and push action.
 
 inputs:
   build-context:
-    description: "Path to image build context. Default is ."
+    description: "Path to image build context. Default is."
     default: .
   build-docker-file:
-    description: "Path to the docker file. Default is./Dockerfile"
+    description: "Path to the docker file. Default is./Dockerfile."
     default: "./Dockerfile"
   build-args:
-    description: "Use these build-args for the docker build process. Default is empty"
+    description: "Use these build-args for the docker build process. Default is empty."
   build-secrets:
-    description: "Use these build-secrets for the docker build process. Default is empty"
+    description: "Use these build-secrets for the docker build process. Default is empty."
   cosign-key:
-    description: "Cosign key to sign the image. Will be skipped if empty. Default is empty"
+    description: "Cosign key to sign the image. Will be skipped if empty. Default is empty."
   cosign-key-password:
-    description: "Cosign key password. Will be skipped if empty. Default is empty"
+    description: "Cosign key password. Will be skipped if empty. Default is empty."
   cosign-tlog-upload:
-    description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default is true"
+    description: "Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true."
     default: "true"
   image-labels:
     description: "Image labels."
     required: true
   image-url:
-    description: "Image url/name without registry. Default is github.repository"
+    description: "Image url/name without registry. Default is github.repository."
     default: "${{ github.repository }}"
   image-tags:
     description: "Image tags."
     required: true
   image-platforms:
-    description: "Image platforms to build for. Default is linux/amd64"
+    description: "Image platforms to build for. Default is linux/amd64."
     default: "linux/amd64"
   meta-annotations-levels:
-    description: "Comma separated list. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor ."
+    description: "Comma separated list. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor."
     default: "manifest,manifest-descriptor"
   registry:
     description: "Registry url."
@@ -44,21 +44,27 @@ inputs:
     description: "Login registry password."
     required: true
   scout-command:
-    description: "Comma separated list to run several commands. Options are quickview, compare, cves, recommendations, sbom, environment. Default is cves,sbom"
+    description: "Comma separated list to run several commands. Options are quickview, compare, cves, recommendations, sbom, environment. Default is cves,sbom."
     default: "cves,sbom"
   scout-user:
-    description: "Dockerhub user for docker scout. Will be skipped if empty. Default is empty"
+    description: "Dockerhub user for docker scout. Will be skipped if empty. Default is empty."
   scout-password:
-    description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty"
+    description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty."
   scout-keep-previous-comments:
-    description: "Keep but hide previous comment. If not set, keep and update one single comment per job. Default is `false`"
+    description: "Keep but hide previous comment. If not set, keep and update one single comment per job. Options are true/false. Default is false."
     default: false
   sarif-retention-days:
-    description: "Days to store the sarif artifact. Default is 1"
+    description: "Days to store the sarif artifact. Default is 1."
     default: 1
+  qemu:
+    description: "Install local QEMU static binaries. Options are true/false. Default is false."
+    default: "false"
   qemu-platforms:
     description: "Comma separated list of platforms to install. Options are amd64, arm64, arm, riscv64, s390x, 386. Default is arm64 (amd64 is default arch)."
     default: "arm64"
+  buildx-container:
+    description: "Use a buildx container to build images. Options are true/false. Default is true."
+    default: "true"
 
 outputs:
   digest:
@@ -80,11 +86,13 @@ runs:
         echo "name=$name" >> "$GITHUB_OUTPUT"
 
     - name: Set up QEMU
+      if: ${{ inputs.qemu == 'true' }}
       uses: docker/setup-qemu-action@v3
       with:
         platforms: ${{ inputs.qemu-platforms }}
 
     - name: Set up docker buildx
+      if: ${{ inputs.buildx-container == 'true' }}
       uses: docker/setup-buildx-action@v3
 
     - name: Login to docker registry
