@@ -61,7 +61,7 @@ jobs:
 | sarif-retention-days         | Days to store the sarif artifact. Default is 1.                                                                                             | Optional |
 | qemu                         | Install local QEMU static binaries. Options are true/false. Default is false.                                                               | Optional |
 | qemu-platforms               | Comma separated list of platforms to install. Options are amd64, arm64, arm, riscv64, s390x, 386. Default is arm64 (amd64 is default arch). | Optional |
-| buildx-container             | Use a buildx container to build images. Options are true/false. Default is true.                                                            | Optional |
+| buildx-container             | Use a buildx container to build images. Options are true/false. Default is false.                                                           | Optional |
 
 ## Action Output
 

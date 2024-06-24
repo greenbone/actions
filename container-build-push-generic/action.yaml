@@ -63,8 +63,8 @@ inputs:
     description: "Comma separated list of platforms to install. Options are amd64, arm64, arm, riscv64, s390x, 386. Default is arm64 (amd64 is default arch)."
     default: "arm64"
   buildx-container:
-    description: "Use a buildx container to build images. Options are true/false. Default is true."
-    default: "true"
+    description: "Use a buildx container to build images. Options are true/false. Default is false."
+    default: "false"
 
 outputs:
   digest:
