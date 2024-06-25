@@ -1,6 +1,11 @@
 name: "Build XML documentation and upload coverage"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action to upload documentation coverage to codecov.io for C Lang repository. Requires to run with the greenbone/doxygen docker image."
+
+inputs:
+  token:
+    description: "Upload token for codecov.io."
+
 branding:
   icon: "package"
   color: "green"
@@ -33,3 +38,5 @@ runs:
       uses: codecov/codecov-action@v4
       with:
         files: lcov.info
+        token: ${{ inputs.token }}
+        flags: documentation
