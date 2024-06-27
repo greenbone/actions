@@ -65,6 +65,10 @@ jobs:
 
 ## Action Output
 
-| Output Variable | Description          |
-|-----------------|----------------------|
-| digest          | The container digest |
+| Output Variable | Description                     |
+|-----------------|---------------------------------|
+| annotations     | The container annotations.      |
+| digest          | The container digest.           |
+| labels          | The container labels.           |
+| meta-tags       | The meta action container tags. |
+| tags            | The container tags.             |

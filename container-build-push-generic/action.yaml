@@ -67,9 +67,21 @@ inputs:
     default: "false"
 
 outputs:
+  annotations:
+    description: "The container annotations."
+    value: ${{ steps.meta.outputs.annotations }}
   digest:
     description: "The container digest."
     value: ${{ steps.build-and-push.outputs.digest }}
+  labels:
+    description: "The container labels."
+    value: ${{ steps.meta.outputs.labels }}
+  tags:
+    description: "The container tags."
+    value: ${{ steps.tags.outputs.tags }}
+  meta-tags:
+    description: "The meta action container tags."
+    value: ${{ steps.meta.outputs.tags }}
 
 branding:
   icon: "package"
@@ -111,6 +123,19 @@ runs:
         tags: ${{ inputs.image-tags }}
       env:
         DOCKER_METADATA_ANNOTATIONS_LEVELS: ${{ inputs.meta-annotations-levels }}
+
+    # We need to filter the tags here because the tags from the meta action contain the full URL.
+    # The full URL might include a secret, and secrets cannot be exposed in the output.
+    - name: Filter tags
+      id: tags
+      shell: bash
+      run: |
+        set +e ; IFS=$'\n' read -r -d '' -a tags <<< "$(printf '%s\n' '${{ steps.meta.outputs.tags }}' | sort -u)" ; set -e
+        echo 'tags<<EOF' >> $GITHUB_OUTPUT
+        for tag in "${tags[@]}"; do
+          echo "$tag" | cut -d ':' -f 2 >> $GITHUB_OUTPUT
+        done
+        echo 'EOF' >> $GITHUB_OUTPUT
 
     - name: Build and push container image
       id: build-and-push
