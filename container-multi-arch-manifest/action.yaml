@@ -1,0 +1,60 @@
+name: Container multi-arch image
+description: Create a multi-arch image.
+
+inputs:
+  tags:
+    description: "New line seperated multi-arch tag list."
+    required: true
+  digests:
+    description: "New line seperated container image digest list."
+    required: true
+  url:
+    description: "Image url/name without registry. Default is github.repository."
+    required: true
+  registry:
+    description: "Registry url."
+    required: true
+  registry-username:
+    description: "Login registry username."
+    required: true
+  registry-password:
+    description: "Login registry password."
+    required: true
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Login to docker registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.registry-username }}
+        password: ${{ inputs.registry-password }}
+
+    - name: Create multi-arch image
+      shell: bash
+      run: |
+        # Define the image URL
+        url='${{ inputs.registry}}/${{ inputs.url }}'
+
+        # Read tags and digests into arrays
+        set +e
+        IFS=$'\n' read -r -d '' -a tags <<< "$(printf '%s\n' '${{ inputs.tags }}' | sort -u)"
+        IFS=$'\n' read -r -d '' -a digests <<< "$(printf '%s\n' '${{ inputs.digests }}' | sort -u)"
+        set -e
+
+        # Build the array of image urls with digests
+        images=()
+        for digest in "${digests[@]}"; do
+          images+=("$url@$digest")
+        done
+
+        # Loop through the tags and create/push multi arch manifests
+        for tag in "${tags[@]}"; do
+          docker manifest create "$url:$tag" ${images[@]}
+          docker manifest push "$url:$tag"
+        done
