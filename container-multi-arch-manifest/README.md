@@ -31,11 +31,12 @@ jobs:
 
 ## Inputs
 
-| Name              | Description                                                    |          |
-|-------------------|----------------------------------------------------------------|----------|
-| tags              | New line seperated multi-arch tag list.                        | Required |
-| digests           | New line seperated container image digest list.                | Required |
-| url               | Image url/name without registry. Default is github.repository. | Required |
-| registry          | Login registry username.                                       | Required |
-| registry-username | Login registry username.                                       | Required |
-| registry-password | Login registry password.                                       | Required |
+| Name              | Description                                     |          |
+|-------------------|-------------------------------------------------|----------|
+| annotations       | New line seperated annotation list.             | Required |
+| digests           | New line seperated container image digest list. | Required |
+| tags              | New line seperated multi-arch tag list.         | Required |
+| url               | Image url/name without registry.                | Required |
+| registry          | Login registry username.                        | Required |
+| registry-username | Login registry username.                        | Required |
+| registry-password | Login registry password.                        | Required |
