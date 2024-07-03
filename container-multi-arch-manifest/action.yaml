@@ -75,9 +75,15 @@ runs:
         done
         # Create manifest and grep digest
         echo "Used arguments: ${manifest_annotations[@]} ${manifest_tags[@]} ${manifest_images[@]}"
-        out=$(docker buildx imagetools create "${manifest_annotations[@]}" "${manifest_tags[@]}" "${manifest_images[@]}")
-        echo "$out"
+        set +e
+        out=$(docker buildx imagetools create "${manifest_annotations[@]}" "${manifest_tags[@]}" "${manifest_images[@]}" 2>&1)
         manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}')
+        set -e
+        if ! [ "$manifest_digest" ]; then
+          echo "$out"
+          echo 'No manifest digest found!'
+          exit 1
+        fi
         # Set digest and tags output
         echo "digest=$manifest_digest" >> "$GITHUB_OUTPUT"
         echo "tags=${meta_tags[@]}" >> "$GITHUB_OUTPUT"
