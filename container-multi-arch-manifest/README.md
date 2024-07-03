@@ -31,11 +31,15 @@ jobs:
 
 ## Inputs
 
-| Name              | Description                                                    |          |
-|-------------------|----------------------------------------------------------------|----------|
-| tags              | New line seperated multi-arch tag list.                        | Required |
-| digests           | New line seperated container image digest list.                | Required |
-| url               | Image url/name without registry. Default is github.repository. | Required |
-| registry          | Login registry username.                                       | Required |
-| registry-username | Login registry username.                                       | Required |
-| registry-password | Login registry password.                                       | Required |
+| Name                | Description                                                                                    |          |
+|---------------------|------------------------------------------------------------------------------------------------|----------|
+| annotations         | New line seperated annotation list.                                                            | Required |
+| cosign-key          | Cosign key to sign the image. Will be skipped if empty. Default is empty.                      | Required |
+| cosign-key-password | Cosign key password. Will be skipped if empty. Default is empty.                               | Required |
+| cosign-tlog-upload  | "Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true. | Required |
+| digests             | New line seperated container image digest list.                                                | Required |
+| tags                | New line seperated multi-arch tag list.                                                        | Required |
+| url                 | Image url/name without registry.                                                               | Required |
+| registry            | Login registry username.                                                                       | Required |
+| registry-username   | Login registry username.                                                                       | Required |
+| registry-password   | Login registry password.                                                                       | Required |

@@ -2,14 +2,23 @@ name: Container multi-arch image
 description: Create a multi-arch image.
 
 inputs:
-  tags:
-    description: "New line seperated multi-arch tag list."
-    required: true
+  annotations:
+    description: "New line seperated annotation list."
+  cosign-key:
+    description: "Cosign key to sign the image. Will be skipped if empty. Default is empty."
+  cosign-key-password:
+    description: "Cosign key password. Will be skipped if empty. Default is empty."
+  cosign-tlog-upload:
+    description: "Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true."
+    default: "true"
   digests:
     description: "New line seperated container image digest list."
     required: true
+  tags:
+    description: "New line seperated multi-arch tag list."
+    required: true
   url:
-    description: "Image url/name without registry. Default is github.repository."
+    description: "Image url/name without registry."
     required: true
   registry:
     description: "Registry url."
@@ -36,25 +45,55 @@ runs:
         password: ${{ inputs.registry-password }}
 
     - name: Create multi-arch image
+      id: manifest
       shell: bash
       run: |
-        # Define the image URL
+        # Image URL
         url='${{ inputs.registry}}/${{ inputs.url }}'
-
         # Read tags and digests into arrays
         set +e
         IFS=$'\n' read -r -d '' -a tags <<< "$(printf '%s\n' '${{ inputs.tags }}' | sort -u)"
         IFS=$'\n' read -r -d '' -a digests <<< "$(printf '%s\n' '${{ inputs.digests }}' | sort -u)"
+        IFS=$'\n' read -r -d '' -a annotations <<< "$(printf '%s\n' '${{ inputs.annotations }}' | sort -u)"
         set -e
-
-        # Build the array of image urls with digests
-        images=()
-        for digest in "${digests[@]}"; do
-          images+=("$url@$digest")
+        # Array of annotation args
+        manifest_annotations=()
+        for annotation in "${annotations[@]}"; do
+          manifest_annotations+=(--annotation "$annotation")
         done
-
-        # Loop through the tags and create/push multi arch manifests
+        # Array of tag args
+        manifest_tags=()
+        meta_tags=()
         for tag in "${tags[@]}"; do
-          docker manifest create "$url:$tag" ${images[@]}
-          docker manifest push "$url:$tag"
+          manifest_tags+=(--tag "$url:$tag")
+          meta_tags+=("$url:$tag")
         done
+        # Array of image url args
+        manifest_images=()
+        for digest in "${digests[@]}"; do
+          manifest_images+=("$url@$digest")
+        done
+        # Create manifest and grep digest
+        echo "Used arguments: ${manifest_annotations[@]} ${manifest_tags[@]} ${manifest_images[@]}"
+        set +e
+        out=$(docker buildx imagetools create "${manifest_annotations[@]}" "${manifest_tags[@]}" "${manifest_images[@]}" 2>&1)
+        manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}')
+        set -e
+        if ! [ "$manifest_digest" ]; then
+          echo "$out"
+          echo 'No manifest digest found!'
+          exit 1
+        fi
+        # Set digest and tags output
+        echo "digest=$manifest_digest" >> "$GITHUB_OUTPUT"
+        echo "tags=${meta_tags[@]}" >> "$GITHUB_OUTPUT"
+
+    - name: Signing Manifest
+      if: ${{ inputs.cosign-key && inputs.cosign-key-password }}
+      uses: greenbone/actions/container-signing@v3
+      with:
+        cosign-key: ${{ inputs.cosign-key }}
+        cosign-key-password: ${{ inputs.cosign-key-password }}
+        cosign-tlog-upload: ${{ inputs.cosign-tlog-upload }}
+        image-tags: ${{ steps.manifest.outputs.tags }}
+        image-digest: ${{ steps.manifest.outputs.digest }}
