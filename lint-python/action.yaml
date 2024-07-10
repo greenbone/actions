@@ -25,8 +25,8 @@ inputs:
     description: "Working directory where to run the action"
     default: ${{ github.workspace }}
   linter:
-    description: "Linter to use. Default is 'pylint'."
-    default: "pylint"
+    description: "Linter to use. Default is 'ruff check'."
+    default: "ruff check"
 
 branding:
   icon: "package"
