@@ -24,7 +24,7 @@ runs:
           BSD-3-Clause-Clear,
           BSD-3-Clause,
           BSL-1.0,
-          CAL-1.0
+          CAL-1.0,
           CC-BY-3.0,
           CC-BY-4.0,
           CC-BY-SA-4.0,
@@ -48,7 +48,7 @@ runs:
           Python-2.0,
           Python-2.0.1,
           Unicode-DFS-2016,
-          Unlicense,
+          Unlicense
 # Only single licenses are allowed in this list. 
 # A combination of licenses like `License-A AND License-B` 
 # is not supported. See:
