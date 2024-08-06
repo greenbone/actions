@@ -84,6 +84,9 @@ runs:
           echo 'No manifest digest found!'
           exit 1
         fi
+        # Print digest and tags output
+        echo -e "digest=$manifest_digest"
+        echo -e "tags=${meta_tags[@]}"
         # Set digest and tags output
         echo "digest=$manifest_digest" >> "$GITHUB_OUTPUT"
         echo "tags=${meta_tags[@]}" >> "$GITHUB_OUTPUT"
