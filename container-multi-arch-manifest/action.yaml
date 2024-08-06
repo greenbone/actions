@@ -77,7 +77,7 @@ runs:
         echo "Used arguments: ${manifest_annotations[@]} ${manifest_tags[@]} ${manifest_images[@]}"
         set +e
         out=$(docker buildx imagetools create "${manifest_annotations[@]}" "${manifest_tags[@]}" "${manifest_images[@]}" 2>&1)
-        manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}')
+        manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}' | sort -u)
         set -e
         if ! [ "$manifest_digest" ]; then
           echo "$out"
