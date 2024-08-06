@@ -90,7 +90,9 @@ runs:
         # Set digest and tags output
         echo "digest=$manifest_digest" >> "$GITHUB_OUTPUT"
         # We need a newline separator here for the cosign action
-        echo "tags=$(printf "%s\n" "${meta_tags[@]}")" >> "$GITHUB_OUTPUT"
+        echo 'tags<<EOF' >> $GITHUB_OUTPUT
+        echo "$(printf "%s\n" "${meta_tags[@]}")" >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
 
     - name: Signing Manifest
       if: ${{ inputs.cosign-key && inputs.cosign-key-password }}
