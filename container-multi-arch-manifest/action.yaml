@@ -77,16 +77,22 @@ runs:
         echo "Used arguments: ${manifest_annotations[@]} ${manifest_tags[@]} ${manifest_images[@]}"
         set +e
         out=$(docker buildx imagetools create "${manifest_annotations[@]}" "${manifest_tags[@]}" "${manifest_images[@]}" 2>&1)
-        manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}')
+        manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}' | sort -u)
         set -e
         if ! [ "$manifest_digest" ]; then
           echo "$out"
           echo 'No manifest digest found!'
           exit 1
         fi
+        # Print digest and tags output
+        echo -e "digest=$manifest_digest"
+        echo -e "tags=${meta_tags[@]}"
         # Set digest and tags output
         echo "digest=$manifest_digest" >> "$GITHUB_OUTPUT"
-        echo "tags=${meta_tags[@]}" >> "$GITHUB_OUTPUT"
+        # We need a newline separator here for the cosign action
+        echo 'tags<<EOF' >> $GITHUB_OUTPUT
+        echo "$(printf "%s\n" "${meta_tags[@]}")" >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
 
     - name: Signing Manifest
       if: ${{ inputs.cosign-key && inputs.cosign-key-password }}
