@@ -56,14 +56,18 @@ runs:
       shell: bash
     - name: Run git commands for PR
       run: |
-        git add -u
-        git commit -m "update license headers"
-        git push --set-upstream origin ${{ steps.update.outputs.HEAD }}
-        pontos-github pr create ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
-          'Update license headers' \
-          --body "## What\n\n Add missing and update out-dated license headers\n\n \
-          ## Why\n\n Files should contain up-to-date license headers\n\n \
-          ## How\n\n Automated process with pontos and GitHub Actions"
+        if ! git diff-index --quiet HEAD --; then
+          git add -u
+          git commit -m "update license headers"
+          git push --set-upstream origin ${{ steps.update.outputs.HEAD }}
+          pontos-github pr create ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
+            'Update license headers' \
+            --body "## What\n\n Add missing and update out-dated license headers\n\n \
+            ## Why\n\n Files should contain up-to-date license headers\n\n \
+            ## How\n\n Automated process with pontos and GitHub Actions"
+        else
+          echo "Nothing to commit"
+        fi
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
