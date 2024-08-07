@@ -22,10 +22,6 @@ inputs:
   directories:
     description: "Specify the directories that should be updated, separated by space e.g. 'foo bar baz'"
     required: true
-  event_type:
-    description: "The event type that triggered the workflow."
-    required: false
-    default: "workflow_dispatch"
 
 branding:
   icon: "package"
@@ -34,13 +30,6 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Validate input
-      run: |
-        if [[ "${{ inputs.event_type }}" != "pull_request" && "${{ inputs.event_type }}" != "workflow_dispatch" && "${{ inputs.event_type }}" != "schedule" ]]; then
-          echo "Unsupported event type: ${{ inputs.event_type }}. Supported event types are: pull_request, workflow_dispatch, schedule."
-          exit 1
-        fi
-      shell: bash
     - uses: actions/checkout@v4
       with:
         ref: ${{ inputs.target }}
@@ -55,45 +44,30 @@ runs:
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
         repository: ${{ github.repository }}
-    - name: Checkout new branch
-      if: inputs.event_type != 'pull_request'
-      run: |
-        BRANCH_NAME="devops/update-header-$(date +'%Y%m%d_%s')"
-        echo "HEAD=$BRANCH_NAME" >> $GITHUB_OUTPUT
-        git checkout -b $BRANCH_NAME
+    - name: Store Branch name
       shell: bash
+      id: update
+      run: |
+        echo "HEAD=devops/update-header-$(date +"%Y%m%d_%s")" >> $GITHUB_OUTPUT
     - name: Run commands to update headers
       run: |
+        git checkout -b ${{ steps.update.outputs.HEAD }}
         pontos-update-header -d ${{ inputs.directories }}
       shell: bash
-    - name: Commit changes
+    - name: Run git commands for PR
       run: |
         if ! git diff-index --quiet HEAD --; then
           git add -u
           git commit -m "update license headers"
+          git push --set-upstream origin ${{ steps.update.outputs.HEAD }}
+          pontos-github pr create ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
+            'Update license headers' \
+            --body "## What\n\n Add missing and update out-dated license headers\n\n \
+            ## Why\n\n Files should contain up-to-date license headers\n\n \
+            ## How\n\n Automated process with pontos and GitHub Actions"
         else
           echo "Nothing to commit"
-          exit 0
         fi
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: Push changes to current branch
-      if: inputs.event_type == 'pull_request'
-      run: |
-        git push origin ${{ inputs.target }}
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ inputs.github-user-token }}
-    - name: Open a pull request
-      if: inputs.event_type != 'pull_request'
-      run: |
-        git push --set-upstream origin ${{ steps.update.outputs.HEAD }}
-        pontos-github pr create ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
-          'Update license headers' \
-          --body "## What\n\n Add missing and update out-dated license headers\n\n \
-          ## Why\n\n Files should contain up-to-date license headers\n\n \
-          ## How\n\n Automated process with pontos and GitHub Actions"
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
