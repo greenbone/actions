@@ -1,6 +1,6 @@
-name: "Update File headers to the new year"
+name: "Add or Update License Headers"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
-description: "An action that updates header year in all files of given directories."
+description: "An action that adds or updates license header in all files of given directories."
 
 inputs:
   github-user:
@@ -22,13 +22,6 @@ inputs:
   directories:
     description: "Specify the directories that should be updated, separated by space e.g. 'foo bar baz'"
     required: true
-  exclude-file:
-    description: "Specify the file, that contains files to ignore"
-    default: .pontos-header-ignore
-    required: false
-  poetry-version:
-    description: "Use a specific poetry version. By default the latest release is used."
-    deprecationMessage: "poetry-version is deprecated and will be ignored."
 
 branding:
   icon: "package"
@@ -55,8 +48,7 @@ runs:
       shell: bash
       id: update
       run: |
-        echo "HEAD=devops/update-header-$(date +"%Y")" >> $GITHUB_OUTPUT
-        echo "YEAR=$(date +"%Y")" >> $GITHUB_OUTPUT
+        echo "HEAD=devops/update-header-$(date +"%Y%m%d_%s")" >> $GITHUB_OUTPUT
     - name: Run commands to update headers
       run: |
         git checkout -b ${{ steps.update.outputs.HEAD }}
@@ -65,15 +57,13 @@ runs:
     - name: Run git commands for PR
       run: |
         git add -u
-        git commit -m "Update header to ${{ steps.update.outputs.YEAR }}"
+        git commit -m "update license headers"
         git push --set-upstream origin ${{ steps.update.outputs.HEAD }}
-        pontos-github pr ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
-          'Update year to ${{ steps.update.outputs.YEAR }} in copyright header' \
-          --body "**What**:\n\nUpdate year to ${{ steps.update.outputs.YEAR }} in \
-          copyright header in all relevant files\n\n**Why**:* Files \
-          should be up-to-date and we don't want to do it manually \
-          in all projects\n\n**How**:\n\n* Automated process \
-          with pontos and GitHub Actions"
+        pontos-github pr create ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
+          'Update license headers' \
+          --body "## What\n\n Add missing and update out-dated license headers\n\n \
+          ## Why\n\n Files should contain up-to-date license headers\n\n \
+          ## How\n\n Automated process with pontos and GitHub Actions"
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-user-token }}
