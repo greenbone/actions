@@ -44,17 +44,17 @@ runs:
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
         repository: ${{ github.repository }}
-    - name: Store Branch name
-      shell: bash
-      id: update
+    - name: Checkout new branch
       run: |
-        echo "HEAD=devops/update-header-$(date +"%Y%m%d_%s")" >> $GITHUB_OUTPUT
+        BRANCH_NAME="devops/update-header-$(date +'%Y%m%d_%s')"
+        echo "HEAD=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        git checkout -b $BRANCH_NAME
+      shell: bash
     - name: Run commands to update headers
       run: |
-        git checkout -b ${{ steps.update.outputs.HEAD }}
         pontos-update-header -d ${{ inputs.directories }}
       shell: bash
-    - name: Run git commands for PR
+    - name: Commit changes and open a pull request
       run: |
         if ! git diff-index --quiet HEAD --; then
           git add -u
