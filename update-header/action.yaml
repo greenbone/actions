@@ -68,8 +68,8 @@ runs:
           pontos-github pr create ${{ github.repository }} ${{ steps.update.outputs.HEAD }} ${{ inputs.target }} \
             'Update license headers' \
             --body "## What\n\n Add missing and update out-dated license headers\n\n \
-            ## Why\n\n Files should contain up-to-date license headers\n\n \
-            ## How\n\n Automated process with pontos and GitHub Actions"
+        ## Why\n\n Files should contain up-to-date license headers\n\n \
+        ## How\n\n Automated process with pontos and GitHub Actions"
         else
           echo "Nothing to commit"
         fi
