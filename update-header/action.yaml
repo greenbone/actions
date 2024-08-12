@@ -49,6 +49,7 @@ runs:
         token: ${{ inputs.github-user-token }}
         repository: ${{ github.repository }}
     - name: Checkout new branch
+      id: update
       run: |
         BRANCH_NAME="devops/update-header-$(date +'%Y%m%d_%s')"
         echo "HEAD=$BRANCH_NAME" >> $GITHUB_OUTPUT
