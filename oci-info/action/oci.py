@@ -45,6 +45,10 @@ class OciAnnotationsError(OciError):
     """OciAnnotationsError exception"""
 
 
+class OciManifestsError(OciError):
+    """OciManifestsError exception"""
+
+
 class Oci(httpx.Client):
     """Class for interacting with OCI (Open Container Initiative) registries."""
 
@@ -89,7 +93,7 @@ class Oci(httpx.Client):
         return res.json()
 
     def _set_auth_token(self, repository) -> None:
-        res = self.get(
+        res = httpx.get(
             f"https://{self.reg_auth_domain}/token?service={self.reg_auth_service}"
             f"&scope=repository:{self.namespace}/{repository}:pull",
             auth=self.user_auth,  # type: ignore
@@ -128,12 +132,20 @@ class Oci(httpx.Client):
             tag: Tag of the image.
 
         Returns:
-            Object containing image manifests.
+            Object containing image manifests,
+            otherwise an OciManifestsError is raised
         """
 
         self._set_auth_token(repository)
         url = f"/v2/{self.namespace}/{repository}/manifests/{tag}"
-        return OciIndex(**self._get_data_as_dict(url))
+        oci_index = OciIndex(**self._get_data_as_dict(url))
+
+        if not oci_index.manifests:
+            raise OciManifestsError(
+                f"Failed to get OCI manifests from repository {repository} on tag {tag}."
+            )
+
+        return oci_index
 
     def get_oci_annotations(
         self, repository: str, tag: str, architecture: str

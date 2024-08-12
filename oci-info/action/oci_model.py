@@ -152,4 +152,4 @@ class OciIndex(BaseModel):
 
     schemaVersion: int
     mediaType: str
-    manifests: list[OciManifest]
+    manifests: Optional[list[OciManifest]] = None
