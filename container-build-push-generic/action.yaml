@@ -139,7 +139,7 @@ runs:
 
     - name: Build and push container image
       id: build-and-push
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v5
       with:
         annotations: ${{ steps.meta.outputs.annotations }}
         context: ${{ inputs.build-context }}
