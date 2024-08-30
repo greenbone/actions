@@ -19,6 +19,8 @@ inputs:
   cosign-tlog-upload:
     description: "Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true."
     default: "true"
+  image-flavor:
+    description: "Global behavior for tags. Default is empty."
   image-labels:
     description: "Image labels."
     required: true
@@ -121,6 +123,7 @@ runs:
         images: "${{ inputs.registry}}/${{ inputs.image-url }}"
         labels: ${{ inputs.image-labels }}
         tags: ${{ inputs.image-tags }}
+        flavor: ${{ inputs.image-flavor }}
       env:
         DOCKER_METADATA_ANNOTATIONS_LEVELS: ${{ inputs.meta-annotations-levels }}
 
