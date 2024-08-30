@@ -46,6 +46,7 @@ jobs:
 | cosign-key                   | Cosign key to sign the image. Will be skipped if empty. Default is empty.                                                                   | Optional |
 | cosign-key-password          | Cosign key password. Will be skipped if empty. Default is empty.                                                                            | Optional |
 | cosign-tlog-upload           | Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true.                                               | Optional |
+| image-flavor                 | Global behavior for tags. Default is empty.                                                                                                 | Optional |
 | image-labels                 | Image labels.                                                                                                                               | Required |
 | image-url                    | Image url/name without registry. Default is github.repository.                                                                              | Optional |
 | image-platforms              | Image platforms to build for. Default is "linux/amd64".                                                                                     | Optional |
