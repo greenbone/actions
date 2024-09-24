@@ -15,9 +15,9 @@ inputs:
     description: "New line seperated container image digest list."
     required: true
   tags:
-    description: "New line seperated tag list."
+    description: "New line seperated tag list. This or meta-tags are required. Default is empty."
   meta-tags:
-    description: "New line seperated meta action tag list."
+    description: "Docker meta action tag list. This or tags are required. Default is empty."
   url:
     description: "Image url/name without registry."
     required: true
