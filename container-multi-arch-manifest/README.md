@@ -38,7 +38,8 @@ jobs:
 | cosign-key-password | Cosign key password. Will be skipped if empty. Default is empty.                               | Required |
 | cosign-tlog-upload  | "Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true. | Required |
 | digests             | New line seperated container image digest list.                                                | Required |
-| tags                | New line seperated multi-arch tag list.                                                        | Required |
+| tags                | New line seperated tag list. This or meta-tags are required. Default is empty.                 | Optional |
+| meta-tags           | Docker meta action tag list. This or tags are required. Default is empty.                      | Optional |
 | url                 | Image url/name without registry.                                                               | Required |
 | registry            | Login registry username.                                                                       | Required |
 | registry-username   | Login registry username.                                                                       | Required |
