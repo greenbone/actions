@@ -15,8 +15,9 @@ inputs:
     description: "New line seperated container image digest list."
     required: true
   tags:
-    description: "New line seperated multi-arch tag list."
-    required: true
+    description: "New line seperated tag list."
+  meta-tags:
+    description: "New line seperated meta action tag list."
   url:
     description: "Image url/name without registry."
     required: true
@@ -53,6 +54,7 @@ runs:
         # Read tags and digests into arrays
         set +e
         IFS=$'\n' read -r -d '' -a tags <<< "$(printf '%s\n' '${{ inputs.tags }}' | sort -u)"
+        IFS=$'\n' read -r -d '' -a m_tags <<< "$(printf '%s\n' '${{ inputs.meta-tags }}' | sort -u)"
         IFS=$'\n' read -r -d '' -a digests <<< "$(printf '%s\n' '${{ inputs.digests }}' | sort -u)"
         IFS=$'\n' read -r -d '' -a annotations <<< "$(printf '%s\n' '${{ inputs.annotations }}' | sort -u)"
         set -e
@@ -64,9 +66,15 @@ runs:
         # Array of tag args
         manifest_tags=()
         meta_tags=()
+        # Add tags from tag list
         for tag in "${tags[@]}"; do
           manifest_tags+=(--tag "$url:$tag")
           meta_tags+=("$url:$tag")
+        done
+        # Add tags from meta action tag list
+        for tag in "${m_tags[@]}"; do
+          manifest_tags+=(--tag "$tag")
+          meta_tags+=("$tag")
         done
         # Array of image url args
         manifest_images=()
