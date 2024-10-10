@@ -2,109 +2,57 @@ version: 2
 updates:
     # GitHub Actions
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+      - "/admin-bypass/"
+      - "/awx-run/"
+      - "/backport-pull-request/"
+      - "/check-version/"
+      - "/checkout/"
+      - "/container-build-push-generic/"
+      - "/container-multi-arch-manifest/"
+      - "/container-signing/"
+      - "/conventional-commits/"
+      - "/coverage-js/"
+      - "/coverage-python/"
+      - "/dependency-review/"
+      - "/doc-coverage-clang/"
+      - "/download-artifact/"
+      - "/git-use-https-for-github/"
+      - "/hashsums/"
+      - "/helm-build-push/"
+      - "/helm-login/"
+      - "/helm-version-upgrade/"
+      - "/install-node/"
+      - "/is-latest-tag/"
+      - "/lint-golang/"
+      - "/lint-python/"
+      - "/lint-node/"
+      - "/lock-branch/"
+      - "/mattermost-notify/"
+      - "/mypy-python/"
+      - "/npm-build-push/"
+      - "/oci-info/"
+      - "/pipx/"
+      - "/poetry/"
+      - "/pr-conventional-commit-labeler/"
+      - "/pypi-upload/"
+      - "/release-type/"
+      - "/release/"
+      - "/sbom-upload/"
+      - "/scp/"
+      - "/set-github-user/"
+      - "/setup-pontos/"
+      - "/sign-release-files/"
+      - "/signature/"
+      - "/ssh-known-hosts/"
+      - "/ssh-run-cmd/"
+      - "/test-node/"
+      - "/trigger-workflow/"
+      - "/update-header/"
     schedule:
       interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/poetry/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/release/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/release-python/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/coverage-python/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/lint-python/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/mypy-python/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/mattermost-notify/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/install-npm/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/lint-javascript/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/test-javascript/"
-    schedule:
-      interval: "weekly"
+      time: "04:00"
     commit-message:
       prefix: "Deps"
     groups:
@@ -114,9 +62,16 @@ updates:
 
     # PIP
   - package-ecosystem: pip
-    directory: "/backport-pull-request/"
+    directories:
+      - "/backport-pull-request/"
+      - "/conventional-commits/"
+      - "/download-artifact/"
+      - "/helm-version-upgrade/"
+      - "/trigger-workflow/"
+      - "/pr-conventional-commit-labeler/"
     schedule:
       interval: "weekly"
+      time: "04:00"
     open-pull-requests-limit: 10
     allow:
       - dependency-type: direct
@@ -127,73 +82,7 @@ updates:
       dependencies:
         patterns:
           - "*"
-  - package-ecosystem: pip
-    directory: "/conventional-commits/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: direct
-      - dependency-type: indirect
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: pip
-    directory: "/download-artifact/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: direct
-      - dependency-type: indirect
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: pip
-    directory: "/helm-version-upgrade/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: direct
-      - dependency-type: indirect
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: pip
-    directory: "/trigger-workflow/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: direct
-      - dependency-type: indirect
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: pip
-    directory: "/pr-conventional-commit-labeler/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: direct
-      - dependency-type: indirect
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+
+  
+
+
