@@ -101,7 +101,7 @@ runs:
 
         if [ -n "${{ inputs.python-path }}" ]; then
           ARGS+=( "--python" "${{ inputs.python-path }}" )
-        else
+        elif [ -n "${{ steps.python.outputs.python-path }}" ]; then
           ARGS+=( "--python" "${{ steps.python.outputs.python-path }}" )
         fi
 
