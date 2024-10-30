@@ -50,7 +50,7 @@ jobs:
 | image-labels                 | Image labels.                                                                                                                               | Required |
 | image-url                    | Image url/name without registry. Default is github.repository.                                                                              | Optional |
 | image-platforms              | Image platforms to build for. Default is "linux/amd64".                                                                                     | Optional |
-| image-tags                   | Image tags.                                                                                                                                 | Required |
+| image-tags                   | Image tags. For format refer to [docker/metadata-action](https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input).          | Required |
 | meta-annotations-levels      | Comma separated list. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor.          | Optional |
 | registry                     | Registry url.                                                                                                                               | Required |
 | registry-username            | Login registry username.                                                                                                                    | Required |
