@@ -80,80 +80,80 @@ runs:
       run: |
         cmd=()
 
-        if [ "${{ inputs.repository }}" ]; then
-          cmd+=(--repository "${{ inputs.repository }}")
+        if [ '${{ inputs.repository }}' ]; then
+          cmd+=(--repository '${{ inputs.repository }}')
         fi
 
-        if [ "${{ inputs.namespace }}" ]; then
-          cmd+=(--namespace "${{ inputs.namespace }}")
+        if [ '${{ inputs.namespace }}' ]; then
+          cmd+=(--namespace '${{ inputs.namespace }}')
         fi
 
-        if [ "${{ inputs.user }}" ]; then
-          cmd+=(--user "${{ inputs.user }}")
+        if [ '${{ inputs.user }}' ]; then
+          cmd+=(--user '${{ inputs.user }}')
         fi
 
-        if [ "${{ inputs.password }}" ]; then
-          cmd+=(--password "${{ inputs.password }}")
+        if [ '${{ inputs.password }}' ]; then
+          cmd+=(--password '${{ inputs.password }}')
         fi
 
-        if [ "${{ inputs.reg-domain }}" ]; then
-          cmd+=(--reg-domain "${{ inputs.reg-domain }}")
+        if [ '${{ inputs.reg-domain }}' ]; then
+          cmd+=(--reg-domain '${{ inputs.reg-domain }}')
         fi
 
-        if [ "${{ inputs.reg-auth-domain }}" ]; then
-          cmd+=(--reg-auth-domain "${{ inputs.reg-auth-domain }}")
+        if [ '${{ inputs.reg-auth-domain }}' ]; then
+          cmd+=(--reg-auth-domain '${{ inputs.reg-auth-domain }}')
         fi
 
-        if [ "${{ inputs.reg-auth-service }}" ]; then
-          cmd+=(--reg-auth-service "${{ inputs.reg-auth-service }}")
+        if [ '${{ inputs.reg-auth-service }}' ]; then
+          cmd+=(--reg-auth-service '${{ inputs.reg-auth-service }}')
         fi
 
-        if [ "${{ inputs.command }}" ]; then
-          cmd+=("${{ inputs.command }}")
+        if [ '${{ inputs.command }}' ]; then
+          cmd+=('${{ inputs.command }}')
         fi
 
-        if [ "${{ inputs.tag }}" ]; then
-          cmd+=(--tag "${{ inputs.tag }}")
+        if [ '${{ inputs.tag }}' ]; then
+          cmd+=(--tag '${{ inputs.tag }}')
         fi
 
-        if [ "${{ inputs.architecture }}" ]; then
-          cmd+=(--architecture "${{ inputs.architecture }}")
+        if [ '${{ inputs.architecture }}' ]; then
+          cmd+=(--architecture '${{ inputs.architecture }}')
         fi
 
-        if [ "${{ inputs.mode }}" ]; then
-          cmd+=(--mode "${{ inputs.mode }}")
+        if [ '${{ inputs.mode }}' ]; then
+          cmd+=(--mode '${{ inputs.mode }}')
         fi
 
-        if [ "${{ inputs.compare-repository }}" ]; then
-          cmd+=(--compare-repository "${{ inputs.compare-repository }}")
+        if [ '${{ inputs.compare-repository }}' ]; then
+          cmd+=(--compare-repository '${{ inputs.compare-repository }}')
         fi
 
-        if [ "${{ inputs.annotation }}" ]; then
-          cmd+=(--annotation "${{ inputs.annotation }}")
+        if [ '${{ inputs.annotation }}' ]; then
+          cmd+=(--annotation '${{ inputs.annotation }}')
         fi
 
-        if [ "${{ inputs.compare-namespace }}" ]; then
-          cmd+=(--compare-namespace "${{ inputs.compare-namespace }}")
+        if [ '${{ inputs.compare-namespace }}' ]; then
+          cmd+=(--compare-namespace '${{ inputs.compare-namespace }}')
         fi
 
-        if [ "${{ inputs.compare-reg-domain }}" ]; then
-          cmd+=(--compare-reg-domain "${{ inputs.compare-reg-domain }}")
+        if [ '${{ inputs.compare-reg-domain }}' ]; then
+          cmd+=(--compare-reg-domain '${{ inputs.compare-reg-domain }}')
         fi
 
-        if [ "${{ inputs.compare-reg-auth-domain }}" ]; then
-          cmd+=(--compare-reg-auth-domain "${{ inputs.compare-reg-auth-domain }}")
+        if [ '${{ inputs.compare-reg-auth-domain }}' ]; then
+          cmd+=(--compare-reg-auth-domain '${{ inputs.compare-reg-auth-domain }}')
         fi
 
-        if [ "${{ inputs.compare-reg-auth-service }}" ]; then
-          cmd+=(--compare-reg-auth-service "${{ inputs.compare-reg-auth-service }}")
+        if [ '${{ inputs.compare-reg-auth-service }}' ]; then
+          cmd+=(--compare-reg-auth-service '${{ inputs.compare-reg-auth-service }}')
         fi
 
-        if [ "${{ inputs.compare-user }}" ]; then
-          cmd+=(--compare-user "${{ inputs.compare-user }}")
+        if [ '${{ inputs.compare-user }}' ]; then
+          cmd+=(--compare-user '${{ inputs.compare-user }}')
         fi
 
-        if [ "${{ inputs.compare-password }}" ]; then
-          cmd+=(--compare-password "${{ inputs.compare-password }}")
+        if [ '${{ inputs.compare-password }}' ]; then
+          cmd+=(--compare-password '${{ inputs.compare-password }}')
         fi
 
         # We need a clear exit code
