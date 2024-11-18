@@ -1,4 +1,3 @@
-
 name: "JavaScript/TypeScript Linting"
 author: "Jaspar Stach <jaspar.stach@greenbone.net>"
 description: "An action to check linting and formatting Greenbone JavaScript/TypeScript Projects"
@@ -28,7 +27,7 @@ runs:
     - run: echo "Install project with ${{ inputs.dependency-manager }}"
       shell: bash
     - name: Install Project
-      uses: greenbone/actions/install-node@v3
+      uses: greenbone/actions/install-node@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         version: ${{ inputs.version }}
         token: ${{ inputs.token }}

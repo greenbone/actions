@@ -101,16 +101,16 @@ runs:
 
     - name: Set up QEMU
       if: ${{ inputs.qemu == 'true' }}
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
       with:
         platforms: ${{ inputs.qemu-platforms }}
 
     - name: Set up docker buildx
       if: ${{ inputs.buildx-container == 'true' }}
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
 
     - name: Login to docker registry
-      uses: docker/login-action@v3
+      uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.registry-username }}
@@ -118,7 +118,7 @@ runs:
 
     - name: Setup container meta information
       id: meta
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
       with:
         images: "${{ inputs.registry}}/${{ inputs.image-url }}"
         labels: ${{ inputs.image-labels }}
@@ -142,7 +142,7 @@ runs:
 
     - name: Build and push container image
       id: build-and-push
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v6.9.0
       with:
         annotations: ${{ steps.meta.outputs.annotations }}
         context: ${{ inputs.build-context }}
@@ -157,7 +157,7 @@ runs:
 
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' && inputs.cosign-key && inputs.cosign-key-password }}
-      uses: greenbone/actions/container-signing@v3
+      uses: greenbone/actions/container-signing@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         cosign-key: ${{ inputs.cosign-key }}
         cosign-key-password: ${{ inputs.cosign-key-password }}
@@ -167,7 +167,7 @@ runs:
 
     - name: Container sbom
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
-      uses: docker/scout-action@v1
+      uses: docker/scout-action@6ac950eb733f8b2811f25c05d97bfb3d181b8026 # v1.15.1
       with:
         command: ${{ inputs.scout-command }}
         image: ${{ steps.meta.outputs.tags }}
@@ -178,7 +178,7 @@ runs:
 
     - name: Upload sbom sarif file
       if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password && contains(inputs.scout-command, 'sbom') }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
       with:
         name: ${{ steps.image.outputs.name }}.sarif
         path: /tmp/${{ steps.image.outputs.name }}.sarif
