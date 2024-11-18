@@ -21,7 +21,6 @@ inputs:
   ssh-tmp:
     description: "SSH private key storage folder path. Default: /tmp/ssh."
     default: "/tmp/ssh"
-  
 
 branding:
   icon: "package"
@@ -37,7 +36,7 @@ runs:
         echo '${{ inputs.ssh-private-key }}' > '${{ inputs.ssh-tmp }}/key.ssh'
         chmod 0600 '${{ inputs.ssh-tmp }}/key.ssh'
     - name: Create ssh known hosts file
-      uses: greenbone/actions/ssh-known-hosts@v3
+      uses: greenbone/actions/ssh-known-hosts@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         known_hosts: ${{ inputs.known-hosts }}
     - name: Run bash cmd on remote host
@@ -48,5 +47,5 @@ runs:
     - name: Run bash cmd on remote host
       if: ${{ inputs.file }}
       run: |
-        ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }} 
+        ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }}
       shell: bash

@@ -26,10 +26,10 @@ runs:
   steps:
     - name: Setup Node.js
       if: inputs.version
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
       with:
-          node-version: ${{ inputs.version }}
-          registry-url: ${{ inputs.registry-url }}
+        node-version: ${{ inputs.version }}
+        registry-url: ${{ inputs.registry-url }}
 
     - name: Run npm ci
       if: inputs.run-ci == 'true'

@@ -17,9 +17,9 @@ branding:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - name: Set up Python ${{ inputs.python-version }} and pontos
-      uses: greenbone/actions/setup-pontos@v3
+      uses: greenbone/actions/setup-pontos@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         python-version: ${{ inputs.python-version}}
     - name: Check version information

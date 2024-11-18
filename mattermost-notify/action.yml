@@ -54,13 +54,13 @@ runs:
       # we need a checkout to determine the commit-message per git
       # if commit is set but commit-message is not
       if: inputs.commit && !inputs.commit-message
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         ref: ${{ inputs.commit }}
 
     - name: Install
       if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
-      uses: greenbone/actions/pipx@v3
+      uses: greenbone/actions/pipx@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       id: pipx
       with:
         python-version: "3.10"

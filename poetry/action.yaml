@@ -33,14 +33,14 @@ runs:
   using: "composite"
   steps:
     - name: Set up poetry
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
       id: python
       with:
         python-version: ${{ inputs.python-version }}
         cache: ${{ inputs.cache == 'true' && 'poetry' || '' }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - name: Set up poetry
-      uses: greenbone/actions/pipx@v3
+      uses: greenbone/actions/pipx@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         python-path: ${{ steps.python.outputs.python-path }}
         cache: ${{ inputs.cache-poetry-installation }}

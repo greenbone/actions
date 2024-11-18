@@ -96,7 +96,7 @@ runs:
           echo "exists=false" >> $GITHUB_OUTPUT
         fi
       shell: bash
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       if: steps.checkout.outputs.exists != 'true'
       with:
         fetch-depth: 0 # for conventional commits and getting all git tags
@@ -104,13 +104,13 @@ runs:
         ref: ${{ inputs.ref }}
         repository: ${{ inputs.repository }}
     - name: Set git name, mail and origin
-      uses: greenbone/actions/set-github-user@v3
+      uses: greenbone/actions/set-github-user@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
     - name: Set up Python and pontos
-      uses: greenbone/actions/setup-pontos@v3
+      uses: greenbone/actions/setup-pontos@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       id: virtualenv
       with:
         python-version: ${{ inputs.python-version }}
@@ -171,7 +171,7 @@ runs:
 
       # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
-      uses: greenbone/actions/admin-bypass@v3
+      uses: greenbone/actions/admin-bypass@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         allow: "true"
         github-token: ${{ inputs.github-user-token }}
@@ -191,7 +191,7 @@ runs:
       # Disable admin bypass
     - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
       if: always()
-      uses: greenbone/actions/admin-bypass@v3
+      uses: greenbone/actions/admin-bypass@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       with:
         allow: "false"
         github-token: ${{ inputs.github-user-token }}
@@ -199,7 +199,7 @@ runs:
 
       # Signing
     - name: Sign assets for released version
-      uses: greenbone/actions/sign-release-files@v3
+      uses: greenbone/actions/sign-release-files@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
       if: inputs.sign-release-files == 'true' && inputs.gpg-key && inputs.gpg-fingerprint && inputs.gpg-passphrase
       with:
         python-version: ${{ inputs.python-version }}
