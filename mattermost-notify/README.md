@@ -74,6 +74,7 @@ jobs:
 | branch | Git branch to use in the message | Optional. Default is `${{ github.ref_name }}`. Will be derived from the event if empty. |
 | commit | Git commit to use in the message | Optional. Default is `${{ github.sha }}`. Will be derived from the event if empty. |
 | message | Enter a markdown formatted text message. Note: Setting a string in this argument ignores all other arguments. | Optional. |
+| shortline | If set to "true", the message will be sent as a short line | Optional. |
 | commit-message | Git commit message to use in the message | Deprecated. Connected commit message to commit will be used |
 | repository | GitHub repository (org/repo) | Optional. Default is `${{ github.repository }}`. |
 | status | Specifies the notification status. Options success or failure. Default is automatic detected by `GITHUB_EVENT_PATH` json. | Optional. |
