@@ -42,6 +42,9 @@ inputs:
   workflow-name:
     description: GitHub workflow name. Default is 'github.workflow'
     default: ${{ github.workflow }}
+  shortline:
+    description: "Set to 'true' to output git changes in a single line for a more concise format."
+    default: "false"
 
 branding:
   icon: "package"
@@ -98,6 +101,10 @@ runs:
 
         if [ -n "${{ inputs.workflow-name }}" ]; then
           ARGS+=(--workflow_name \""${{ inputs.workflow-name }}\"")
+        fi
+
+        if [[ ! "${{ inputs.shortline }}" == "false" ]]; then
+          ARGS+=(--short)
         fi
 
         if [ -n "${{ inputs.MATTERMOST_HIGHLIGHT }}" ] || [ -n "${{ inputs.highlight }}" ]; then
