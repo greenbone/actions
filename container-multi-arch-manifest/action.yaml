@@ -85,13 +85,21 @@ runs:
         echo "Used arguments: ${manifest_annotations[@]} ${manifest_tags[@]} ${manifest_images[@]}"
         set +e
         out=$(docker buildx imagetools create "${manifest_annotations[@]}" "${manifest_tags[@]}" "${manifest_images[@]}" 2>&1)
+        exit_code="$?"
+        # Debug output
         echo "$out"
+        # Check imagetools exit code
+        if [ "$exit_code" -ne 0 ]; then
+          echo echo "Imagetools failed with exit code $exit_code"
+          exit 1
+        fi
+        # Get maifest digest
         manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}' | sort -u)
         set -e
+        # Check manifest digest
         if ! [ "$manifest_digest" ]; then
-          echo "$out"
           echo 'No manifest digest found!'
-          exit 1
+          exit 2
         fi
         # Print digest and tags output
         echo -e "digest=$manifest_digest"
