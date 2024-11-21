@@ -44,3 +44,10 @@ jobs:
 | registry            | Login registry username.                                                                       | Required |
 | registry-username   | Login registry username.                                                                       | Required |
 | registry-password   | Login registry password.                                                                       | Required |
+
+
+## Output
+
+| Output Variable | Description          |
+|-----------------|----------------------|
+| digest          | The manifest digest. |
