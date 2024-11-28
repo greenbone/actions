@@ -37,6 +37,6 @@ runs:
         poetry build
       shell: bash
     - name: Upload
-      uses: pypa/gh-action-pypi-publish@release/v1
+      uses: pypa/gh-action-pypi-publish@fb13cb306901256ace3dab689990e13a5550ffaa # v1.11.0
       with:
         password: ${{ inputs.pypi-token }}
