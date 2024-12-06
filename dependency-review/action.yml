@@ -50,8 +50,8 @@ runs:
           PSF-2.0,
           Python-2.0,
           Python-2.0.1,
-          Unicode-DFS-2016,
           Unicode-3.0,
+          Unicode-DFS-2016,
           Unlicense
 
 # Only single licenses are allowed in this list.
