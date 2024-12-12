@@ -68,7 +68,7 @@ runs:
       with:
         python-version: "3.10"
         install: mattermost-notify
-        install-version: "24.11.2"
+        install-version: "24.12.0"
 
     - name: Set Channel and Webhook
       shell: bash
