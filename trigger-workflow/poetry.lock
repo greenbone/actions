@@ -596,13 +596,13 @@ type = ["mypy (>=1.11.2)"]
 
 [[package]]
 name = "pontos"
-version = "24.12.3"
+version = "24.12.4"
 description = "Common utilities and tools maintained by Greenbone Networks"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "pontos-24.12.3-py3-none-any.whl", hash = "sha256:f6f1ff15d44bfbf4ac86f09f58cf5720e700e9cc5d8056a0700f841af7bedb73"},
-    {file = "pontos-24.12.3.tar.gz", hash = "sha256:a2dd7165a7e13f8d806ebeba966cf17ae158c06c403a9eef573ce8761ff66d21"},
+    {file = "pontos-24.12.4-py3-none-any.whl", hash = "sha256:ff2b810697b64d80e9526b216db1d477e6d1110b2c8af4f88697668dfbe73190"},
+    {file = "pontos-24.12.4.tar.gz", hash = "sha256:87db5110a235d5bdb6cb400f8b45aaf29ee07de25a680d46122f38d5ed628b47"},
 ]
 
 [package.dependencies]
