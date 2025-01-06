@@ -38,14 +38,14 @@ runs:
         filePath: "_manifest/spdx_2.2/"
     - name: Setup github user
       if: inputs.git-user && inputs.git-user-email && inputs.token
-      uses: greenbone/actions/set-github-user@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/set-github-user@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       with:
         user: ${{ inputs.git-user }}
         mail: ${{ inputs.git-user-email }}
         token: ${{ inputs.token }}
     - name: Disable branch protection for admin user
       if: always() && inputs.bypass-branch-protection && inputs.git-user && inputs.git-user-email && inputs.token
-      uses: greenbone/actions/admin-bypass@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/admin-bypass@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       with:
         allow: "true"
         github-token: ${{ inputs.token }}
@@ -60,7 +60,7 @@ runs:
         git push
     - name: Enable branch protection for admin user
       if: always() && inputs.bypass-branch-protection && inputs.git-user && inputs.git-user-email && inputs.token
-      uses: greenbone/actions/admin-bypass@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/admin-bypass@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       with:
         allow: "false"
         github-token: ${{ inputs.token }}

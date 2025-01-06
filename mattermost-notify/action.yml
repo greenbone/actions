@@ -63,7 +63,7 @@ runs:
 
     - name: Install
       if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
-      uses: greenbone/actions/pipx@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/pipx@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       id: pipx
       with:
         python-version: "3.10"

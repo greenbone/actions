@@ -24,7 +24,7 @@ runs:
   using: "composite"
   steps:
     - name: Set up Python and pontos
-      uses: greenbone/actions/setup-pontos@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/setup-pontos@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
     - name: allow/not allow bypass?
       run: |
         if [[ "${{inputs.allow}}" == "true" ]];
