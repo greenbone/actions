@@ -19,7 +19,7 @@ runs:
   steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - name: Set up Python ${{ inputs.python-version }} and pontos
-      uses: greenbone/actions/setup-pontos@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
+      uses: greenbone/actions/setup-pontos@v3
       with:
         python-version: ${{ inputs.python-version}}
     - name: Check version information

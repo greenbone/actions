@@ -41,7 +41,7 @@ runs:
         cache: ${{ inputs.cache == 'true' && 'poetry' || '' }}
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
     - name: Set up poetry
-      uses: greenbone/actions/pipx@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
+      uses: greenbone/actions/pipx@v3
       with:
         python-path: ${{ steps.python.outputs.python-path }}
         cache: ${{ inputs.cache-poetry-installation }}
