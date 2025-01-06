@@ -21,6 +21,7 @@ inputs:
     description: "Cache poetry and its dependencies by setting it to 'true'. Disabled by default."
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+    default: "1.8.0"
   python-version:
     description: "Python version that should be installed and used."
     default: "3.10"
