@@ -104,13 +104,13 @@ runs:
         ref: ${{ inputs.ref }}
         repository: ${{ inputs.repository }}
     - name: Set git name, mail and origin
-      uses: greenbone/actions/set-github-user@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/set-github-user@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       with:
         user: ${{ inputs.github-user }}
         mail: ${{ inputs.github-user-mail }}
         token: ${{ inputs.github-user-token }}
     - name: Set up Python and pontos
-      uses: greenbone/actions/setup-pontos@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/setup-pontos@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       id: virtualenv
       with:
         python-version: ${{ inputs.python-version }}
@@ -171,7 +171,7 @@ runs:
 
       # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
-      uses: greenbone/actions/admin-bypass@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/admin-bypass@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       with:
         allow: "true"
         github-token: ${{ inputs.github-user-token }}
@@ -191,7 +191,7 @@ runs:
       # Disable admin bypass
     - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
       if: always()
-      uses: greenbone/actions/admin-bypass@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/admin-bypass@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       with:
         allow: "false"
         github-token: ${{ inputs.github-user-token }}
@@ -199,7 +199,7 @@ runs:
 
       # Signing
     - name: Sign assets for released version
-      uses: greenbone/actions/sign-release-files@a1883bd24d2d921426b3f06413e84606ecd43bdd # v3.27.11
+      uses: greenbone/actions/sign-release-files@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
       if: inputs.sign-release-files == 'true' && inputs.gpg-key && inputs.gpg-fingerprint && inputs.gpg-passphrase
       with:
         python-version: ${{ inputs.python-version }}
