@@ -35,7 +35,7 @@ runs:
       shell: bash
     - name: Install pontos via pipx
       id: pipx
-      uses: greenbone/actions/pipx@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
+      uses: greenbone/actions/pipx@v3
       with:
         python-version: ${{ steps.pontos.outputs.installed == 'false' && inputs.python-version || '' }}
         install: ${{  steps.pontos.outputs.installed == 'false' && 'pontos' || '' }}

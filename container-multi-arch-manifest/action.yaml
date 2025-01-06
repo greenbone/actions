@@ -118,7 +118,7 @@ runs:
 
     - name: Signing Manifest
       if: ${{ inputs.cosign-key && inputs.cosign-key-password }}
-      uses: greenbone/actions/container-signing@62ad2c65d4d5e59b7e6608a4267a41c03ccb3cfd # v3.27.22
+      uses: greenbone/actions/container-signing@v3
       with:
         cosign-key: ${{ inputs.cosign-key }}
         cosign-key-password: ${{ inputs.cosign-key-password }}
