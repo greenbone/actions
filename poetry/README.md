@@ -44,5 +44,5 @@ jobs:
 | cache | Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache. | Optional |
 | cache-dependency-path | Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies. See [https://github.com/actions/setup-python#caching-packages-dependencies](https://github.com/actions/setup-python#caching-packages-dependencies) for more details. | Optional |
 | cache-poetry-installation | Cache poetry and its dependencies by setting it to 'true'. | Optional. Disabled by default. |
-| poetry-version | Use a specific poetry version. By default the latest release is used. | Optional (default is latest version) |
+| poetry-version | Use a specific poetry version. By default the latest release is used. | Optional (default is `1.8.0` version) |
 | python-version | Python version that should be installed and used. | Optional (default: "3.10") |
