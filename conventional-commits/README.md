@@ -51,7 +51,7 @@ jobs:
 |--------------|-----------|-|
 | token | GitHub token to create the pull request comments. | Optional (default is [`${{ github.token }}`](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)) |
 | python-version | Python version to use for running the action. | Optional (default is `3.10`) |
-| poetry-version | Poetry version to use for running the action. | Optional (default is latest) |
+| poetry-version | Poetry version to use for running the action. | Optional (default is `1.8.0`) |
 | cache-poetry-installation | Cache poetry and its dependencies. | Optional (default is `"true"`) |
 | head-ref | End ref where to look for conventional commits. | Optional (default is`${{ github.event.pull_request.head.sha }}`). |
 | base-ref | Start ref where to look for conventional commits. | Optional (default is `${{ github.event.pull_request.base.sha }}`). |
