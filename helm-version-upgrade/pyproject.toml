@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-ruamel-yaml = "^0.18.9"
+ruamel-yaml = "^0.18.10"
 
 [tool.poetry.group.dev.dependencies]
 autohooks-plugin-pylint = ">=22.8.0"
