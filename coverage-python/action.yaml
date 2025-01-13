@@ -14,7 +14,6 @@ inputs:
     description: "Upload token for codecov.io. Required for private repositories."
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
-    default: "1.8.0"
   cache:
     description: "Cache dependencies by setting it to 'true'."
   cache-dependency-path:

@@ -26,7 +26,7 @@ jobs:
 |-------|-------------|-|
 | python-version | Python version that should be installed | Optional (default: "3.10") |
 | test-command | Command to run the unit tests | Optional (default: `"-m unittest"`)
-| poetry-version | Use a specific poetry version. By default the latest release is used. | Optional (default `1.8.0`) |
+| poetry-version | Use a specific poetry version. By default the latest release is used. | Optional (default `latest`) |
 | cache | Cache dependencies by setting it to `"true"`. | Optional |
 | cache-dependency-path | "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies. | Optional |
 | cache-poetry-installation | Cache poetry and its dependencies by setting it to `"true"`. | Optional |
