@@ -55,7 +55,7 @@ workflow file of the backport action.
 | config         | TOML based configuration file for backporting pull requests | Optional (default is `backport.toml`) |
 | username       | GitHub user name to use for the backported commits          | Optional (by default github.actor is used) |
 | python-version | Python version to use for running the action                | Optional (default is `3.10`) |
-| poetry-version | Poetry version to use for running the action                | Optional (default is `1.8.0`) |
+| poetry-version | Poetry version to use for running the action                | Optional (default is `latest`) |
 
 ## TOML Configuration
 

@@ -11,7 +11,6 @@ inputs:
     default: "3.10"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
-    default: "1.8.0"
   cache:
     description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   cache-dependency-path:
