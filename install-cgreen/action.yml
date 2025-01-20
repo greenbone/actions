@@ -1,0 +1,44 @@
+name: "Install cgreen test framework"
+description: "Build and install a cgreen release from source"
+
+inputs:
+  hash:
+    description: "SHA256 hash of the downloaded cgreen archive."
+    default: "fe6be434cbe280330420106bd5d667f1bc84ae9468960053100dbf17071036b9"
+  version:
+    description: "Version of the release to download."
+    default: "1.6.2"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Install dependencies"
+      shell: bash
+      run: |
+        apt-get update && \
+        apt-get install -y --no-install-recommends  --no-install-suggests \
+            build-essential \
+            ca-certificates \
+            cmake \
+            curl \
+            gcc \
+            && rm -rf /var/lib/apt/lists/*
+    - name: "Install dependencies"
+      shell: bash
+      run: curl -sSL -o cgreen.tar.gz https://github.com/cgreen-devs/cgreen/archive/refs/tags/${{ inputs.version }}.tar.gz
+    - name: "Validate cgreen archive"
+      shell: bash
+      run: |
+        echo "${{ inputs.hash }} cgreen.tar.gz" | sha256sum -c -
+    - name: "Build and install cgreen"
+      shell: bash
+      run: |
+        tar -xzf cgreen.tar.gz
+        cd cgreen-*
+        cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+        cmake --build build -j$(nproc) -- install
+        ldconfig
