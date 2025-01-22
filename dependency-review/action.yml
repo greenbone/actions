@@ -52,7 +52,8 @@ runs:
           Python-2.0,
           Python-2.0.1,
           Unicode-DFS-2016,
-          Unlicense
+          Unlicense,
+          Zlib
 
 # Licenses that are not supported by dependency-review-action:
 # - Unicode-3.0,
