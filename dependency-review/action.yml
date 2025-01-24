@@ -53,7 +53,8 @@ runs:
           Python-2.0.1,
           Unicode-DFS-2016,
           Unlicense,
-          Zlib
+          Zlib,
+          ZPL-2.1
 
 # Licenses that are not supported by dependency-review-action:
 # - Unicode-3.0,
