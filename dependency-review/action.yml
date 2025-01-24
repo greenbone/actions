@@ -52,7 +52,7 @@ runs:
           Python-2.0,
           Python-2.0.1,
           Unicode-DFS-2016,
-          Unlicense
+          Unlicense,
           ZPL-2.1
 
 # Licenses that are not supported by dependency-review-action:
