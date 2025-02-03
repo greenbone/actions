@@ -27,6 +27,9 @@ inputs:
   linter:
     description: "Linter to use. Default is 'ruff check'."
     default: "ruff check"
+  formatter:
+    description: "Formatter to use. Default is 'black --check --diff'."
+    default: "black --check --diff"
 
 branding:
   icon: "package"
@@ -45,9 +48,9 @@ runs:
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
         install-dependencies: ${{ inputs.install-dependencies }}
         working-directory: ${{ inputs.working-directory }}
-    - run: poetry run black --check --diff ${{ inputs.packages }}
+    - run: poetry run ${{ inputs.formatter }} ${{ inputs.packages }}
       shell: bash
-      name: Check with black
+      name: Check with ${{ inputs.formatter }}
       working-directory: ${{ inputs.working-directory }}
     - run: poetry run ${{ inputs.linter }} ${{ inputs.packages }}
       shell: bash
