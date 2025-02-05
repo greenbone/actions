@@ -35,6 +35,44 @@ jobs:
           registry-password: my-passwort
 ```
 
+## Example for ARM64
+
+> [!IMPORTANT]
+> If you use `linux/arm64` directly as image platform, without QEMU, you will need a dedicated runner that runs on arm64 architecture!
+
+```yml
+name: Build Container Image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: self-hosted-generic-arm64
+    steps:
+      - name: Container build and push docker.io
+        uses: greenbone/actions/container-build-push-generic@v3
+        with:
+          image-url: my-image
+          image-labels: my-labels
+          image-platforms: linux/arm64
+          image-tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+          registry: "docker.io"
+          registry-username: my-user
+          registry-password: my-passwort
+```
+
+
 ## Inputs
 
 | Name                         | Description                                                                                                                                 |          |
