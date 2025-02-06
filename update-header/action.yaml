@@ -26,6 +26,10 @@ inputs:
     description: "Specify the license type'"
     default: "GPL-3.0-or-later"
     required: false
+  single-year:
+    description: "License header will contain only a single year instead of a range if set to 'true'"
+    default: "false"
+    required: false
 
 branding:
   icon: "package"
@@ -57,7 +61,7 @@ runs:
       shell: bash
     - name: Run commands to update headers
       run: |
-        pontos-update-header -d ${{ inputs.directories }} -l ${{ inputs.license-type }}
+        pontos-update-header -d ${{ inputs.directories }} -l ${{ inputs.license-type }} ${{ (inputs.single-year == 'true' && '--single-year') || ''}}
       shell: bash
     - name: Commit changes and open a pull request
       run: |
