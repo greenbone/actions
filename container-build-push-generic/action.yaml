@@ -67,6 +67,8 @@ inputs:
   buildx-container:
     description: "Use a buildx container to build images. Options are true/false. Default is false."
     default: "false"
+  artifact-name:
+    description: "Name of the artifact the container image tar is stored into. Default is empty."
 
 outputs:
   annotations:
@@ -154,6 +156,15 @@ runs:
         build-args: ${{ inputs.build-args }}
         secrets: ${{ inputs.build-secrets }}
         load: ${{ github.event_name == 'pull_request' && !contains(inputs.image-platforms, ',') }}
+        outputs: type=docker,dest=${{ runner.temp }}/${{ inputs.image-url }}.tar # e.g: greenbone/openvas-scanner.tar
+
+    - name: Container artifact upload
+      if: ${{ inputs.artifact-name }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ runner.temp }}/${{ inputs.image-url }}.tar # uploads openvas-scanner.tar in the above example
+        overwrite: true
 
     - name: Container signing
       if: ${{ github.event_name != 'pull_request' && inputs.cosign-key && inputs.cosign-key-password }}

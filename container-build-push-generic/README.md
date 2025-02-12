@@ -101,6 +101,7 @@ jobs:
 | qemu                         | Install local QEMU static binaries. Options are true/false. Default is false.                                                               | Optional |
 | qemu-platforms               | Comma separated list of platforms to install. Options are amd64, arm64, arm, riscv64, s390x, 386. Default is arm64 (amd64 is default arch). | Optional |
 | buildx-container             | Use a buildx container to build images. Options are true/false. Default is false.                                                           | Optional |
+| artifact-name                | When set the image will be uploaded as a tar into the given artifact name. Default is empty.                                                | Optional |
 
 ## Action Output
 
