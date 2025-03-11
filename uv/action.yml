@@ -1,0 +1,84 @@
+name: "Install Python Package with uv"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to install a Python package with uv"
+
+inputs:
+  python-version:
+    description: "Python version to use"
+    required: false
+  install:
+    description: Python application to install
+    required: true
+  enable-cache:
+    description: "Enable caching"
+    required: false
+    default: "true"
+  cache-dependency-glob:
+    description: "Glob pattern to match dependencies to cache"
+    required: false
+    default: ""
+  cache-suffix:
+    description: "Suffix to append to the cache key"
+    required: false
+  cache-local-path:
+    description: "Path to the local cache"
+    required: false
+  uv-version:
+    description: "The version of uv"
+    required: false
+
+outputs:
+  version:
+    description: "The version of uv"
+    value: ${{ steps.setup-uv.outputs.version }}
+  major:
+    description: "The major version of uv"
+    value: ${{ steps.version.outputs.major }}
+  minor:
+    description: "The minor version of uv"
+    value: ${{ steps.version.outputs.minor }}
+  patch:
+    description: "The patch version of uv"
+    value: ${{ steps.version.outputs.patch }}
+  cache-hit:
+    description: "'true' if the cache has been hit"
+    value: ${{ steps.setup-uv.outputs.cache-hit }}
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup uv
+      id: setup-uv
+      uses: astral-sh/setup-uv@f94ec6bedd8674c4426838e6b50417d36b6ab231 # v5.3.1
+      with:
+        enable-cache: ${{ inputs.enable-cache }}
+        python-version: ${{ inputs.python-version }}
+        cache-dependency-glob: ${{ inputs.cache-dependency-glob }}
+        cache-suffix: ${{ inputs.cache-suffix }}
+        cache-local-path: ${{ inputs.cache-local-path }}
+        version: ${{ inputs.uv-version }}
+    - name: uv version
+      id: version
+      run: |
+        UV_VERSION=${{ steps.setup-uv.outputs.version }}
+
+        IFS='.' read -r major minor patch << EOF
+        $UV_VERSION
+        EOF
+
+        echo "major=$major" >> $GITHUB_OUTPUT
+        echo "minor=$minor" >> $GITHUB_OUTPUT
+        echo "patch=$patch" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Install Python Package
+      run: |
+        uv tool install ${{ inputs.install }}
+      shell: bash
+    - name: List installed applications
+      run: |
+        uv tool list
+      shell: bash
