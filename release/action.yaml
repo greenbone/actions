@@ -62,6 +62,12 @@ inputs:
   repository:
     description: "GitHub repository (owner/name) to create the release for."
     default: ${{ github.repository }}
+  changelog:
+    description: "Optional path to a changelog file. If not set a changelog will be generated."
+    required: false
+  last-release-version:
+    description: "The last release version. If not set, it will be detected automatically."
+    required: false
 
 outputs:
   release-version:
@@ -144,6 +150,18 @@ runs:
       if: ${{ inputs.release-series }}
       run: |
         ARGS="${ARGS} --release-series ${{ inputs.release-series }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Use changelog file
+      if: ${{ inputs.changelog }}
+      run: |
+        ARGS="${ARGS} --changelog ${{ inputs.changelog }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Use last release version
+      if: ${{ inputs.last-release-version }}
+      run: |
+        ARGS="${ARGS} --last-release-version ${{ inputs.last-release-version }}"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - name: Update project files
