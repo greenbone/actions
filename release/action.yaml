@@ -117,7 +117,6 @@ runs:
         token: ${{ inputs.github-user-token }}
     - name: Set up Python and pontos
       uses: greenbone/actions/setup-pontos@v3
-      id: virtualenv
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -199,7 +198,6 @@ runs:
     - name: Create automatic release
       id: release
       run: |
-        source ${{ steps.virtualenv.outputs.activate }}
         pontos-release create ${{ env.ARGS }} --repository ${{ inputs.repository }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
       shell: bash
       env:

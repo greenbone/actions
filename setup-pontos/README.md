@@ -21,13 +21,13 @@ jobs:
 
 ## Action Configuration
 
-|Input Variable|Description| |
-|--------------|-----------|-|
-| python-version | Python version to use for running the action. | Optional (default is `3.10`) |
-| virtualenv-path |  | Deprecated and will be ignored. |
-| cache-key |  | Deprecated and will be ignored. |
+| Input Variable  | Description                                   |                                 |
+| --------------- | --------------------------------------------- | ------------------------------- |
+| python-version  | Python version to use for running the action. | Optional (default is `3.10`)    |
+| virtualenv-path |                                               | Deprecated and will be ignored. |
+| cache-key       |                                               | Deprecated and will be ignored. |
 
-|Output Variable|Description|
-|---------------|-----------|
-| virtualenv-path | Path to the created virtual Python environment |
-| activate | Path to the activate environment script |
+| Output Variable | Description                                    |                            |
+| --------------- | ---------------------------------------------- | -------------------------- |
+| virtualenv-path | Path to the created virtual Python environment | Deprecated. Will be empty. |
+| activate        | Path to the activate environment script        | Deprecated. Will be empty. |
