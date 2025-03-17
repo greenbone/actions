@@ -1,0 +1,89 @@
+name: "Determine Release Version"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action to determine the release version based on the release type and the current version"
+
+inputs:
+  python-version:
+    description: "Python version to use"
+  release-type:
+    description: "The release type to determine the version for"
+    required: true
+  git-tag-prefix:
+    description: "The prefix for the git tags"
+    required: false
+    default: "v"
+  release-version:
+    description: "The release version to use. Overrides release-type."
+    required: false
+  release-series:
+    description: "An optional release series to use"
+    required: false
+  versioning-scheme:
+    description: "What versioning scheme should be used for the release? Supported: 'semver' and 'pep440'. Default: pep440"
+    default: "pep440"
+
+outputs:
+  last-release-version:
+    description: "The last release version"
+    value: ${{ steps.release-versions.outputs.last_release_version }}
+  last-release-version-major:
+    description: "The major version of the last release"
+    value: ${{ steps.release-versions.outputs.last_release_version_major }}
+  last-release-version-minor:
+    description: "The minor version of the last release"
+    value: ${{ steps.release-versions.outputs.last_release_version_minor }}
+  last-release-version-patch:
+    description: "The patch version of the last release"
+    value: ${{ steps.release-versions.outputs.last_release_version_patch }}
+  release-version:
+    description: "The release version"
+    value: ${{ steps.release-versions.outputs.release_version }}
+  release-version-major:
+    description: "The major version of the release"
+    value: ${{ steps.release-versions.outputs.release_version_major }}
+  release-version-minor:
+    description: "The minor version of the release"
+    value: ${{ steps.release-versions.outputs.release_version_minor }}
+  release-version-patch:
+    description: "The patch version of the release"
+    value: ${{ steps.release-versions.outputs.release_version_patch }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup pontos
+      uses: greenbone/actions/uv@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache-suffix: pontos
+        install: pontos
+    - name: Parse release-type
+      run: |
+        case ${{ inputs.release-type }} in
+          alpha | beta | calendar | major | minor | patch | release-candidate)
+            ARGS="--release-type ${{ inputs.release-type }}"
+            ;;
+          *)
+            ARGS="--release-type patch"
+            ;;
+        esac
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Parse release-version if set (overwrite release-type)
+      if: ${{ inputs.release-version }}
+      run: |
+        ARGS="--release-version ${{ inputs.release-version }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Parse release-series
+      if: ${{ inputs.release-series }}
+      run: |
+        ARGS="${ARGS} --release-series ${{ inputs.release-series }}"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Determine release versions
+      id: release-versions
+      run: |
+        pontos-release show ${{ env.ARGS }} --output-format env --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
+        pontos-release show ${{ env.ARGS }} --output-format github-action --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
+      shell: bash

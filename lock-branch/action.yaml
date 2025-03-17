@@ -27,7 +27,6 @@ runs:
   using: "composite"
   steps:
     - name: Set up Python and pontos
-      id: virtualenv
       uses: greenbone/actions/setup-pontos@v3
     - name: lock/unlock?
       run: |
@@ -44,7 +43,6 @@ runs:
       # in case of blubber input let the branch be unlocked!
     - name: Prepare release and store the version
       run: |
-        source ${{ steps.virtualenv.outputs.activate }}
         pontos-github-script pontos.github.scripts.lock-branch ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.LOCK_OPT }}
       shell: bash
       env:

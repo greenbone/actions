@@ -61,6 +61,8 @@ You can alternatively set an explicit `release-version`. It will overwrite the `
 | next-version         | Set an explicit version that should be used after the release. Leave empty for determining the next version automatically. Set to `'false'` for not updating the version after a release. |                                                  |
 | github-pre-release   | Set to `'true'`` to enforce uploading the release to GitHub as a pre-release                                                                                                              |                                                  |
 | repository           | GitHub repository (owner/name) to create the release for.                                                                                                                                 | Optional (default is `${{ github.repository }}`) |
+| changelog            | A path to a changelog file. If not set a changelog will be generated.                                                                                                                     | Optional                                         |
+| last-release-version | The last release version. If not set, it will be detected automatically.                                                                                                                  | Optional                                         |
 
 ## Output Arguments
 
