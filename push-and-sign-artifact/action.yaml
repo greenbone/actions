@@ -1,0 +1,92 @@
+name: "Push and sign an artifact"
+author: "Robert Schardt <robert.schardt@greenbone.net>"
+description: "An action that pushes an artifact with oras and signs it with cosign"
+
+inputs:
+  product:
+    type: choice
+    description: "The product to build."
+    options:
+      - appliance
+      - asset
+      - lookout
+      - sensor
+      - universal
+      - management-console
+    required: true
+  artifact-url:
+    type: string
+    description: "The artifact-url to upload the artifact into (with tag)."
+    required: true
+  artifact-folder:
+    type: string
+    description: "The path to the system folder to save the artifact file. Default is /tmp."
+    default: '/tmp'
+  registry-user:
+    type: string
+    description: "Registry user name."
+  registry-domain:
+    type: string
+    description: "Registry domain."
+  registry-token:
+    type: string
+    description: "Registry user token. Set is input only if you want to upload an artifact."
+  cosign-key:
+    type: string
+    description: "Key for Signing artifacts/containers."
+    required: true
+  cosign-password:
+    type: string
+    description: "Password for COSIGN key."
+    required: true
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+      - name: Setup oras
+        if: inputs.registry-token
+        shell: bash
+        run: |
+          VERSION="1.2.0"
+          curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
+          mkdir -p oras-install/
+          tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
+          sudo mv oras-install/oras /usr/local/bin/
+          rm -rf oras_${VERSION}_*.tar.gz oras-install/
+          oras login \
+            -u '${{ inputs.registry-user }}' \
+            -p '${{ inputs.registry-token }}' \
+            '${{ inputs.registry-domain }}'
+
+        # TODO:Create an action for oras
+      - name: Upload tar artifact into oci
+        if: inputs.registry-token
+        shell: bash
+        id: artifact-upload
+        working-directory: ${{ inputs.artifact-folder }}
+        run: |
+          echo "digest=$(oras push --format json ${{ inputs.product-url }} ${{ inputs.product }}.tar.gz:application/octet-stream | jq .digest -r)" >> $GITHUB_OUTPUT
+
+      - name: Remove tag from product-url
+        id: remove-tag
+        shell: bash
+        run: |
+          echo "product-url=${{ inputs.product-url }}" | sed s/":.*"// >> $GITHUB_OUTPUT
+
+      - uses: docker/login-action@v2
+        with:
+          registry: ${{ inputs.registry-domain }}
+          username: ${{ inputs.registry-user }}
+          password: ${{ inputs.registry-token }}
+
+      - uses: greenbone/actions/container-signing@v3
+        with:
+          cosign-key: ${{ inputs.cosign-key }}
+          cosign-key-password: ${{ inputs.cosign-password }}
+          image-tags: ${{ steps.remove-tag.outputs.product-url }}
+          image-digest: ${{ steps.artifact-upload.outputs.digest }}
+          cosign-tlog-upload: false
