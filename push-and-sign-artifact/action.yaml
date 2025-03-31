@@ -3,16 +3,8 @@ author: "Robert Schardt <robert.schardt@greenbone.net>"
 description: "An action that pushes an artifact with oras and signs it with cosign"
 
 inputs:
-  product:
-    type: choice
-    description: "The product to build."
-    options:
-      - appliance
-      - asset
-      - lookout
-      - sensor
-      - universal
-      - management-console
+  artifact-file:
+    type: string
     required: true
   artifact-url:
     type: string
@@ -52,7 +44,17 @@ runs:
         shell: bash
         run: |
           VERSION="1.2.0"
+          MD5_HASH="fdfe4d2a888d0c1c5780b2fd6961b7b7"
+          
           curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
+          
+          if [ "$(md5sum oras_1.2.0_linux_amd64.tar.gz)" = "$MD5_HASH" ]; then
+            echo "oras hash sum is correct"
+          else
+            echo "oras md5 sum is incorrect -> abort"
+            exit -1
+          fi
+
           mkdir -p oras-install/
           tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
           sudo mv oras-install/oras /usr/local/bin/
@@ -68,21 +70,24 @@ runs:
         id: artifact-upload
         working-directory: ${{ inputs.artifact-folder }}
         run: |
-          echo "digest=$(oras push --format json ${{ inputs.artifact-url }} ${{ inputs.product }}.tar.gz:application/octet-stream | jq .digest -r)" >> $GITHUB_OUTPUT
+          echo "digest=$(oras push --format json ${{ inputs.artifact-url }} ${{ inputs.artifact-file }}.tar.gz:application/octet-stream | jq .digest -r)" >> $GITHUB_OUTPUT
 
       - name: Remove tag from artifact-url
+        if: inputs.registry-token
         id: remove-tag
         shell: bash
         run: |
           echo "artifact-url=${{ inputs.artifact-url }}" | sed s/":.*"// >> $GITHUB_OUTPUT
 
       - uses: docker/login-action@v2
+        if: inputs.registry-token
         with:
           registry: ${{ inputs.registry-domain }}
           username: ${{ inputs.registry-user }}
           password: ${{ inputs.registry-token }}
 
       - uses: greenbone/actions/container-signing@v3
+        if: inputs.registry-token && inputs.cosign-key && inputs.cosign-password
         with:
           cosign-key: ${{ inputs.cosign-key }}
           cosign-key-password: ${{ inputs.cosign-password }}
