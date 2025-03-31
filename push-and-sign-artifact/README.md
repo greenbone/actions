@@ -15,16 +15,16 @@ jobs:
     name: Push and sign an artifact
     runs-on: ubuntu-latest
     steps:
-	  - uses: greenbone/actions/push-and-sign-artifact@v3
+      - uses: greenbone/actions/push-and-sign-artifact@v3
         with:
-		  product: < product >
-		  artifact-url: < artifact-url >
-		  artifact-folder: < artifact-folder >
-		  registry-user: < registry-user >
-		  registry-domain: < registry-domain >
-		  registry-token: < registry-token >
+          product: < product >
+          artifact-url: < artifact-url >
+          artifact-folder: < artifact-folder >
+          registry-user: < registry-user >
+          registry-domain: < registry-domain >
+          registry-token: < registry-token >
           cosign-key: < cosign-key >
-		  cosign-key-password: < cosign-key-password >
+          cosign-key-password: < cosign-key-password >
 ```
 
 ## Action Configuration
