@@ -24,7 +24,7 @@ jobs:
           registry-domain: < registry-domain >
           registry-token: < registry-token >
           cosign-key: < cosign-key >
-          cosign-key-password: < cosign-key-password >
+          cosign-password: < cosign-password >
 ```
 
 ## Action Configuration
