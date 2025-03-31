@@ -49,7 +49,7 @@ runs:
           curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
           
           if [ "$(md5sum oras_1.2.0_linux_amd64.tar.gz)" = "$MD5_HASH" ]; then
-            echo "oras hash sum is correct"
+            echo "oras md5 sum is correct"
           else
             echo "oras md5 sum is incorrect -> abort"
             exit -1
