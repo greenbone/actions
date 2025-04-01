@@ -17,9 +17,11 @@ inputs:
   registry-user:
     type: string
     description: "Registry user name."
+    required: true
   registry-domain:
     type: string
     description: "Registry domain."
+    required: true
   registry-token:
     type: string
     description: "Registry user token. Set is input only if you want to upload an artifact."
