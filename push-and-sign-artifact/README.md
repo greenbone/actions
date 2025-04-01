@@ -19,7 +19,6 @@ jobs:
         with:
           artifact-file: < artifact-file >
           artifact-url: < artifact-url >
-          artifact-folder: < artifact-folder >
           registry-user: < registry-user >
           registry-domain: < registry-domain >
           registry-token: < registry-token >
@@ -35,7 +34,6 @@ jobs:
 |--------------|-----------|-|
 | artifact-file | The artifact to build. | |
 | artifact-url | The artifact-url to upload the artifact into (with tag). | |
-| artifact-folder | The path to the system folder to save the artifact file. Default is /tmp. | |
 | registry-user | Registry user name. | |
 | registry-domain | Registry domain. | |
 | registry-token | Registry user token. Set is input only if you want to upload an artifact. | |
