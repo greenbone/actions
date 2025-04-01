@@ -23,6 +23,7 @@ inputs:
   registry-token:
     type: string
     description: "Registry user token. Set is input only if you want to upload an artifact."
+    required: true
   cosign-key:
     type: string
     description: "Key for Signing artifacts/containers."
