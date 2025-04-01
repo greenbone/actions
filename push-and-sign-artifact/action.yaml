@@ -46,8 +46,8 @@ runs:
         if: inputs.registry-token
         shell: bash
         run: |
-          VERSION="${{ oras-version }}"
-          MD5_HASH="${{ oras-md5sum }}"
+          VERSION="${{ inputs.oras-version }}"
+          MD5_HASH="${{ inputs.oras-md5sum }}"
           
           curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
           
