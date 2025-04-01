@@ -80,7 +80,7 @@ runs:
         shell: bash
         id: artifact-upload
         run: |
-          echo "digest=$(oras push --format json ${{ inputs.artifact-url }} ${{ inputs.artifact-file }}:application/octet-stream | jq .digest -r)" >> $GITHUB_OUTPUT
+          echo "digest=$(oras push --disable-path-validation --format json ${{ inputs.artifact-url }} ${{ inputs.artifact-file }}:application/octet-stream | jq .digest -r)" >> $GITHUB_OUTPUT
 
       - uses: docker/login-action@v2
         if: inputs.registry-token
