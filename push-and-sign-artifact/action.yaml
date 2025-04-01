@@ -10,10 +10,6 @@ inputs:
     type: string
     description: "The artifact-url to upload the artifact into (with tag)."
     required: true
-  artifact-folder:
-    type: string
-    description: "The path to the system folder to save the artifact file. Default is /tmp."
-    default: '/tmp'
   registry-user:
     type: string
     description: "Registry user name."
@@ -83,7 +79,6 @@ runs:
         if: inputs.registry-token
         shell: bash
         id: artifact-upload
-        working-directory: ${{ inputs.artifact-folder }}
         run: |
           echo "digest=$(oras push --format json ${{ inputs.artifact-url }} ${{ inputs.artifact-file }}.tar.gz:application/octet-stream | jq .digest -r)" >> $GITHUB_OUTPUT
 
