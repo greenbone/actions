@@ -585,14 +585,14 @@ type = ["mypy (>=1.14.1)"]
 
 [[package]]
 name = "pontos"
-version = "25.3.2"
+version = "25.3.3"
 description = "Common utilities and tools maintained by Greenbone Networks"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main", "dev"]
 files = [
-    {file = "pontos-25.3.2-py3-none-any.whl", hash = "sha256:bfa0d53164fbc12f787ce041d4f054456ec103ea214eec860b3c465dd512ba7f"},
-    {file = "pontos-25.3.2.tar.gz", hash = "sha256:9405b26842f662254f657b5a0883703faf0857bf94ad1a1eb411024e15bd6f10"},
+    {file = "pontos-25.3.3-py3-none-any.whl", hash = "sha256:99e52a848503a9ae9be735850d9767002bce4311d222d4af5d8d48049648c1b8"},
+    {file = "pontos-25.3.3.tar.gz", hash = "sha256:fdcda184536727a185922c862ce7e3913213e698f6e9a3d5aa76605235855769"},
 ]
 
 [package.dependencies]
@@ -638,14 +638,14 @@ six = ">=1.5"
 
 [[package]]
 name = "rich"
-version = "13.9.4"
+version = "14.0.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 optional = false
 python-versions = ">=3.8.0"
 groups = ["main", "dev"]
 files = [
-    {file = "rich-13.9.4-py3-none-any.whl", hash = "sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90"},
-    {file = "rich-13.9.4.tar.gz", hash = "sha256:439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098"},
+    {file = "rich-14.0.0-py3-none-any.whl", hash = "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0"},
+    {file = "rich-14.0.0.tar.gz", hash = "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725"},
 ]
 
 [package.dependencies]
