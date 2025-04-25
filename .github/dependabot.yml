@@ -68,6 +68,7 @@ updates:
       - "/download-artifact/"
       - "/helm-version-upgrade/"
       - "/trigger-workflow/"
+      - "/oci-info/"
       - "/pr-conventional-commit-labeler/"
     schedule:
       interval: "weekly"
