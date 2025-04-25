@@ -2,7 +2,14 @@
 
 A action to build and push container image.
 
-## Example
+## Introduction
+
+If you want to upload an image to a registry you have to give a registry e.g. GitHub Container Registry (`registry: "ghcr.io"`) or DockerHub registry (`registry: "docker.io"`).
+You also need to have authentication for the registry, by passing `registry-username` and `registry-password` (which can be a Token ...).
+The image URL will result in the repository `owner/name` scheme (e.g. `greenbone/actions` for this repository).
+Set some `image-tags:`, e.g. a version or some best practice named labels like `nightly`, `latest`, `staging` and you are good to go! [See docker `metadata-action` for the whole fun!](https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input)
+
+### Example
 
 ```yml
 name: Build Container Image
@@ -35,7 +42,7 @@ jobs:
           registry-password: my-passwort
 ```
 
-## Example for ARM64
+### Example for ARM64
 
 > [!IMPORTANT]
 > If you use `linux/arm64` directly as image platform, without QEMU, you will need a dedicated runner that runs on arm64 architecture!
@@ -75,6 +82,18 @@ jobs:
 
 ## Inputs
 
+### Required
+
+| Name                         | Description                                                                                                                                 |          |
+|------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| image-labels                 | Image labels.                                                                                                                               | Required |
+| image-tags                   | Image tags. For format refer to [docker/metadata-action](https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input).          | Required |
+| registry                     | Registry url.                                                                                                                               | Required |
+| registry-username            | Login registry username.                                                                                                                    | Required |
+| registry-password            | Login registry password.                                                                                                                    | Required |
+
+### Optional
+
 | Name                         | Description                                                                                                                                 |          |
 |------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|----------|
 | build-context                | Path to image build context. Default is ".".                                                                                                | Optional |
@@ -85,14 +104,9 @@ jobs:
 | cosign-key-password          | Cosign key password. Will be skipped if empty. Default is empty.                                                                            | Optional |
 | cosign-tlog-upload           | Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true.                                               | Optional |
 | image-flavor                 | Global behavior for tags. Default is empty.                                                                                                 | Optional |
-| image-labels                 | Image labels.                                                                                                                               | Required |
 | image-url                    | Image url/name without registry. Default is github.repository.                                                                              | Optional |
 | image-platforms              | Image platforms to build for. Default is "linux/amd64".                                                                                     | Optional |
-| image-tags                   | Image tags. For format refer to [docker/metadata-action](https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input).          | Required |
 | meta-annotations-levels      | Comma separated list. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor.          | Optional |
-| registry                     | Registry url.                                                                                                                               | Required |
-| registry-username            | Login registry username.                                                                                                                    | Required |
-| registry-password            | Login registry password.                                                                                                                    | Required |
 | scout-command                | Comma separated list of several commands. Options are quickview, compare, cves, recommendations, sbom, environment. Default is cves,sbom.   | Optional |
 | scout-user                   | Dockerhub user for docker scout. Will be skipped if empty. Default is empty.                                                                | Optional |
 | scout-password               | Dockerhub user password for docker scout. Will be skipped if empty. Default is empty.                                                       | Optional |
