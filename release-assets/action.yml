@@ -1,0 +1,45 @@
+name: "Manage Release Assets"
+description: "GitHub Action to manage github release assets."
+
+inputs:
+  mode:
+    description: "Available modes are upload. Default is upload."
+    default: "upload"
+    options: ["upload"]
+  files:
+    description: "Comma seprated list of file to manage."
+    required: true
+  tag:
+    description: "The release tag to manage assets on."
+    required: true
+  token:
+    description: "Github auth token."
+    required: true
+  repository:
+    description: "Repository name."
+    default: ${{ github.repository }}
+  python-version:
+    description: " Python version to use for running the action. Default is 3.12."
+    default: "3.12"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup
+      uses: greenbone/actions/pipx@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+        install: ${{ github.action_path }}
+
+    - name: Run Release Asset
+      shell: bash
+      run: |
+        cmd=()
+        cmd+=(--mode '${{ inputs.mode }}')
+        cmd+=(--tag '${{ inputs.tag }}')
+        cmd+=(--files '${{ inputs.files }}')
+        cmd+=(--token '${{ inputs.token }}')
+        cmd+=(--repository '${{ inputs.repository }}')
+
+        echo "CMD: ${cmd[@]}"
+        release-assets "${cmd[@]}"
