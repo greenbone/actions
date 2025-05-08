@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: upload
         id: tags
-        uses: greenbone/actions/release-assets@pholthaus/release-assets
+        uses: greenbone/actions/release-assets@v3
         with:
           files: test1,test2
           tag: ${{ github.ref_name }}
