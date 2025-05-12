@@ -5,7 +5,7 @@
   any_errors_fatal: true
   ignore_errors: false
   tasks:
-    - name: Load vars if file exists
+    - name: Load vars
       ansible.builtin.include_vars: "{{ base_dir }}/{{ vars_path }}"
 
     - name: Deployment environment
