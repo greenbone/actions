@@ -3,6 +3,10 @@ name: To Be Triggered Long Running Test Workflow
 on:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   wait:
     runs-on: ubuntu-latest

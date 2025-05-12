@@ -3,6 +3,10 @@ name: To be Triggered Upload Artifacts Test Workflow
 on:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   echo:
     runs-on: ubuntu-latest
