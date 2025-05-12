@@ -1,0 +1,68 @@
+name: "Deploy dev environment"
+description: "Deploy a dev environment on a server."
+
+inputs:
+  inventory:
+    description: "Inventory file data in yaml. Optional if file exist."
+  inventory-path:
+    description: "Inventory file path. Default is inventory.yml."
+    default: "inventory.yml"
+  ssh-key:
+    description: "SSH key file data. Optional if file exist."
+  ssh-key-path:
+    description: "SSH key file path. Default is ssh.key."
+    default: "ssh.key"
+  ssh-known-hosts:
+    description: "SSH fingerprints for dev servers."
+    required: true
+  vars:
+    description: "Extra vars like passwords that can not be in the inventory file. As yaml. Optional if file exist."
+  vars-path:
+    description: "Vars file path. Default is vars.yml."
+    default: "vars.yml"
+  limit-hosts:
+    description: "Limit deployment to hosts. Default is all."
+    default: "all"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create ssh key
+      if: inputs.ssh-key
+      shell: bash
+      run: |
+        echo '${{ inputs.ssh-key }}' > '${{ inputs.ssh-key-path }}'
+        chmod 0600 '${{ inputs.ssh-key-path }}'
+
+    - name: Create ssh known hosts file
+      if: inputs.ssh-known-hosts
+      uses: greenbone/actions/ssh-known-hosts@v3
+      with:
+        known_hosts: ${{ inputs.ssh-known-hosts }}
+
+    - name: Create vars
+      if: inputs.vars
+      shell: bash
+      run: |
+        echo -e '${{ inputs.vars }}' > '${{ inputs.vars-path }}'
+
+    - name: Create inventory
+      if: inputs.inventory
+      shell: bash
+      run: |
+        echo -e '${{ inputs.inventory }}' > '${{ inputs.inventory-path }}'
+
+    - name: Run dev environment deployment
+      shell: bash
+      run: |
+        ansible-playbook \
+          -i '${{ inputs.inventory-path }}' \
+          --private-key '${{ inputs.ssh-key-path }}' \
+          --limit '${{ inputs.limit-hosts }}' \
+          -e "vars_path=${{ inputs.vars-path }}" \
+          -e "base_dir=$(pwd)" \
+          "$GITHUB_ACTION_PATH/run.yml"
