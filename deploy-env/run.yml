@@ -1,0 +1,47 @@
+---
+- name: Run dev environment deployment
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  ignore_errors: false
+  tasks:
+    - name: Load vars if file exists
+      ansible.builtin.include_vars: "{{ base_dir }}/{{ vars_path }}"
+
+    - name: Deployment environment
+      block:
+        - name: Create tmp folder
+          ansible.builtin.tempfile:
+            state: directory
+            path: './'
+            suffix: deployment
+          register: tmp
+
+        - name: Copy folder
+          ansible.builtin.copy:
+            src: "{{ base_dir }}/{{ copy }}"
+            dest: "{{ tmp.path }}/"
+          when: copy is defined
+
+        - name: Run deployment
+          environment: "{{ env | default({}) }}"
+          ansible.builtin.shell:
+            chdir: "{{ tmp.path }}"
+            cmd: "{{ cmd }}"
+          register: deployment_result
+          changed_when: deployment_result.rc == 0
+      always:
+        - name: Deployment outout
+          ansible.builtin.debug:
+            msg: "{{ deployment_result.stdout_lines }}"
+          when: deployment_result.stdout_lines is defined
+
+        - name: Deployment error output
+          ansible.builtin.debug:
+            msg: "{{ deployment_result.stderr_lines }}"
+          when: deployment_result.stderr_lines is defined
+
+        - name: Remove tmp folder
+          ansible.builtin.file:
+            path: "{{ tmp.path }}"
+            state: absent
