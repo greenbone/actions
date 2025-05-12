@@ -23,6 +23,37 @@ all:
 ssh fingerprint ...
 ```
 
+#### VARS
+
+##### copy`
+
+* **Purpose**: Specifies files or directories to be transferred as part of a deployment process.
+* **Usage**: Commonly used to move necessary data, code, or configuration files into a target environment.
+
+##### env
+
+* **Purpose**: Defines **environment variables**, which are key-value pairs used with the cmd command.
+* **Usage**: Often used to pass values like credentials, configuration options, or environment-specific settings into the cmd command.
+
+##### cmd
+
+* **Purpose**: Run any kind of shell commands on the target environment.
+* **Usage**: Executes shell (or system) commands, such as run deployments e.g compose, starting services, etc.
+
+##### Example
+```yaml
+copy: my_deployment_data_folder
+env:
+  my_env: Hello world
+cmd: |
+  echo $my_env
+  ls my_deployment_data_folder
+  cd my_deployment_data_folder
+  compose down
+  compose up
+  ...
+```
+
 ### Workflow
 
 ```yaml
