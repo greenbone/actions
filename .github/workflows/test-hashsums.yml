@@ -8,6 +8,10 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-creating-sha256sums-file:
     runs-on: ubuntu-latest
