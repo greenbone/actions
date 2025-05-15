@@ -1,4 +1,4 @@
-name: Test Python Actions
+name: Test sha256 Hashsum creation
 
 on:
   push:
