@@ -1,4 +1,4 @@
-name: Test Python Actions
+name: Test Signature Creation
 
 on:
   push:
