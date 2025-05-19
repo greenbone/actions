@@ -15,7 +15,7 @@ inputs:
     description: "SSH key file path. Default is ssh.key."
     default: "ssh.key"
   ssh-known-hosts:
-    description: "SSH fingerprints for dev servers."
+    description: "SSH fingerprints for dev servers. Optional if file exist."
     required: true
   vars:
     description: "Extra vars like passwords that can not be in the inventory file or the cmd command to run on the node. As yaml. Optional if file exist."
