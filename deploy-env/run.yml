@@ -36,6 +36,7 @@
             cmd: "{{ cmd }}"
           register: deployment_result
           changed_when: deployment_result.rc == 0
+          when: cmd is defined
       always:
         - name: Deployment outout
           ansible.builtin.debug:
