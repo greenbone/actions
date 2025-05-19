@@ -19,8 +19,14 @@
 
         - name: Copy folder
           ansible.builtin.copy:
-            src: "{{ base_dir }}/{{ copy }}"
+            src: "{{ base_dir }}/{{ item }}"
             dest: "{{ tmp.path }}/"
+          loop: >-
+            {%- if copy | type_debug == 'list' -%}
+              {{ copy }}
+            {%- else -%}
+              {{ copy | split }}
+            {%- endif -%}
           when: copy is defined
 
         - name: Run deployment

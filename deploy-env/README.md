@@ -42,7 +42,9 @@ ssh fingerprint ...
 
 ##### Example
 ```yaml
-copy: my_deployment_data_folder
+copy:
+  - my_deployment_data_folder1
+  - my_deployment_data_folder2
 env:
   my_env: Hello world
 cmd: |
@@ -56,13 +58,15 @@ cmd: |
 
 ### Workflow
 
+#### Deploy with inventory file
+
 ```yaml
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy with inventory file
     runs-on: self-hosted-generic
     steps:
-      - name:
+      - name: Deploy with inventory file
         uses: greenbone/actions/deploy-env@v3
         with:
           ssh-key: ${{ secrets.SSH_KEY }}
@@ -75,19 +79,42 @@ jobs:
             cmd: |
               echo $my_env
               ls my_deployment_data_folder
+```
 
-
+#### Deploy on one node
+```yaml
+jobs:
+  deploy:
+    name: Deploy on one node
+    runs-on: self-hosted-generic
+    steps:
+      - name: Deploy on one node
+        uses: greenbone/actions/deploy-env@v3
+        with:
+          ssh-key: ${{ secrets.SSH_KEY }}
+          ssh-known-hosts: ${{ vars.KNOWN_HOSTS_FILE }}
+          inventory: 192.168.0.1,
+          user: root
+          vars: |
+            copy: my_deployment_data_folder
+            env:
+              my_env: Hello world
+            cmd: |
+              echo $my_env
+              ls my_deployment_data_folder
 ```
 
 ## Inputs
 
-| Name                           | Description                                                                                                                   |          |
-|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------|----------|
-| ssh-key            | SSH key file data. Optional if file exist.                                                                                                | Required |
-| vars               | Extra vars like passwords that can not be in the inventory file. As yaml. Optional if file exist.                                         | Required |
-| ssh-known-hosts    | SSH fingerprints for dev servers.                                                                                                         | Required |
-| inventory          | Inventory file data in yaml. Optional if file exist.                                                                                      | Required |
-| inventory-path     | Inventory file path. Default is inventory.yml.                                                                                            | Optional |
-| ssh-key-path       | SSH key file path. Default is ssh.key                                                                                                     | Optional |
-| vars-path          | Vars file path. Default is vars.yml                                                                                                       | Optional |
-| limit-hosts        | Limit deployment to hosts. Default is all.                                                                                                | Optional |
+| Name                           | Description                                                                                                                                                               |          |
+|--------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| ssh-key            | SSH key file data. Optional if file exist.                                                                                                                                            | Required |
+| vars               | Extra vars like passwords that can not be in the inventory file or the cmd command to run on the node. As yaml. Optional if file exist.                                               | Required |
+| ssh-known-hosts    | SSH fingerprints for dev servers.                                                                                                                                                     | Required |
+| inventory          | Inventory file data as yaml, or a comma(,) seperated list of IP/Domain names, if it is a just one IP/Domain it needs a comma at the end. Optional if file exist.                      | Required |
+| user               | Username used for login. ONLY set this if you inventory data is a comma(,) seperated list of IP/Domain names. If not please put the username in the inventory file. Default is empty. | Optional |
+| inventory-path     | Inventory file path. Default is inventory.yml.                                                                                                                                        | Optional |
+| ssh-key-path       | SSH key file path. Default is ssh.key                                                                                                                                                 | Optional |
+| vars-path          | Vars file path. Default is vars.yml                                                                                                                                                   | Optional |
+| limit-hosts        | Limit deployment to hosts. Default is all.                                                                                                                                            | Optional |
+| base-dir           | The the base directory / working directory. Default is current working directory.                                                                                                     | Optional |
