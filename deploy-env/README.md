@@ -93,7 +93,7 @@ jobs:
         with:
           ssh-key: ${{ secrets.SSH_KEY }}
           ssh-known-hosts: ${{ vars.KNOWN_HOSTS_FILE }}
-          inventory: 192.168.0.1,
+          inventory-path: 192.168.0.1,
           user: root
           vars: |
             copy: my_deployment_data_folder
@@ -110,10 +110,10 @@ jobs:
 |--------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
 | ssh-key            | SSH key file data. Optional if file exist.                                                                                                                                            | Required |
 | vars               | Extra vars like passwords that can not be in the inventory file or the cmd command to run on the node. As yaml. Optional if file exist.                                               | Required |
-| inventory          | Inventory file data as yaml, or a comma(,) seperated list of IP/Domain names, if it is a just one IP/Domain it needs a comma at the end. Optional if file exist.                      | Required |
+| inventory          | Inventory file data as yaml. Optional if file exist.                      | Required |
 | ssh-known-hosts    | SSH fingerprints for dev servers. Optional if file exist.                                                                                                                             | Optional |
-| user               | Username used for login. ONLY set this if you inventory data is a comma(,) seperated list of IP/Domain names. If not please put the username in the inventory file. Default is empty. | Optional |
-| inventory-path     | Inventory file path. Default is inventory.yml.                                                                                                                                        | Optional |
+| user               | Username used for login. ONLY set this if you inventory-path is a comma(,) seperated list of IP/Domain names. If not please put the username in the inventory file. Default is empty. | Optional |
+| inventory-path     | Inventory file path, or a comma(,) seperated list of IP/Domain names, if it is a just one IP/Domain it needs a comma at the end. Default is inventory.yml.                                                                                                                                        | Optional |
 | ssh-key-path       | SSH key file path. Default is ssh.key                                                                                                                                                 | Optional |
 | vars-path          | Vars file path. Default is vars.yml                                                                                                                                                   | Optional |
 | limit-hosts        | Limit deployment to hosts. Default is all.                                                                                                                                            | Optional |
