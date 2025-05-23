@@ -5,8 +5,15 @@
   any_errors_fatal: true
   ignore_errors: false
   tasks:
+    - name: Check if vars file exist
+      ansible.builtin.stat:
+        path: "{{ base_dir }}/{{ vars_path }}"
+      register: check_vars
+      delegate_to: localhost
+
     - name: Load vars
       ansible.builtin.include_vars: "{{ base_dir }}/{{ vars_path }}"
+      when: check_vars.stat.exists
 
     - name: Deployment environment
       block:
