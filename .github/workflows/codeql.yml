@@ -11,7 +11,7 @@ on:
     - cron: '33 15 * * 5'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.language }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
