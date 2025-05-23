@@ -16,6 +16,10 @@ on:
         type: string
         description: Set an explicit version (without leading v), that will overwrite release-type. Fails if version is not semver compliant.
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release:
     name: Actions

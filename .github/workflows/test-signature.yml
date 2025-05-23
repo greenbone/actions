@@ -1,4 +1,4 @@
-name: Test Python Actions
+name: Test Signature Creation
 
 on:
   push:
@@ -8,6 +8,10 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test-creating-signature-file:
