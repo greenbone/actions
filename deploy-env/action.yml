@@ -3,12 +3,12 @@ description: "Deploy a dev environment on a server."
 
 inputs:
   inventory:
-    description: "Inventory file data as yaml, or a comma(,) seperated list of IP/Domain names, if it is a just one IP/Domain it needs a comma at the end. Optional if file exist."
+    description: "Inventory file data as yaml. Optional if file exist."
   inventory-path:
-    description: "Inventory file path. Default is inventory.yml."
+    description: "Inventory file path, or a comma(,) seperated list of IP/Domain names, if it is a just one IP/Domain it needs a comma at the end. Default is inventory.yml."
     default: "inventory.yml"
   user:
-    description: "Username used for login. ONLY set this if you inventory data is a comma(,) seperated list of IP/Domain names. If not please put the username in the inventory file. Default is empty."
+    description: "Username used for login. ONLY set this if you inventory-path is a comma(,) seperated list of IP/Domain names. If not please put the username in the inventory file. Default is empty."
   ssh-key:
     description: "SSH key file data. Optional if file exist."
   ssh-key-path:
