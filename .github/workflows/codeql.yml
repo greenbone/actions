@@ -11,7 +11,7 @@ on:
     - cron: '33 15 * * 5'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.language }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -34,12 +34,12 @@ jobs:
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@396bb3e45325a47dd9ef434068033c6d5bb0d11a # v2.19.3
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
         queries: security-and-quality
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@396bb3e45325a47dd9ef434068033c6d5bb0d11a # v2.19.3
+      uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
