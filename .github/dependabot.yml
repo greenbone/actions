@@ -17,7 +17,7 @@ updates:
     # for dir in $(ls -d *| grep -v -E "README.md|LICENSE" | sort); do echo "      - \"$dir\""; done
     directories:
 #      - "**/*"
-      - "/"
+#      - "/"
       - "admin-bypass"
       - "awx-run"
       - "backport-pull-request"
