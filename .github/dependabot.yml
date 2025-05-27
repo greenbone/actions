@@ -13,7 +13,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "github-actions"
-    directory: "helm-login"
+    directories: "**/*"
 #      - "/admin-bypass/"
 #      - "/awx-run/"
 #      - "/backport-pull-request/"
