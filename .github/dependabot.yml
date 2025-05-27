@@ -16,11 +16,11 @@ updates:
     # HINT: generate the list of directories apart from / with this command:
     # for dir in $(ls -d *| grep -v -E "README.md|LICENSE" | sort); do echo "      - \"$dir\""; done
     directories:
-      - "**/*"
+#      - "**/*"
 #      - "/"
-#      - "admin-bypass"
-#      - "awx-run"
-#      - "backport-pull-request"
+      - "admin-bypass"
+      - "awx-run"
+      - "backport-pull-request"
 #      - "checkout"
 #      - "check-version"
 #      - "container-build-push-generic"
