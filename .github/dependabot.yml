@@ -17,9 +17,9 @@ updates:
     # for dir in $(ls -d *| grep -v -E "README.md|LICENSE" | sort); do echo "      - \"$dir\""; done
     directories:
 #      - "**/*"
-#      - "/"
-      - "admin-bypass"
-      - "awx-run"
+      - "/"
+#      - "admin-bypass"
+#      - "awx-run"
 #      - "backport-pull-request"
 #      - "checkout"
 #      - "check-version"
@@ -36,7 +36,7 @@ updates:
 #      - "git-use-https-for-github"
 #      - "hashsums"
 #      - "helm-build-push"
-#      - "helm-login"
+      - "helm-login"
 #      - "helm-version-upgrade"
 #      - "install-cgreen"
 #      - "install-node"
