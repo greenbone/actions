@@ -1,17 +1,17 @@
 version: 2
 updates:
     # GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+#  - package-ecosystem: "github-actions"
+#    directory: "/"
+#    schedule:
+#      interval: "weekly"
+#      time: "04:00"
+#    commit-message:
+#      prefix: "Deps"
+#    groups:
+#      dependencies:
+#        patterns:
+#          - "*"
   - package-ecosystem: "github-actions"
     directories:
       - "**/*"
