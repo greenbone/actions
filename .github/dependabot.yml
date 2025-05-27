@@ -2,54 +2,53 @@ version: 2
 updates:
     # GitHub Actions
   - package-ecosystem: "github-actions"
-    directories:
-      - "/"
-      - "/admin-bypass/"
-      - "/awx-run/"
-      - "/backport-pull-request/"
-      - "/check-version/"
-      - "/checkout/"
-      - "/container-build-push-generic/"
-      - "/container-multi-arch-manifest/"
-      - "/container-signing/"
-      - "/conventional-commits/"
-      - "/coverage-js/"
-      - "/coverage-python/"
-      - "/dependency-review/"
-      - "/doc-coverage-clang/"
-      - "/download-artifact/"
-      - "/git-use-https-for-github/"
-      - "/hashsums/"
-      - "/helm-build-push/"
-      - "/helm-login/"
-      - "/helm-version-upgrade/"
-      - "/install-node/"
-      - "/is-latest-tag/"
-      - "/lint-golang/"
-      - "/lint-python/"
-      - "/lint-node/"
-      - "/lock-branch/"
-      - "/mattermost-notify/"
-      - "/mypy-python/"
-      - "/npm-build-push/"
-      - "/oci-info/"
-      - "/pipx/"
-      - "/poetry/"
-      - "/pr-conventional-commit-labeler/"
-      - "/pypi-upload/"
-      - "/release-type/"
-      - "/release/"
-      - "/sbom-upload/"
-      - "/scp/"
-      - "/set-github-user/"
-      - "/setup-pontos/"
-      - "/sign-release-files/"
-      - "/signature/"
-      - "/ssh-known-hosts/"
-      - "/ssh-run-cmd/"
-      - "/test-node/"
-      - "/trigger-workflow/"
-      - "/update-header/"
+#    directories:
+#      - "/admin-bypass/"
+#      - "/awx-run/"
+#      - "/backport-pull-request/"
+#      - "/check-version/"
+#      - "/checkout/"
+#      - "/container-build-push-generic/"
+#      - "/container-multi-arch-manifest/"
+#      - "/container-signing/"
+#      - "/conventional-commits/"
+#      - "/coverage-js/"
+#      - "/coverage-python/"
+#      - "/dependency-review/"
+#      - "/doc-coverage-clang/"
+#      - "/download-artifact/"
+#      - "/git-use-https-for-github/"
+#      - "/hashsums/"
+#      - "/helm-build-push/"
+#      - "/helm-login/"
+#      - "/helm-version-upgrade/"
+#      - "/install-node/"
+#      - "/is-latest-tag/"
+#      - "/lint-golang/"
+#      - "/lint-python/"
+#      - "/lint-node/"
+#      - "/lock-branch/"
+#      - "/mattermost-notify/"
+#      - "/mypy-python/"
+#      - "/npm-build-push/"
+#      - "/oci-info/"
+#      - "/pipx/"
+#      - "/poetry/"
+#      - "/pr-conventional-commit-labeler/"
+#      - "/pypi-upload/"
+#      - "/release-type/"
+#      - "/release/"
+#      - "/sbom-upload/"
+#      - "/scp/"
+#      - "/set-github-user/"
+#      - "/setup-pontos/"
+#      - "/sign-release-files/"
+#      - "/signature/"
+#      - "/ssh-known-hosts/"
+#      - "/ssh-run-cmd/"
+#      - "/test-node/"
+#      - "/trigger-workflow/"
+#      - "/update-header/"
     schedule:
       interval: "weekly"
       time: "04:00"
@@ -60,27 +59,27 @@ updates:
         patterns:
           - "*"
 
-    # PIP
-  - package-ecosystem: pip
-    directories:
-      - "/backport-pull-request/"
-      - "/conventional-commits/"
-      - "/download-artifact/"
-      - "/helm-version-upgrade/"
-      - "/trigger-workflow/"
-      - "/oci-info/"
-      - "/pr-conventional-commit-labeler/"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: direct
-      - dependency-type: indirect
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+#    # PIP
+#  - package-ecosystem: pip
+#    directories:
+#      - "/backport-pull-request/"
+#      - "/conventional-commits/"
+#      - "/download-artifact/"
+#      - "/helm-version-upgrade/"
+#      - "/trigger-workflow/"
+#      - "/oci-info/"
+#      - "/pr-conventional-commit-labeler/"
+#    schedule:
+#      interval: "weekly"
+#      time: "04:00"
+#    open-pull-requests-limit: 10
+#    allow:
+#      - dependency-type: direct
+#      - dependency-type: indirect
+#    commit-message:
+#      prefix: "Deps"
+#    groups:
+#      dependencies:
+#        patterns:
+#          - "*"
 
