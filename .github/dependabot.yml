@@ -56,7 +56,6 @@ updates:
       - "pypi-upload"
       - "release"
       - "release-assets"
-      - "release-assets_tests"
       - "release-type"
       - "release-version"
       - "sbom-upload"
