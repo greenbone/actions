@@ -20,7 +20,7 @@ updates:
 #      - "/"
       - "admin-bypass"
       - "awx-run"
-      - "backport-pull-request"
+#      - "backport-pull-request"
 #      - "checkout"
 #      - "check-version"
 #      - "container-build-push-generic"
