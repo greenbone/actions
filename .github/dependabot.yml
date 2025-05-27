@@ -18,7 +18,7 @@ updates:
     directories:
 #      - "**/*"
       - "/"
-#      - "admin-bypass"
+      - "admin-bypass"
 #      - "awx-run"
 #      - "backport-pull-request"
 #      - "checkout"
