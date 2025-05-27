@@ -13,7 +13,8 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "github-actions"
-    directories: "**/*"
+    directories:
+      - "**/*"
 #      - "/admin-bypass/"
 #      - "/awx-run/"
 #      - "/backport-pull-request/"
