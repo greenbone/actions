@@ -76,10 +76,10 @@ updates:
       time: "04:00"
     commit-message:
       prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+#    groups:
+#      dependencies:
+#        patterns:
+#          - "*"
 
     # PIP
   - package-ecosystem: pip
