@@ -2,6 +2,7 @@ version: 2
 updates:
     # GitHub Actions
   - package-ecosystem: "github-actions"
+    directory: "/"
 #    directories:
 #      - "/admin-bypass/"
 #      - "/awx-run/"
