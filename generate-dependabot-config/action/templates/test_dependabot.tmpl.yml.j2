@@ -1,0 +1,7 @@
+# minimal template to test the output
+version: 2
+action_dirs: {% for directory in github_action_dirs %}
+  - "{{directory}}" {% endfor %}
+
+python_dirs: {% for directory in python_project_dirs %}
+  - "{{ directory }}"{% endfor %}
