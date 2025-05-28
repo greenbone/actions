@@ -1,0 +1,28 @@
+name: Generate dependabot config
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Generate
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: generate Dependabot config
+        # FIXME: must be updated as soon as action is available in main
+        uses: greenbone/actions/generate-dependabot-config@hsprang/DEVOPS-1551_dependabot-config-generator
