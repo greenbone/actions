@@ -30,7 +30,6 @@ updates:
         patterns:
           - "*"
 {% endfor %}
-
   - package-ecosystem: pip
     directories:{% for directory in python_project_dirs %}
       - "/{{ directory }}/"{% endfor %}
