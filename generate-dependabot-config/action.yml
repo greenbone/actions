@@ -1,0 +1,27 @@
+description: "Generate a depdenabot config for a repository with multiple actions."
+name: "generate-dependabot-config"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Refs
+      run: |
+        echo "::debug::ref: ${{ github.ref }}"
+        echo "::debug::ref_name: ${{ github.ref_name }}"
+        echo "::debug::pr number: ${{ github.event.pull_request.number }}"
+      shell: bash
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Python and Poetry
+      uses: greenbone/actions/poetry@v3
+      with:
+        working-directory: ${{ github.action_path }}
+        cache-dependency-path: ${{ github.action_path }}/poetry.lock
+    - name: Run conventional commit labeler
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        PYTHONPATH=. poetry run action/main.py
+        cat ../.github/dependabot.yml
+
+    # TODO: commit the config in the current branch
