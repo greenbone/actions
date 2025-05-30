@@ -19,13 +19,13 @@ TODO:
 import os
 from os.path import join
 
-from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2 import Environment, PackageLoader
 
 # Get the list of all github actions in the repo
 github_action_dirs = list()
 python_project_dirs = list()
 
-for root, dirs, files in os.walk('..'):
+for root, dirs, files in os.walk(".."):
     for dirname in dirs:
         if os.path.exists(join(root, dirname, "action.yml")):
             github_action_dirs.append(dirname)
@@ -35,12 +35,15 @@ for root, dirs, files in os.walk('..'):
 # load the template and render it giving it the previously created lists
 env = Environment(
     loader=PackageLoader("action"),
+    keep_trailing_newline=True,
 )
 
 template = env.get_template("dependabot.tmpl.yml.j2")
 
 dependabot_file_content = template.render(
-    github_action_dirs=github_action_dirs, python_project_dirs=python_project_dirs)
+    github_action_dirs=github_action_dirs,
+    python_project_dirs=python_project_dirs,
+)
 
-with open("../../.github/dependabot.yml","w") as f:
+with open("../.github/dependabot.yml", "w") as f:
     f.write(dependabot_file_content)
