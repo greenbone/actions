@@ -9,9 +9,9 @@ Script to generate a dependabot config file that ensures all actions are properl
 language-specific as well as dependencies on other actions or workflows.
 
 TODO:
-* ensure the generated dependabot config works and solves the issue we have with the old one
 * add tests
-* make this an action that generates and also commits and pushes the newly generated dependabot file
+* make the script easily runnable manually
+* make this an action that generates and also creates a PR with the newly generated dependabot file
 * make the action generically useable?
     * That would require to use a user-specified template for the dependabot file!
 """
