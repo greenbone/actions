@@ -5,6 +5,7 @@ description = ""
 authors = [
     {name = "Henning Sprang",email = "henning.sprang@greenbone.net"}
 ]
+license = "GPLv3+"
 readme = "README.md"
 requires-python = "^3.12"
 
@@ -22,6 +23,27 @@ dependencies = [
 autohooks-plugin-pylint = "^23.10.0"
 autohooks-plugin-isort = "^23.10.0"
 autohooks-plugin-black = "^23.10.0"
+
+[tool.black]
+line-length = 80
+target-version = ["py311", "py312", "py313"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | \.idea
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
