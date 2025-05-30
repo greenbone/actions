@@ -326,7 +326,6 @@ updates:
         patterns:
           - "*"
 
-
   - package-ecosystem: pip
     directories:
       - "/download-artifact/"
