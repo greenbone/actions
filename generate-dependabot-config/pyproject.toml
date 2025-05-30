@@ -1,0 +1,50 @@
+[project]
+name = "generate-dependabot-config"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Henning Sprang",email = "henning.sprang@greenbone.net"}
+]
+license = "GPLv3+"
+readme = "README.md"
+requires-python = "^3.12"
+
+packages = [
+    { include = "action" },
+]
+
+dependencies = [
+    "jinja2 (>=3.1.6,<4.0.0)"
+]
+
+[tool.poetry]
+
+[tool.poetry.group.dev.dependencies]
+autohooks-plugin-ruff = "^25.3.1"
+autohooks-plugin-isort = "^23.3.1"
+autohooks-plugin-black = "^23.3.1"
+
+[tool.black]
+line-length = 80
+target-version = ["py311", "py312", "py313"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | \.idea
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
