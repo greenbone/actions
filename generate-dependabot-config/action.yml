@@ -20,7 +20,7 @@ runs:
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
     - name: Run dependabot generator
       shell: bash
-      working-directory: ${{ github.action_path }}
+      # working-directory: ${{ github.workspace }}
       run: |
         poetry run generate-dependabot-config
         # TODO: remove later - just for testing:
