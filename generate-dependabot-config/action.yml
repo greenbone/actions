@@ -25,5 +25,5 @@ runs:
         poetry run generate-dependabot-config
         # TODO: remove later - just for testing:
         cat ../.github/dependabot.yml
-
-    # TODO: commit the config in the current branch
+        git commit -m "Update dependabot config" ../.github/dependabot.yml
+        git push
