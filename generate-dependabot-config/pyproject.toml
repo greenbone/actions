@@ -1,26 +1,16 @@
-[project]
+[tool.poetry]
 name = "generate-dependabot-config-action"
 version = "0.1.0"
-description = "Generate a dependabot config file."
-authors = [
-    {name = "Henning Sprang",email = "henning.sprang@greenbone.net"}
-]
+description = "Generate a dependabot config file according to existing githubn actions and python porojects in the repository."
+authors = ["Henning Sprang <henning.sprang@greenbone.net>"]
 license = "GPLv3+"
 readme = "README.md"
-#requires-python = "^3.12"
-
 packages = [
     { include = "action" },
 ]
 
-#dependencies = [
-#    "jinja2 (>=3.1.6,<4.0.0)"
-#]
-
 [tool.poetry.dependencies]
 python = "^3.12"
-#pontos = ">=23.7.4"
-#jinja2 = ">=3.1.6,<4.0.0"
 jinja2 = "^3.1.6"
 
 [tool.poetry.scripts]
@@ -28,7 +18,7 @@ generate-dependabot-config = 'action.dependabot_config:main'
 
 [tool.black]
 line-length = 80
-target-version = ["py311", "py312", "py313"]
+target-version = ["py312", "py313"]
 exclude = '''
 /(
     \.git
