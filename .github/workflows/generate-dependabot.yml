@@ -1,4 +1,4 @@
-name: generate-dependabot
+name: Generate dependabot config
 on:
   push:
     branches:
