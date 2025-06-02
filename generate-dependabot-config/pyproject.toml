@@ -1,28 +1,30 @@
 [project]
-name = "generate-dependabot-config"
+name = "generate-dependabot-config-action"
 version = "0.1.0"
-description = ""
+description = "Generate a dependabot config file."
 authors = [
     {name = "Henning Sprang",email = "henning.sprang@greenbone.net"}
 ]
 license = "GPLv3+"
 readme = "README.md"
-requires-python = "^3.12"
+#requires-python = "^3.12"
 
 packages = [
     { include = "action" },
 ]
 
-dependencies = [
-    "jinja2 (>=3.1.6,<4.0.0)"
-]
+#dependencies = [
+#    "jinja2 (>=3.1.6,<4.0.0)"
+#]
 
-[tool.poetry]
+[tool.poetry.dependencies]
+python = "^3.12"
+#pontos = ">=23.7.4"
+#jinja2 = ">=3.1.6,<4.0.0"
+jinja2 = "^3.1.6"
 
-[tool.poetry.group.dev.dependencies]
-autohooks-plugin-ruff = "^25.3.1"
-autohooks-plugin-isort = "^23.3.1"
-autohooks-plugin-black = "^23.3.1"
+[tool.poetry.scripts]
+generate-dependabot-config = 'action.dependabot_config:main'
 
 [tool.black]
 line-length = 80
