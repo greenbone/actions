@@ -16,12 +16,15 @@ runs:
       uses: greenbone/actions/poetry@v3
       with:
         working-directory: ${{ github.action_path }}
+        without-dev: "true"
         cache-dependency-path: ${{ github.action_path }}/poetry.lock
-    - name: Run conventional commit labeler
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
+    - name: Run dependabot generator
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
         PYTHONPATH=. poetry run action/main.py
+        # TODO: remove later - just for testing:
         cat ../.github/dependabot.yml
 
     # TODO: commit the config in the current branch
