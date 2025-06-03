@@ -8,6 +8,7 @@ runs:
       run: |
         echo "::debug::ref: ${{ github.ref }}"
         echo "::debug::ref_name: ${{ github.ref_name }}"
+        echo "::debug::head_ref: ${{ github.head_ref }}"
         echo "::debug::pr number: ${{ github.event.pull_request.number }}"
       shell: bash
     - name: Checkout repository
