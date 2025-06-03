@@ -10,11 +10,13 @@ runs:
         echo "::debug::ref_name: ${{ github.ref_name }}"
         echo "::debug::head_ref: ${{ github.head_ref }}"
         echo "::debug::pr number: ${{ github.event.pull_request.number }}"
-        echo "::debug::workspace: ${{ github.workspace }}"
+        echo "::debug::workspace: ${{ github.path }}"
         echo "::debug::action_path: ${{ github.action_path }}"
       shell: bash
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        path: "commit_dir"
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v3
       with:
@@ -31,21 +33,12 @@ runs:
         # poetry run generate-dependabot-config ${{ github.workspace }}
         poetry run generate-dependabot-config
 
-        echo workspace content:
-        ls ${{ github.workspace }}
-        echo
-
-        echo action path content:
-        ls ${{ github.action_path }}
-        echo
-        
         echo copy config...
-        cp ../${config_file} ${{ github.workspace }}/${{ github.repository }}/${config_file}
+        cp ../${config_file} ${{ github.workspace }}/commit_dir/${config_file}
 
         echo changing to checked out dir
-        cd ${{ github.workspace }}/${{ github.repository }}
+        cd ${{ github.workspace }}/commit_dir
 
-        git stash
         # git checkout ${{ github.head_ref }}
 
         if [ -n "`git status --porcelain ${config_file}`" ]; then
