@@ -10,13 +10,14 @@ runs:
         echo "::debug::ref_name: ${{ github.ref_name }}"
         echo "::debug::head_ref: ${{ github.head_ref }}"
         echo "::debug::pr number: ${{ github.event.pull_request.number }}"
-        echo "::debug::workspace: ${{ github.path }}"
+        echo "::debug::workspace: ${{ github.workspace }}"
         echo "::debug::action_path: ${{ github.action_path }}"
       shell: bash
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         path: "commit_dir"
+        ref: ${{ github.head_ref }}
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v3
       with:
@@ -39,12 +40,12 @@ runs:
         echo changing to checked out dir
         cd ${{ github.workspace }}/commit_dir
 
-        # git checkout ${{ github.head_ref }}
 
         if [ -n "`git status --porcelain ${config_file}`" ]; then
           echo changed files
           git stash
-          git pull --ff origin ${{ inputs.notus-data-branch }}
+          git pull --ff origin ${{ github.head_ref }}
+          # git checkout ${{ github.head_ref }}
           git stash pop
           git add .
 
