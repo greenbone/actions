@@ -44,4 +44,4 @@ runs:
           .github/dependabot.yml
 
         echo ${{ github.head_ref }}
-        git push origin HEAD: ${{ github.head_ref }}
+        git push origin HEAD:${{ github.head_ref }}
