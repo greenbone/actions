@@ -24,24 +24,37 @@ runs:
       # we start in the action directory because we want to execute this python code
       working-directory: ${{ github.action_path }}
       run: |
+        config_file=.github/dependabot.yml
         # TODO: enable the python code to take the repository as parameter.
         # poetry run generate-dependabot-config ${{ github.workspace }}
         poetry run generate-dependabot-config
 
         echo copy config...
-        cp ../.github/dependabot.yml ${{ github.workspace }}/.github/dependabot.yml
+        cp ../${config_file} ${{ github.workspace }}/${config_file}
 
         echo changing to workspace
         cd ${{ github.workspace }}
 
-        echo comitting
-        git \
-          -c user.name="${{ github.actor }}" \
-          -c user.email="${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com" \
-          commit \
-          -m "Update dependabot config" \
-          --author="${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>" \
-          .github/dependabot.yml
+        git stash
+        git checkout ${{ github.head_ref }}
+
+        if [ -n "`git status --porcelain ${config_file}`" ]; then
+          echo changed files
+          git stash
+          git pull --ff origin ${{ inputs.notus-data-branch }}
+          git stash pop
+          git add .
+
+          echo comitting
+          git \
+            -c user.name="${{ github.actor }}" \
+            -c user.email="${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com" \
+            commit \
+            -m "Update dependabot config" \
+            --author="${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>" \
+            ${config_file}
+        else
+          echo nothing changed
 
         git log --max-count=3
 
