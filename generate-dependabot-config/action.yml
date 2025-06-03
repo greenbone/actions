@@ -29,14 +29,15 @@ runs:
         # poetry run generate-dependabot-config ${{ github.workspace }}
         poetry run generate-dependabot-config
 
+        ls ${{ github.workspace }}
         echo copy config...
-        cp ../${config_file} ${{ github.workspace }}/${config_file}
+        cp ../${config_file} ${{ github.workspace }}/${{ github.repository }}/${config_file}
 
-        echo changing to workspace
-        cd ${{ github.workspace }}
+        echo changing to checked out dir
+        cd ${{ github.workspace }}/${{ github.repository }}
 
         git stash
-        git checkout ${{ github.head_ref }}
+        # git checkout ${{ github.head_ref }}
 
         if [ -n "`git status --porcelain ${config_file}`" ]; then
           echo changed files
