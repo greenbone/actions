@@ -43,5 +43,6 @@ runs:
           --author="${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>" \
           .github/dependabot.yml
 
-        echo ${{ github.head_ref }}
+        git log --max-count=3
+
         git push origin HEAD:${{ github.head_ref }}
