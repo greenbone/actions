@@ -40,12 +40,10 @@ runs:
         echo changing to checked out dir
         cd ${{ github.workspace }}/commit_dir
 
-
         if [ -n "`git status --porcelain ${config_file}`" ]; then
           echo changed files
           git stash
           git pull --ff origin ${{ github.head_ref }}
-          # git checkout ${{ github.head_ref }}
           git stash pop
           git add .
 
@@ -54,7 +52,7 @@ runs:
             -c user.name="${{ github.actor }}" \
             -c user.email="${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com" \
             commit \
-            -m "Update dependabot config" \
+            -m "[skip ci] Update dependabot config" \
             --author="${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>" \
             ${config_file}
         else

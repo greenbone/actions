@@ -28,6 +28,8 @@ def main() -> NoReturn:
     github_action_dirs = list()
     python_project_dirs = list()
 
+    # TODO: only go 1 level deep OR must add full path!
+    #  (like this we get entries from somewhere deeper in the hierarchy, as I realized when
     for root, dirs, files in os.walk(".."):
         for dirname in dirs:
             if os.path.exists(join(root, dirname, "action.yml")):
