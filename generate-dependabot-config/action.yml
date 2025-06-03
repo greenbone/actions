@@ -58,6 +58,7 @@ runs:
             ${config_file}
         else
           echo nothing changed
+        fi
 
         git log --max-count=3
 
