@@ -10,6 +10,8 @@ runs:
         echo "::debug::ref_name: ${{ github.ref_name }}"
         echo "::debug::head_ref: ${{ github.head_ref }}"
         echo "::debug::pr number: ${{ github.event.pull_request.number }}"
+        echo "::debug::workspace: ${{ github.workspace }}"
+        echo "::debug::action_path: ${{ github.action_path }}"
       shell: bash
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -29,7 +31,14 @@ runs:
         # poetry run generate-dependabot-config ${{ github.workspace }}
         poetry run generate-dependabot-config
 
+        echo workspace content:
         ls ${{ github.workspace }}
+        echo
+
+        echo action path content:
+        ls ${{ github.action_path }}
+        echo
+        
         echo copy config...
         cp ../${config_file} ${{ github.workspace }}/${{ github.repository }}/${config_file}
 
