@@ -27,6 +27,9 @@ inputs:
     default: "all"
   base-dir:
     description: "The the base directory / working directory. Default is current working directory."
+  os:
+    description: "OS on target. Default is linux. Support for linux and windows."
+    default: "linux"
 
 branding:
   icon: "package"
@@ -35,6 +38,11 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Setup ansible.windows
+      if: inputs.os == 'windows'
+      shell: bash
+      run: ansible-galaxy collection install ansible.windows
+
     - name: Create ssh key
       if: inputs.ssh-key
       shell: bash
@@ -78,4 +86,4 @@ runs:
           --private-key '${{ inputs.ssh-key-path }}' \
           --limit '${{ inputs.limit-hosts }}' \
           -e "vars_path=${{ inputs.vars-path }}" \
-          "$GITHUB_ACTION_PATH/run.yml"
+          "$GITHUB_ACTION_PATH/run_${{ inputs.os }}.yml"

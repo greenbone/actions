@@ -37,7 +37,7 @@ ssh fingerprint ...
 
 ##### cmd
 
-* **Purpose**: Run any kind of shell commands on the target environment.
+* **Purpose**: Run any kind of shell/powershell scripts on the target environment.
 * **Usage**: Executes shell (or system) commands, such as run deployments e.g compose, starting services, etc.
 
 ##### Example
@@ -118,3 +118,4 @@ jobs:
 | vars-path          | Vars file path. Default is vars.yml                                                                                                                                                   | Optional |
 | limit-hosts        | Limit deployment to hosts. Default is all.                                                                                                                                            | Optional |
 | base-dir           | The the base directory / working directory. Default is current working directory.                                                                                                     | Optional |
+| os                 | OS on target. Default is linux. Support for linux and windows.                                                                                                                        | Optional |
