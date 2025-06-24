@@ -1,10 +1,27 @@
 # Install Python Applications with uv
 
-GitHub Action to install applications from PyPI using [uv](https://docs.astral.sh/uv).
+GitHub Action for setting up [uv](https://docs.astral.sh/uv) and use it to
+install applications from PyPI.
 
 For details about the caching see [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv?tab=readme-ov-file).
 
-## Example
+## Examples
+
+```yml
+name: Setup uv
+
+on:
+  pull_requests:
+
+jobs:
+  setup-uv:
+    name: Setup uv
+    runs-on: ubuntu-latest
+    steps:
+        - uses: greenbone/actions/uv@v3
+        - run: |
+            uv tree
+```
 
 ```yml
 name: Install httpx
@@ -24,15 +41,15 @@ jobs:
 
 ## Action Configuration
 
-| Input Variable        | Description                                                        |                             |
-| --------------------- | ------------------------------------------------------------------ | --------------------------- |
-| python-version        | Python version to use for running the action.                      | Optional                    |
-| install               | The package to install from PyPI                                   | Required                    |
-| enable-cache          | Enable caching                                                     | Optional (default: true)    |
-| cache-dependency-glob | Glob pattern to match dependencies to cache. Optional. Default: "" |
-| cache-suffix          | Suffix to append to the cache key                                  | Optional                    |
-| cache-local-path      | Path to the local cache                                            | Optional                    |
-| uv-version            | The version of uv to install and use                               | Optional. Default is latest |
+| Input Variable        | Description                                   |                             |
+| --------------------- | --------------------------------------------- | --------------------------- |
+| python-version        | Python version to use for running the action. | Optional                    |
+| install               | The package to install from PyPI              | Optional                    |
+| enable-cache          | Enable caching                                | Optional (default: true)    |
+| cache-dependency-glob | Glob pattern to match dependencies to cache.  | Optional. Default: ""       |
+| cache-suffix          | Suffix to append to the cache key             | Optional                    |
+| cache-local-path      | Path to the local cache                       | Optional                    |
+| uv-version            | The version of uv to install and use          | Optional. Default is latest |
 
 | Output Variable | Description                    |
 | --------------- | ------------------------------ |

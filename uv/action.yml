@@ -8,7 +8,8 @@ inputs:
     required: false
   install:
     description: Python application to install
-    required: true
+    default: ""
+    required: false
   enable-cache:
     description: "Enable caching"
     required: false
@@ -75,10 +76,13 @@ runs:
         echo "patch=$patch" >> $GITHUB_OUTPUT
       shell: bash
     - name: Install Python Package
+      if: ${{ inputs.install != '' }}
+      id: install
       run: |
         uv tool install ${{ inputs.install }}
       shell: bash
     - name: List installed applications
+      if: ${{ inputs.install != '' && steps.install.outcome == 'success' }}
       run: |
         uv tool list
       shell: bash
