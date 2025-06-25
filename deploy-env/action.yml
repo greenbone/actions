@@ -12,7 +12,7 @@ inputs:
   ssh-key:
     description: "SSH key file data. Optional if file exist."
   ssh-key-path:
-    description: "SSH key file path. Default is ssh.key."
+    description: "SSH key file path, if user is set. Default is ssh.key."
     default: "ssh.key"
   ssh-known-hosts:
     description: "SSH fingerprints for dev servers. Optional if file exist."
@@ -30,6 +30,17 @@ inputs:
   os:
     description: "OS on target. Default is linux. Support for linux and windows."
     default: "linux"
+  winrm-password:
+    description: "Winrm auth password, if user is set. Default is 5986."
+  winrm-port:
+    description: "Winrm port, if user is set. Default is 5986."
+    default: "5986"
+  winrm-transport:
+    description: "Winrm transport, if user is set. Default is basic."
+    default: "basic"
+  winrm-server-cert-validation:
+    description: "Winrm cert validation, if user is set. Default is ignore."
+    default: "ignore"
 
 branding:
   icon: "package"
@@ -41,7 +52,10 @@ runs:
     - name: Setup ansible.windows
       if: inputs.os == 'windows'
       shell: bash
-      run: ansible-galaxy collection install ansible.windows
+      run: |
+        sudo apt update
+        sudo apt install python3-winrm -y
+        ansible-galaxy collection install ansible.windows
 
     - name: Create ssh key
       if: inputs.ssh-key
@@ -72,9 +86,22 @@ runs:
       shell: bash
       run: |
         cmd=()
+        if [ '${{ inputs.os }}' == 'linux' ] && [ '${{ inputs.user }}' ]; then
+          cmd+=(--private-key '${{ inputs.ssh-key-path }}')
+        fi
+
+        if [ '${{ inputs.os }}' == 'windows' ] && [ '${{ inputs.user }}' ]; then
+          cmd+=(-c 'winrm')
+          cmd+=(-e 'ansible_password=${{ inputs.winrm-password }}')
+          cmd+=(-e 'ansible_winrm_port=${{ inputs.winrm-port }}')
+          cmd+=(-e 'ansible_winrm_transport=${{ inputs.winrm-transport }}')
+          cmd+=(-e 'ansible_winrm_server_cert_validation=${{ inputs.winrm-server-cert-validation }}')
+        fi
+
         if [ '${{ inputs.user }}' ]; then
           cmd+=(--user '${{ inputs.user }}')
         fi
+
         if [ '${{ inputs.base-dir }}' ]; then
           cmd+=(-e "base_dir=${{ inputs.base-dir }}")
         else
@@ -83,7 +110,6 @@ runs:
 
         ansible-playbook "${cmd[@]}" \
           -i '${{ inputs.inventory-path }}' \
-          --private-key '${{ inputs.ssh-key-path }}' \
           --limit '${{ inputs.limit-hosts }}' \
           -e "vars_path=${{ inputs.vars-path }}" \
           "$GITHUB_ACTION_PATH/run_${{ inputs.os }}.yml"
