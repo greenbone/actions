@@ -41,15 +41,16 @@ jobs:
 
 ## Action Configuration
 
-| Input Variable        | Description                                   |                             |
-| --------------------- | --------------------------------------------- | --------------------------- |
-| python-version        | Python version to use for running the action. | Optional                    |
-| install               | The package to install from PyPI              | Optional                    |
-| enable-cache          | Enable caching                                | Optional (default: true)    |
-| cache-dependency-glob | Glob pattern to match dependencies to cache.  | Optional. Default: ""       |
-| cache-suffix          | Suffix to append to the cache key             | Optional                    |
-| cache-local-path      | Path to the local cache                       | Optional                    |
-| uv-version            | The version of uv to install and use          | Optional. Default is latest |
+| Input Variable        | Description                                           |                             |
+| --------------------- | ----------------------------------------------------- | --------------------------- |
+| python-version        | Python version to use for running the action.         | Optional                    |
+| install               | The package to install from PyPI                      | Optional                    |
+| enable-cache          | Enable caching                                        | Optional (default: true)    |
+| cache-dependency-glob | Glob pattern to match dependencies to cache.          | Optional. Default: ""       |
+| cache-suffix          | Suffix to append to the cache key                     | Optional                    |
+| cache-local-path      | Path to the local cache                               | Optional                    |
+| uv-version            | The version of uv to install and use                  | Optional. Default is latest |
+| working-directory     | The working directory. Where to find the config files | Optional                    |
 
 | Output Variable | Description                    |
 | --------------- | ------------------------------ |

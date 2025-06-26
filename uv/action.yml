@@ -27,6 +27,12 @@ inputs:
   uv-version:
     description: "The version of uv"
     required: false
+  working-directory:
+    description: |
+      "The working directory. This controls where we look for pyproject.toml, "
+      "uv.toml and .python-version files which are used to determine the "
+      "version of uv and python to install."
+    required: false
 
 outputs:
   version:
@@ -62,6 +68,7 @@ runs:
         cache-suffix: ${{ inputs.cache-suffix }}
         cache-local-path: ${{ inputs.cache-local-path }}
         version: ${{ inputs.uv-version }}
+        working-directory: ${{ inputs.working-directory }}
     - name: uv version
       id: version
       run: |
