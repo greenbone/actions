@@ -53,9 +53,9 @@ runs:
       if: inputs.os == 'windows'
       shell: bash
       run: |
-        sudo apt update
-        sudo apt install python3-winrm -y
-        ansible-galaxy collection install ansible.windows
+        # No pywinrm package install with pipx ansible.
+        pip install pywinrm ansible
+        ansible-galaxy collection install ansible.windows --force
 
     - name: Create ssh key
       if: inputs.ssh-key
