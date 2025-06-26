@@ -74,13 +74,13 @@ runs:
       if: inputs.vars
       shell: bash
       run: |
-        echo -e '${{ inputs.vars }}' > '${{ inputs.vars-path }}'
+        echo '${{ inputs.vars }}' > '${{ inputs.vars-path }}'
 
     - name: Create inventory
       if: inputs.inventory
       shell: bash
       run: |
-        echo -e '${{ inputs.inventory }}' > '${{ inputs.inventory-path }}'
+        echo '${{ inputs.inventory }}' > '${{ inputs.inventory-path }}'
 
     - name: Run dev environment deployment
       shell: bash
