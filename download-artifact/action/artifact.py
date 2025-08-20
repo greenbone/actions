@@ -88,6 +88,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument("--branch", required=True)
     parser.add_argument("--name", nargs="?")
     parser.add_argument("--allow-not-found")
+    parser.add_argument("--search-older-runs")
     parser.add_argument("--path", required=True)
     parser.add_argument("--user", nargs="?")
     parser.add_argument("--group", nargs="?")
@@ -111,6 +112,7 @@ class DownloadArtifacts:
         name: Optional[str] = None,
         path: Optional[str] = None,
         allow_not_found: Optional[str] = None,
+        search_older_runs: Optional[str] = None,
         user: Union[str, int] = None,
         group: Union[str, int] = None,
     ) -> None:
@@ -158,6 +160,9 @@ class DownloadArtifacts:
         allow_not_found = allow_not_found or ActionIO.input("allow-not-found")
         self.allow_not_found = allow_not_found == "true"
 
+        search_older_runs = search_older_runs or ActionIO.input("search-older-runs")
+        self.search_older_runs = search_older_runs == "true"
+
         self.is_debug = env.is_debug
 
         self.api = GitHubAsyncRESTApi(token)
@@ -171,6 +176,7 @@ class DownloadArtifacts:
             Console.log(f"name: {self.name}")
             Console.log(f"path: {self.download_path}")
             Console.log(f"allow-not-found: {self.allow_not_found}")
+            Console.log(f"search-older-runs: {self.search_older_runs}")
             Console.log(f"user: {self.user}")
             Console.log(f"group: {self.group}")
 
@@ -219,7 +225,7 @@ class DownloadArtifacts:
             if not self.name:
                 return run, artifacts
 
-            # Pick a run that actually contains the requested artifact, otherwise check the next one
+            # Find artifact with matching name
             for artifact in artifacts:
                 if self.name != artifact.name:
                     Console.log(
@@ -229,6 +235,15 @@ class DownloadArtifacts:
                     continue
 
                 return run, [artifact]
+
+            # Search artifact in older runs, if allowed
+            if not self.search_older_runs:
+                return None, None
+
+            Console.log(
+                f"Artifact '{self.name}' not found in workflow run with ID "
+                f"{run.id}. Searching older runs."
+            )
 
         return None, None
 
@@ -394,6 +409,7 @@ def main() -> NoReturn:
                 branch=args.branch,
                 name=args.name,
                 allow_not_found=args.allow_not_found,
+                search_older_runs=args.search_older_runs,
                 path=args.path,
                 user=args.user,
                 group=args.group,
