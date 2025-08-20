@@ -86,7 +86,7 @@ runs:
           --branch ${{ inputs.branch }} \
           --name ${{ inputs.name }} \
           --allow-not-found ${{ inputs.allow-not-found }} \
-          --search-older-runs ${{ inputs.search_older_runs }} \
+          --search-older-runs ${{ inputs.search-older-runs }} \
           --path ${{ inputs.path }} \
           --user ${{ inputs.user }} \
           --group ${{ inputs.group }}
