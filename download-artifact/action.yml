@@ -15,6 +15,10 @@ inputs:
     description: "Consider only workflow runs triggered by the specified events. Default: schedule, workflow_dispatch"
     default: "schedule, workflow_dispatch"
     required: false
+  workflow-status:
+    description: "Consider only workflow runs with the specified status. Default: success"
+    default: "success"
+    required: false
   branch:
     description: "The git branch for the workflow to download the artifacts from."
     required: false
