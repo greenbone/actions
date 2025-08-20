@@ -83,7 +83,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument("--token", required=True)
     parser.add_argument("--repository", nargs="?")
     parser.add_argument("--workflow", required=True)
-    parser.add_argument("--workflow-status", type=WorkflowRunStatus)
+    parser.add_argument("--workflow-status", type=WorkflowRunStatus, choices=WorkflowRunStatus)
     parser.add_argument("--workflow-events", nargs="?")
     parser.add_argument("--branch", required=True)
     parser.add_argument("--name", nargs="?")
