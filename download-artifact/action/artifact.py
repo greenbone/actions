@@ -167,7 +167,9 @@ class DownloadArtifacts:
             Console.log(f"user: {self.user}")
             Console.log(f"group: {self.group}")
 
-    async def get_newest_workflow_run(self) -> Optional[WorkflowRun]:
+    async def get_newest_workflow_run(
+        self,
+    ) -> Optional[Union[WorkflowRun, Iterable[Artifact]]]:
         try:
             runs = [
                 run
@@ -199,7 +201,29 @@ class DownloadArtifacts:
         # ensure that newest run is run[0]
         runs = sorted(runs, key=created_at, reverse=True)
 
-        return runs[0]
+        for run in runs:
+            artifacts = [
+                artifact
+                async for artifact in self.api.artifacts.get_workflow_run_artifacts(
+                    self.repository, run.id
+                )
+            ]
+
+            if not self.name:
+                return run, artifacts
+
+            # Pick a run that actually contains the requested artifact, otherwise check the next one
+            for artifact in artifacts:
+                if self.name != artifact.name:
+                    Console.log(
+                        f"Skipping artifact '{artifact.name} with ID {artifact.id}' "
+                        f"because it does not match {self.name}."
+                    )
+                    continue
+
+                return run, [artifact]
+
+        return None, None
 
     def adjust_permissions(self, file_path: Path) -> None:
         try:
@@ -239,13 +263,6 @@ class DownloadArtifacts:
                 )
 
     async def download_artifact(self, artifact: Artifact) -> Optional[Artifact]:
-        if self.name and self.name != artifact.name:
-            Console.log(
-                f"Skipping artifact '{artifact.name} with ID {artifact.id}' "
-                f"because it does not match {self.name}."
-            )
-            return None
-
         with temp_directory() as temp_dir:
             temp_file = temp_dir / f"{artifact.name}.zip"
 
@@ -313,7 +330,7 @@ class DownloadArtifacts:
             )
 
         async with self.api:
-            run = await self.get_newest_workflow_run()
+            run, artifacts = await self.get_newest_workflow_run()
 
             if not run:
                 if self.allow_not_found:
@@ -327,9 +344,7 @@ class DownloadArtifacts:
             try:
                 tasks = [
                     asyncio.create_task(self.download_artifact(artifact))
-                    async for artifact in self.api.artifacts.get_workflow_run_artifacts(
-                        self.repository, run.id
-                    )
+                    for artifact in artifacts
                 ]
             except httpx.HTTPStatusError as e:
                 raise DownloadArtifactsError(
