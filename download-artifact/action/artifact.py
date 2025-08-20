@@ -176,7 +176,7 @@ class DownloadArtifacts:
 
     async def get_newest_workflow_run(
         self,
-    ) -> Optional[Union[WorkflowRun, Iterable[Artifact]]]:
+    ) -> Union[Optional[WorkflowRun], Optional[Iterable[Artifact]]]:
         try:
             runs = [
                 run
@@ -192,7 +192,7 @@ class DownloadArtifacts:
             ]
         except httpx.HTTPStatusError as e:
             if self.allow_not_found and e.response.status_code == 404:
-                return None
+                return None, None
 
             raise DownloadArtifactsError(f"Could not find workflow. {e}") from e
 
@@ -203,7 +203,7 @@ class DownloadArtifacts:
             )
 
         if not runs:
-            return None
+            return None, None
 
         # ensure that newest run is run[0]
         runs = sorted(runs, key=created_at, reverse=True)
