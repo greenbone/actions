@@ -83,6 +83,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument("--token", required=True)
     parser.add_argument("--repository", nargs="?")
     parser.add_argument("--workflow", required=True)
+    parser.add_argument("--workflow-status")
     parser.add_argument("--workflow-events", nargs="?")
     parser.add_argument("--branch", required=True)
     parser.add_argument("--name", nargs="?")
@@ -104,6 +105,7 @@ class DownloadArtifacts:
         token: Optional[str] = None,
         workflow: Optional[str] = None,
         workflow_events: Optional[str] = None,
+        workflow_status: Optional[WorkflowRunStatus] = None,
         repository: Optional[str] = None,
         branch: Optional[str] = None,
         name: Optional[str] = None,
@@ -127,6 +129,10 @@ class DownloadArtifacts:
             self.workflow_events = ["schedule", "workflow_dispatch"]
         else:
             self.workflow_events = parse_list(workflow_events)
+
+        self.workflow_status = workflow_status or ActionIO.input("workflow-status")
+        if not self.workflow_status:
+            self.workflow_status = WorkflowRunStatus.SUCCESS
 
         self.branch = branch or ActionIO.input("branch")
         if not self.branch:
@@ -160,6 +166,7 @@ class DownloadArtifacts:
             Console.log(f"repository: {self.repository}")
             Console.log(f"workflow: {self.workflow}")
             Console.log(f"workflow-events: {self.workflow_events}")
+            Console.log(f"workflow-status: {self.workflow_status}")
             Console.log(f"branch: {self.branch}")
             Console.log(f"name: {self.name}")
             Console.log(f"path: {self.download_path}")
@@ -175,7 +182,7 @@ class DownloadArtifacts:
                     self.repository,
                     self.workflow,
                     branch=self.branch,
-                    status=WorkflowRunStatus.SUCCESS,
+                    status=self.workflow_status,
                     exclude_pull_requests=True,
                 )
                 if not self.workflow_events
@@ -368,6 +375,7 @@ def main() -> NoReturn:
                 repository=args.repository,
                 workflow=args.workflow,
                 workflow_events=args.workflow_events,
+                workflow_status=args.workflow_status,
                 branch=args.branch,
                 name=args.name,
                 allow_not_found=args.allow_not_found,
