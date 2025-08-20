@@ -78,6 +78,7 @@ runs:
           --repository ${{ inputs.repository }} \
           --workflow ${{ inputs.workflow }} \
           --workflow-events "${{ inputs.workflow-events }}" \
+          --workflow-status "${{ inputs.workflow-status }}" \
           --branch ${{ inputs.branch }} \
           --name ${{ inputs.name }} \
           --allow-not-found ${{ inputs.allow-not-found }} \
