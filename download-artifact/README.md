@@ -59,6 +59,7 @@ jobs:
 | path | Destination path for the to be downloaded artifact of parent directory if name is not set. | Optional (default is `${{ github.workspace }}`) |
 | name | Name of the artifact to be downloaded. If not set all artifacts will be downloaded. | Optional |
 | allow-not-found | Set to `"true"` to not fail if workflow or artifact can not be found. | Optional |
+| search-older-runs | Set to `"true"` to also search older workflow run for a matching artifact name. | Optional (default is `"false"`)|
 | user | User ID for ownership of the downloaded artifacts. | Optional |
 | group | Group ID for ownership of the downloaded artifacts. | Optional |
 
