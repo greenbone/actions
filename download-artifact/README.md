@@ -53,6 +53,7 @@ jobs:
 | token | Token required to create the backport pull request | Required |
 | workflow | Workflow to trigger. Either a workflow ID or file name, for example `"ci.yml"`. | Required |
 | workflow-events | Consider only workflow runs triggered by the specified events. | Optional (default is `"schedule, workflow_dispatch"`) |
+| workflow-status | Consider only workflow runs with the specified status | Optional (default is `success`) |
 | repository | Repository of the workflow to trigger | Optional (default is `${{ github.repository }}` (current repository)) |
 | branch | The git branch for the workflow. | Optional (default is `"main"`) |
 | path | Destination path for the to be downloaded artifact of parent directory if name is not set. | Optional (default is `${{ github.workspace }}`) |
