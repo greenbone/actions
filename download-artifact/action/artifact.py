@@ -176,7 +176,7 @@ class DownloadArtifacts:
 
     async def get_newest_workflow_run(
         self,
-    ) -> Union[Optional[WorkflowRun], Optional[Iterable[Artifact]]]:
+    ) -> tuple[Optional[WorkflowRun], Optional[Iterable[Artifact]]]:
         try:
             runs = [
                 run
