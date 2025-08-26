@@ -34,6 +34,10 @@ runs:
       run: |
         echo "RELEASE_TYPE=patch" >> $GITHUB_ENV
       shell: bash
+    - if: contains(github.event.pull_request.labels.*.name, 'hotfix release')
+      run: |
+        echo "RELEASE_TYPE=patch" >> $GITHUB_ENV
+      shell: bash
     - if: contains(github.event.pull_request.labels.*.name, 'rc release')
       run: |
         echo "RELEASE_TYPE=release-candidate" >> $GITHUB_ENV
@@ -53,7 +57,11 @@ runs:
     - name: Workflow_dispatch RELEASE_TYPE
       if: github.event_name == 'workflow_dispatch'
       run: |
-        echo "RELEASE_TYPE=${{ inputs.release-type-input }}" >> $GITHUB_ENV
+        if [ '${{ inputs.release-type-input }}' == 'hotfix' ]; then
+          echo "RELEASE_TYPE=patch" >> $GITHUB_ENV
+        else
+          echo "RELEASE_TYPE=${{ inputs.release-type-input }}" >> $GITHUB_ENV
+        fi
       shell: bash
     - name: Echoing the release type
       id: release
