@@ -32,7 +32,7 @@ runs:
   steps:
     - name: Sign file
       run: |
-        signtool.exe sign /a /f ${{ inputs.signing-certificate }} /fd ${{ inputs.signing-certificate-hash-alg }} /p ${{ inputs.password }} /tr ${{ inputs.timestamp-url }} /td ${{ inputs.timestamp-hash-alg }} ${{ inputs.file }}
+        signtool.exe sign /a /f ${{ inputs.signing-certificate }} /fd ${{ inputs.signing-certificate-hash-alg }} /p ${{ inputs.signing-password }} /tr ${{ inputs.timestamp-url }} /td ${{ inputs.timestamp-hash-alg }} ${{ inputs.file }}
 
     - name: Verify Signing
       run: |
