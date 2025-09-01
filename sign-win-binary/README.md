@@ -29,7 +29,7 @@ jobs:
 |------------------------------|---------------------------------------------------------------------|-------------------------------------------|
 | file                         | The file to sign with signtool.exe                                  |                                           |
 | signing-certificate          | The certificate for signing the file                                |                                           |
-| signing-certificate-hash-alg | The hash algorithm used for the signing-certificate                 | Default is `"sha512"`                     |
+| signing-certificate-hash-alg | The hash algorithm used for the signing-certificate                 | Optional: (Default is `"sha512"`)         |
 | signing-password             | The password for the signing certificate                            |                                           |
 | timestamp-url                | The url of the timestamp server                                     |                                           |
-| timestamp-hash-alg           | The hash algorithm used for the timestamp server                    | Default is `"sha512"`                     |
+| timestamp-hash-alg           | The hash algorithm used for the timestamp server                    | Optional: (Default is `"sha512"`)         |
