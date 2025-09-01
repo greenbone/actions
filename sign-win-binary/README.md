@@ -8,20 +8,28 @@ GitHub Action to sign a Windows binary.
 name: Sign Windows Binary
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 jobs:
-  sign:
+  sign-win-binary:
     name: Sign Windows Binary
     runs-on: windows-latest
     steps:
-        - uses: greenbone/actions/sign-win-binary@v1
-          with:
+      - uses: greenbone/actions/sign-win-binary@v3.33.0
+        with:
+          file: "pathToFile"
+          signing-certificate: "someCert.cer"
+          signing-password: "somePassword"
+          timestamp-url: "https://some.url"
 ```
 
 ## Action Configuration
 
-| Input Variable    | Description                                                                              |                                                  |
-| ----------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------ |
-|                   |                                                                                          |                                                  |
+| Input Variable               | Description                                                         |                                           |
+|------------------------------|---------------------------------------------------------------------|-------------------------------------------|
+| file                         | The file to sign with signtool.exe                                  |                                           |
+| signing-certificate          | The certificate for signing the file                                |                                           |
+| signing-certificate-hash-alg | The hash algorithm used for the signing-certificate                 | Default is `"sha512"`                     |
+| signing-password             | The password for the signing certificate                            |                                           |
+| timestamp-url                | The url of the timestamp server                                     |                                           |
+| timestamp-hash-alg           | The hash algorithm used for the timestamp server                    | Default is `"sha512"`                     |

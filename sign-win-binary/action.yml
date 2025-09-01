@@ -2,9 +2,26 @@ name: "Sign Windows Binary"
 description: |
   "An action to sign Windows binaries."
 inputs:
-  #repository:
-  #  description: "GitHub repository (owner/name) to download the release files from."
-  #  default: ${{ github.repository }}
+  file:
+    description: "The file to sign with signtool.exe"
+    required: true
+  signing-certificate:
+    description: "The certificate for signing the file"
+    required: true
+  signing-certificate-hash-alg:
+    description: "The hash algorithm used for the signing-certificate"
+    default: "sha512"
+    required: false
+  signing-password:
+    description: "The password for the signing certificate"
+    required: true
+  timestamp-url:
+    description: "The url of the timestamp server"
+    required: true
+  timestamp-hash-alg:
+    description: "The hash algorithm used for the timestamp server"
+    default: "sha512"
+    required: false
 
 branding:
   icon: "package"
@@ -13,36 +30,10 @@ branding:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v5
-      repository: greenbone/techop-gvm-tools-signing
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.9'
-
-    - name: Install pipenv
-      run: pip install pipenv --user
-      # Do we need to set the PATH?
-
-    - name: Setting up a pipenv
+    - name: Sign file
       run: |
-        set PIPENV_pipenv_IN_PROJECT="true"
-        pipenv install
-        pipenv update
-        build_and_sign.bat
+        signtool.exe sign /a /f ${{ inputs.signing-certificate }} /fd ${{ inputs.signing-certificate-hash-alg }} /p ${{ inputs.password }} /tr ${{ inputs.timestamp-url }} /td ${{ inputs.timestamp-hash-alg }} ${{ inputs.file }}
 
     - name: Verify Signing
       run: |
-        signtool.exe verify /v /pa Cli\gvm-cli.exe
-        signtool.exe verify /v /pa Shell\gvm-pyshell.exe
-
-    #- uses: skymatic/code-sign-action@v1
-    #  with:
-    #    certificate: '${{ secrets.CERTIFICATE }}'
-    #    password: '${{ secrets.PASSWORD }}'
-    #    certificatesha1: '${{ secrets.CERTHASH }}'
-    #    certificatename: '${{ secrets.CERTNAME }}'
-    #    description: 'My App'
-    #    timestampUrl: 'http://timestamp.digicert.com'
-    #    folder: 'files'
-    #    recursive: true
+        signtool.exe verify /v /pa ${{ inputs.file }}
