@@ -31,9 +31,11 @@ runs:
   using: "composite"
   steps:
     - name: Sign file
+      shell: bash
       run: |
         signtool.exe sign /a /f ${{ inputs.signing-certificate }} /fd ${{ inputs.signing-certificate-hash-alg }} /p ${{ inputs.signing-password }} /tr ${{ inputs.timestamp-url }} /td ${{ inputs.timestamp-hash-alg }} ${{ inputs.file }}
 
     - name: Verify Signing
+      shell: bash
       run: |
         signtool.exe verify /v /pa ${{ inputs.file }}
