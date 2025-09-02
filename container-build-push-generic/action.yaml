@@ -165,21 +165,22 @@ runs:
         image-tags: ${{ steps.meta.outputs.tags }}
         image-digest: ${{ steps.build-and-push.outputs.digest }}
 
-    - name: Container sbom
-      if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
-      uses: docker/scout-action@6ac950eb733f8b2811f25c05d97bfb3d181b8026 # v1.15.1
-      with:
-        command: ${{ inputs.scout-command }}
-        image: ${{ steps.meta.outputs.tags }}
-        dockerhub-user: ${{ inputs.scout-user }}
-        dockerhub-password: ${{ inputs.scout-password }}
-        sarif-file: /tmp/${{ steps.image.outputs.name }}.sarif
-        keep-previous-comments: ${{ inputs.scout-keep-previous-comments }}
+    ### The sbom action causes too many problems on our self-hosted runners ###
+    #- name: Container sbom
+    #  if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
+    #  uses: docker/scout-action@6ac950eb733f8b2811f25c05d97bfb3d181b8026 # v1.15.1
+    #  with:
+    #    command: ${{ inputs.scout-command }}
+    #    image: ${{ steps.meta.outputs.tags }}
+    #    dockerhub-user: ${{ inputs.scout-user }}
+    #    dockerhub-password: ${{ inputs.scout-password }}
+    #    sarif-file: /tmp/${{ steps.image.outputs.name }}.sarif
+    #    keep-previous-comments: ${{ inputs.scout-keep-previous-comments }}
 
-    - name: Upload sbom sarif file
-      if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password && contains(inputs.scout-command, 'sbom') }}
-      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-      with:
-        name: ${{ steps.image.outputs.name }}.sarif
-        path: /tmp/${{ steps.image.outputs.name }}.sarif
-        retention-days: ${{ inputs.sarif-retention-days }}
+    #- name: Upload sbom sarif file
+    #  if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password && contains(inputs.scout-command, 'sbom') }}
+    #  uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+    #  with:
+    #    name: ${{ steps.image.outputs.name }}.sarif
+    #    path: /tmp/${{ steps.image.outputs.name }}.sarif
+    #    retention-days: ${{ inputs.sarif-retention-days }}
