@@ -84,7 +84,7 @@ runs:
         $fd = "${{ inputs.signing-certificate-hash-alg }}".ToUpper()
         $env:SIGN_PASS = "${{ inputs.signing-password }}"
         
-        signtool.exe sign /a /f "${{ inputs.signing-certificate }}" /p "$env:SIGN_PASS" /tr "${{ inputs.timestamp-url }}" /td $td /fd $fd "${{ inputs.file }}"
+        signtool.exe sign /v /a /f "${{ inputs.signing-certificate }}" /p "$env:SIGN_PASS" /tr "${{ inputs.timestamp-url }}" /td $td /fd $fd "${{ inputs.file }}"
         
         if ($LASTEXITCODE -ne 0) {
           Write-Output "::error::SignTool failed with exit code $LASTEXITCODE"
