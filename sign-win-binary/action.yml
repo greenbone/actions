@@ -79,7 +79,7 @@ runs:
     - name: Sign file
       shell: bash
       run: |
-        signtool.exe sign /a /f ${{ inputs.signing-certificate }} /p ${{ inputs.signing-password }} /tr ${{ inputs.timestamp-url }} /td ${{ inputs.timestamp-hash-alg }} /fd ${{ inputs.signing-certificate-hash-alg }} ${{ inputs.file }}
+        signtool.exe sign /v /a /f ${{ inputs.signing-certificate }} /p ${{ inputs.signing-password }} /tr ${{ inputs.timestamp-url }} /td ${{ inputs.timestamp-hash-alg }} /fd ${{ inputs.signing-certificate-hash-alg }} ${{ inputs.file }}
 
     - name: Verify Signing
       shell: bash
