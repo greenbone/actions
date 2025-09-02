@@ -77,11 +77,31 @@ runs:
         Write-Output '::endgroup::'
 
     - name: Sign file
-      shell: bash
-      run: |
-        signtool.exe sign /a /f ${{ inputs.signing-certificate }} /p ${{ inputs.signing-password }} /tr ${{ inputs.timestamp-url }} /td ${{ inputs.timestamp-hash-alg }} /fd ${{ inputs.signing-certificate-hash-alg }} ${{ inputs.file }}
-
+      shell: pwsh 
+      run: |      
+        Write-Output "::group::Signing file"
+        $td = "${{ inputs.timestamp-hash-alg }}".ToUpper()
+        $fd = "${{ inputs.signing-certificate-hash-alg }}".ToUpper()
+        $env:SIGN_PASS = "${{ inputs.signing-password }}"
+        
+        signtool.exe sign /a /f "${{ inputs.signing-certificate }}" /p "$env:SIGN_PASS" /tr "${{ inputs.timestamp-url }}" /td $td /fd $fd "${{ inputs.file }}"
+        
+        if ($LASTEXITCODE -ne 0) {
+          Write-Output "::error::SignTool failed with exit code $LASTEXITCODE"
+          Write-Output "::endgroup::"
+          exit 1
+        }
+        Remove-Item env:SIGN_PASS -ErrorAction SilentlyContinue
+        Write-Output "::endgroup::"
+        
     - name: Verify Signing
-      shell: bash
-      run: |
-        signtool.exe verify /v /pa ${{ inputs.file }}
+      shell: pwsh 
+      run: |       
+        Write-Output "::group::Verifying signature"
+        signtool.exe verify /v /pa "${{ inputs.file }}"
+        if ($LASTEXITCODE -ne 0) {
+          Write-Output "::error::Signature verification failed"
+          Write-Output "::endgroup::"
+          exit 1
+        }
+        Write-Output "::endgroup::"
