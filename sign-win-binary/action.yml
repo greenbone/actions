@@ -33,7 +33,7 @@ runs:
     - name: Write signing certificate to file
       shell: bash
       run: |
-        echo '${{ secrets.SIGNING_CERTIFICATE }}' | base64 -d > signing-certificate.pfx
+        echo '${{ inputs.signing-certificate-base64 }}' | base64 -d > signing-certificate.pfx
         
     - name: Add signtool.exe to PATH
       shell: pwsh
