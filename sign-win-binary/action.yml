@@ -5,8 +5,8 @@ inputs:
   file:
     description: "The file to sign with signtool.exe"
     required: true
-  signing-certificate:
-    description: "The certificate for signing the file"
+  signing-certificate-base64:
+    description: "The certificate for signing the file, base64 encoded"
     required: true
   signing-certificate-hash-alg:
     description: "The hash algorithm used for the signing-certificate"
@@ -30,6 +30,11 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Write signing certificate to file
+      shell: bash
+      run: |
+        echo '${{ secrets.SIGNING_CERTIFICATE }}' | base64 -d > signing-certificate.pfx
+        
     - name: Add signtool.exe to PATH
       shell: pwsh
       run: |
@@ -84,7 +89,7 @@ runs:
         $fd = "${{ inputs.signing-certificate-hash-alg }}".ToUpper()
         $env:SIGN_PASS = "${{ inputs.signing-password }}"
         
-        signtool.exe sign /v /a /f "${{ inputs.signing-certificate }}" /p "$env:SIGN_PASS" /tr "${{ inputs.timestamp-url }}" /td $td /fd $fd "${{ inputs.file }}"
+        signtool.exe sign /v /a /f "signing-certificate.pfx" /p "$env:SIGN_PASS" /tr "${{ inputs.timestamp-url }}" /td $td /fd $fd "${{ inputs.file }}"
         
         if ($LASTEXITCODE -ne 0) {
           Write-Output "::error::SignTool failed with exit code $LASTEXITCODE"
