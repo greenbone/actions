@@ -28,7 +28,7 @@ jobs:
 | Input Variable               | Description                                                         |                                           |
 |------------------------------|---------------------------------------------------------------------|-------------------------------------------|
 | file                         | The file to sign with signtool.exe                                  |                                           |
-| signing-certificate          | The certificate for signing the file                                |                                           |
+| signing-certificate          | The certificate for signing the file                                | Base64 encoded                            |
 | signing-certificate-hash-alg | The hash algorithm used for the signing-certificate                 | Optional: (Default is `"sha512"`)         |
 | signing-password             | The password for the signing certificate                            |                                           |
 | timestamp-url                | The url of the timestamp server                                     |                                           |
