@@ -1,0 +1,107 @@
+name: "Sign Windows Binary"
+description: |
+  "An action to sign Windows binaries."
+inputs:
+  file:
+    description: "The file to sign with signtool.exe"
+    required: true
+  signing-certificate:
+    description: "The certificate for signing the file"
+    required: true
+  signing-certificate-hash-alg:
+    description: "The hash algorithm used for the signing-certificate"
+    default: "sha512"
+    required: false
+  signing-password:
+    description: "The password for the signing certificate"
+    required: true
+  timestamp-url:
+    description: "The url of the timestamp server"
+    required: true
+  timestamp-hash-alg:
+    description: "The hash algorithm used for the timestamp server"
+    default: "sha512"
+    required: false
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add signtool.exe to PATH
+      shell: pwsh
+      run: |
+        Write-Output "::group::powershell $($PSCommandPath)"
+
+        $Action = $env:GITHUB_ACTION_PATH.Substring(($env:GITHUB_ACTION_PATH.IndexOf('_actions/') + 9))
+
+        Write-Output "- Checking runner OS"
+        if ($env:RUNNER_OS -ne 'Windows') {
+        Write-Output "::error::$Action can only run on Windows runners!"
+        exit 1
+        }
+
+        Write-Output '- Checking runner architecture'
+        if ($env:RUNNER_ARCH -notin @('X86', 'X64', 'ARM', 'ARM64')) {
+            Write-Output "::error::$Action does not support your machine's architecture."
+            exit 1
+        }
+
+        try {
+            $Arch = ($env:RUNNER_ARCH).ToLower()
+            $SearchBase = "${env:ProgramFiles(x86)}\Windows Kits\10\bin"
+
+            "Searching `"$SearchBase`" for signtool ($Arch)..."
+            $Tool = Get-ChildItem $SearchBase -Recurse -Force -ErrorAction SilentlyContinue |
+                Where-Object {$_.Name -eq 'signtool.exe' -and $_.Directory -like "*\$Arch"} |
+                Sort-Object -Descending |
+                Select-Object -First 1
+
+            if (!($Tool)) {throw [System.IO.FileNotFoundException]::new('File not found.', 'signtool.exe')}
+
+            'Adding signtool to PATH'
+            $Tool.Directory.FullName | Out-File $env:GITHUB_PATH -Append
+            "signtool-$Arch=$($Tool.FullName)" | Out-File $env:GITHUB_OUTPUT -Append
+            $env:PATH = "$($Tool.Directory.FullName);$env:PATH"
+
+            signtool.exe /h
+        } catch {
+            Write-Output "::error::$($_.Exception)"
+            Write-Output '::endgroup::'
+
+            exit 1
+        }
+
+        Write-Output '::endgroup::'
+
+    - name: Sign file
+      shell: pwsh 
+      run: |      
+        Write-Output "::group::Signing file"
+        $td = "${{ inputs.timestamp-hash-alg }}".ToUpper()
+        $fd = "${{ inputs.signing-certificate-hash-alg }}".ToUpper()
+        $env:SIGN_PASS = "${{ inputs.signing-password }}"
+        
+        signtool.exe sign /v /a /f "${{ inputs.signing-certificate }}" /p "$env:SIGN_PASS" /tr "${{ inputs.timestamp-url }}" /td $td /fd $fd "${{ inputs.file }}"
+        
+        if ($LASTEXITCODE -ne 0) {
+          Write-Output "::error::SignTool failed with exit code $LASTEXITCODE"
+          Write-Output "::endgroup::"
+          exit 1
+        }
+        Remove-Item env:SIGN_PASS -ErrorAction SilentlyContinue
+        Write-Output "::endgroup::"
+        
+    - name: Verify Signing
+      shell: pwsh 
+      run: |       
+        Write-Output "::group::Verifying signature"
+        signtool.exe verify /v /pa "${{ inputs.file }}"
+        if ($LASTEXITCODE -ne 0) {
+          Write-Output "::error::Signature verification failed"
+          Write-Output "::endgroup::"
+          exit 1
+        }
+        Write-Output "::endgroup::"
