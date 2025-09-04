@@ -18,7 +18,7 @@ jobs:
       - uses: greenbone/actions/sign-win-binary@v3.33.0
         with:
           file: "pathToFile"
-          signing-certificate: "someCert.cer"
+          signing-certificate: "someBase64EncodedCertificate"
           signing-password: "somePassword"
           timestamp-url: "https://some.url"
 ```
