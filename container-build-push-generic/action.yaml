@@ -127,9 +127,7 @@ runs:
       env:
         DOCKER_METADATA_ANNOTATIONS_LEVELS: ${{ inputs.meta-annotations-levels }}
 
-    # We need to filter the tags here because the tags from the meta action contain the full URL.
-    # The full URL might include a secret, and secrets cannot be exposed in the output.
-    - name: Filter tags
+    - name: Get tag names
       id: tags
       shell: bash
       run: |
