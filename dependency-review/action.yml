@@ -54,18 +54,12 @@ runs:
           PSF-2.0,
           Python-2.0,
           Python-2.0.1,
+          Unicode-3.0,
           Unicode-DFS-2016,
           Unlicense,
           Zlib,
           ZPL-2.1
 
-# Licenses that are not supported by dependency-review-action:
-# - Unicode-3.0,
-# - ...
-#
-# To be added after https://github.com/actions/dependency-review-action/pull/855
-# is merged upstream.
-#
 # Only single licenses are allowed in this list.
 # A combination of licenses like `License-A AND License-B`
 # is not supported. See:
