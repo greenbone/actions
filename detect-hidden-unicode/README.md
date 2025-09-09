@@ -16,7 +16,7 @@ on:
     runs-on: ubuntu-latest
     steps:
       - name: Detect hidden unicode
-	    uses: greenbone/actions/detect-hidden-unicode@3.33.5
+        uses: greenbone/actions/detect-hidden-unicode@3.33.5
 ```
 
 ## Action Configuration
