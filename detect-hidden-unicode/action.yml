@@ -1,0 +1,39 @@
+name: "Detect hidden unicode"
+description: "Detects hidden unicode in newly committed config files."
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    # According to this comment on SO: https://stackoverflow.com/questions/74265821/get-modified-files-in-github-actions
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 2
+
+    - name: Store a list of the changed files in this PR
+      run: |
+        echo "CHANGED_FILES=$(git diff --name-only HEAD^1 HEAD)" >> $GITHUB_ENV
+
+    - uses: actions/checkout@v5
+      with:
+        repository: juriku/hidden-characters-detector
+        path: hidden-characters-detector
+
+    - name: Install hidden-characters-detector
+      shell: bash
+      run: |
+        cd hidden-characters-detector
+        pip install -r requirements.txt
+        chmod +x hidden-characters-detector.py
+        cd ..
+
+    - name: Run hidden unicode detector against the list of changed files
+      shell: bash
+      run: |
+        echo "Scan the following files for hidden unicode: ${{ env.CHANGED_FILES }}"
+        while IFS= read -r line ;
+        do ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-typographic --check-ivs --fail
+        done <<< "${{ env.CHANGED_FILES }}"
