@@ -38,7 +38,11 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
-        echo "Scan the following files for hidden unicode: ${{ env.CHANGED_FILES }}"
+        echo "Scan the following files for hidden unicode:"
+        echo "${{ env.CHANGED_FILES }}"
         while IFS= read -r line ;
+        echo "SCAN START"
+        echo "CURRENT FILE: $line"
         do ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-ivs --fail
+        echo "SCAN END"
         done <<< "${{ env.CHANGED_FILES }}"
