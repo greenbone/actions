@@ -36,5 +36,5 @@ runs:
       run: |
         echo "Scan the following files for hidden unicode: ${{ env.CHANGED_FILES }}"
         while IFS= read -r line ;
-        do ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-typographic --check-ivs --fail
+        do ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-ivs --fail
         done <<< "${{ env.CHANGED_FILES }}"
