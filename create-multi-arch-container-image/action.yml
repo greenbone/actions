@@ -1,0 +1,74 @@
+name: "Create a Multi-Arch Container Image and Push to Registry"
+
+description: |
+  "Create and push a multi-architecture container image to one or more container registries. "
+  "Requires that the single-arch images are already pushed to the registry and "
+  "you are logged in to the registries."
+
+inputs:
+  digests:
+    description: "List of digests of the single-arch images separated by new lines"
+    required: true
+    default: ""
+  tags:
+    description: "List of tags for the multi-arch image separated by new lines"
+    required: true
+    default: ""
+  annotations:
+    description: "List of annotations for the multi-arch image separated by new lines"
+    required: false
+    default: ""
+  inspect:
+    description: "Whether to inspect the created multi-arch image"
+    required: false
+    default: "true"
+
+branding:
+  icon: "package"
+  color: "green"
+
+outputs:
+  digest:
+    description: "The digest of the created multi-arch image"
+    value: ${{ steps.image.outputs.digest }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
+
+    - name: Create manifest list and push
+      shell: bash
+      id: image
+      run: |
+        set +e
+
+        IFS=$'\n' read -r -d '' -a tags <<< "$(printf '%s\n' '${{ inputs.tags }}' | sort -u)"
+        IFS=$'\n' read -r -d '' -a digests <<< "$(printf '%s\n' '${{ inputs.digests }}' | sort -u)"
+        IFS=$'\n' read -r -d '' -a annotations <<< "$(printf '%s\n' '${{ inputs.annotations }}' | sort -u)"
+
+        echo "Tags: ${tags[@]}"
+        echo "Digests: ${digests[@]}"
+        echo "Annotations: ${annotations[@]}"
+
+        echo "tag=${tags[0]}" >> $GITHUB_OUTPUT
+
+        set -e -o pipefail
+
+        IFS=$'\n'; a=(); for l in "${annotations[@]}"; do a+=(--annotation "$l"); done;
+        IFS=$'\n'; t=(); for l in "${tags[@]}"; do t+=(--tag "$l") ; done;
+
+        echo "Used arguments: ${a[@]} ${t[@]} ${digests[@]}"
+
+        out=$(docker buildx imagetools create --progress rawjson "${a[@]}" "${t[@]}" "${digests[@]}" 2>&1)
+
+        digest=$(echo "$out" | tail -1 | jq -r '.vertexes[0].digest')
+        echo "Digest: $digest"
+        echo "digest=$digest" >> $GITHUB_OUTPUT
+
+    - name: Inspect image
+      if: ${{ inputs.inspect == 'true' }}
+      shell: bash
+      run: |
+        docker buildx imagetools inspect ${{ steps.image.outputs.tag }}
