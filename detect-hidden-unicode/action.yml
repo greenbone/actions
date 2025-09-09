@@ -19,7 +19,7 @@ runs:
       run: |
         {
           echo 'CHANGED_FILES<<EOF'
-          git diff --name-only HEAD^1 HEAD
+          echo '$(git diff --name-only HEAD^1 HEAD)'
           echo EOF
         } ‍>> "$GITHUB_ENV"
 
