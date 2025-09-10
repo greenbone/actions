@@ -11,7 +11,7 @@ runs:
     # According to this comment on SO: https://stackoverflow.com/questions/74265821/get-modified-files-in-github-actions
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       with:
-        fetch-depth: 2
+        fetch-depth: 1
 
     # ‍https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
     # https://medium.com/@ibraheemabukaff/github-actions-exporting-multi-line-one-line-value-environment-variable-5bb86d01e866
