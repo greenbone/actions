@@ -62,7 +62,7 @@ runs:
         echo "SCAN END"
 
     - name: Update format of PR Comment, publish it and fail if necessary
-      if: ${{ inputs.pr_comment == true || inputs.pr_comment == 'true' }}
+      if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
       shell: bash
       run: |
         # Update formatting
