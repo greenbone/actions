@@ -23,4 +23,4 @@ on:
 
 |Input Variable|Description| |
 |--------------|-----------|-|
-|              |           | |
+| github-token | GH Token for writing/editing a comment to/in a PR | |
