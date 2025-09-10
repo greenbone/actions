@@ -64,12 +64,12 @@ runs:
       shell: bash
       run: |
         # Update formatting
-        sed -i -e 's/============================================================//g'
-        sed -i -e 's/Scan the following files/# Scan the following files/g'
-        sed -i -e 's/SCAN START/## SCAN START/g'
-        sed -i -e 's/SCAN END/## SCAN END/g'
-        sed -i -e 's/CURRENT FILE/### CURRENT FILE/g'
-        sed -i -e 's/SCAN SUMMARY/#### SCAN SUMMARY/g'
+        sed -i -e 's/============================================================//g' PR_COMMENT.md
+        sed -i -e 's/Scan the following files/# Scan the following files/g' PR_COMMENT.md
+        sed -i -e 's/SCAN START/## SCAN START/g' PR_COMMENT.md
+        sed -i -e 's/SCAN END/## SCAN END/g' PR_COMMENT.md
+        sed -i -e 's/CURRENT FILE/### CURRENT FILE/g' PR_COMMENT.md
+        sed -i -e 's/SCAN SUMMARY/#### SCAN SUMMARY/g' PR_COMMENT.md
         
         # Write a comment to the PR, which contains the Scan Output
         gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
