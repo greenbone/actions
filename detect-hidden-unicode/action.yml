@@ -9,7 +9,7 @@ runs:
   using: "composite"
   steps:
     # According to this comment on SO: https://stackoverflow.com/questions/74265821/get-modified-files-in-github-actions
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       with:
         fetch-depth: 2
 
@@ -24,7 +24,7 @@ runs:
 
     - uses: actions/checkout@v5
       with:
-        repository: juriku/hidden-characters-detector
+        repository: juriku/hidden-characters-detector@1b9032901a872bfd8748afa83907cd8c5dc3c5bb
         path: hidden-characters-detector
 
     - name: Install hidden-characters-detector
