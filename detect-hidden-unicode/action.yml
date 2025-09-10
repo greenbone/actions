@@ -57,8 +57,6 @@ runs:
           ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-ivs | tee -a PR_COMMENT.md
         done <<< "${{ env.CHANGED_FILES }}"
         echo "SCAN END" | tee -a PR_COMMENT.md
-      env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
 
     - name: Update format of PR Comment, publish it and fail if necessary
       shell: bash
@@ -76,3 +74,5 @@ runs:
 
         # Fail if Markers have been found
         grep -vqz "Status: MARKERS FOUND" PR_COMMENT.md
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
