@@ -26,3 +26,4 @@ on:
 |Input Variable|Description| |
 |--------------|-----------|-|
 | github-token | GH Token for writing/editing a comment to/in a PR | |
+| pr-comment | Write a summary of the scan as comment to the PR | |
