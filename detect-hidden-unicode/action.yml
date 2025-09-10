@@ -1,6 +1,11 @@
 name: "Detect hidden unicode"
 description: "Detects hidden unicode in newly committed config files."
 
+inputs:
+  github-token:
+  description: "GH Token for writing/editing a comment to/in a PR"
+  required: true
+
 branding:
   icon: "package"
   color: "green"
@@ -59,4 +64,4 @@ runs:
         # Fail if Markers have been found
         grep -vqz "Status: MARKERS FOUND" PR_COMMENT.md
       env:
-        GITHUB_TOKEN: ${{ secrets.GREENBONE_BOT_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
