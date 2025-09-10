@@ -22,10 +22,11 @@ runs:
         echo "$(git diff --name-only HEAD^1 HEAD)" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       with:
         repository: juriku/hidden-characters-detector@1b9032901a872bfd8748afa83907cd8c5dc3c5bb
         path: hidden-characters-detector
+        ref: 1b9032901a872bfd8748afa83907cd8c5dc3c5bb # main at 10. September 2025
 
     - name: Install hidden-characters-detector
       shell: bash
