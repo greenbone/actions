@@ -39,12 +39,24 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
-        echo "Scan the following files for hidden unicode:" >> $GITHUB_STEP_SUMMARY
-        echo "${{ env.CHANGED_FILES }}" >> $GITHUB_STEP_SUMMARY
+        touch PR_COMMENT.md
+        
+        echo "# Scan the following files for hidden unicode:" | tee -a PR_COMMENT.md
+        echo "${{ env.CHANGED_FILES }}" | tee -a PR_COMMENT.md
+
+        # Scan for every line in CHANGED_FILES
+        echo "## SCAN START" | tee -a PR_COMMENT.md
         while IFS= read -r line
         do 
-          echo "SCAN START" >> $GITHUB_STEP_SUMMARY
-          echo "CURRENT FILE: $line" >> $GITHUB_STEP_SUMMARY
-          ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-ivs --fail >> $GITHUB_STEP_SUMMARY
-          echo "SCAN END" >> $GITHUB_STEP_SUMMARY
+          echo "### CURRENT FILE: $line" | tee -a PR_COMMENT.md
+          ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-ivs | tee -a PR_COMMENT.md
         done <<< "${{ env.CHANGED_FILES }}"
+        echo "## SCAN END" | tee -a PR_COMMENT.md
+
+        # Write a comment to the PR, which contains the Scan Output
+        gh pr comment ${{ github.event.pull_request.number }} --body-file pr_comment.md --create-if-none --edit-last
+
+        # Fail if Markers have been found
+        grep -vqz "Status: MARKERS FOUND" PR_COMMENT.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GREENBONE_BOT_TOKEN }}
