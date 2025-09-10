@@ -3,8 +3,8 @@ description: "Detects hidden unicode in newly committed config files."
 
 inputs:
   github-token:
-  description: "GH Token for writing/editing a comment to/in a PR"
-  required: true
+    description: "GH Token for writing/editing a comment to/in a PR"
+    required: true
 
 branding:
   icon: "package"
