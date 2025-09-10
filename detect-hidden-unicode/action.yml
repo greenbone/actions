@@ -5,6 +5,9 @@ inputs:
   github-token:
     description: "GH Token for writing/editing a comment to/in a PR"
     required: true
+  pr-comment:
+    description: "Write a summary of the scan as comment to the PR"
+    default: true
 
 branding:
   icon: "package"
@@ -59,6 +62,7 @@ runs:
         echo "SCAN END"
 
     - name: Update format of PR Comment, publish it and fail if necessary
+      if: ${{ inputs.pr_comment == true || inputs.pr_comment == 'true' }}
       shell: bash
       run: |
         # Update formatting
