@@ -1,0 +1,38 @@
+name: "Trigger Harbor Replication"
+
+description: "Trigger a replication in a Harbor registry."
+
+inputs:
+  registry:
+    description: "The URL of the Harbor registry (without https://)"
+    required: true
+  token:
+    description: "The token to authenticate with the Harbor registry"
+    required: true
+  user:
+    description: "The user to authenticate with the Harbor registry"
+    required: true
+  policy-id:
+    description: "The replication policy ID to trigger"
+    required: false
+    default: "1"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Trigger harbor replication
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.token }}" ]; then
+          echo "::error::Registry replication token is missing"
+          exit 1
+        fi
+        curl --fail-with-body -X POST \
+          https://${{ inputs.registry }}/api/v2.0/replication/executions \
+          -u '${{ inputs.user }}:${{ inputs.token }}' \
+          -H "Content-Type: application/json" \
+          -d '{"policy_id": ${{ inputs.policy-id }}}'
