@@ -61,8 +61,17 @@ runs:
 
         echo "Used arguments: ${a[@]} ${t[@]} ${digests[@]}"
 
+        set +e
         out=$(docker buildx imagetools create --progress rawjson "${a[@]}" "${t[@]}" "${digests[@]}" 2>&1)
+        exit_code="$?"
 
+        if [ "$exit_code" -ne 0 ]; then
+          echo "Imagetools failed with exit code $exit_code"
+          echo "$out"
+          exit 1
+        fi
+
+        set -e
         digest=$(echo "$out" | tail -1 | jq -r '.vertexes[0].digest')
         echo "Digest: $digest"
         echo "digest=$digest" >> $GITHUB_OUTPUT
