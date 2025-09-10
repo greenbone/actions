@@ -59,7 +59,7 @@ runs:
         echo "## SCAN END" | tee -a PR_COMMENT.md
 
         # Write a comment to the PR, which contains the Scan Output
-        gh pr comment ${{ github.event.pull_request.number }} --body-file pr_comment.md --create-if-none --edit-last
+        gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
 
         # Fail if Markers have been found
         grep -vqz "Status: MARKERS FOUND" PR_COMMENT.md
