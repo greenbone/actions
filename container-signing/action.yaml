@@ -15,6 +15,9 @@ inputs:
   cosign-tlog-upload:
     description: "Turn on or turn off the cosign tlog upload function. Possible options: true/false Default: true"
     default: "true"
+  skip-installation-on:
+    description: Skip installation on selected runner. Default is self-hosted-generic.
+    default: "self-hosted-generic"
 
 branding:
   icon: "package"
@@ -23,7 +26,10 @@ branding:
 runs:
   using: "composite"
   steps:
-    - uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+    - name: Install cosign
+      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
+      uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+
     - name: Sign container image (public/private keypair)
       if: ${{ inputs.cosign-key-password && inputs.cosign-key }}
       shell: bash
@@ -39,6 +45,7 @@ runs:
           -r \
           --key env://COSIGN_KEY \
           {}@${{ inputs.image-digest }}
+
     - name: Sign the published Container Image (Keyless)
       if: ${{ !inputs.cosign-key-password || !inputs.cosign-key }}
       shell: bash
