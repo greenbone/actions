@@ -57,11 +57,19 @@ runs:
           ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-ivs | tee -a PR_COMMENT.md
         done <<< "${{ env.CHANGED_FILES }}"
         echo "## SCAN END" | tee -a PR_COMMENT.md
+        echo "#"
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
 
+    - name: Write PR Comment and fail if necessary
+      shell: bash
+      run: |
+        # Update formatting
+        sed -i -e 's/============================================================//g'
+        sed -i -e 's/SCAN SUMMARY/#### SCAN SUMMARY/g'
+        
         # Write a comment to the PR, which contains the Scan Output
         gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
 
         # Fail if Markers have been found
         grep -vqz "Status: MARKERS FOUND" PR_COMMENT.md
-      env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
