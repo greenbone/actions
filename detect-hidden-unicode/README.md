@@ -17,6 +17,8 @@ on:
     steps:
       - name: Detect hidden unicode
         uses: greenbone/actions/detect-hidden-unicode@3.33.5
+        with:
+          github-token: ${{ secrets.GREENBONE_BOT_TOKEN }}
 ```
 
 ## Action Configuration
