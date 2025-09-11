@@ -1,0 +1,44 @@
+name: Download a Digest
+
+description: |
+  "Downloads container image digest files as artifacts and determines their "
+  "contents. Because it is not possible to use outputs in a matrix strategy, "
+  "this action can be used to collect the digests of multiple images built in "
+  "parallel jobs."
+
+inputs:
+  path:
+    description: "The path to download the digest files to. Default is a temporary directory."
+    required: false
+    default: "${{ runner.temp }}/digests"
+  pattern:
+    description: "The pattern to match digest files. Default is 'digests-*'."
+    required: false
+    default: "digests-*"
+
+outputs:
+  digests:
+    description: |
+      "The combined contents of all downloaded digest files. Separated by "
+      "newlines."
+    value: ${{ steps.digests.outputs.digests }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download digests
+      uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+      with:
+        path: ${{ inputs.path }}
+        pattern: ${{ inputs.pattern }}
+        merge-multiple: true
+
+    - name: Determine digests
+      id: digests
+      shell: bash
+      run: |
+        {
+          echo 'digests<<EOF' >> $GITHUB_OUTPUT
+          cat "${{ inputs.path }}"/* >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+        }
