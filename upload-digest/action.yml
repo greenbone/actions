@@ -1,0 +1,28 @@
+name: Upload a Digest
+
+description: "Uploads a container image digest file as an artifact."
+
+inputs:
+  digest:
+    description: "The digest of the container image to upload (should include the image name)."
+    required: true
+  name:
+    description: "The name of the artifact to create."
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Export digest
+      shell: bash
+      run: |
+        mkdir -p ${{ runner.temp }}/digests
+        echo "${{ inputs.digest }}" > "${{ runner.temp }}/digests/${{ inputs.name }}"
+
+    - name: Upload digest
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ runner.temp }}/digests/*
+        if-no-files-found: error
+        retention-days: 1
