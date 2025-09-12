@@ -98,6 +98,6 @@ runs:
         out='${{ steps.inspect.outputs.summary }}'
         echo "## Multi-Arch Container Image Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY"
+        echo '```' >> $GITHUB_STEP_SUMMARY
         echo "$out" >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY"
+        echo '```' >> $GITHUB_STEP_SUMMARY
