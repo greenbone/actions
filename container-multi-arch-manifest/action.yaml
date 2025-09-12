@@ -3,7 +3,7 @@ description: Create a multi-arch image.
 
 inputs:
   annotations:
-    description: "New line seperated annotation list."
+    description: "New line separated annotation list."
   cosign-key:
     description: "Cosign key to sign the image. Will be skipped if empty. Default is empty."
   cosign-key-password:
@@ -12,10 +12,10 @@ inputs:
     description: "Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true."
     default: "true"
   digests:
-    description: "New line seperated container image digest list."
+    description: "New line separated container image digest list."
     required: true
   tags:
-    description: "New line seperated tag list. This or meta-tags are required. Default is empty."
+    description: "New line separated tag list. This or meta-tags are required. Default is empty."
   meta-tags:
     description: "Docker meta action tag list. This or tags are required. Default is empty."
   url:
@@ -98,7 +98,7 @@ runs:
           echo echo "Imagetools failed with exit code $exit_code"
           exit 1
         fi
-        # Get maifest digest
+        # Get manifest digest
         manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}' | sort -u)
         set -e
         # Check manifest digest

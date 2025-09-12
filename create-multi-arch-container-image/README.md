@@ -78,6 +78,7 @@ jobs:
 | tags        | New line separated list of tags for the created multi-arg image.                       | Required                 |
 | annotations | New line separated list of annotations for the created multi-arch image.               | Optional                 |
 | inspect     | Whether to display inspect information of the created multi-arch image                 | Optional (default: true) |
+| summary     | Whether to display a job summary with information of the created multi-arch image      | Optional (default: true) |
 
 ## Output
 

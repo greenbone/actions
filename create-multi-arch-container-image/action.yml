@@ -22,6 +22,10 @@ inputs:
     description: "Whether to inspect the created multi-arch image"
     required: false
     default: "true"
+  summary:
+    description: "Whether to show a job summary for the created multi-arch image"
+    required: false
+    default: "true"
 
 branding:
   icon: "package"
@@ -77,7 +81,22 @@ runs:
         echo "digest=$digest" >> $GITHUB_OUTPUT
 
     - name: Inspect image
-      if: ${{ inputs.inspect == 'true' }}
+      id: inspect
+      if: ${{ inputs.inspect == 'true' || inputs.summary == 'true'}}
       shell: bash
       run: |
-        docker buildx imagetools inspect ${{ steps.image.outputs.tag }}
+        out=$(docker buildx imagetools inspect ${{ steps.image.outputs.tag }})
+        echo "$out"
+        echo "summary<<EOF" >> $GITHUB_OUTPUT
+        echo "$out" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Add summary
+      if: ${{ inputs.summary == 'true' }}
+      shell: bash
+      run: |
+        echo "## Multi-Arch Container Image Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY"
+        echo "${{ steps.inspect.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY"
