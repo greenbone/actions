@@ -1,0 +1,86 @@
+[tool.poetry]
+name = "detect-hidden-unicode"                                      # FIXME
+version = "0.0.1"
+description = "Detect hidden unicode"
+authors = ["Greenbone <info@greenbone.net>"]
+license = "AGPL-3.0-or-later"
+readme = "README.md"
+
+classifiers = [
+  # Full list: https://pypi.org/pypi?%3Aaction=list_classifiers
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)", # pylint: disable=line-too-long
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+packages = [
+  { include = "src" },
+  { include = "tests", format = "sdist" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+shtab = ">=1.6.5"
+
+[tool.poetry.group.dev.dependencies]
+pontos = ">=22.10.0"
+autohooks-plugin-black = ">=23.10.0"
+autohooks-plugin-ruff = ">=23.10.0"
+autohooks-plugin-mypy = ">=23.10.0"
+coverage = ">=7.2.7"
+
+[tool.black]
+line-length = 80
+target-version = ["py39", "py310", "py311", "py312"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.autohooks]
+mode = "poetry"
+pre-commit = [
+  "autohooks.plugins.black",
+  "autohooks.plugins.ruff",
+  "autohooks.plugins.mypy",
+]
+
+[tool.pontos.version]
+version-module-file = "src/__version__.py" # FIXME
+
+[tool.ruff]
+line-length = 80
+target-version = "py39"
+extend-select = ["I", "PLE", "PLW"]
+
+[tool.poetry.scripts]
+src-app = 'src:main'
+
+[tool.mypy]
+files = "src"
+ignore_missing_imports = true
+explicit_package_bases = true
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*", "*/__init__.py"]
+source = ["src"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
