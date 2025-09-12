@@ -95,8 +95,9 @@ runs:
       if: ${{ inputs.summary == 'true' }}
       shell: bash
       run: |
+        out='${{ steps.inspect.outputs.summary }}'
         echo "## Multi-Arch Container Image Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY"
-        echo "${{ steps.inspect.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
+        echo "$out" >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY"
