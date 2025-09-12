@@ -2,6 +2,14 @@ name: "Detect hidden unicode"
 description: "Detects hidden unicode in newly committed config files."
 
 inputs:
+  python-version:
+    description: "Python version to use for running the action"
+    default: "3.10"
+  poetry-version:
+    description: "Use a specific poetry version. By default the latest release is used."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
+    default: "true"
   github-token:
     description: "GH Token for writing/editing a comment to/in a PR"
     required: true
@@ -30,34 +38,30 @@ runs:
         echo "$(git diff --name-only HEAD^1 HEAD)" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
 
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+    - name: Set up Python and Poetry
+      uses: greenbone/actions/poetry@v3
       with:
-        repository: juriku/hidden-characters-detector
-        path: hidden-characters-detector
-        ref: 1b9032901a872bfd8748afa83907cd8c5dc3c5bb # main at 10. September 2025
-
-    - name: Install hidden-characters-detector
-      shell: bash
-      run: |
-        cd hidden-characters-detector
-        pip install -r requirements.txt
-        chmod +x hidden-characters-detector.py
-        cd ..
+        python-version: ${{ inputs.python-version }}
+        poetry-version: ${{ inputs.poetry-version }}
+        working-directory: ${{ github.action_path }}
+        without-dev: "true"
+        cache-dependency-path: ${{ github.action_path }}/poetry.lock
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
 
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
         touch PR_COMMENT.md
-        
+
         echo "Scan the following files for hidden unicode:" | tee -a PR_COMMENT.md
         echo "${{ env.CHANGED_FILES }}" | tee -a PR_COMMENT.md
 
         # Scan for every line in CHANGED_FILES
         echo "SCAN START"
         while IFS= read -r line
-        do 
+        do
           echo "CURRENT FILE: $line" | tee -a PR_COMMENT.md
-          ./hidden-characters-detector/hidden-characters-detector.py -f $line --check-ivs | tee -a PR_COMMENT.md
+          poetry run detect-hidden-unicode -f $line | tee -a PR_COMMENT.md
         done <<< "${{ env.CHANGED_FILES }}"
         echo "SCAN END"
 
@@ -66,11 +70,10 @@ runs:
       shell: bash
       run: |
         # Update formatting
-        sed -i -e 's/============================================================//g' PR_COMMENT.md
         sed -i -e 's/Scan the following files/# Scan the following files/g' PR_COMMENT.md
         sed -i -e 's/CURRENT FILE/## CURRENT FILE/g' PR_COMMENT.md
         sed -i -e 's/SCAN SUMMARY/### SCAN SUMMARY/g' PR_COMMENT.md
-        
+
         # Write a comment to the PR, which contains the Scan Output
         gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
 
