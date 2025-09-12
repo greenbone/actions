@@ -1,0 +1,95 @@
+name: "Build a Container Image and Push to Registry by Digest"
+
+description: |
+  "An action to build a container image and optionally push it to a container "
+  "registry by digest only."
+
+branding:
+  icon: "package"
+  color: "green"
+
+inputs:
+  images:
+    description: |
+      "List of container image names to create and push, separated by newlines. "
+      "The image names have to include the registry and repository only, but "
+      "not the tag. Example: ghcr.io/greenbone/gvmd."
+    required: true
+    default: ""
+  annotations:
+    description: "List of custom annotations separated by newlines."
+    default: ""
+    required: false
+  labels:
+    description: "List of custom labels separated by newlines."
+    default: ""
+    required: false
+  context:
+    description: "The build context for the Docker build. Default is the current working directory."
+    required: false
+    default: "."
+  dockerfile:
+    description: "The path to the Dockerfile to use for the build. Default is {context}/Dockerfile."
+    required: false
+    default: ""
+  provenance:
+    description: "Whether to enable or disable provenance generation. Default is 'false'."
+    required: false
+    default: "false"
+  oci-mediatypes:
+    description: "Whether to use OCI instead of docker media types. Default is 'true'."
+    required: false
+    default: "true"
+  push:
+    description: "Whether to push the built image to the registry. Default is 'true'."
+    required: false
+    default: "true"
+  build-args:
+    description: "A newline separated list of build arguments to pass to the Docker build. Example: 'ARG1=value1\nARG2=value2'."
+    required: false
+    default: ""
+  platforms:
+    description: "A comma-separated list of target platforms for the build. Default is 'linux/amd64'."
+    required: false
+    default: "linux/amd64"
+  setup-qemu:
+    description: "Whether to set up QEMU for cross-platform builds. Default is 'false'."
+    required: false
+    default: "false"
+
+outputs:
+  digest:
+    description: "The digest of the pushed container image."
+    value: ${{ steps.build.outputs.digest }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up QEMU
+      if: ${{ inputs.setup-qemu == 'true' }}
+      uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
+      with:
+        images: ${{ inputs.images }}
+        labels: ${{ inputs.labels }}
+        annotations: ${{ inputs.annotations }}
+
+    - name: Build and push by digest
+      id: build
+      uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v6.9.0
+      with:
+        annotations: ${{ steps.meta.outputs.annotations }}
+        build-args: ${{ inputs.build-args }}
+        context: ${{ inputs.context }}
+        file: ${{ inputs.dockerfile }}
+        labels: ${{ steps.meta.outputs.labels }}
+        platforms: ${{ inputs.platforms }}
+        provenance: ${{ inputs.provenance }}
+        tags: ${{ inputs.images }}
+        outputs: type=image,oci-mediatypes=${{ inputs.oci-mediatypes }},name-canonical=true,push-by-digest=true,push=${{ inputs.push }}
