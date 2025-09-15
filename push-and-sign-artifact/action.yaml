@@ -40,7 +40,9 @@ inputs:
     type: string
     description: "md5sum of oras."
     default: 'fdfe4d2a888d0c1c5780b2fd6961b7b7'
-
+  skip-installation-on:
+    description: Skip installation on selected runner. Default is self-hosted-generic.
+    default: "self-hosted-generic"
 
 branding:
   icon: "package"
@@ -50,7 +52,7 @@ runs:
   using: "composite"
   steps:
       - name: Setup oras
-        if: inputs.registry-token
+        if: ${{ inputs.registry-token && !startsWith(runner.name, inputs.skip-installation-on) }}
         shell: bash
         run: |
           VERSION="${{ inputs.oras-version }}"
