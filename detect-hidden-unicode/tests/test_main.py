@@ -3,12 +3,15 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import unittest
+import sys
 
 from src.main import parse_args
 
 
 class ParseArgsTestCase(unittest.TestCase):
     def test_parse_args(self):
-        args = parse_args(["--some-arg", "foo"])
+        sys.argv.append("--some-arg")
+        sys.argv.append("foo")
+        args = parse_args()
 
         self.assertEqual(args.some_arg, "foo")
