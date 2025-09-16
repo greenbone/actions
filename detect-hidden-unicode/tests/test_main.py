@@ -10,7 +10,7 @@ from src.main import parse_args
 
 class ParseArgsTestCase(unittest.TestCase):
     def test_parse_args(self):
-        sys.argv.append("--some-arg")
+        sys.argv.append("filepath")
         sys.argv.append("foo")
         args = parse_args()
 
