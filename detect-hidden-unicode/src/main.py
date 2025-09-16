@@ -207,6 +207,7 @@ def scan_file(file_path):
    line_nr = 0
    column_nr = 0
 
+   print (f"Current file: {file_path}")
    with open(file_path) as fileobj:
        for line in fileobj:
            line_nr += 1
@@ -221,12 +222,15 @@ def scan_file(file_path):
 
    end_time = time.perf_counter()
    elapsed_time = end_time - start_time
-   print (f"{detected_markers} hidden markers detected in {file_path}")
+   if detected_markers == 0:
+       print (f"Nothing detected in {file_path}")
+   else:
+       print (f"{detected_markers} hidden markers detected in {file_path}")
    print (f"Scanning {file_path} took {elapsed_time:.2f} seconds")
    return detected_markers
 
 def main():
-   args = parse_args(sys.argv)
+   args = parse_args()
    scan_file(args.filepath)
 
 
