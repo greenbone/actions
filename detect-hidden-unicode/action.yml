@@ -67,6 +67,8 @@ runs:
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
       shell: bash
       run: |
+        cd ${{ github.action_path }}
+      
         # Update formatting
         sed -i -e 's/Scan the following files/# Scan the following files/g' PR_COMMENT.md
         sed -i -e 's/Current file/## Current file/g' PR_COMMENT.md
