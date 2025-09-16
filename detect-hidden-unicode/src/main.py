@@ -15,3 +15,8 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
     parser.add_argument("--some-arg", help="Something")
 
     return parser.parse_args(args)
+
+def main():
+    parse_args
+if __name__ == "__main__":
+    main()
