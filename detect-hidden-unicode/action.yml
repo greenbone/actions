@@ -51,24 +51,22 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
-        cd ${{ github.action_path }}
         touch PR_COMMENT.md
+        cd ${{ github.action_path }}
 
-        echo "Scan the following files for hidden unicode:" | tee -a PR_COMMENT.md
-        echo "${{ env.CHANGED_FILES }}" | tee -a PR_COMMENT.md
+        echo "Scan the following files for hidden unicode:" | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
+        echo "${{ env.CHANGED_FILES }}" | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
 
         # Scan for every line in CHANGED_FILES
         while IFS= read -r line
         do
-          poetry run detect-hidden-unicode "$GITHUB_WORKSPACE/$line" | tee -a PR_COMMENT.md
+          poetry run detect-hidden-unicode "$GITHUB_WORKSPACE/$line" | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
         done <<< "${{ env.CHANGED_FILES }}"
 
     - name: Update format of PR Comment, publish it and fail if necessary
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
       shell: bash
       run: |
-        cd ${{ github.action_path }}
-      
         # Update formatting
         sed -i -e 's/Scan the following files/# Scan the following files/g' PR_COMMENT.md
         sed -i -e 's/Current file/## Current file/g' PR_COMMENT.md
