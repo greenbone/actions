@@ -60,7 +60,7 @@ runs:
         # Scan for every line in CHANGED_FILES
         while IFS= read -r line
         do
-          poetry run detect-hidden-unicode $line | tee -a PR_COMMENT.md
+          poetry run detect-hidden-unicode "$GITHUB_WORKSPACE/$line" | tee -a PR_COMMENT.md
         done <<< "${{ env.CHANGED_FILES }}"
 
     - name: Update format of PR Comment, publish it and fail if necessary
