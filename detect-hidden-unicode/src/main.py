@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 from argparse import ArgumentParser, Namespace
+from typing import Optional, Sequence
 from typing import Dict
 
 import shtab
@@ -187,13 +188,13 @@ HIDDEN_TAG_MARKERS: Dict[str, str] = {
     '\U000E007F': "CANCEL TAG (U+E007F)",
 }
 
-def parse_args() -> Namespace:
+def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    parser = ArgumentParser()
    shtab.add_argument_to(parser)
 
    parser.add_argument("filepath", help="Path to file, which should be scanned")
 
-   return parser.parse_args()
+   return parser.parse_args(args)
 
 def print_marker(desc, line_nr, column_nr, file_path, detected_markers):
    detected_markers += 1
@@ -222,9 +223,10 @@ def scan_file(file_path):
    elapsed_time = end_time - start_time
    print (f"{detected_markers} hidden markers detected in {file_path}")
    print (f"Scanning {file_path} took {elapsed_time:.2f} seconds")
+   return detected_markers
 
 def main():
-   args = parse_args()
+   args = parse_args(sys.argv)
    scan_file(args.filepath)
 
 

@@ -4,14 +4,27 @@
 
 import unittest
 import sys
+import os
 
-from src.main import parse_args
-
+from src.main import parse_args, print_marker, scan_file
 
 class ParseArgsTestCase(unittest.TestCase):
     def test_parse_args(self):
-        sys.argv.append("filepath")
-        sys.argv.append("foo")
-        args = parse_args()
+        args = parse_args(["foo"])
 
-        self.assertEqual(args.some_arg, "foo")
+        self.assertEqual(args.filepath, "foo")
+
+class PrintMarkerTestCase(unittest.TestCase):
+    def test_print_marker(self):
+        detected_markers = 0
+        detected_markers = print_marker('b', 1, 1, "fakePath", detected_markers)
+
+        self.assertEqual(detected_markers, 1)
+
+class ScanFileTestCase(unittest.TestCase):
+    def test_scan_file(self):
+        file_path = "509_pillar-security_example"
+        detected_markers = 0
+        detected_markers = scan_file(file_path)
+
+        self.assertEqual(detected_markers, 509)
