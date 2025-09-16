@@ -51,6 +51,7 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
+        cd ${{ github.action_path }}
         touch PR_COMMENT.md
 
         echo "Scan the following files for hidden unicode:" | tee -a PR_COMMENT.md
