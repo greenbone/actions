@@ -57,13 +57,10 @@ runs:
         echo "${{ env.CHANGED_FILES }}" | tee -a PR_COMMENT.md
 
         # Scan for every line in CHANGED_FILES
-        echo "SCAN START"
         while IFS= read -r line
         do
-          echo "CURRENT FILE: $line" | tee -a PR_COMMENT.md
-          poetry run detect-hidden-unicode -f $line | tee -a PR_COMMENT.md
+          poetry run detect-hidden-unicode $line | tee -a PR_COMMENT.md
         done <<< "${{ env.CHANGED_FILES }}"
-        echo "SCAN END"
 
     - name: Update format of PR Comment, publish it and fail if necessary
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
@@ -71,13 +68,12 @@ runs:
       run: |
         # Update formatting
         sed -i -e 's/Scan the following files/# Scan the following files/g' PR_COMMENT.md
-        sed -i -e 's/CURRENT FILE/## CURRENT FILE/g' PR_COMMENT.md
-        sed -i -e 's/SCAN SUMMARY/### SCAN SUMMARY/g' PR_COMMENT.md
+        sed -i -e 's/Current file/## Current file/g' PR_COMMENT.md
 
         # Write a comment to the PR, which contains the Scan Output
         gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
 
         # Fail if Markers have been found
-        grep -vqz "Status: MARKERS FOUND" PR_COMMENT.md
+        grep -vqz "hidden markers detected" PR_COMMENT.md
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
