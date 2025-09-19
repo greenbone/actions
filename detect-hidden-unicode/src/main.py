@@ -10,6 +10,7 @@ import shtab
 import time
 import subprocess
 import os
+import re
 
 HIDDEN_MARKERS: Dict[str, str] = {
     # Zero Width Characters
@@ -195,6 +196,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    shtab.add_argument_to(parser)
 
    parser.add_argument("repopath", help="Path to local git repository")
+   parser.add_argument("--filter", help="Regex all changed files are filtered by")
    parser.add_argument("-s", "--silent", action='store_true')
 
    return parser.parse_args(args)
@@ -239,6 +241,7 @@ def scan_file(silent, file_path):
 
 
 def main():
+   ### TODO Refactor main and write another test -- Fix tests
    args = parse_args()
 
    os.chdir(args.repopath)
@@ -246,26 +249,30 @@ def main():
    raw_changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout
    changed_files = raw_changed_files.splitlines()
 
+   if args.filter != "":
+     regex = re.compile(args.filter)
+     changed_files = [ c_file for c_file in changed_files if regex.match(c_file) ]
+
    file_count = len(changed_files)
 
    # Multiple files
    if file_count > 1:
 
-      ### 5. TODO Refactor main and write another test -- Fix tests
-      ### 4. TODO Add & Apply filter on this files
 
       print ("# Scanning the following files:")
       print (f"{raw_changed_files}")
 
       print()
       for cur_file in changed_files:
-         print (f"## Scan: '{cur_file.strip()}'")
-         scan_file(args.silent, cur_file.strip())
+         cur_file = cur_file.strip()
+         print (f"## Scan: '{cur_file}'")
+         scan_file(args.silent, cur_file)
 
    # Single file
    elif file_count == 1:
-      print (f"# Scan: '{changed_files.strip()}'")
-      scan_file(args.silent, changed_files.strip())
+      changed_files = changed_files[0].strip()
+      print (f"# Scan: '{changed_files}'")
+      scan_file(args.silent, changed_files)
 
 if __name__ == "__main__":
     main()
