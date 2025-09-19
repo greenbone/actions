@@ -30,6 +30,7 @@ on:
 | cache-poetry-installation | Cache poetry and its dependencies by setting it to 'true'. | Optional. Disabled by default. |
 | github-token | GH Token for writing/editing a comment to/in a PR | |
 | pr-comment | Write a summary of the scan as comment to the PR | |
+| detect-hidden-unicode-args | Args passed to detect-hidden-unicode script | |
 
 ## Run detect-hidden-unicode python script locally
 

@@ -8,6 +8,8 @@ from typing import Dict
 
 import shtab
 import time
+import subprocess
+import os
 
 HIDDEN_MARKERS: Dict[str, str] = {
     # Zero Width Characters
@@ -192,25 +194,30 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    parser = ArgumentParser()
    shtab.add_argument_to(parser)
 
-   parser.add_argument("filepath", help="Path to file, which should be scanned")
+   parser.add_argument("repopath", help="Path to local git repository")
+   parser.add_argument("-s", "--silent", action='store_false')
 
    return parser.parse_args(args)
 
-def print_marker(desc, line_nr, column_nr, file_path, detected_markers):
+def print_marker(silent, desc, line_nr, column_nr, file_path, detected_markers):
    detected_markers += 1
-   print (f"{desc}, found at line {line_nr} and column {column_nr} in file {file_path}")
+   if not silent:
+      print (f"{desc}, found at line {line_nr} and column {column_nr} in file {file_path}")
    return detected_markers
 
-def scan_file(file_path):
+def scan_file(silent, file_path):
    start_time = time.perf_counter()
    detected_markers = 0
    line_nr = 0
    column_nr = 0
 
-   print (f"Current file: {file_path}")
    with open(file_path) as fileobj:
        for line in fileobj:
+
            line_nr += 1
+           if detected_markers == 1 and not silent:
+              print("```")
+
            for current_char in line:
                column_nr += 1
                if current_char in HIDDEN_MARKERS:
@@ -222,17 +229,44 @@ def scan_file(file_path):
 
    end_time = time.perf_counter()
    elapsed_time = end_time - start_time
+
    if detected_markers == 0:
        print (f"Nothing detected in {file_path}")
    else:
+       if not silent:
+          print ("```")
        print (f"{detected_markers} hidden markers detected in {file_path}")
-   print (f"Scanning {file_path} took {elapsed_time:.2f} seconds")
+   print (f"Scan took {elapsed_time:.2f} seconds")
    return detected_markers
+
 
 def main():
    args = parse_args()
-   scan_file(args.filepath)
 
+   os.chdir(args.repopath)
+
+    # ‍https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
+    # https://medium.com/@ibraheemabukaff/github-actions-exporting-multi-line-one-line-value-environment-variable-5bb86d01e866
+   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout
+
+   # Multiple files
+   if type(changed_files) == type(["i am a", "list of strings"]):
+
+      ### 5. TODO Refactor main and write another test
+      ### 4. TODO Add & Apply filter on this files
+
+      print ("# Scanning the following files:")
+      print (f"{changed_files}")
+
+      print()
+      for cur_file in changed_files:
+         print (f"## Scan: '{cur_file.strip()}'")
+         scan_file(args.silent, cur_file.strip())
+
+   # Single file
+   else:
+      print (f"# Scan: '{changed_files.strip()}'")
+      scan_file(args.silent, changed_files.strip())
 
 if __name__ == "__main__":
     main()
