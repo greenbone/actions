@@ -252,7 +252,7 @@ def main():
    # Multiple files
    if type(changed_files) == type(["i am a", "list of strings"]):
 
-      ### 5. TODO Refactor main and write another test
+      ### 5. TODO Refactor main and write another test -- Fix tests
       ### 4. TODO Add & Apply filter on this files
 
       print ("# Scanning the following files:")
