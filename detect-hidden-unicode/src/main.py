@@ -195,14 +195,16 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    shtab.add_argument_to(parser)
 
    parser.add_argument("repopath", help="Path to local git repository")
-   parser.add_argument("-s", "--silent", action='store_false')
+   parser.add_argument("-s", "--silent", action='store_true')
 
    return parser.parse_args(args)
 
 def print_marker(silent, desc, line_nr, column_nr, file_path, detected_markers):
-   detected_markers += 1
    if not silent:
+      if detected_markers == 0:
+         print("```")
       print (f"{desc}, found at line {line_nr} and column {column_nr} in file {file_path}")
+   detected_markers += 1
    return detected_markers
 
 def scan_file(silent, file_path):
@@ -213,11 +215,7 @@ def scan_file(silent, file_path):
 
    with open(file_path) as fileobj:
        for line in fileobj:
-
            line_nr += 1
-           if detected_markers == 1 and not silent:
-              print("```")
-
            for current_char in line:
                column_nr += 1
                if current_char in HIDDEN_MARKERS:
@@ -245,12 +243,12 @@ def main():
 
    os.chdir(args.repopath)
 
-    # ‍https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
-    # https://medium.com/@ibraheemabukaff/github-actions-exporting-multi-line-one-line-value-environment-variable-5bb86d01e866
-   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout
+   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
+
+   file_count = len(changed_files)
 
    # Multiple files
-   if type(changed_files) == type(["i am a", "list of strings"]):
+   if file_count > 1:
 
       ### 5. TODO Refactor main and write another test -- Fix tests
       ### 4. TODO Add & Apply filter on this files
@@ -264,7 +262,7 @@ def main():
          scan_file(args.silent, cur_file.strip())
 
    # Single file
-   else:
+   elif file_count == 1:
       print (f"# Scan: '{changed_files.strip()}'")
       scan_file(args.silent, changed_files.strip())
 
