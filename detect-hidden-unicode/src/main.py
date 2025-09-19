@@ -196,7 +196,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    shtab.add_argument_to(parser)
 
    parser.add_argument("repopath", help="Path to local git repository")
-   parser.add_argument("--filter", help="Regex all changed files are filtered by")
+   parser.add_argument("--filter", help="Regex all changed files are filtered by", default="")
    parser.add_argument("-s", "--silent", action='store_true')
 
    return parser.parse_args(args)
