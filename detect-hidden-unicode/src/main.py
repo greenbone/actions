@@ -243,7 +243,8 @@ def main():
 
    os.chdir(args.repopath)
 
-   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
+   raw_changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout
+   changed_files = raw_changed_files.splitlines()
 
    file_count = len(changed_files)
 
@@ -254,7 +255,7 @@ def main():
       ### 4. TODO Add & Apply filter on this files
 
       print ("# Scanning the following files:")
-      print (f"{changed_files}")
+      print (f"{raw_changed_files}")
 
       print()
       for cur_file in changed_files:
