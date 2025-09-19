@@ -221,11 +221,11 @@ def scan_file(silent, file_path):
            for current_char in line:
                column_nr += 1
                if current_char in HIDDEN_MARKERS:
-                   detected_markers = print_marker(HIDDEN_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(silent, HIDDEN_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
                elif current_char in HIDDEN_IDEOGRAPHIC_MARKERS:
-                   detected_markers = print_marker(HIDDEN_IDEOGRAPHIC_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(silent, HIDDEN_IDEOGRAPHIC_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
                elif current_char in HIDDEN_TAG_MARKERS:
-                   detected_markers = print_marker(HIDDEN_TAG_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(silent, HIDDEN_TAG_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
 
    end_time = time.perf_counter()
    elapsed_time = end_time - start_time
