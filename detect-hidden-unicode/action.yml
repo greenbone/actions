@@ -16,6 +16,10 @@ inputs:
   pr-comment:
     description: "Write a summary of the scan as comment to the PR"
     default: true
+  detect-hidden-unicode-args:
+    description: "Args passed to detect-hidden-unicode script"
+    default: ""
+
 
 branding:
   icon: "package"
@@ -28,15 +32,6 @@ runs:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       with:
         fetch-depth: 2
-
-    # ‍https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
-    # https://medium.com/@ibraheemabukaff/github-actions-exporting-multi-line-one-line-value-environment-variable-5bb86d01e866
-    - name: Store a list of the changed files in this PR
-      shell: bash
-      run: |
-        echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-        echo "$(git diff --name-only HEAD^1 HEAD)" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
 
     - name: Set up Python and Poetry
       uses: greenbone/actions/poetry@v3
@@ -53,24 +48,12 @@ runs:
       run: |
         touch PR_COMMENT.md
         cd ${{ github.action_path }}
-
-        echo "Scan the following files for hidden unicode:" | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
-        echo "${{ env.CHANGED_FILES }}" | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
-
-        # Scan for every line in CHANGED_FILES
-        while IFS= read -r line
-        do
-          poetry run detect-hidden-unicode "$GITHUB_WORKSPACE/$line" | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
-        done <<< "${{ env.CHANGED_FILES }}"
+        poetry run detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ inputs.detect-hidden-unicode-args }} | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
 
     - name: Update format of PR Comment, publish it and fail if necessary
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
       shell: bash
       run: |
-        # Update formatting
-        sed -i -e 's/Scan the following files/# Scan the following files/g' PR_COMMENT.md
-        sed -i -e 's/Current file/## Current file/g' PR_COMMENT.md
-
         # Write a comment to the PR, which contains the Scan Output
         gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
 
