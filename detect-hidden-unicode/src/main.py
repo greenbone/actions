@@ -246,8 +246,7 @@ def main():
 
    os.chdir(args.repopath)
 
-   raw_changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout
-   changed_files = raw_changed_files.splitlines()
+   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
 
    if args.filter != "":
      regex = re.compile(args.filter)
@@ -257,10 +256,9 @@ def main():
 
    # Multiple files
    if file_count > 1:
-
-
       print ("# Scanning the following files:")
-      print (f"{raw_changed_files}")
+      for cur_file in changed_files:
+         print (f"{cur_file.strip()}")
 
       print()
       for cur_file in changed_files:
