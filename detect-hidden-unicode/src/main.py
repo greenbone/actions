@@ -277,7 +277,9 @@ def scan_changed_files(silent, changed_files):
 
    elif file_count == 1:
       return scan_single_changed_file(silent, changed_files[0])
-
+       
+   return 0
+    
 def parse_args_and_scan_changed_files():
    args = parse_args()
    changed_files = get_changed_files_and_apply_filter(args)
