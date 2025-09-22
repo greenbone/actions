@@ -38,7 +38,6 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
-        touch PR_COMMENT.md
         detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ inputs.detect-hidden-unicode-args }} | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
 
     - name: Publish PR Comment
