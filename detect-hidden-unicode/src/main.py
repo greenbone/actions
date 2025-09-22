@@ -201,9 +201,9 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
    return parser.parse_args(args)
 
-def get_changed_files_and_apply_filter(args):
+def get_changed_files_and_apply_filter(args, commitA="HEAD^1", commitB="HEAD"):
    os.chdir(args.repopath)
-   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
+   changed_files = subprocess.run(["git", "diff", "--name-only", commitA, commitB, "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
 
    if args.filter != "":
      regex = re.compile(args.filter)
@@ -250,6 +250,8 @@ def scan_file(silent, file_path):
    return detected_markers
 
 def scan_multiple_changed_files(silent, changed_files):
+   detected_markers = 0
+
    print ("# Scanning the following files:")
    for cur_file in changed_files:
       print (f"{cur_file.strip()}")
@@ -258,21 +260,23 @@ def scan_multiple_changed_files(silent, changed_files):
    for cur_file in changed_files:
       cur_file = cur_file.strip()
       print (f"## Scan: '{cur_file}'")
-      scan_file(args.silent, cur_file)
+      detected_markers += scan_file(silent, cur_file)
+
+   return detected_markers
 
 def scan_single_changed_file(silent, changed_file):
    stripped_file = changed_file.strip()
    print (f"# Scan: '{stripped_file}'")
-   scan_file(silent, stripped_file)
+   return scan_file(silent, stripped_file)
 
 def scan_changed_files(silent, changed_files):
    file_count = len(changed_files)
 
    if file_count > 1:
-      scan_multipe_changed_files(silent, changed_files)
+      return scan_multiple_changed_files(silent, changed_files)
 
    elif file_count == 1:
-      scan_single_changed_file(silent, changed_files[0])
+      return scan_single_changed_file(silent, changed_files[0])
 
 def parse_args_and_scan_changed_files():
    args = parse_args()
