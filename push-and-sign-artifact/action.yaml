@@ -52,7 +52,7 @@ runs:
   using: "composite"
   steps:
       - name: Setup oras
-        if: ${{ inputs.registry-token && !startsWith(runner.name, inputs.skip-installation-on) }}
+        if: ${{ inputs.registry-token && (!startsWith(runner.name, inputs.skip-installation-on)) }}
         shell: bash
         run: |
           VERSION="${{ inputs.oras-version }}"
