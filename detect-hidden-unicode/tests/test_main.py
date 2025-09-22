@@ -4,7 +4,7 @@
 
 import unittest
 
-from src.main import parse_args, get_changed_files_and_apply_filter, print_marker, scan_file, scan_multiple_changed_files, scan_single_changed_file, scan_changed_files, parse_args_and_scan_changed_files
+from src.main import parse_args, get_changed_files_and_apply_filter, print_marker, scan_file, scan_multiple_changed_files, scan_single_changed_file, scan_changed_files
 
 class ParseArgsTestCase(unittest.TestCase):
     def test_parse_args(self):
