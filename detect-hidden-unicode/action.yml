@@ -47,8 +47,10 @@ runs:
       run: |
         # Write a comment to the PR, which contains the Scan Output
         gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
-
-        # Fail if Markers have been found
-        grep -vqz "hidden markers detected" PR_COMMENT.md
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+
+    - name: Fail if markers are detected
+      shell: bash
+      run: |
+        grep -vqz "hidden markers detected" PR_COMMENT.md
