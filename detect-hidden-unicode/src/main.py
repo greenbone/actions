@@ -201,6 +201,16 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
    return parser.parse_args(args)
 
+def get_changed_files_and_apply_filter(args):
+   os.chdir(args.repopath)
+   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
+
+   if args.filter != "":
+     regex = re.compile(args.filter)
+     changed_files = [ c_file for c_file in changed_files if regex.match(c_file) ]
+
+   return changed_files
+
 def print_marker(silent, desc, line_nr, column_nr, file_path, detected_markers):
    if not silent:
       if detected_markers == 0:
@@ -239,38 +249,39 @@ def scan_file(silent, file_path):
    print (f"Scan took {elapsed_time:.2f} seconds")
    return detected_markers
 
+def scan_multiple_changed_files(silent, changed_files):
+   print ("# Scanning the following files:")
+   for cur_file in changed_files:
+      print (f"{cur_file.strip()}")
 
-def main():
-   ### TODO Refactor main and write another test -- Fix tests
-   args = parse_args()
+   print()
+   for cur_file in changed_files:
+      cur_file = cur_file.strip()
+      print (f"## Scan: '{cur_file}'")
+      scan_file(args.silent, cur_file)
 
-   os.chdir(args.repopath)
+def scan_single_changed_file(silent, changed_file):
+   stripped_file = changed_file.strip()
+   print (f"# Scan: '{stripped_file}'")
+   scan_file(silent, stripped_file)
 
-   changed_files = subprocess.run(["git", "diff", "--name-only", "HEAD^1", "HEAD", "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
-
-   if args.filter != "":
-     regex = re.compile(args.filter)
-     changed_files = [ c_file for c_file in changed_files if regex.match(c_file) ]
-
+def scan_changed_files(silent, changed_files):
    file_count = len(changed_files)
 
-   # Multiple files
    if file_count > 1:
-      print ("# Scanning the following files:")
-      for cur_file in changed_files:
-         print (f"{cur_file.strip()}")
+      scan_multipe_changed_files(silent, changed_files)
 
-      print()
-      for cur_file in changed_files:
-         cur_file = cur_file.strip()
-         print (f"## Scan: '{cur_file}'")
-         scan_file(args.silent, cur_file)
-
-   # Single file
    elif file_count == 1:
-      changed_files = changed_files[0].strip()
-      print (f"# Scan: '{changed_files}'")
-      scan_file(args.silent, changed_files)
+      scan_single_changed_file(silent, changed_files[0])
+
+def parse_args_and_scan_changed_files():
+   args = parse_args()
+   changed_files = get_changed_files_and_apply_filter(args)
+
+   scan_changed_files(args.silent, changed_files)
+
+def main():
+   parse_args_and_scan_changed_files()
 
 if __name__ == "__main__":
     main()
