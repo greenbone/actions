@@ -5,11 +5,6 @@ inputs:
   python-version:
     description: "Python version to use for running the action"
     default: "3.10"
-  poetry-version:
-    description: "Use a specific poetry version. By default the latest release is used."
-  cache-poetry-installation:
-    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
-    default: "true"
   github-token:
     description: "GH Token for writing/editing a comment to/in a PR"
     required: true
@@ -28,29 +23,25 @@ branding:
 runs:
   using: "composite"
   steps:
+    - name: Install detect-hidden-unicode
+      uses: greenbone/actions/uv@v3
+      with:
+        install: "."
+        python-version: ${{ inputs.python-version }}
+        working-directory: ${{ github.action_path }}
+  
     # According to this comment on SO: https://stackoverflow.com/questions/74265821/get-modified-files-in-github-actions
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       with:
         fetch-depth: 2
 
-    - name: Set up Python and Poetry
-      uses: greenbone/actions/poetry@v3
-      with:
-        python-version: ${{ inputs.python-version }}
-        poetry-version: ${{ inputs.poetry-version }}
-        working-directory: ${{ github.action_path }}
-        without-dev: "true"
-        cache-dependency-path: ${{ github.action_path }}/poetry.lock
-        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
-
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
         touch PR_COMMENT.md
-        cd ${{ github.action_path }}
-        poetry run detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ inputs.detect-hidden-unicode-args }} | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
+        detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ inputs.detect-hidden-unicode-args }} | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
 
-    - name: Update format of PR Comment, publish it and fail if necessary
+    - name: Publish PR Comment and fail if necessary
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
       shell: bash
       run: |
