@@ -41,7 +41,7 @@ runs:
         touch PR_COMMENT.md
         detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ inputs.detect-hidden-unicode-args }} | tee -a "$GITHUB_WORKSPACE/PR_COMMENT.md"
 
-    - name: Publish PR Comment and fail if necessary
+    - name: Publish PR Comment
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
       shell: bash
       run: |
