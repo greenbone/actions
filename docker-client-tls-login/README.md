@@ -21,7 +21,7 @@ jobs:
           client-key: ${{ secrets.GREENBONE_CLIENT_KEY }}
       - name: Pull Docker image
         run: |
-          docker pull packages.greenbone.net/gvm/gvmd:latest
+          docker pull packages.greenbone.net/some-greenbone-image:latest
 ```
 
 ## Action Configuration
