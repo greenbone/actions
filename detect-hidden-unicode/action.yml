@@ -26,7 +26,7 @@ runs:
     - name: Install detect-hidden-unicode
       uses: greenbone/actions/uv@v3
       with:
-        install: "."
+        install: "${{ github.action_path }}/."
         python-version: ${{ inputs.python-version }}
         working-directory: ${{ github.action_path }}
   
