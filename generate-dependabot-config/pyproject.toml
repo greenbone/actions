@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "generate-dependabot-config-action"
+version = "0.1.0"
+description = "Generate a dependabot config file according to existing githubn actions and python porojects in the repository."
+authors = ["Henning Sprang <henning.sprang@greenbone.net>"]
+license = "GPLv3+"
+readme = "README.md"
+packages = [
+    { include = "action" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+jinja2 = "^3.1.6"
+
+[tool.poetry.scripts]
+generate-dependabot-config = 'action.dependabot_config_generator:main'
+
+[tool.poetry.group.dev.dependencies]
+pyyaml = "^6.0.2"
+pytest = "^8.4.0"
+
+[tool.black]
+line-length = 80
+target-version = ["py312", "py313"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.github
+  | \.vscode
+  | \.idea
+  | _build
+  | build
+  | dist
+  | docs
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
