@@ -225,7 +225,7 @@ def scan_file(silent, file_path):
    line_nr = 0
    column_nr = 0
 
-   with open(file_path) as fileobj:
+   with open(file_path, encoding="utf-8") as fileobj:
        for line in fileobj:
            line_nr += 1
            for current_char in line:
