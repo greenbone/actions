@@ -24,7 +24,7 @@ class GetChangedFilesAndApplyFilterTestCase(unittest.TestCase):
 class PrintMarkerTestCase(unittest.TestCase):
     def test_print_marker(self):
         detected_markers = 0
-        detected_markers = print_marker('b', "description", 1, 1, "fakePath", detected_markers)
+        detected_markers = print_marker(False, "description", 1, 1, "fakePath", detected_markers)
 
         self.assertEqual(detected_markers, 1)
 
