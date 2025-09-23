@@ -80,7 +80,7 @@ class GeneratorTestCase(unittest.TestCase):
             generator.generate_dependabot_config()
 
             result_file_path = os.path.join(test_tmp_dir, ".github", "dependabot.yml")
-            with open(result_file_path, "rb", encoding="utf-8") as result_file:
+            with open(result_file_path, "r", encoding="utf-8") as result_file:
                 test_result_data = yaml.safe_load(result_file.read())
 
             print(action_directories)

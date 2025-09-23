@@ -68,7 +68,7 @@ class DependabotConfigGenerator:
             python_project_dirs=python_project_dirs,
         )
 
-        with open(join(self.repository_path, ".github/dependabot.yml"), "w") as f:
+        with open(join(self.repository_path, ".github/dependabot.yml"), "w", encoding="utf-8") as f:
             f.write(dependabot_file_content)
 
 
