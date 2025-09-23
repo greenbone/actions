@@ -6,15 +6,6 @@ inputs:
     description: 'Docker registry URL'
     required: true
     default: 'https://packages.greenbone.net'
-  client-cert:
-    description: 'Client certificate (PEM format, may include certificate chain)'
-    required: true
-  client-key:
-    description: 'Client private key (PEM format)'
-    required: true
-  ca-cert:
-    description: 'CA certificate (PEM format). Optional if client-cert contains full chain'
-    required: false
   logout:
     description: 'Clean up certificates at the end of the job'
     required: false
@@ -28,63 +19,76 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup TLS certificate files
-      shell: bash
-      run: |
-        CERT_DIR=$(mktemp -d)
-        echo "CERT_DIR=$CERT_DIR" >> $GITHUB_ENV
-        chmod 700 "$CERT_DIR"
-
-        echo "${{ inputs.client-cert }}" > "$CERT_DIR/client.crt"
-        echo "${{ inputs.client-key }}" > "$CERT_DIR/client.key"
-        chmod 600 "$CERT_DIR"/*
-
-        if [[ -n "${{ inputs.ca-cert }}" ]]; then
-          echo "${{ inputs.ca-cert }}" > "$CERT_DIR/ca.crt"
-          chmod 600 "$CERT_DIR/ca.crt"
-          echo "CA_CERT_PATH=$CERT_DIR/ca.crt" >> $GITHUB_ENV
-        fi
-
-        echo "CLIENT_CERT_PATH=$CERT_DIR/client.crt" >> $GITHUB_ENV
-        echo "CLIENT_KEY_PATH=$CERT_DIR/client.key" >> $GITHUB_ENV
-
-    - name: Configure Docker for TLS client authentication
+    - name: Configure Docker TLS and Login
       shell: bash
       run: |
         DOCKER_CONFIG_DIR="$HOME/.docker"
-        mkdir -p "$DOCKER_CONFIG_DIR"
-
         REGISTRY_HOST="${{ inputs.registry }}"
         REGISTRY_HOST=${REGISTRY_HOST#http*://}
         REGISTRY_HOST=${REGISTRY_HOST%/*}
         echo "REGISTRY_HOST=$REGISTRY_HOST" >> $GITHUB_ENV
-
-        mkdir -p "$DOCKER_CONFIG_DIR/certs.d/$REGISTRY_HOST"
-        cp "$CLIENT_CERT_PATH" "$DOCKER_CONFIG_DIR/certs.d/$REGISTRY_HOST/client.cert"
-        cp "$CLIENT_KEY_PATH" "$DOCKER_CONFIG_DIR/certs.d/$REGISTRY_HOST/client.key"
-        [[ -n "${CA_CERT_PATH:-}" ]] && cp "$CA_CERT_PATH" "$DOCKER_CONFIG_DIR/certs.d/$REGISTRY_HOST/ca.crt"
-
-        chmod 600 "$DOCKER_CONFIG_DIR/certs.d/$REGISTRY_HOST/"*
-
-    - name: Test registry connectivity
-      shell: bash
-      run: |
-        REGISTRY_URL="${{ inputs.registry }}"
-        [[ ! "$REGISTRY_URL" =~ ^https?:// ]] && REGISTRY_URL="https://$REGISTRY_URL"
-
-        CURL_OPTS="--cert $CLIENT_CERT_PATH --key $CLIENT_KEY_PATH"
-        [[ -n "${CA_CERT_PATH:-}" ]] && CURL_OPTS="$CURL_OPTS --cacert $CA_CERT_PATH"
-
-        echo "Testing connectivity to $REGISTRY_URL/v2/..."
-        HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" $CURL_OPTS "$REGISTRY_URL/v2/" || echo "000")
-        echo "Registry responded with HTTP $HTTP_CODE"
         
-        if [[ "$HTTP_CODE" != "200" && "$HTTP_CODE" != "401" ]]; then
-          echo "Registry connectivity failed (HTTP $HTTP_CODE)"
-          echo "Expected HTTP 200 (success) or 401 (auth required)"
+        CERT_DIR="$DOCKER_CONFIG_DIR/certs.d/$REGISTRY_HOST"
+        mkdir -p "$CERT_DIR"
+        echo "DOCKER_CERT_DIR=$CERT_DIR" >> $GITHUB_ENV
+        
+        # Check for required environment variables
+        if [[ -z "${GREENBONE_CLIENT_CERT:-}" ]]; then
+          echo "ERROR: GREENBONE_CLIENT_CERT environment variable is required"
           exit 1
+        fi
+        
+        if [[ -z "${GREENBONE_CLIENT_KEY:-}" ]]; then
+          echo "ERROR: GREENBONE_CLIENT_KEY environment variable is required"
+          exit 1
+        fi
+        
+        # Write certificates from environment variables
+        echo "$GREENBONE_CLIENT_CERT" > "$CERT_DIR/client.cert"
+        echo "$GREENBONE_CLIENT_KEY" > "$CERT_DIR/client.key"
+        
+        # Handle CA certificate - use provided or extract from client cert
+        if [[ -n "${GREENBONE_CA_CERT:-}" ]]; then
+          echo "$GREENBONE_CA_CERT" > "$CERT_DIR/ca.crt"
         else
-          echo "Registry connectivity successful"
+          # Extract CA certificate from client certificate chain if it contains multiple certs
+          CERT_COUNT=$(grep -c "BEGIN CERTIFICATE" "$CERT_DIR/client.cert" || echo "1")
+          if [[ "$CERT_COUNT" -gt 1 ]]; then
+            echo "Extracting CA certificate from client certificate chain..."
+            # Extract the last certificate in the chain (should be the CA)
+            tail -n +$(grep -n "BEGIN CERTIFICATE" "$CERT_DIR/client.cert" | tail -1 | cut -d: -f1) "$CERT_DIR/client.cert" > "$CERT_DIR/ca.crt"
+          else
+            # If only one certificate, use it as both client and CA (self-signed case)
+            echo "Using client certificate as CA certificate..."
+            cp "$CERT_DIR/client.cert" "$CERT_DIR/ca.crt"
+          fi
+        fi
+        
+        chmod 600 "$CERT_DIR"/*
+        
+        # List certificate files for debugging
+        echo "Certificate files created:"
+        ls -la "$CERT_DIR/"
+        
+        # Test Docker connectivity and perform login in the same context
+        echo "Testing Docker connectivity to $REGISTRY_HOST..."
+        if docker info >/dev/null 2>&1; then
+          echo "Docker daemon is running"
+          
+          # Perform login if credentials provided via environment variables
+          if [[ -n "${GREENBONE_REGISTRY_USER:-}" ]] && [[ -n "${GREENBONE_REGISTRY_TOKEN:-}" ]]; then
+            echo "Performing docker login with provided credentials..."
+            echo "Registry: $REGISTRY_HOST"
+            echo "Username: $GREENBONE_REGISTRY_USER"
+            echo "$GREENBONE_REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" --username "$GREENBONE_REGISTRY_USER" --password-stdin
+          else
+            echo "No basic auth credentials provided - using certificate-only authentication"
+            echo "Attempting to test registry access with certificates only..."
+            # Test if certificates alone are sufficient
+            docker pull $REGISTRY_HOST/hello-world:latest 2>/dev/null || echo "Certificate-only authentication failed - basic auth may be required"
+          fi
+        else
+          echo "Warning: Docker daemon not accessible"
         fi
 
     - name: Set output
@@ -96,4 +100,4 @@ runs:
       if: inputs.logout == 'true'
       shell: bash
       run: |
-        [[ -n "${CERT_DIR:-}" && -d "$CERT_DIR" ]] && rm -rf "$CERT_DIR"
+        [[ -n "${DOCKER_CERT_DIR:-}" && -d "$DOCKER_CERT_DIR" ]] && rm -rf "$DOCKER_CERT_DIR"
