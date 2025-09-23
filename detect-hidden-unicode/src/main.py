@@ -280,14 +280,11 @@ def scan_changed_files(silent, changed_files):
        
    return 0
     
-def parse_args_and_scan_changed_files():
+def main():
    args = parse_args()
    changed_files = get_changed_files_and_apply_filter(args)
 
    scan_changed_files(args.silent, changed_files)
-
-def main():
-   parse_args_and_scan_changed_files()
 
 if __name__ == "__main__":
     main()
