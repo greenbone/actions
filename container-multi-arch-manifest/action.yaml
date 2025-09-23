@@ -99,7 +99,7 @@ runs:
           exit 1
         fi
         # Get manifest digest
-        manifest_digest=$(echo "$out" | tail -2 | grep -o 'sha256:[a-f0-9]\{64\}' | sort -u)
+        manifest_digest=$(echo "$out" | grep -o 'sha256:[a-f0-9]\{64\}' | tail -1)
         set -e
         # Check manifest digest
         if ! [ "$manifest_digest" ]; then
