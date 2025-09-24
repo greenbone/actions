@@ -1,0 +1,103 @@
+name: 'Docker Login with Client TLS Certificates'
+description: 'Configure Docker to use client TLS certificates for mutual authentication'
+
+inputs:
+  registry:
+    description: 'Docker registry URL'
+    required: true
+    default: 'https://packages.greenbone.net'
+  logout:
+    description: 'Clean up certificates at the end of the job'
+    required: false
+    default: 'true'
+
+outputs:
+  registry:
+    description: 'Registry that was configured'
+    value: ${{ steps.set-output.outputs.registry }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure Docker TLS and Login
+      shell: bash
+      run: |
+        DOCKER_CONFIG_DIR="$HOME/.docker"
+        REGISTRY_HOST="${{ inputs.registry }}"
+        REGISTRY_HOST=${REGISTRY_HOST#http*://}
+        REGISTRY_HOST=${REGISTRY_HOST%/*}
+        echo "REGISTRY_HOST=$REGISTRY_HOST" >> $GITHUB_ENV
+        
+        CERT_DIR="$DOCKER_CONFIG_DIR/certs.d/$REGISTRY_HOST"
+        mkdir -p "$CERT_DIR"
+        echo "DOCKER_CERT_DIR=$CERT_DIR" >> $GITHUB_ENV
+        
+        # Check for required environment variables
+        if [[ -z "${GREENBONE_CLIENT_CERT:-}" ]]; then
+          echo "ERROR: GREENBONE_CLIENT_CERT environment variable is required"
+          exit 1
+        fi
+        
+        if [[ -z "${GREENBONE_CLIENT_KEY:-}" ]]; then
+          echo "ERROR: GREENBONE_CLIENT_KEY environment variable is required"
+          exit 1
+        fi
+        
+        # Write certificates from environment variables
+        echo "$GREENBONE_CLIENT_CERT" > "$CERT_DIR/client.cert"
+        echo "$GREENBONE_CLIENT_KEY" > "$CERT_DIR/client.key"
+        
+        # Handle CA certificate - use provided or extract from client cert
+        if [[ -n "${GREENBONE_CA_CERT:-}" ]]; then
+          echo "$GREENBONE_CA_CERT" > "$CERT_DIR/ca.crt"
+        else
+          # Extract CA certificate from client certificate chain if it contains multiple certs
+          CERT_COUNT=$(grep -c "BEGIN CERTIFICATE" "$CERT_DIR/client.cert" || echo "1")
+          if [[ "$CERT_COUNT" -gt 1 ]]; then
+            echo "Extracting CA certificate from client certificate chain..."
+            # Extract the last certificate in the chain (should be the CA)
+            tail -n +$(grep -n "BEGIN CERTIFICATE" "$CERT_DIR/client.cert" | tail -1 | cut -d: -f1) "$CERT_DIR/client.cert" > "$CERT_DIR/ca.crt"
+          else
+            # If only one certificate, use it as both client and CA (self-signed case)
+            echo "Using client certificate as CA certificate..."
+            cp "$CERT_DIR/client.cert" "$CERT_DIR/ca.crt"
+          fi
+        fi
+        
+        chmod 600 "$CERT_DIR"/*
+        
+        # List certificate files for debugging
+        echo "Certificate files created:"
+        ls -la "$CERT_DIR/"
+        
+        # Test Docker connectivity and perform login in the same context
+        echo "Testing Docker connectivity to $REGISTRY_HOST..."
+        if docker info >/dev/null 2>&1; then
+          echo "Docker daemon is running"
+          
+          # Perform login if credentials provided via environment variables
+          if [[ -n "${GREENBONE_REGISTRY_USER:-}" ]] && [[ -n "${GREENBONE_REGISTRY_TOKEN:-}" ]]; then
+            echo "Performing docker login with provided credentials..."
+            echo "Registry: $REGISTRY_HOST"
+            echo "Username: $GREENBONE_REGISTRY_USER"
+            echo "$GREENBONE_REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" --username "$GREENBONE_REGISTRY_USER" --password-stdin
+          else
+            echo "No basic auth credentials provided - using certificate-only authentication"
+            echo "Attempting to test registry access with certificates only..."
+            # Test if certificates alone are sufficient
+            docker pull $REGISTRY_HOST/hello-world:latest 2>/dev/null || echo "Certificate-only authentication failed - basic auth may be required"
+          fi
+        else
+          echo "Warning: Docker daemon not accessible"
+        fi
+
+    - name: Set output
+      id: set-output
+      shell: bash
+      run: echo "registry=$REGISTRY_HOST" >> $GITHUB_OUTPUT
+
+    - name: Cleanup certificates (if logout enabled)
+      if: inputs.logout == 'true'
+      shell: bash
+      run: |
+        [[ -n "${DOCKER_CERT_DIR:-}" && -d "$DOCKER_CERT_DIR" ]] && rm -rf "$DOCKER_CERT_DIR"
