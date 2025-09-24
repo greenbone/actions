@@ -254,7 +254,7 @@ def scan_multiple_changed_files(silent: bool, changed_files: list[str]):
 
    print ("# Scanning the following files:")
    for cur_file in changed_files:
-      print (f"{cur_file.strip()}")
+      print (f"`{cur_file.strip()}`")
 
    print()
    for cur_file in changed_files:
