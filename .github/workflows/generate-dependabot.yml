@@ -1,8 +1,5 @@
 name: Generate dependabot config
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
