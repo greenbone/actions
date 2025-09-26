@@ -111,6 +111,18 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
+    directory: "/detect-hidden-unicode"
+    schedule:
+      interval: "weekly"
+      time: "04:00"
+    commit-message:
+      prefix: "Deps"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
     directory: "/doc-coverage-clang"
     schedule:
       interval: "weekly"
@@ -402,6 +414,7 @@ updates:
     directories:
       - "/backport-pull-request/"
       - "/conventional-commits/"
+      - "/detect-hidden-unicode/"
       - "/download-artifact/"
       - "/generate-dependabot-config/"
       - "/helm-version-upgrade/"
