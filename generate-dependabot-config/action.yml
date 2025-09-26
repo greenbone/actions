@@ -52,7 +52,7 @@ runs:
             -c user.name="${{ github.actor }}" \
             -c user.email="${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com" \
             commit \
-            -m "[skip ci] Update dependabot config" \
+            -m "Deps: Update dependabot config" \
             --author="${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>" \
             ${config_file}
         else
