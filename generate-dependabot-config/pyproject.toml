@@ -17,7 +17,7 @@ jinja2 = "^3.1.6"
 generate-dependabot-config = 'action.dependabot_config_generator:main'
 
 [tool.poetry.group.dev.dependencies]
-pyyaml = "^6.0.2"
+pyyaml = "^6.0.3"
 pytest = "^8.4.2"
 
 [tool.black]
