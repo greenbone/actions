@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Docker TLS Certificates
-        uses: greenbone/actions/sdocker-client-tls-login@v1.0.0
+        uses: greenbone/actions/docker-client-tls-login@v1.0.0
         with:
           registry-url: packages.greenbone.net
           client-cert: ${{ secrets.GREENBONE_CLIENT_CERT }}
