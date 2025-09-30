@@ -1,8 +1,8 @@
-# Docker Client TLS Login
+# Docker TLS Certificate Login Action
 
-GitHub Action to configure Docker with client TLS certificates for registry authentication.
+This GitHub Action configures Docker to use client TLS certificates for secure registry authentication (mutual TLS).
 
-## Example
+## Example Usage
 
 ```yaml
 name: Docker TLS Login
@@ -15,36 +15,40 @@ jobs:
     name: Docker Operations with TLS
     runs-on: ubuntu-latest
     steps:
-      - name: Login to Greenbone Registry
-        uses: greenbone/actions/docker-client-tls-login@v1
+      - name: Setup Docker TLS Certificates
+        uses: ./.github/actions/docker-tls-login
+        with:
+          registry-url: packages.greenbone.net
+          client-cert: ${{ secrets.GREENBONE_CLIENT_CERT }}
+          client-key: ${{ secrets.GREENBONE_CLIENT_KEY }}
+          # Optional: ca-cert if not using system CA bundle
+          # ca-cert: ${{ secrets.GREENBONE_CA_CERT }}
+          debug: 'true'
+
+      - name: Login to Greenbone Registry (Read-Only)
+        uses: docker/login-action@v3
         with:
           registry: packages.greenbone.net
-        env:
-          GREENBONE_CLIENT_CERT: ${{ secrets.GREENBONE_CLIENT_CERT }}
-          GREENBONE_CLIENT_KEY: ${{ secrets.GREENBONE_CLIENT_KEY }}
-          GREENBONE_REGISTRY_USER: ${{ secrets.GREENBONE_REGISTRY_USER }}
-          GREENBONE_REGISTRY_TOKEN: ${{ secrets.GREENBONE_REGISTRY_TOKEN }}
-      
+          username: ${{ secrets.GREENBONE_REGISTRY_READ_USER }}
+          password: ${{ secrets.GREENBONE_REGISTRY_READ_TOKEN }}
+
       - name: Pull Docker image
         run: |
-          docker pull packages.greenbone.net/some-greenbone-image:latest
+          docker pull packages.greenbone.net/opensight/opensight-postgres:17.5.3@sha256:2e28556d0dceec5880f2104e35db6002d64d6e7e756e7fbf2b618d4d660f0d31
 ```
 
-## Action Configuration
+## Inputs
 
-### Inputs
+| Input Variable | Description                           | Required | Default   |
+|----------------|---------------------------------------|----------|-----------|
+| registry-url   | Docker registry URL                   | Yes      |           |
+| client-cert    | Base64-encoded client certificate     | Yes      |           |
+| client-key     | Base64-encoded client private key     | Yes      |           |
+| ca-cert        | Base64-encoded CA certificate         | No       | ''        |
+| debug          | Enable debug output (true/false)      | No       | 'false'   |
 
-| Input Variable | Description                           | Required | Default                    |
-|----------------|---------------------------------------|----------|----------------------------|
-| registry       | Docker registry URL                   | No       | `packages.greenbone.net`   |
-| logout         | Clean up certificates at end of job   | No       | `true`                     |
+## Outputs
 
-### Environment Variables
-
-| Environment Variable      | Description                           | Required |
-|---------------------------|---------------------------------------|----------|
-| GREENBONE_CLIENT_CERT     | Client certificate in PEM format     | Yes      |
-| GREENBONE_CLIENT_KEY      | Client private key in PEM format     | Yes      |
-| GREENBONE_CA_CERT         | CA certificate in PEM format         | No       |
-| GREENBONE_REGISTRY_USER   | Username for basic authentication    | No       |
-| GREENBONE_REGISTRY_TOKEN  | Password/token for basic auth        | No       |
+| Output Variable | Description                           |
+|-----------------|---------------------------------------|
+| cert-directory  | Path to the Docker certificate directory |
