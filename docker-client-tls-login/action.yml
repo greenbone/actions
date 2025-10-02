@@ -33,19 +33,18 @@ runs:
       shell: bash
       run: |
         # Setup certificate directory
-        REGISTRY_URL="${{ inputs.registry-url }}"
-        CERT_DIR=/etc/.docker/certs.d/$REGISTRY_URL"
+        CERT_DIR=/etc/.docker/certs.d/${{ inputs.registry-url }}"
         mkdir -p "$CERT_DIR"
         
         # Install certificates
-        echo "${{ inputs.client-cert }}" | base64 -d > "$CERT_DIR/client.cert"
-        echo "${{ inputs.client-key }}" | base64 -d > "$CERT_DIR/client.key"
-        chmod 644 "$CERT_DIR/client.cert"
-        chmod 600 "$CERT_DIR/client.key"
+        echo "${{ inputs.client-cert }}"  > "$CERT_DIR/client.cert"
+        echo "${{ inputs.client-key }}"  > "$CERT_DIR/client.key"
+        #chmod 644 "$CERT_DIR/client.cert"
+        #chmod 600 "$CERT_DIR/client.key"
         
         # Install CA certificate if provided
         if [[ -n "${{ inputs.ca-cert }}" ]]; then
-          echo "${{ inputs.ca-cert }}" | base64 -d > "$CERT_DIR/ca.cert"
+          echo "${{ inputs.ca-cert }}" > "$CERT_DIR/ca.cert"
           chmod 644 "$CERT_DIR/ca.cert"
         fi
         
@@ -58,7 +57,7 @@ runs:
         fi
         
         echo "cert-directory=$CERT_DIR" >> $GITHUB_OUTPUT
-        echo "Docker TLS certificates installed to: $CERT_DIR"
+        echo "Docker TLS certificates written to: $CERT_DIR"
         
         if [[ "${{ inputs.debug }}" == "true" ]]; then
           echo "--- Certificate Details ---"
