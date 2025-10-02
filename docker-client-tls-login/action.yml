@@ -34,7 +34,7 @@ runs:
       run: |
         # Setup certificate directory
         CERT_DIR=/etc/.docker/certs.d/${{ inputs.registry-url }}
-        mkdir -p "$CERT_DIR"
+        sudo mkdir -p "$CERT_DIR"
         
         # Install certificates
         echo "${{ inputs.client-cert }}"  > "$CERT_DIR/client.cert"
