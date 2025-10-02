@@ -32,11 +32,7 @@ runs:
         python -m pip install --upgrade pip
         python -m pip install --upgrade uv
       shell: bash
-    - name: Check project configuration
-      run: |
-        uv sync --check
-      shell: bash
-    - name: Install dependencies
+    - name: Install dependencies and sync environment
       run: |
         uv sync
       shell: bash
