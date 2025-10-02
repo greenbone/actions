@@ -34,7 +34,7 @@ runs:
       run: |
         # Setup certificate directory
         REGISTRY_URL="${{ inputs.registry-url }}"
-        CERT_DIR="$HOME/.docker/certs.d/$REGISTRY_URL"
+        CERT_DIR=/etc/.docker/certs.d/$REGISTRY_URL"
         mkdir -p "$CERT_DIR"
         
         # Install certificates
@@ -66,3 +66,12 @@ runs:
           ls -la "$CERT_DIR/"
         fi
         
+        echo "Restarting Docker to reload TLS certs..."
+        sudo systemctl restart docker
+        sleep 5
+        if systemctl is-active --quiet docker; then
+          echo "Docker daemon restarted successfully."
+        else
+          echo "Docker daemon failed to restart after cert insertion."
+          exit 1
+        fi
