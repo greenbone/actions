@@ -46,7 +46,6 @@ runs:
         python -m twine check dist/*
       shell: bash
     - name: Upload
-      uses: pypa/gh-action-pypi-publish@f7600683efdcb7656dec5b29656edb7bc586e597 # v1.12.3
-      with:
-        password: ${{ inputs.pypi-token }}
-        verify-metadata: false
+      run: |
+        python -m twine upload dist/* --username __token__ --password ${{ inputs.pypi-token }} --repository-url https://test.pypi.org/legacy/
+      shell: bash
