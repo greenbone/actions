@@ -49,3 +49,4 @@ runs:
       uses: pypa/gh-action-pypi-publish@f7600683efdcb7656dec5b29656edb7bc586e597 # v1.12.3
       with:
         password: ${{ inputs.pypi-token }}
+        verify-metadata: false
