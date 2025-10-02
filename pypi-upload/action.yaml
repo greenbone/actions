@@ -47,5 +47,9 @@ runs:
       shell: bash
     - name: Upload
       run: |
-        python -m twine upload dist/* --username __token__ --password ${{ inputs.pypi-token }} --repository-url https://test.pypi.org/legacy/
+        if [ -n "${{ inputs.pypi-token }}" ]; then
+          python -m twine upload dist/* --username __token__ --password "${{ inputs.pypi-token }}"
+        else
+          echo "No PyPI token provided, skipping upload"
+        fi
       shell: bash
