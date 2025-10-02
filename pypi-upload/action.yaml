@@ -1,6 +1,6 @@
 name: "Upload to PyPI"
 author: "Björn Ricks <bjoern.ricks@greenbone.net>"
-description: "Action to build and upload a release via poetry to PyPI"
+description: "Action to build and upload a release via uv to PyPI"
 
 inputs:
   python-version:
@@ -27,22 +27,22 @@ runs:
       uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
       with:
         python-version: ${{ inputs.python-version }}
-    - name: Install pip and poetry
+    - name: Install pip and uv
       run: |
         python -m pip install --upgrade pip
-        python -m pip install --upgrade poetry
+        python -m pip install --upgrade uv
       shell: bash
-    - name: Check poetry configuration
+    - name: Check project configuration
       run: |
-        poetry check
+        uv sync --check
       shell: bash
     - name: Install dependencies
       run: |
-        poetry install
+        uv sync
       shell: bash
     - name: Build
       run: |
-        poetry build
+        uv build
       shell: bash
     - name: Verify package metadata
       run: |
