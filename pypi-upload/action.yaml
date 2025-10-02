@@ -32,9 +32,22 @@ runs:
         python -m pip install --upgrade pip
         python -m pip install --upgrade poetry
       shell: bash
+    - name: Check poetry configuration
+      run: |
+        poetry check
+      shell: bash
+    - name: Install dependencies
+      run: |
+        poetry install
+      shell: bash
     - name: Build
       run: |
         poetry build
+      shell: bash
+    - name: Verify package metadata
+      run: |
+        python -m pip install --upgrade twine
+        python -m twine check dist/*
       shell: bash
     - name: Upload
       uses: pypa/gh-action-pypi-publish@fb13cb306901256ace3dab689990e13a5550ffaa # v1.11.0
