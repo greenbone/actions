@@ -1,0 +1,14 @@
+name: Test PyPI Upload Fix
+
+on:
+  workflow_dispatch:  # Manual trigger for testing
+
+jobs:
+  test-pypi-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test our fixed action
+        uses: greenbone/actions/pypi-upload@pypi-upload-fix
+        with:
+          # Don't actually upload, just test the build and validation steps
+          pypi-token: "fake-token-for-testing"
