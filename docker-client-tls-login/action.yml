@@ -33,7 +33,7 @@ runs:
       shell: bash
       run: |
         # Setup certificate directory
-        CERT_DIR=/etc/.docker/certs.d/${{ inputs.registry-url }}"
+        CERT_DIR=/etc/.docker/certs.d/${{ inputs.registry-url }}
         mkdir -p "$CERT_DIR"
         
         # Install certificates
