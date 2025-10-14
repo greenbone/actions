@@ -39,5 +39,3 @@ runs:
       run: |
         uv publish
       shell: bash
-      env:
-        UV_PUBLISH_TOKEN: ${{ inputs.pypi-token }}
