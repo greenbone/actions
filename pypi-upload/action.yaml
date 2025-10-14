@@ -37,5 +37,9 @@ runs:
       shell: bash
     - name: Upload
       run: |
-        uv publish
+        if [ -n "${{ inputs.pypi-token }}" ]; then
+          uv publish --token "${{ inputs.pypi-token }}"
+        else
+          uv publish
+        fi
       shell: bash
