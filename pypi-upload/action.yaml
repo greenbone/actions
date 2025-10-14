@@ -37,7 +37,7 @@ runs:
       shell: bash
     - name: Upload
       run: |
-        uv upload
+        uv publish
       shell: bash
       env:
         UV_PUBLISH_TOKEN: ${{ inputs.pypi-token }}
