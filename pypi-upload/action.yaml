@@ -37,6 +37,8 @@ runs:
       shell: bash
     - name: Upload
       run: |
+        # if this fails enable OIDC / trusted publishersetup in the PyPi project(see Readme)
+        # and remove the pypi-token variable from the github repo/inputs
         if [ -n "${{ inputs.pypi-token }}" ]; then
           uv publish --token "${{ inputs.pypi-token }}"
         else
