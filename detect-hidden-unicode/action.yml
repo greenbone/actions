@@ -54,4 +54,6 @@ runs:
     - name: Fail if markers are detected
       shell: bash
       run: |
-        grep -vqz "hidden markers detected" PR_COMMENT.md
+        if [ -s PR_COMMENT.md ]; then
+          grep -vqz "hidden markers detected" PR_COMMENT.md
+        fi
