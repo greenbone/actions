@@ -45,7 +45,9 @@ runs:
       shell: bash
       run: |
         # Write a comment to the PR, which contains the Scan Output
-        gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
+        if [ -s PR_COMMENT.md ]; then
+          gh pr comment ${{ github.event.pull_request.number }} --body-file PR_COMMENT.md --create-if-none --edit-last
+        fi
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
