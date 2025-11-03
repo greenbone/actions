@@ -50,7 +50,7 @@ jobs:
 | cache-suffix          | Suffix to append to the cache key                     | Optional                    |
 | cache-local-path      | Path to the local cache                               | Optional                    |
 | uv-version            | The version of uv to install and use                  | Optional. Default is latest |
-| working-directory     | The working directory. Where to find the config files | Optional                    |
+| working-directory     | The working directory. Where to find the config files | Optional: Default is "."    |
 
 | Output Variable | Description                    |
 | --------------- | ------------------------------ |

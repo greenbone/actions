@@ -31,7 +31,8 @@ inputs:
     description: |
       "The working directory. This controls where we look for pyproject.toml, "
       "uv.toml and .python-version files which are used to determine the "
-      "version of uv and python to install."
+      "version of uv and python to install. Default is '.'"
+    default: "."
     required: false
 
 outputs:
