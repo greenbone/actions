@@ -1,0 +1,26 @@
+name: Greenbone Setup Buildx Action
+description: Buildx is pre-installed in the self hosted environment. The Buildx container is CA incompatible with our caching system.
+
+inputs:
+  skip-installation-on:
+    description: Skip installation on selected runner. Default is self-hosted-generic.
+    default: "self-hosted-generic"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Docker Buildx
+      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
+      uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+
+    - name: Info
+      if: ${{ startsWith(runner.name, inputs.skip-installation-on) }}
+      shell: bash
+      run: |
+        echo 'We are on runner: {{ runner.name }}.'
+        echo 'Buildx is pre-installed in this environment.The Buildx container is incompatible with our caching system. .'
+        echo 'Installation of buildx is skipped!.'
