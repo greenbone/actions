@@ -22,5 +22,5 @@ runs:
       shell: bash
       run: |
         echo 'We are on runner: {{ runner.name }}.'
-        echo 'Buildx is pre-installed in this environment.The Buildx container is incompatible with our caching system. .'
+        echo 'Buildx is pre-installed in this environment. The Buildx container is incompatible with our caching system. .'
         echo 'Installation of buildx is skipped!.'
