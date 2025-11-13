@@ -6,6 +6,9 @@ inputs:
     description: "Bash cmd string. Single quotes are not allowed."
   file:
     description: "Use file instead of cmd."
+  cmd-output:
+    description: "Save the result of the cmd or script into a local file."
+    default: ""
   known-hosts:
     description: "SSH known hosts string."
     required: true
@@ -42,10 +45,18 @@ runs:
     - name: Run bash cmd on remote host
       if: ${{ inputs.cmd }}
       run: |
-        echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash
+        if [ -z "${{ inputs.cmd-output }}" ]; then
+          echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash
+        else
+          echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash > ${{ inputs.cmd-output }}
+        fi
       shell: bash
     - name: Run bash cmd on remote host
       if: ${{ inputs.file }}
       run: |
-        ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }}
+        if [ -z "${{ inputs.cmd-output }}" ]; then
+          ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }}
+        else
+          ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }} > ${{ inputs.cmd-output }}
+        fi
       shell: bash

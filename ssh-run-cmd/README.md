@@ -20,11 +20,14 @@ jobs:
 
 ## Action Input
 
-| Input Variable  | Description                                             |          |
-|-----------------|---------------------------------------------------------|----------|
-| cmd             | Bash cmd string. Single quotes are not allowed.         | Required |
-| known-hosts     | SSH known hosts string.                                 | Required |
-| ssh-user        | SSH login user. Default: root.                          | Optional |
-| ssh-remote-host | SSH remote host IP/DNS.                                 | Required |
-| ssh-private-key | SSH private key string.                                 | Required |
-| ssh-tmp         | SSH private key storage folder path. Default: /tmp/ssh. | Optional |
+| Input Variable  | Description                                             |                              |
+|-----------------|---------------------------------------------------------|------------------------------|
+| cmd             | Bash cmd string. Single quotes are not allowed.         | Required(Either file or cmd) |
+| file            | File path to local bash script. Must be executable.     | Required(Either file or cmd) |
+| cmd-output      | Save the result of the cmd or script into a local file. | Optional                     |
+| known-hosts     | SSH known hosts string.                                 | Required                     |
+| ssh-user        | SSH login user. Default: root.                          | Optional                     |
+| ssh-remote-host | SSH remote host IP/DNS.                                 | Required                     |
+| ssh-private-key | SSH private key string.                                 | Required                     |
+| ssh-tmp         | SSH private key storage folder path. Default: /tmp/ssh. | Optional                     |
+| ssh-tmp         | SSH private key storage folder path. Default: /tmp/ssh. | Optional                     |
