@@ -14,7 +14,7 @@ runs:
         echo "::debug::action_path: ${{ github.action_path }}"
       shell: bash
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         path: "commit_dir"
         ref: ${{ github.head_ref }}
