@@ -228,6 +228,7 @@ def scan_file(silent: bool, file_path: str) -> int:
    with open(file_path, encoding="utf-8") as fileobj:
        for line in fileobj:
            line_nr += 1
+           column_nr = 0
            for current_char in line:
                column_nr += 1
                if current_char in HIDDEN_MARKERS:
