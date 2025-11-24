@@ -195,11 +195,19 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    parser = ArgumentParser()
    shtab.add_argument_to(parser)
 
-   parser.add_argument("repopath", help="Path to local git repository")
+   input_group = parser.add_mutually_exclusive_group(required=True)
+   input_group.add_argument("repopath", help="Path to local git repository", nargs="?")
+   input_group.add_argument("--file", help="Path to a single file to scan", nargs="?")
+
    parser.add_argument("--filter", help="Regex all changed files are filtered by", default="")
    parser.add_argument("-s", "--silent", action='store_true')
 
-   return parser.parse_args(args)
+   parsed_args = parser.parse_args(args)
+
+   if parsed_args.filter and not parsed_args.repopath:
+       parser.error("--filter can only be used with --repopath")
+
+   return parsed_args
 
 def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", commitB: str ="HEAD") -> int:
    os.chdir(args.repopath)
@@ -283,9 +291,12 @@ def scan_changed_files(silent: bool, changed_files: list[str]):
 
 def main():
    args = parse_args()
-   changed_files = get_changed_files_and_apply_filter(args)
 
-   scan_changed_files(args.silent, changed_files)
+   if args.file:
+       scan_file(args.silent, args.file)
+   else:
+       changed_files = get_changed_files_and_apply_filter(args)
+       scan_changed_files(args.silent, changed_files)
 
 if __name__ == "__main__":
     main()
