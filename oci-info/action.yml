@@ -150,7 +150,7 @@ runs:
         if [ '${{ inputs.compare-password }}' ]; then
           cmd+=(--compare-password '${{ inputs.compare-password }}')
         fi
-        export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
         # We need a clear exit code
         output="$(oci-info "${cmd[@]}")"
         echo "output<<EOF"$'\n'"$output"$'\n'EOF >> $GITHUB_OUTPUT
