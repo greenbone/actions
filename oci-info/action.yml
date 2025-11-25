@@ -63,15 +63,10 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Set up Python and Poetry
-      uses: greenbone/actions/poetry@v3
+    - name: Setup
+      uses: greenbone/actions/pipx@v3
       with:
-        python-version: ${{ inputs.python-version }}
-        working-directory: ${{ github.action_path }}
-        without-dev: "true"
-        poetry-version: ${{ inputs.poetry-version }}
-        cache-dependency-path: ${{ github.action_path }}/poetry.lock
-        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
+        install: ${{ github.action_path }}
 
     - name: Run oci-info
       working-directory: ${{ github.action_path }}
@@ -157,5 +152,5 @@ runs:
         fi
 
         # We need a clear exit code
-        output="$(poetry run oci-info "${cmd[@]}")"
+        output="$(oci-info "${cmd[@]}")"
         echo "output<<EOF"$'\n'"$output"$'\n'EOF >> $GITHUB_OUTPUT
