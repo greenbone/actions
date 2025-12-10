@@ -28,7 +28,9 @@ on:
 | python-version | Python version that should be installed and used. | Optional (default: "3.10") |
 | github-token | GH Token for writing/editing a comment to/in a PR | |
 | pr-comment | Write a summary of the scan as comment to the PR | |
-| detect-hidden-unicode-args | Args passed to detect-hidden-unicode script | |
+| filter | Args passed to detect-hidden-unicode script | "^.*.(?<!png)(?<!jpg)(?<!jpeg)(?<!gif)(?<!tiff)(?<!tif)(?<!bmp)(?<!psd)(?<!heic)(?<!heif)(?<!svg)$" |
+| log-level | The log level of the detect-hidden-unicode action | NONE, WARNING, DEBUG |
+| hide-scan-details | Hide the scan details in the output | false |
 
 ## Run detect-hidden-unicode python script locally
 
