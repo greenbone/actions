@@ -201,7 +201,6 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
    parser.add_argument("--filter", help="Regex all changed files are filtered by", default="")
    parser.add_argument("--log_level", help="Configure the logging level", default="WARNING")
-
    parser.add_argument("--hide_scan_details", action='store_true')
 
    parsed_args = parser.parse_args(args)
