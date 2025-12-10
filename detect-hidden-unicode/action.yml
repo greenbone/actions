@@ -47,7 +47,7 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
-        detect-hidden-unicode "$GITHUB_WORKSPACE/" --filter '${{ inputs.filter }}' --log-level '${{ inputs.log-level }}'
+        detect-hidden-unicode "$GITHUB_WORKSPACE/" --filter '${{ inputs.filter }}' --log-level '${{ inputs.log-level }}' | tee -a "$GITHUB_WORKSPACE/output"
 
     - name: Publish PR Comment
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
@@ -63,6 +63,6 @@ runs:
     - name: Fail if markers are detected
       shell: bash
       run: |
-        if [ -s PR_COMMENT.md ]; then
-          grep -vqz "hidden markers detected" PR_COMMENT.md
+        if [ -s output ]; then
+          grep -vqz "hidden markers detected" output
         fi
