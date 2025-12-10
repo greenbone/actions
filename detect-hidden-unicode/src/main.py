@@ -204,7 +204,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    input_group.add_argument("--file", help="Path to a single file to scan", nargs="?")
 
    parser.add_argument("--filter", help="Regex all changed files are filtered by", default="")
-   parser.add_argument("--log-level", help="Configure the logging level")
+   parser.add_argument("--log_level", help="Configure the logging level", default="WARNING")
    parser.add_argument("-s", "--silent", action='store_true')
 
    parsed_args = parser.parse_args(args)
@@ -212,8 +212,8 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    if parsed_args.filter and not parsed_args.repopath:
        parser.error("--filter can only be used with --repopath")
 
-   if parsed_args.log-level not in ["NONE", "WARNING", "DEBUG"]
-       parser.error("--log-level isn't NONE, WARNING or DEBUG")
+   if parsed_args.log_level not in ["NONE", "WARNING", "DEBUG"]:
+       parser.error("--log_level isn't NONE, WARNING or DEBUG")
 
    return parsed_args
 
@@ -227,11 +227,11 @@ def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", 
 
    return changed_files
 
-def print_and_store(msg: str, pr_comment: list[str])
-  print(f"{str}")
-  pr_comment.append(str)
+def print_and_store(msg: str, pr_comment: list[str]):
+  print(f"{msg}")
+  pr_comment.append(msg)
 
-def print_marker(pr_comment: list[str], log-level: str, silent: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
+def print_marker(pr_comment: list[str], log_level: str, silent: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
    if not silent:
       if detected_markers == 0:
          print_and_store("```", pr_comment)
@@ -239,7 +239,7 @@ def print_marker(pr_comment: list[str], log-level: str, silent: bool, desc: str,
    detected_markers += 1
    return detected_markers
 
-def scan_file(pr_comment: list[str], log-level: str, silent: bool, file_path: str) -> int:
+def scan_file(pr_comment: list[str], log_level: str, silent: bool, file_path: str) -> int:
    start_time = time.perf_counter()
    detected_markers = 0
    line_nr = 0
@@ -270,14 +270,14 @@ def scan_file(pr_comment: list[str], log-level: str, silent: bool, file_path: st
    print_and_store(f"Scan took {elapsed_time:.2f} seconds", pr_comment)
    return detected_markers
 
-def scan_multiple_changed_files(pr_comment: list[str], log-level: str, silent: bool, changed_files: list[str]):
+def scan_multiple_changed_files(pr_comment: list[str], log_level: str, silent: bool, changed_files: list[str]):
    detected_markers = 0
 
    print_and_store("# Scanning the following files:", pr_comment)
    for cur_file in changed_files:
       print_and_store(f"`{cur_file.strip()}`", pr_comment)
 
-   print_and_store("")
+   print_and_store("", pr_comment)
    for cur_file in changed_files:
       cur_file = cur_file.strip()
       print_and_store(f"## Scan: '{cur_file}'", pr_comment)
@@ -285,12 +285,12 @@ def scan_multiple_changed_files(pr_comment: list[str], log-level: str, silent: b
 
    return detected_markers
 
-def scan_single_changed_file(pr_comment: list[str], log-level: str, silent: bool, changed_file: str):
+def scan_single_changed_file(pr_comment: list[str], log_level: str, silent: bool, changed_file: str):
    stripped_file = changed_file.strip()
    print_and_store(f"# Scan: '{stripped_file}'", pr_comment)
    return scan_file(pr_comment, log_level, silent, stripped_file)
 
-def scan_changed_files(pr_comment: list[str], log-level: str, silent: bool, changed_files: list[str]):
+def scan_changed_files(pr_comment: list[str], log_level: str, silent: bool, changed_files: list[str]):
    file_count = len(changed_files)
 
    if file_count > 1:
@@ -301,7 +301,7 @@ def scan_changed_files(pr_comment: list[str], log-level: str, silent: bool, chan
 
    return 0
 
-def write_to_file(content: list[str], filename: str)
+def write_to_file(content: list[str], filename: str):
   with open(filename, "w", encoding="utf-8") as file_opened:
      for line in content:
         file_opened.write(line + "\n")
@@ -319,7 +319,7 @@ def main():
        changed_files = get_changed_files_and_apply_filter(args)
        detected_markers = scan_changed_files(pr_comment, args.log_level, args.silent, changed_files)
 
-   if (detected_markers != 0 and args.log_level = "WARNING") or args.log_level = "DEBUG"
+   if (detected_markers != 0 and args.log_level == "WARNING") or args.log_level == "DEBUG":
      write_to_file(pr_comment, "PR_COMMENT.md")
 
 if __name__ == "__main__":
