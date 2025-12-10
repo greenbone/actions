@@ -10,7 +10,7 @@ inputs:
     required: true
   pr-comment:
     description: "Write a summary of the scan as comment to the PR"
-    default: true
+    default: false
   detect-hidden-unicode-args:
     description: "Args passed to detect-hidden-unicode script"
     default: ""

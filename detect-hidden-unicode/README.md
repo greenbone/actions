@@ -27,7 +27,7 @@ on:
 |--------------|-----------|-|
 | python-version | Python version that should be installed and used. | Optional (default: "3.10") |
 | github-token | GH Token for writing/editing a comment to/in a PR | |
-| pr-comment | Write a summary of the scan as comment to the PR | |
+| pr-comment | Write a summary of the scan as comment to the PR | Optional (default: `false`) |
 | detect-hidden-unicode-args | Args passed to detect-hidden-unicode script | |
 
 ## Run detect-hidden-unicode python script locally
