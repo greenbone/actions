@@ -211,7 +211,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
 def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", commitB: str ="HEAD") -> int:
    os.chdir(args.repopath)
-   changed_files = subprocess.run(["git", "diff", "--name-only", commitA, commitB, "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
+   changed_files = subprocess.run(["git", "diff", "--diff-filter=d", "--name-only", commitA, commitB, "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
 
    if args.filter != "":
      regex = re.compile(args.filter)
