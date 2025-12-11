@@ -77,8 +77,11 @@ runs:
           exit 1
         fi
 
+        # Get digest
+        inspect="$(docker buildx imagetools inspect ${tags[0]})"
+        
         set -e
-        digest=$(echo "$out" | tail -1 | jq -r '.vertexes[0].digest')
+        digest="$(echo "$inspect" | grep -oP 'Digest:\s*\Ksha256:[a-f0-9]+')"
         echo "Digest: $digest"
         echo "digest=$digest" >> $GITHUB_OUTPUT
 
