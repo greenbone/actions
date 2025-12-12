@@ -205,8 +205,6 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
    parser.add_argument("--filter", help="Regex all changed files are filtered by", default="")
    parser.add_argument("--log_level", help="Configure the logging level", default="WARNING")
-
-   ### TODO RENAME THIS OPTION
    parser.add_argument("-s", "--silent", action='store_true')
 
    parsed_args = parser.parse_args(args)
@@ -241,13 +239,6 @@ def print_marker(pr_comment: list[str], log_level: str, silent: bool, desc: str,
    detected_markers += 1
    return detected_markers
 
-def shrink_pr_comment(pr_comment: list[str]):
-   ## Delete until last '## Scan:' or '# Scan:' section
-   while True:
-      curElement = pr_comment.pop()
-      if "## Scan:" in curElement or len(pr_comment) == 1:
-         break
-
 def scan_file(pr_comment: list[str], log_level: str, silent: bool, file_path: str) -> int:
    start_time = time.perf_counter()
    detected_markers = 0
@@ -277,10 +268,6 @@ def scan_file(pr_comment: list[str], log_level: str, silent: bool, file_path: st
           print_and_store("```", pr_comment)
        print_and_store(f"{detected_markers} hidden markers detected in {file_path}", pr_comment)
    print_and_store(f"Scan took {elapsed_time:.2f} seconds", pr_comment)
-
-   if detected_markers == 0 and log_level == "WARNING":
-      shrink_pr_comment(pr_comment)
-
    return detected_markers
 
 def scan_multiple_changed_files(pr_comment: list[str], log_level: str, silent: bool, changed_files: list[str]):
