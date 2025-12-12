@@ -227,19 +227,15 @@ def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", 
 
    return changed_files
 
-def print_and_store(msg: str, pr_comment: list[str])
-  print(f"{str}")
-  pr_comment.append(str)
-
-def print_marker(pr_comment: list[str], log-level: str, silent: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
+def print_marker(silent: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
    if not silent:
       if detected_markers == 0:
-         print_and_store("```", pr_comment)
-      print_and_store(f"{desc}, found at line {line_nr} and column {column_nr} in file {file_path}", pr_comment)
+         print("```")
+      print (f"{desc}, found at line {line_nr} and column {column_nr} in file {file_path}")
    detected_markers += 1
    return detected_markers
 
-def scan_file(pr_comment: list[str], log-level: str, silent: bool, file_path: str) -> int:
+def scan_file(silent: bool, file_path: str) -> int:
    start_time = time.perf_counter()
    detected_markers = 0
    line_nr = 0
@@ -252,64 +248,58 @@ def scan_file(pr_comment: list[str], log-level: str, silent: bool, file_path: st
            for current_char in line:
                column_nr += 1
                if current_char in HIDDEN_MARKERS:
-                   detected_markers = print_marker(pr_comment, log_level, silent, HIDDEN_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(silent, HIDDEN_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
                elif current_char in HIDDEN_IDEOGRAPHIC_MARKERS:
-                   detected_markers = print_marker(pr_comment, log_level, silent, HIDDEN_IDEOGRAPHIC_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(silent, HIDDEN_IDEOGRAPHIC_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
                elif current_char in HIDDEN_TAG_MARKERS:
-                   detected_markers = print_marker(pr_comment, log_level, silent, HIDDEN_TAG_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(silent, HIDDEN_TAG_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
 
    end_time = time.perf_counter()
    elapsed_time = end_time - start_time
 
    if detected_markers == 0:
-       print_and_store(f"Nothing detected in {file_path}", pr_comment)
+       print (f"Nothing detected in {file_path}")
    else:
        if not silent:
-          print_and_store("```", pr_comment)
-       print_and_store(f"{detected_markers} hidden markers detected in {file_path}", pr_comment)
-   print_and_store(f"Scan took {elapsed_time:.2f} seconds", pr_comment)
+          print ("```")
+       print (f"{detected_markers} hidden markers detected in {file_path}")
+   print (f"Scan took {elapsed_time:.2f} seconds")
    return detected_markers
 
-def scan_multiple_changed_files(pr_comment: list[str], log-level: str, silent: bool, changed_files: list[str]):
+def scan_multiple_changed_files(silent: bool, changed_files: list[str]):
    detected_markers = 0
 
-   print_and_store("# Scanning the following files:", pr_comment)
+   print ("# Scanning the following files:")
    for cur_file in changed_files:
-      print_and_store(f"`{cur_file.strip()}`", pr_comment)
+      print (f"`{cur_file.strip()}`")
 
-   print_and_store("")
+   print()
    for cur_file in changed_files:
       cur_file = cur_file.strip()
-      print_and_store(f"## Scan: '{cur_file}'", pr_comment)
-      detected_markers += scan_file(pr_comment, log_level, silent, cur_file)
+      print (f"## Scan: '{cur_file}'")
+      detected_markers += scan_file(silent, cur_file)
 
    return detected_markers
 
-def scan_single_changed_file(pr_comment: list[str], log-level: str, silent: bool, changed_file: str):
+def scan_single_changed_file(silent: bool, changed_file: str):
    stripped_file = changed_file.strip()
-   print_and_store(f"# Scan: '{stripped_file}'", pr_comment)
-   return scan_file(pr_comment, log_level, silent, stripped_file)
+   print (f"# Scan: '{stripped_file}'")
+   return scan_file(silent, stripped_file)
 
-def scan_changed_files(pr_comment: list[str], log-level: str, silent: bool, changed_files: list[str]):
+def scan_changed_files(silent: bool, changed_files: list[str]):
    file_count = len(changed_files)
 
    if file_count > 1:
-      return scan_multiple_changed_files(pr_comment, log_level, silent, changed_files)
+      return scan_multiple_changed_files(silent, changed_files)
 
    elif file_count == 1:
-      return scan_single_changed_file(pr_comment, log_level, silent, changed_files[0])
+      return scan_single_changed_file(silent, changed_files[0])
 
    return 0
 
-def write_to_file(content: list[str], filename: str)
-  with open(filename, "w", encoding="utf-8") as file_opened:
-     for line in content:
-        file_opened.write(line + "\n")
-
 def main():
    detected_markers = 0
-   pr_comment = []
-
+   pr_comment = ""
    # TODO Add pr_comment to all printing functions and fill/cut it according to args.log_level
    args = parse_args()
 
@@ -319,8 +309,9 @@ def main():
        changed_files = get_changed_files_and_apply_filter(args)
        detected_markers = scan_changed_files(pr_comment, args.log_level, args.silent, changed_files)
 
+   ### TODO Write to the PR_COMMENT.md according to args.log-level
    if (detected_markers != 0 and args.log_level = "WARNING") or args.log_level = "DEBUG"
-     write_to_file(pr_comment, "PR_COMMENT.md")
+     ## TODO Write pr_comment to PR_COMMENT.md file
 
 if __name__ == "__main__":
     main()
