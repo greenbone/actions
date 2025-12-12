@@ -191,7 +191,7 @@ HIDDEN_TAG_MARKERS: Dict[str, str] = {
     '\U000E007F': "CANCEL TAG (U+E007F)",
 }
 
-"""
+""" parse_args
 Parse the commandline arguments
 """
 def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
@@ -216,7 +216,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
    return parsed_args
 
-"""
+""" get_changed_files_and_apply_filter
 Get a list of files from a git diff and apply a regex filter to that list
 """
 def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", commitB: str ="HEAD") -> int:
@@ -229,7 +229,7 @@ def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", 
 
    return changed_files
 
-"""
+""" print_and_store
 Print the msg string but also store it in the pr_commment list
 to manipulate it possibly later on
 The pr_comment could possibly be shrunken down if none markers
@@ -239,7 +239,7 @@ def print_and_store(msg: str, pr_comment: list[str]):
   print(f"{msg}")
   pr_comment.append(msg)
 
-"""
+""" print_marker
 Print the marked position of a hidden unicode character which has been found by the scan_file fn
 Marker is just a general term which means a sequence or symbol is highlighted, this highlighted character + position(line, column) + filename is then printed.
 """
@@ -251,7 +251,7 @@ def print_marker(pr_comment: list[str], pr_comment_level: str, hide_scan_details
    detected_markers += 1
    return detected_markers
 
-"""
+""" shrink_pr_comment
 Shrink the pr_comment, will only be evoked
 if pr_comment_level = "WARNING" and zero markes have been found
 """
@@ -262,7 +262,7 @@ def shrink_pr_comment(pr_comment: list[str]):
       if "## Scan:" in curElement or len(pr_comment) == 1:
          break
 
-"""
+""" scan_file
 Go through each line and character of the file from file_path
 and scan for hidden unicode characters
 """
@@ -301,7 +301,7 @@ def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: b
 
    return detected_markers
 
-"""
+""" scan_multiple_changed_files
 Is only evoked when multiple files are in the git diff
 Will print slighty different to represent that multiple files are being scanned
 """
@@ -320,7 +320,7 @@ def scan_multiple_changed_files(pr_comment: list[str], pr_comment_level: str, hi
 
    return detected_markers
 
-"""
+""" scan_single_changed_file
 Is only evoked when one file is being scanned
 Will print slighty different to represent that one file is being scanned
 """
@@ -329,7 +329,7 @@ def scan_single_changed_file(pr_comment: list[str], pr_comment_level: str, hide_
    print_and_store(f"# Scan: '{stripped_file}'", pr_comment)
    return scan_file(pr_comment, pr_comment_level, hide_scan_details, stripped_file)
 
-"""
+""" scan_changed_files
 Decides if the scan for multiple or a single file is evoked
 """
 def scan_changed_files(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, changed_files: list[str]):
@@ -344,7 +344,7 @@ def scan_changed_files(pr_comment: list[str], pr_comment_level: str, hide_scan_d
    return 0
 
 # Writes the content of the list 'content' to the filename and appends a linebreak to each element
-"""
+""" write_to_file
 Writes the content of the list 'content' to the filename
 and appends a linebreak to each element
 """
@@ -353,7 +353,7 @@ def write_to_file(content: list[str], filename: str):
      for line in content:
         file_opened.write(line + "\n")
 
-"""
+""" main
 This is the main entry point of the program
 variables are set, arguments are parsed and the scan is started
 Afterwards it will decide if a PR_COMMENT.md file is created
