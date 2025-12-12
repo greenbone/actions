@@ -191,7 +191,6 @@ HIDDEN_TAG_MARKERS: Dict[str, str] = {
     '\U000E007F': "CANCEL TAG (U+E007F)",
 }
 
-# Parse the commandline arguments
 def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    parser = ArgumentParser()
    shtab.add_argument_to(parser)
@@ -214,7 +213,6 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
 
    return parsed_args
 
-# Get a list of files from a git diff and apply a regex filter to that list
 def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", commitB: str ="HEAD") -> int:
    os.chdir(args.repopath)
    changed_files = subprocess.run(["git", "diff", "--diff-filter=d", "--name-only", commitA, commitB, "--", args.repopath], capture_output=True, text=True).stdout.splitlines()
@@ -225,12 +223,10 @@ def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", 
 
    return changed_files
 
-# Print the msg string but also store it in the pr_commment list to manipulate it possibly later on
 def print_and_store(msg: str, pr_comment: list[str]):
   print(f"{msg}")
   pr_comment.append(msg)
 
-# Print the marked position of a hidden unicode character which has been found by the scan_file fn
 def print_marker(pr_comment: list[str], log_level: str, hide_scan_details: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
    if not hide_scan_details:
       if detected_markers == 0:
@@ -239,8 +235,6 @@ def print_marker(pr_comment: list[str], log_level: str, hide_scan_details: bool,
    detected_markers += 1
    return detected_markers
 
-# Shrink the pr_comment, will only be evoked
-# if pr_comment_level = "WARNING" and zero markes have been found
 def shrink_pr_comment(pr_comment: list[str]):
    ## Delete until last '## Scan:' or '# Scan:' section
    while True:
@@ -248,8 +242,6 @@ def shrink_pr_comment(pr_comment: list[str]):
       if "## Scan:" in curElement or len(pr_comment) == 1:
          break
 
-# Go through each line and character of the file from file_path
-# and scan for hidden unicode characters
 def scan_file(pr_comment: list[str], log_level: str, hide_scan_details: bool, file_path: str) -> int:
    start_time = time.perf_counter()
    detected_markers = 0
@@ -285,8 +277,6 @@ def scan_file(pr_comment: list[str], log_level: str, hide_scan_details: bool, fi
 
    return detected_markers
 
-# Is only evoked when multiple files are in the git diff
-# Will print slighty different to represent that multiple files are being scanned
 def scan_multiple_changed_files(pr_comment: list[str], log_level: str, hide_scan_details: bool, changed_files: list[str]):
    detected_markers = 0
 
@@ -302,14 +292,11 @@ def scan_multiple_changed_files(pr_comment: list[str], log_level: str, hide_scan
 
    return detected_markers
 
-# Is only evoked when one file is being scanned
-# Will print slighty different to represent that one file is being scanned
 def scan_single_changed_file(pr_comment: list[str], log_level: str, hide_scan_details: bool, changed_file: str):
    stripped_file = changed_file.strip()
    print_and_store(f"# Scan: '{stripped_file}'", pr_comment)
    return scan_file(pr_comment, log_level, hide_scan_details, stripped_file)
 
-# Decides if the scan for multiple or a single file is evoked
 def scan_changed_files(pr_comment: list[str], log_level: str, hide_scan_details: bool, changed_files: list[str]):
    file_count = len(changed_files)
 
@@ -321,15 +308,11 @@ def scan_changed_files(pr_comment: list[str], log_level: str, hide_scan_details:
 
    return 0
 
-# Writes the content of the list 'content' to the filename and appends a linebreak to each element
 def write_to_file(content: list[str], filename: str):
   with open(filename, "w", encoding="utf-8") as file_opened:
      for line in content:
         file_opened.write(line + "\n")
 
-# This is the main entry point of the program
-# variables are set, arguments are parsed and the scan is started
-# Afterwards it will decide if a PR_COMMENT.md file is created
 def main():
    detected_markers = 0
    pr_comment = []
