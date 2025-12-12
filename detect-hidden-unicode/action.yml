@@ -11,9 +11,12 @@ inputs:
   pr-comment:
     description: "Write a summary of the scan as comment to the PR"
     default: true
+  detect-hidden-unicode-args:
+    description: "Args passed to detect-hidden-unicode script"
+    default: ""
   filter:
     description: "The regex filter being applied to the file selection"
-    default: "^.*.(?<!png)(?<!jpg)(?<!jpeg)(?<!gif)(?<!tiff)(?<!tif)(?<!bmp)(?<!psd)(?<!heic)(?<!heif)(?<!svg)$"
+    default: ""
   log-level:
     description: "The log level of the detect-hidden-unicode action"
     options:
@@ -21,10 +24,6 @@ inputs:
       - WARNING
       - DEBUG
     default: WARNING
-  hide-scan-details:
-    description: "Hide the scan details in the output"
-    type: boolean
-    default: false
 
 branding:
   icon: "package"
@@ -48,7 +47,7 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
-        detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ inputs.hide-scan-details == true && "--hide_scan_details" || "" }} --filter '${{ inputs.filter }}' --log_level '${{ inputs.log-level }}' | tee -a "$GITHUB_WORKSPACE/output"
+        detect-hidden-unicode "$GITHUB_WORKSPACE/" --filter '${{ inputs.filter }}' --log_level '${{ inputs.log-level }}' | tee -a "$GITHUB_WORKSPACE/output"
 
     - name: Publish PR Comment
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
