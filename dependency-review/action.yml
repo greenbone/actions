@@ -24,6 +24,7 @@ runs:
           BSD-3-Clause-Clear,
           BSD-3-Clause,
           BSL-1.0,
+          bzip2-1.0.6,
           CAL-1.0,
           CC-BY-3.0,
           CC-BY-4.0,
