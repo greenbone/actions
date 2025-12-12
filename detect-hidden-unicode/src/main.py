@@ -268,7 +268,6 @@ def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: b
     Go through each line and character of the file from file_path
     and scan for hidden unicode characters
     """
-
     start_time = time.perf_counter()
     detected_markers = 0
     line_nr = 0
