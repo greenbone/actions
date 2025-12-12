@@ -201,7 +201,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    input_group.add_argument("--file", help="Path to a single file to scan", nargs="?")
 
    parser.add_argument("--filter", help="Regex all changed files are filtered by", default="")
-   parser.add_argument("--pr_comment_level", help="Configure the pr_comment_level", default="WARNING")
+   parser.add_argument("--log_level", help="Configure the logging level", default="WARNING")
    parser.add_argument("--hide_scan_details", action='store_true')
 
    parsed_args = parser.parse_args(args)
@@ -209,8 +209,8 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    if parsed_args.filter and not parsed_args.repopath:
        parser.error("--filter can only be used with --repopath")
 
-   if parsed_args.pr_comment_level not in ["NONE", "WARNING", "DEBUG"]:
-       parser.error("--pr_comment_level isn't NONE, WARNING or DEBUG")
+   if parsed_args.log_level not in ["NONE", "WARNING", "DEBUG"]:
+       parser.error("--log_level isn't NONE, WARNING or DEBUG")
 
    return parsed_args
 
@@ -233,7 +233,7 @@ def print_and_store(msg: str, pr_comment: list[str]):
 
 # Print the marked position of a hidden unicode character which has been found by the scan_file fn
 # Marker is just a general term which means a sequence or symbol is highlighted, this highlighted character + position(line, column) + filename is then printed.
-def print_marker(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
+def print_marker(pr_comment: list[str], log_level: str, hide_scan_details: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
    if not hide_scan_details:
       if detected_markers == 0:
          print_and_store("```", pr_comment)
@@ -252,7 +252,7 @@ def shrink_pr_comment(pr_comment: list[str]):
 
 # Go through each line and character of the file from file_path
 # and scan for hidden unicode characters
-def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, file_path: str) -> int:
+def scan_file(pr_comment: list[str], log_level: str, hide_scan_details: bool, file_path: str) -> int:
    start_time = time.perf_counter()
    detected_markers = 0
    line_nr = 0
@@ -265,11 +265,11 @@ def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: b
            for current_char in line:
                column_nr += 1
                if current_char in HIDDEN_MARKERS:
-                   detected_markers = print_marker(pr_comment, pr_comment_level, hide_scan_details, HIDDEN_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(pr_comment, log_level, hide_scan_details, HIDDEN_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
                elif current_char in HIDDEN_IDEOGRAPHIC_MARKERS:
-                   detected_markers = print_marker(pr_comment, pr_comment_level, hide_scan_details, HIDDEN_IDEOGRAPHIC_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(pr_comment, log_level, hide_scan_details, HIDDEN_IDEOGRAPHIC_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
                elif current_char in HIDDEN_TAG_MARKERS:
-                   detected_markers = print_marker(pr_comment, pr_comment_level, hide_scan_details, HIDDEN_TAG_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
+                   detected_markers = print_marker(pr_comment, log_level, hide_scan_details, HIDDEN_TAG_MARKERS[current_char], line_nr, column_nr, file_path, detected_markers)
 
    end_time = time.perf_counter()
    elapsed_time = end_time - start_time
@@ -282,14 +282,14 @@ def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: b
        print_and_store(f"{detected_markers} hidden markers detected in {file_path}", pr_comment)
    print_and_store(f"Scan took {elapsed_time:.2f} seconds", pr_comment)
 
-   if detected_markers == 0 and pr_comment_level == "WARNING":
+   if detected_markers == 0 and log_level == "WARNING":
       shrink_pr_comment(pr_comment)
 
    return detected_markers
 
 # Is only evoked when multiple files are in the git diff
 # Will print slighty different to represent that multiple files are being scanned
-def scan_multiple_changed_files(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, changed_files: list[str]):
+def scan_multiple_changed_files(pr_comment: list[str], log_level: str, hide_scan_details: bool, changed_files: list[str]):
    detected_markers = 0
 
    print_and_store("# Scanning the following files for hidden unicode:", pr_comment)
@@ -300,26 +300,26 @@ def scan_multiple_changed_files(pr_comment: list[str], pr_comment_level: str, hi
    for cur_file in changed_files:
       cur_file = cur_file.strip()
       print_and_store(f"## Scanning the following file for hidden unicode: '{cur_file}'", pr_comment)
-      detected_markers += scan_file(pr_comment, pr_comment_level, hide_scan_details, cur_file)
+      detected_markers += scan_file(pr_comment, log_level, hide_scan_details, cur_file)
 
    return detected_markers
 
 # Is only evoked when one file is being scanned
 # Will print slighty different to represent that one file is being scanned
-def scan_single_changed_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, changed_file: str):
+def scan_single_changed_file(pr_comment: list[str], log_level: str, hide_scan_details: bool, changed_file: str):
    stripped_file = changed_file.strip()
    print_and_store(f"# Scan: '{stripped_file}'", pr_comment)
-   return scan_file(pr_comment, pr_comment_level, hide_scan_details, stripped_file)
+   return scan_file(pr_comment, log_level, hide_scan_details, stripped_file)
 
 # Decides if the scan for multiple or a single file is evoked
-def scan_changed_files(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, changed_files: list[str]):
+def scan_changed_files(pr_comment: list[str], log_level: str, hide_scan_details: bool, changed_files: list[str]):
    file_count = len(changed_files)
 
    if file_count > 1:
-      return scan_multiple_changed_files(pr_comment, pr_comment_level, hide_scan_details, changed_files)
+      return scan_multiple_changed_files(pr_comment, log_level, hide_scan_details, changed_files)
 
    elif file_count == 1:
-      return scan_single_changed_file(pr_comment, pr_comment_level, hide_scan_details, changed_files[0])
+      return scan_single_changed_file(pr_comment, log_level, hide_scan_details, changed_files[0])
 
    return 0
 
@@ -339,12 +339,12 @@ def main():
    args = parse_args()
 
    if args.file:
-       detected_markers = scan_file(pr_comment, args.pr_comment_level, args.hide_scan_details, args.file)
+       detected_markers = scan_file(pr_comment, args.log_level, args.hide_scan_details, args.file)
    else:
        changed_files = get_changed_files_and_apply_filter(args)
-       detected_markers = scan_changed_files(pr_comment, args.pr_comment_level, args.hide_scan_details, changed_files)
+       detected_markers = scan_changed_files(pr_comment, args.log_level, args.hide_scan_details, changed_files)
 
-   if (detected_markers != 0 and args.pr_comment_level == "WARNING") or args.pr_comment_level == "DEBUG":
+   if (detected_markers != 0 and args.log_level == "WARNING") or args.log_level == "DEBUG":
      write_to_file(pr_comment, "PR_COMMENT.md")
 
 if __name__ == "__main__":
