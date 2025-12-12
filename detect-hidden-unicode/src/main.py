@@ -226,6 +226,7 @@ def get_changed_files_and_apply_filter(args: list[str], commitA: str ="HEAD^1", 
    return changed_files
 
 # Print the msg string but also store it in the pr_commment list to manipulate it possibly later on
+# The pr_comment could possibly be shrunken down if none markers have been found and the pr_comment_level is WARNING
 def print_and_store(msg: str, pr_comment: list[str]):
   print(f"{msg}")
   pr_comment.append(msg)
