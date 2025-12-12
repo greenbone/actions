@@ -192,10 +192,6 @@ HIDDEN_TAG_MARKERS: Dict[str, str] = {
 }
 
 def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
-   # TODO Implement log level, replace silent option:
-   # 1. no comment at all
-   # 2. only comment if something fails
-   # 3. write everything into a comment
    parser = ArgumentParser()
    shtab.add_argument_to(parser)
 
@@ -204,16 +200,12 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
    input_group.add_argument("--file", help="Path to a single file to scan", nargs="?")
 
    parser.add_argument("--filter", help="Regex all changed files are filtered by", default="")
-   parser.add_argument("--log-level", help="Configure the logging level")
    parser.add_argument("-s", "--silent", action='store_true')
 
    parsed_args = parser.parse_args(args)
 
    if parsed_args.filter and not parsed_args.repopath:
        parser.error("--filter can only be used with --repopath")
-
-   if parsed_args.log-level not in ["NONE", "WARNING", "DEBUG"]
-       parser.error("--log-level isn't NONE, WARNING or DEBUG")
 
    return parsed_args
 
@@ -298,20 +290,13 @@ def scan_changed_files(silent: bool, changed_files: list[str]):
    return 0
 
 def main():
-   detected_markers = 0
-   pr_comment = ""
-   # TODO Add pr_comment to all printing functions and fill/cut it according to args.log_level
    args = parse_args()
 
    if args.file:
-       detected_markers = scan_file(pr_comment, args.log_level, args.silent, args.file)
+       scan_file(args.silent, args.file)
    else:
        changed_files = get_changed_files_and_apply_filter(args)
-       detected_markers = scan_changed_files(pr_comment, args.log_level, args.silent, changed_files)
-
-   ### TODO Write to the PR_COMMENT.md according to args.log-level
-   if (detected_markers != 0 and args.log_level = "WARNING") or args.log_level = "DEBUG"
-     ## TODO Write pr_comment to PR_COMMENT.md file
+       scan_changed_files(args.silent, changed_files)
 
 if __name__ == "__main__":
     main()
