@@ -270,6 +270,7 @@ def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: b
     start_time = time.perf_counter()
     detected_markers = 0
     line_nr = 0
+    column_nr = 0
 
     with open(file_path, encoding="utf-8") as fileobj:
         for line in fileobj:
@@ -360,7 +361,9 @@ def main():
     Afterwards it will decide if a PR_COMMENT.md file is created
     """
 
+    detected_markers = 0
     pr_comment = []
+
     args = parse_args()
 
     if args.file:
