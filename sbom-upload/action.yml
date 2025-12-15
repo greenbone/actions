@@ -28,7 +28,7 @@ runs:
         chmod +x $RUNNER_TEMP/sbom-tool
         $RUNNER_TEMP/sbom-tool generate -b . -bc . -pn ${{ github.repository }} -pv 1.0.0 -ps "Greenbone AG" -nsb https://greenbone.net -V Verbose
       shell: bash
-    - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+    - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: sbom
         path: _manifest/spdx_2.2
