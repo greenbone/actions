@@ -20,7 +20,7 @@ runs:
         echo "${{ inputs.digest }}" > "${{ runner.temp }}/digests/${{ inputs.name }}"
 
     - name: Upload digest
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ inputs.name }}
         path: ${{ runner.temp }}/digests/*
