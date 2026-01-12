@@ -239,7 +239,8 @@ def print_and_store(msg: str, pr_comment: list[str]):
     pr_comment.append(msg)
 
 def print_marker(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, desc: str, line_nr: int, column_nr: int, file_path: str, detected_markers: int) -> int:
-    """ Print the marked position of a hidden unicode character which has been found by the scan_file fn
+    """
+    Print the marked position of a hidden unicode character which has been found by the scan_file fn
     Marker is just a general term which means a sequence or symbol is highlighted, this highlighted character + position(line, column) + filename is then printed.
     """
 
