@@ -49,10 +49,7 @@ runs:
     - name: Run hidden unicode detector against the list of changed files
       shell: bash
       run: |
-        echo "$HIDE_SCAN_DETAILS"
-        detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ env.HIDE_SCAN_DETAILS }} --filter '${{ inputs.filter }}' --pr_comment_level '${{ inputs.pr-comment-level }}' | tee -a "$GITHUB_WORKSPACE/output"
-      env:
-        HIDE_SCAN_DETAILS: ${{ inputs.hide-scan-details == 'true' && '--hide_scan_details' || '' }}
+        detect-hidden-unicode "$GITHUB_WORKSPACE/" ${{ inputs.hide-scan-details == 'true' && '--hide_scan_details' || '' }} --filter '${{ inputs.filter }}' --pr_comment_level '${{ inputs.pr-comment-level }}' | tee -a "$GITHUB_WORKSPACE/output"
       
     - name: Publish PR Comment
       if: ${{ inputs.pr-comment == true || inputs.pr-comment == 'true' }}
