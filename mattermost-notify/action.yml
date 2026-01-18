@@ -45,6 +45,32 @@ inputs:
   shortline:
     description: "Set to 'true' to output git changes in a single line for a more concise format."
     default: "false"
+  # NEW INPUTS
+  product: 
+    description: "Product name (asset, lookout, detect, management-console, security-intelligence, enterprise-containers)"
+    required: false
+  stage:
+    description: "Deployment stage (dev, integration, testing, staging, production)"
+    required: false
+  version:
+    description: "Product or service version (semver format, e.g., 1.15.1-alpha.10)"
+    required: false
+  service:
+    description: "Service name for service-update notifications"
+    required: false
+  from-stage:
+    description: "Source stage for stage-transition notifications (e.g., testing)"
+    required: false
+  to-stage:
+    description: "Target stage for stage-transition notifications (e.g., staging)"
+    required: false
+  notification-type:
+    description:  "Type of notification:  deployment, service-update, stage-transition, release, hotfix"
+    required: false
+    default: "deployment"
+  changed-services:
+    description: "Comma-separated list of changed services"
+    required: false
 
 branding:
   icon: "package"
@@ -115,6 +141,38 @@ runs:
           for HIGHLIGHT in "${HIGHLIGHTS[@]}"; do
             ARGS+=("$HIGHLIGHT")
           done
+        fi
+        #Add new arguments
+        if [ -n "${{ inputs.product }}" ]; then
+          ARGS+=(--product "${{ inputs.product }}")
+        fi
+
+        if [ -n "${{ inputs.stage }}" ]; then
+          ARGS+=(--stage "${{ inputs. stage }}")
+        fi
+
+        if [ -n "${{ inputs. version }}" ]; then
+          ARGS+=(--version "${{ inputs.version }}")
+        fi
+
+        if [ -n "${{ inputs.service }}" ]; then
+          ARGS+=(--service "${{ inputs.service }}")
+        fi
+
+        if [ -n "${{ inputs.from-stage }}" ]; then
+          ARGS+=(--from-stage "${{ inputs.from-stage }}")
+        fi
+
+        if [ -n "${{ inputs.to-stage }}" ]; then
+          ARGS+=(--to-stage "${{ inputs.to-stage }}")
+        fi
+
+        if [ -n "${{ inputs.notification-type }}" ]; then
+          ARGS+=(--notification-type "${{ inputs.notification-type }}")
+        fi
+
+        if [ -n "${{ inputs.changed-services }}" ]; then
+          ARGS+=(--changed-services "${{ inputs.changed-services }}")
         fi
 
         echo "ARGS=${ARGS[@]}" >> $GITHUB_ENV
