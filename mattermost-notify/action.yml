@@ -93,8 +93,8 @@ runs:
       id: pipx
       with:
         python-version: "3.10"
-        install: git+https://github.com/greenbone/mattermost-notify.git@DEVOPS-1929-improve-notification-message
-        #install-version: "24.12.0"
+        install: mattermost-notify
+        install-version: "24.12.1"
 
     - name: Set Channel and Webhook
       shell: bash
@@ -148,10 +148,10 @@ runs:
         fi
 
         if [ -n "${{ inputs.stage }}" ]; then
-          ARGS+=(--stage "${{ inputs. stage }}")
+          ARGS+=(--stage "${{ inputs.stage }}")
         fi
 
-        if [ -n "${{ inputs. version }}" ]; then
+        if [ -n "${{ inputs.version }}" ]; then
           ARGS+=(--version "${{ inputs.version }}")
         fi
 
