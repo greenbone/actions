@@ -67,7 +67,7 @@ inputs:
   notification-type:
     description:  "Type of notification:  deployment, service-update, stage-transition, release, hotfix"
     required: false
-    default: "deployment"
+    default: ""
   changed-services:
     description: "Comma-separated list of changed services"
     required: false
@@ -94,7 +94,7 @@ runs:
       with:
         python-version: "3.10"
         install: mattermost-notify
-        install-version: "26.1.0"
+        install-version: "26.1.1"
 
     - name: Set Channel and Webhook
       shell: bash
@@ -167,7 +167,7 @@ runs:
           ARGS+=(--to-stage "${{ inputs.to-stage }}")
         fi
 
-        if [ -n "${{ inputs.notification-type }}" ]; then
+        if [ -n "${{ inputs.notification-type }}" ] && [ "${{ inputs.notification-type }}" != "" ]; then
           ARGS+=(--notification-type "${{ inputs.notification-type }}")
         fi
 
