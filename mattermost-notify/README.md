@@ -81,6 +81,14 @@ jobs:
 | skip-installation-on | Skip mn-notify installation on selected runner. Default is self-hosted-generic. | Optional. |
 | workflow | GitHub workflow ID to use in the message | Optional. Default is `${{ github.run_id }}`. |
 | workflow-name | GitHub workflow name to use in the message | Optional. Default is `${{ github.workflow }}` |
+| product | Product name (asset, lookout, detect, management-console, security-intelligence, enterprise-containers) | Optional. |
+| stage | Deployment stage (dev, integration, testing, staging, production) | Optional. |
+| version | Product or service version | Optional. |
+| service | Service name for service-update notifications | Optional. |
+| from-stage | Source stage for stage-transition notifications (e.g., testing) | Optional. |
+| to-stage | Target stage for stage-transition notifications (e.g., staging) | Optional. |
+| notification-type | Type of notification: deployment, service-update, stage-transition, release, hotfix. Optional and empty by default. | Optional. |
+| changed-services | Comma-separated list of changed services | Optional. |
 | MATTERMOST_WEBHOOK_URL | Mattermost webhook url | Deprecated. Use url instead. |
 | MATTERMOST_CHANNEL | Mattermost channel | Deprecated. Use channel instead. |
 | MATTERMOST_HIGHLIGHT | List of space separated users to highlight in the channel | Deprecated. Use highlight instead |
