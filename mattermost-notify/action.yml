@@ -88,7 +88,7 @@ runs:
         ref: ${{ inputs.commit }}
 
     - name: Install
-      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
+      # if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       uses: greenbone/actions/pipx@v3
       id: pipx
       with:
