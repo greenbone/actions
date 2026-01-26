@@ -35,7 +35,7 @@ inputs:
     description: Specifies the notification status. Options success or failure. Default is automatic detected by 'GITHUB_EVENT_PATH' json.
   skip-installation-on:
     description: Skip mn-notify installation on selected runner. Default is self-hosted-generic.
-    default: "self-hosted-generic"
+    default: "self-hosted-generic-vm"
   workflow:
     description: GitHub workflow ID. Default is 'github.run_id'.
     default: ${{ github.run_id }}
@@ -88,7 +88,7 @@ runs:
         ref: ${{ inputs.commit }}
 
     - name: Install
-      # if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
+      if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       uses: greenbone/actions/pipx@v3
       id: pipx
       with:
