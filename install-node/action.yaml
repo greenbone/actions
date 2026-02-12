@@ -16,6 +16,9 @@ inputs:
   registry-url:
     description: "npm registry to use for installing dependencies. default: 'https://npm.pkg.github.com'"
     default: "https://npm.pkg.github.com"
+  working-directory:
+    description: "Working directory where to run the action"
+    default: ${{ github.workspace }}
 branding:
   icon: "package"
   color: "green"
@@ -38,6 +41,7 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.token }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
     - name: Install Yarn
       if: ${{ inputs.dependency-manager == 'yarn' }}
       # `--prefer-offline` gives cache priority
@@ -45,3 +49,4 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.token }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
