@@ -33,7 +33,7 @@ runs:
         name: sbom
         path: _manifest/spdx_2.2
     - name: SBOM upload
-      uses: advanced-security/spdx-dependency-submission-action@f957edbb35161c1f9e33f61026fc86a671c58cae # v0.1.2
+      uses: advanced-security/spdx-dependency-submission-action@169d22427d74f3faf93504e70b03eede8dab272a # v0.2.0
       with:
         filePath: "_manifest/spdx_2.2/"
     - name: Setup github user
