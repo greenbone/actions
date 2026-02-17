@@ -6,7 +6,7 @@ inputs:
     description: "NFS Server IP/Domain. Default is 10.0.0.1."
     default: "10.0.0.1"
   path:
-    description: "Mount Path. Default is /repository-cache"
+    description: "Mount Path(FULL PATH). Default is /repository-cache"
     default: "/repository-cache"
 
 branding:
