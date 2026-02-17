@@ -23,6 +23,9 @@ runs:
     - name: Set up Rust
       run: rustup update ${{ inputs.rust-version }} && rustup default ${{ inputs.rust-version }} || rustup default ${{ inputs.rust-version }}
       shell: bash
+    - name: Print Rust compiler version
+      run: rustc --version
+      shell: bash
     - name: Ensure linting and formatting tools are installed
       run: rustup component add rustfmt clippy
       shell: bash
