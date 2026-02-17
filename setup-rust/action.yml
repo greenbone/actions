@@ -1,0 +1,28 @@
+name: "Setup Rust Environment"
+
+description: "A GitHub Action to set up a Rust environment."
+
+inputs:
+  rust-version:
+    description: "The Rust version to install (default: stable)"
+    required: false
+    default: "stable"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+    - name: Set up Rust
+      run: rustup update ${{ inputs.rust-version }} && rustup default ${{ inputs.rust-version }} || rustup default ${{ inputs.rust-version }}
+      shell: bash
+    - name: Ensure linting and formatting tools are installed
+      run: rustup component add rustfmt clippy
+      shell: bash
