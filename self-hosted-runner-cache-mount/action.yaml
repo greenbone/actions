@@ -1,0 +1,29 @@
+name: Self-Hosted Runner Cache Mount
+description: A GitHub Action to mount a cache directory on your self-hosted runner.
+
+inputs:
+  server:
+    description: "NFS Server IP/Domain. Default is 10.0.0.1."
+    default: "10.0.0.1"
+  path:
+    description: "Mount Path. Default is /repository-cache"
+    default: "/repository-cache"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Mount Cache
+      shell: bash
+      run: |
+        root_path='/var/lib/runner-cache'
+        sudo apt update
+        sudo apt install nfs-common -y
+        sudo mkdir -p "$root_path"
+        sudo mount -t nfs -o vers=4,sec=sys {{ inputs.server }}:/ "$root_path"
+        sudo mkdir -p "$root_path/${{ github.repository }}"
+        sudo mkdir -p '{{ inputs.path }}'
+        sudo mount --bind "$root_path/${{ github.repository }}" '{{ inputs.path }}'
