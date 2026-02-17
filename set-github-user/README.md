@@ -12,7 +12,7 @@ on:
   pull_request:
 
 jobs:
-  setup-pontos:
+  setup-github-user:
     name: Setup
     runs-on: ubuntu-latest
     steps:
