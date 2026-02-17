@@ -17,7 +17,7 @@ jobs:
 ``` 
 ## Action Configuration
  
-| Input Variable | Description                                                   | Default Value         |
-| ---------------| ------------------------------------------------------------- | --------------------- |
-| server         | NFS Server IP/Domain to mount.                                | 10.0.0.1              |
-| path           | Mount Path on the runner where the cache will be mounted.     | /repository-cache     |
+| Input Variable | Description                                                              | Default Value         |
+| ---------------| ------------------------------------------------------------------------ | --------------------- |
+| server         | NFS Server IP/Domain to mount.                                           | 10.0.0.1              |
+| path           | Mount Path on the runner where the cache will be mounted. FULL PATH!     | /repository-cache     |
