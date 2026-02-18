@@ -27,4 +27,3 @@ runs:
         sudo mkdir -p "$root_path/${{ github.repository }}"
         sudo mkdir -p '${{ inputs.path }}'
         sudo mount --bind "$root_path/${{ github.repository }}" '${{ inputs.path }}'
-        sudo umount "$root_path"
