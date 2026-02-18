@@ -23,8 +23,8 @@ runs:
         sudo apt update
         sudo apt install nfs-common -y
         sudo mkdir -p "$root_path"
-        sudo mount -t nfs -o vers=4.1,sec=sys,sync,noac,rw ${{ inputs.server }}:/ "$root_path"
+        sudo mount -t nfs -o vers=4.1,sec=sys,sync,noac,soft,rw ${{ inputs.server }}:/ "$root_path"
         sudo mkdir -p "$root_path/${{ github.repository }}"
         sudo umount "$root_path"
         sudo mkdir -p '${{ inputs.path }}'
-        sudo mount -t nfs -o vers=4.1,sec=sys,sync,noac,rw ${{ inputs.server }}:/${{ github.repository }} '${{ inputs.path }}'
+        sudo mount -t nfs -o vers=4.1,sec=sys,sync,noac,soft,rw ${{ inputs.server }}:/${{ github.repository }} '${{ inputs.path }}'
