@@ -327,6 +327,18 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
+    directory: "/setup-rust"
+    schedule:
+      interval: "weekly"
+      time: "04:00"
+    commit-message:
+      prefix: "Deps"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
     directory: "/sign-release-files"
     schedule:
       interval: "weekly"
