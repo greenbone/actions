@@ -68,6 +68,11 @@ inputs:
   last-release-version:
     description: "The last release version. If not set, it will be detected automatically."
     required: false
+  project-types:
+    description: |
+      "The project type to determine the version for as space separated values. "
+      "Supported are 'cargo', 'cmake', 'go', 'java', 'npm' and 'pyproject'."
+      "If not set, all project types will be considered."
 
 outputs:
   release-version:
@@ -183,6 +188,22 @@ runs:
       if: ${{ inputs.github-pre-release == 'true' }}
       run: |
         ARGS="${ARGS} --github-pre-release"
+        echo "ARGS=${ARGS}" >> $GITHUB_ENV
+      shell: bash
+    - name: Parse project types
+      if: ${{ inputs.project-types }}
+      run: |
+        for type in ${{ inputs.project-types }}; do
+          case $type in
+            cargo | cmake | go | java | npm | pyproject)
+              ;;
+            *)
+              echo "Unsupported project type: $type"
+              exit 1
+              ;;
+          esac
+        done
+        ARGS="${ARGS} --project-types ${{ inputs.project-types }}"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
 
