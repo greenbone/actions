@@ -21,11 +21,6 @@ inputs:
   versioning-scheme:
     description: "What versioning scheme should be used for the release? Supported: 'semver' and 'pep440'. Default: pep440"
     default: "pep440"
-  project-types:
-    description: |
-      "The project type to determine the version for as space separated values. "
-      "Supported are 'cargo', 'cmake', 'go', 'java', 'npm' and 'pyproject'."
-      "If not set, all project types will be considered."
 
 outputs:
   last-release-version:
@@ -84,22 +79,6 @@ runs:
       if: ${{ inputs.release-series }}
       run: |
         ARGS="${ARGS} --release-series ${{ inputs.release-series }}"
-        echo "ARGS=${ARGS}" >> $GITHUB_ENV
-      shell: bash
-    - name: Parse project types
-      if: ${{ inputs.project-types }}
-      run: |
-        for type in ${{ inputs.project-types }}; do
-          case $type in
-            cargo | cmake | go | java | npm | pyproject)
-              ;;
-            *)
-              echo "Unsupported project type: $type"
-              exit 1
-              ;;
-          esac
-        done
-        ARGS="${ARGS} --project-types ${{ inputs.project-types }}"
         echo "ARGS=${ARGS}" >> $GITHUB_ENV
       shell: bash
     - name: Determine release versions

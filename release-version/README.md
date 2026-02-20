@@ -43,15 +43,14 @@ jobs:
 
 ## Action Configuration
 
-| Input Variable    | Description                                                                                                                                   |                                                             |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| python-version    | Python version to use for running the code                                                                                                    | Optional                                                    |
-| release-type      | Type of the release.                                                                                                                          | Required                                                    |
-| release-version   | A release version to use. Overrides release-type                                                                                              | Optional                                                    |
-| release-series    | A release series to use.                                                                                                                      | Optional                                                    |
-| versioning-scheme | The versioning scheme to use for the release. Either pep440 or semver                                                                         | Optional. Default is pep440                                 |
-| git-tag-prefix    | The prefix for the git tags                                                                                                                   | Optional. Default is 'v'                                    |
-| project-types     | The project type to determine the version for as space separated values. Supported are 'cargo', 'cmake', 'go', 'java', 'npm' and 'pyproject'. | Optional. By default  all project types will be considered. |
+| Input Variable    | Description                                                           |                             |
+| ----------------- | --------------------------------------------------------------------- | --------------------------- |
+| python-version    | Python version to use for running the code                            | Optional                    |
+| release-type      | Type of the release.                                                  | Required                    |
+| release-version   | A release version to use. Overrides release-type                      | Optional                    |
+| release-series    | A release series to use.                                              | Optional                    |
+| versioning-scheme | The versioning scheme to use for the release. Either pep440 or semver | Optional. Default is pep440 |
+| git-tag-prefix    | The prefix for the git tags                                           | Optional. Default is 'v'    |
 
 ## Output Arguments
 
