@@ -65,7 +65,7 @@ runs:
         working-directory: ${{ inputs.working-directory }}
     - if: ${{ inputs.package-manager == 'uv' && inputs.install-dependencies == 'true' }}
       name: Install dependencies with uv
-      run: uv sync
+      run: uv sync --locked --all-extras --dev
       shell: bash
       working-directory: ${{ inputs.working-directory }}
     - run: ${{ inputs.package-manager }} run ${{ inputs.formatter }} ${{ inputs.packages }}
