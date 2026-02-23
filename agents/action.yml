@@ -1,0 +1,80 @@
+name: 'Agents Production Deployment'
+description: 'Promote staging agent image to production feed'
+
+inputs:
+  image_repository:
+    description: 'Full image repository path (e.g., greenbone/scan-agent-app)'
+    required: true
+  staging_version:
+    description: 'Version tag from staging to promote'
+    required: true
+  github_token:
+    description: 'GitHub token for GHCR access'
+    required: true
+  harbor_registry:
+    description: 'Harbor registry URL'
+    required: true
+  harbor_username:
+    description: 'Harbor username'
+    required: true
+  harbor_password:
+    description: 'Harbor password'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Extract service name for Harbor
+      shell: bash
+      id: service
+      run: |
+        SERVICE_NAME=$(echo "${{ inputs.image_repository }}" | cut -d'/' -f2)
+        echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Verify and pull staging image
+      shell: bash
+      run: |
+        STAGING_IMAGE="ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}-staging"
+        
+        if ! docker manifest inspect "$STAGING_IMAGE" > /dev/null 2>&1; then
+          echo "Error: Staging image not found: $STAGING_IMAGE"
+          exit 1
+        fi
+        
+        docker pull $STAGING_IMAGE
+        echo "STAGING_IMAGE=$STAGING_IMAGE" >> $GITHUB_ENV
+
+    - name: Tag and push to GHCR production
+      shell: bash
+      run: |
+        docker tag $STAGING_IMAGE ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}
+        docker tag $STAGING_IMAGE ghcr.io/${{ inputs.image_repository }}:enterprise
+        docker tag $STAGING_IMAGE ghcr.io/${{ inputs.image_repository }}:latest
+        docker push ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}
+        docker push ghcr.io/${{ inputs.image_repository }}:enterprise
+        docker push ghcr.io/${{ inputs.image_repository }}:latest
+
+    - name: Login to Harbor
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.harbor_registry }}
+        username: ${{ inputs.harbor_username }}
+        password: ${{ inputs.harbor_password }}
+
+    - name: Tag and push to Harbor
+      shell: bash
+      run: |
+        HARBOR_IMAGE="${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}"
+        docker tag $STAGING_IMAGE ${HARBOR_IMAGE}:${{ inputs.staging_version }}
+        docker tag $STAGING_IMAGE ${HARBOR_IMAGE}:community
+        docker tag $STAGING_IMAGE ${HARBOR_IMAGE}:latest
+        docker push ${HARBOR_IMAGE}:${{ inputs.staging_version }}
+        docker push ${HARBOR_IMAGE}:community
+        docker push ${HARBOR_IMAGE}:latest
