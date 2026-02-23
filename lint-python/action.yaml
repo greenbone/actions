@@ -9,8 +9,13 @@ inputs:
   python-version:
     description: "Python version that should be installed"
     default: "3.10"
+  package-manager:
+    description: "Package manager to use. Default is 'poetry'."
+    default: "poetry"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+  uv-version:
+    description: "Use a specific uv version. By default the latest release is used."
   cache:
     description: "Cache dependencies by setting it to 'true'. Leave unset or set to an other string then 'true' to disable the cache."
   cache-dependency-path:
@@ -38,7 +43,8 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Install poetry
+    - if: ${{ inputs.package-manager == 'poetry' }}
+      name: Install poetry
       uses: greenbone/actions/poetry@v3
       with:
         python-version: ${{ inputs.python-version }}
@@ -48,11 +54,25 @@ runs:
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
         install-dependencies: ${{ inputs.install-dependencies }}
         working-directory: ${{ inputs.working-directory }}
-    - run: poetry run ${{ inputs.formatter }} ${{ inputs.packages }}
+    - if: ${{ inputs.package-manager == 'uv' }}
+      name: Install uv
+      uses: greenbone/actions/uv@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+        uv-version: ${{ inputs.uv-version }}
+        enable-cache: ${{ inputs.cache }}
+        cache-dependency-glob: ${{ inputs.cache-dependency-path }}
+        working-directory: ${{ inputs.working-directory }}
+    - if: ${{ inputs.package-manager == 'uv' && inputs.install-dependencies == 'true' }}
+      name: Install dependencies with uv
+      run: uv sync
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+    - run: ${{ inputs.package-manager }} run ${{ inputs.formatter }} ${{ inputs.packages }}
       shell: bash
       name: Check with ${{ inputs.formatter }}
       working-directory: ${{ inputs.working-directory }}
-    - run: poetry run ${{ inputs.linter }} ${{ inputs.packages }}
+    - run: ${{ inputs.package-manager }} run ${{ inputs.linter }} ${{ inputs.packages }}
       shell: bash
       name: Check with ${{ inputs.linter }}
       working-directory: ${{ inputs.working-directory }}
