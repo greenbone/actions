@@ -8,6 +8,10 @@ inputs:
   staging_version:
     description: 'Version tag from staging to promote'
     required: true
+  dry_run:
+    description: 'Dry run mode - verify only, do not push to production'
+    required: false
+    default: 'true'
   github_token:
     description: 'GitHub token for GHCR access'
     required: true
@@ -48,10 +52,18 @@ runs:
           exit 1
         fi
         
-        docker pull $STAGING_IMAGE
+        echo "Staging image verified: $STAGING_IMAGE"
+        
+        if [ "${{ inputs.dry_run }}" = "true" ]; then
+          echo "DRY RUN MODE - Skipping pull"
+        else
+          docker pull $STAGING_IMAGE
+        fi
+        
         echo "STAGING_IMAGE=$STAGING_IMAGE" >> $GITHUB_ENV
 
     - name: Tag and push to GHCR production
+      if: inputs.dry_run != 'true'
       shell: bash
       run: |
         docker tag $STAGING_IMAGE ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}
@@ -61,7 +73,17 @@ runs:
         docker push ghcr.io/${{ inputs.image_repository }}:enterprise
         docker push ghcr.io/${{ inputs.image_repository }}:latest
 
+    - name: Dry run summary for GHCR
+      if: inputs.dry_run == 'true'
+      shell: bash
+      run: |
+        echo "DRY RUN - Would push to GHCR:"
+        echo "  - ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}"
+        echo "  - ghcr.io/${{ inputs.image_repository }}:enterprise"
+        echo "  - ghcr.io/${{ inputs.image_repository }}:latest"
+
     - name: Login to Harbor
+      if: inputs.dry_run != 'true'
       uses: docker/login-action@v3
       with:
         registry: ${{ inputs.harbor_registry }}
@@ -69,6 +91,7 @@ runs:
         password: ${{ inputs.harbor_password }}
 
     - name: Tag and push to Harbor
+      if: inputs.dry_run != 'true'
       shell: bash
       run: |
         HARBOR_IMAGE="${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}"
@@ -78,3 +101,12 @@ runs:
         docker push ${HARBOR_IMAGE}:${{ inputs.staging_version }}
         docker push ${HARBOR_IMAGE}:community
         docker push ${HARBOR_IMAGE}:latest
+
+    - name: Dry run summary for Harbor
+      if: inputs.dry_run == 'true'
+      shell: bash
+      run: |
+        echo "DRY RUN - Would push to Harbor:"
+        echo "  - ${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}:${{ inputs.staging_version }}"
+        echo "  - ${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}:community"
+        echo "  - ${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}:latest"
