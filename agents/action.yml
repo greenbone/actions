@@ -1,5 +1,5 @@
 name: 'Agents Production Deployment'
-description: 'Promote staging agent image to production feed'
+description: 'Promote staging agent image to enterprise feed in GHCR'
 
 inputs:
   image_repository:
@@ -15,26 +15,10 @@ inputs:
   github_token:
     description: 'GitHub token for GHCR access'
     required: true
-  harbor_registry:
-    description: 'Harbor registry URL'
-    required: true
-  harbor_username:
-    description: 'Harbor username'
-    required: true
-  harbor_password:
-    description: 'Harbor password'
-    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Extract service name for Harbor
-      shell: bash
-      id: service
-      run: |
-        SERVICE_NAME=$(echo "${{ inputs.image_repository }}" | cut -d'/' -f2)
-        echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
-
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
@@ -46,20 +30,16 @@ runs:
       shell: bash
       run: |
         STAGING_IMAGE="ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}-staging"
-        
         if ! docker manifest inspect "$STAGING_IMAGE" > /dev/null 2>&1; then
           echo "Error: Staging image not found: $STAGING_IMAGE"
           exit 1
         fi
-        
         echo "Staging image verified: $STAGING_IMAGE"
-        
         if [ "${{ inputs.dry_run }}" = "true" ]; then
           echo "DRY RUN MODE - Skipping pull"
         else
           docker pull $STAGING_IMAGE
         fi
-        
         echo "STAGING_IMAGE=$STAGING_IMAGE" >> $GITHUB_ENV
 
     - name: Tag and push to GHCR production
@@ -81,32 +61,3 @@ runs:
         echo "  - ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}"
         echo "  - ghcr.io/${{ inputs.image_repository }}:enterprise"
         echo "  - ghcr.io/${{ inputs.image_repository }}:latest"
-
-    - name: Login to Harbor
-      if: inputs.dry_run != 'true'
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ inputs.harbor_registry }}
-        username: ${{ inputs.harbor_username }}
-        password: ${{ inputs.harbor_password }}
-
-    - name: Tag and push to Harbor
-      if: inputs.dry_run != 'true'
-      shell: bash
-      run: |
-        HARBOR_IMAGE="${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}"
-        docker tag $STAGING_IMAGE ${HARBOR_IMAGE}:${{ inputs.staging_version }}
-        docker tag $STAGING_IMAGE ${HARBOR_IMAGE}:community
-        docker tag $STAGING_IMAGE ${HARBOR_IMAGE}:latest
-        docker push ${HARBOR_IMAGE}:${{ inputs.staging_version }}
-        docker push ${HARBOR_IMAGE}:community
-        docker push ${HARBOR_IMAGE}:latest
-
-    - name: Dry run summary for Harbor
-      if: inputs.dry_run == 'true'
-      shell: bash
-      run: |
-        echo "DRY RUN - Would push to Harbor:"
-        echo "  - ${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}:${{ inputs.staging_version }}"
-        echo "  - ${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}:community"
-        echo "  - ${{ inputs.harbor_registry }}/community/${{ steps.service.outputs.service_name }}:latest"
