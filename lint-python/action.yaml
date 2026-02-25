@@ -10,7 +10,7 @@ inputs:
     description: "Python version that should be installed"
     default: "3.10"
   package-manager:
-    description: "Package manager to use. Default is 'poetry'."
+    description: "Package manager to use, either 'poetry' or 'uv'. Default is 'poetry'."
     default: "poetry"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
