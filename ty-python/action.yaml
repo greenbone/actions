@@ -1,0 +1,84 @@
+name: "ty Python Action"
+author: "Kanishk Navale <kanishk.navale@greenbone.net>"
+description: "An action that verifies Python type checks by using ty."
+
+inputs:
+  packages:
+    description: "Python packages to check with ty."
+    required: true
+  ty-arguments:
+    description: "Additional arguments for running ty."
+    default: ""
+  python-version:
+    description: "Installable Python version."
+    default: "3.10"
+  dependency-manager:
+    description: "Dependency manager to use: 'poetry' or 'uv'. Default is 'poetry'."
+    default: "poetry"
+  poetry-version:
+    description: "Use a specific poetry version. By default, it uses the latest release."
+  install-dependencies:
+    description: "Install project dependencies. Default is 'true'. Set to another string than 'true' to not install the dependencies."
+    default: "true"
+  working-directory:
+    description: "Working directory where to run the action."
+    default: ${{ github.workspace }}
+  cache:
+    description: "Cache dependencies by setting it to 'true'. Leave unset or set to another string than 'true' to disable the cache."
+  cache-dependency-path:
+    description: "Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies."
+  cache-poetry-installation:
+    description: "Cache poetry and its dependencies. Default is 'true'. Set to another string than 'true' to disable the cache."
+    default: "true"
+  uv-version:
+    description: "Use a specific uv version. By default, it uses the latest release."
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install poetry
+      if: inputs.dependency-manager == 'poetry'
+      uses: greenbone/actions/poetry@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+        poetry-version: ${{ inputs.poetry-version }}
+        cache: ${{ inputs.cache }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
+        cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
+        install-dependencies: ${{ inputs.install-dependencies }}
+        working-directory: ${{ inputs.working-directory }}
+    
+    - name: Check with ty (poetry)
+      if: inputs.dependency-manager == 'poetry'
+      run: poetry run ty check ${{ inputs.ty-arguments }} ${{ inputs.packages }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+
+    - name: Setup Python for uv
+      if: inputs.dependency-manager == 'uv'
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install uv
+      if: inputs.dependency-manager == 'uv'
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: ${{ inputs.uv-version }}
+        enable-cache: ${{ inputs.cache == 'true' }}
+
+    - name: Install dependencies with uv
+      if: inputs.dependency-manager == 'uv' && inputs.install-dependencies == 'true'
+      run: uv sync --all-extras --dev
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+
+    - name: Check with ty (uv)
+      if: inputs.dependency-manager == 'uv'
+      run: uv run ty check ${{ inputs.ty-arguments }} ${{ inputs.packages }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
