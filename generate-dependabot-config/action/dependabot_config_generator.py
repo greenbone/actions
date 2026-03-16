@@ -44,10 +44,20 @@ class DependabotConfigGenerator:
                     pass
 
             path_to_add = os.path.relpath(root.strip(), self.repository_path)
-            if "action.yml" in files:
+            is_action=False
+            is_python=False
+            if "action.yml" in files or "action.yaml" in files:
+                print("Detected action!")
                 github_action_dirs.append(path_to_add)
+                is_action=True
+
+            # NOTE: that's no elif because the same dir can be both :)
             if "pyproject.toml" in files:
                 python_project_dirs.append(path_to_add)
+                is_python=True
+
+            if not is_action and not is_python:
+                print("No action and no python project found.")
 
         github_action_dirs.sort()
         python_project_dirs.sort()
