@@ -15,18 +15,6 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
-    directory: "/admin-bypass"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
     directory: "/agents"
     schedule:
       interval: "weekly"
@@ -63,18 +51,6 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
-    directory: "/check-version"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
     directory: "/checkout"
     schedule:
       interval: "weekly"
@@ -99,67 +75,7 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
-    directory: "/container-build-push-generic"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/container-multi-arch-manifest"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/container-signing"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
     directory: "/conventional-commits"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/coverage-js"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/coverage-python"
     schedule:
       interval: "weekly"
       time: "04:00"
@@ -267,54 +183,6 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
-    directory: "/git-use-https-for-github"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/hashsums"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/helm-build-push"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/helm-login"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
     directory: "/helm-version-upgrade"
     schedule:
       interval: "weekly"
@@ -328,18 +196,6 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/install-cgreen"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/install-node"
     schedule:
       interval: "weekly"
       time: "04:00"
@@ -375,67 +231,7 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
-    directory: "/lint-node"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/lint-python"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/lock-branch"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
     directory: "/mattermost-notify"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/mypy-python"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/npm-build-push"
     schedule:
       interval: "weekly"
       time: "04:00"
@@ -471,55 +267,7 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
-    directory: "/poetry"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
     directory: "/pr-conventional-commit-labeler"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/push-and-sign-artifact"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/pypi-upload"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/release"
     schedule:
       interval: "weekly"
       time: "04:00"
@@ -568,42 +316,6 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/sbom-upload"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/scp"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/self-hosted-runner-cache-mount"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/set-github-user"
     schedule:
       interval: "weekly"
       time: "04:00"
@@ -675,42 +387,6 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
-    directory: "/ssh-known-hosts"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/ssh-run-cmd"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/test-node"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
     directory: "/trigger-harbor-replication"
     schedule:
       interval: "weekly"
@@ -724,18 +400,6 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/trigger-workflow"
-    schedule:
-      interval: "weekly"
-      time: "04:00"
-    commit-message:
-      prefix: "Deps"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/update-header"
     schedule:
       interval: "weekly"
       time: "04:00"
