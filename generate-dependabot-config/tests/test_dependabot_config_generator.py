@@ -45,15 +45,18 @@ class GeneratorTestCase(unittest.TestCase):
         """
 
         action_directories = list()
+        # action directories where the action is defined with action.yaml
+        # instead of the recommended .yml - we must handle these, too
+        action_directories_with_a = list()
 
         action_directories.append("a")
-        action_directories.append("b")
+        action_directories_with_a.append("b")
         action_directories.append("b/a")
-        action_directories.append("b/b")
+        action_directories_with_a.append("b/b")
         action_directories.append("c")
-        action_directories.append("c/a")
+        action_directories_with_a.append("c/a")
         action_directories.append("c/a/a")
-        action_directories.append("c/b/a")
+        action_directories_with_a.append("c/b/a")
 
         python_directories = list()
         python_directories.append("b")
@@ -73,6 +76,7 @@ class GeneratorTestCase(unittest.TestCase):
 
         with tempfile.TemporaryDirectory(delete=False) as test_tmp_dir:
             create_directories_with_file(action_directories, test_tmp_dir, "action.yml")
+            create_directories_with_file(action_directories_with_a, test_tmp_dir, "action.yaml")
             create_directories_with_file(python_directories, test_tmp_dir, "pyproject.toml")
             create_directories_with_file(other_directories, test_tmp_dir, "action.yml")
 
@@ -86,7 +90,12 @@ class GeneratorTestCase(unittest.TestCase):
             print(action_directories)
             print(python_directories)
 
-            assert test_result_data["action_dirs"] == action_directories
+            all_action_directories = list()
+            all_action_directories.extend(action_directories)
+            all_action_directories.extend(action_directories_with_a)
+            all_action_directories.sort()
+
+            assert test_result_data["action_dirs"] == all_action_directories
             assert test_result_data["python_dirs"] == python_directories
 
 if __name__ == '__main__':
