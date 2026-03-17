@@ -28,7 +28,7 @@ runs:
   steps:
     - name: Install cosign
       if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
-      uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+      uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
 
     - name: Sign container image (public/private keypair)
       if: ${{ inputs.cosign-key-password && inputs.cosign-key }}
