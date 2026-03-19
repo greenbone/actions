@@ -10,7 +10,7 @@ packages = [{include = "project"}]
 python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
+black = "^26.3.1"
 ruff = "^0.5.2"
 coverage = "^7.2.3"
 
