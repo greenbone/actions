@@ -9,7 +9,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 ruamel-yaml = "^0.18.16"
 
 [tool.poetry.group.dev.dependencies]
@@ -26,7 +26,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 80
-target-version = ['py39', 'py310', 'py311']
+target-version = ["py310", "py311", "py312", "py313", "py314"]
 exclude = '''
 /(
     \.git
