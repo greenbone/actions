@@ -12,10 +12,11 @@ classifiers = [
   "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)", # pylint: disable=line-too-long
   "Environment :: Console",
   "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -25,7 +26,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 pontos = ">=22.10.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -36,7 +37,7 @@ coverage = ">=7.2.7"
 
 [tool.black]
 line-length = 80
-target-version = ["py39", "py310", "py311", "py312"]
+target-version = ["py310", "py311", "py312", "py313", "py314"]
 exclude = '''
 /(
     \.git
@@ -63,7 +64,7 @@ version-module-file = "action/__version__.py"
 
 [tool.ruff]
 line-length = 80
-target-version = "py39"
+target-version = "py310"
 extend-select = ["I", "PLE", "PLW"]
 
 [tool.poetry.scripts]
