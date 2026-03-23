@@ -50,6 +50,9 @@ inputs:
   sign-release-files:
     description: "Create and upload release file signatures. Default is 'true'. Set to an other string then 'true' to disable the signatures."
     default: "true"
+  admin-bypass:
+    description: "Toggle admin bypass on branch protection before/after release. Disable for repos without branch protection or on free GitHub plans. Default is 'true'. Set to 'false' to skip."
+    default: "true"
   update-project:
     description: "Update version in project files like `pyproject.toml`. Default is 'true'. Set to an other string then 'true' to disable updating project files."
     default: "true"
@@ -209,6 +212,7 @@ runs:
 
       # Enable admin bypass
     - name: Allow admin users bypassing protection on ${{ inputs.ref}} branch
+      if: inputs.admin-bypass == 'true'
       uses: greenbone/actions/admin-bypass@v3
       with:
         allow: "true"
@@ -227,7 +231,7 @@ runs:
 
       # Disable admin bypass
     - name: Disable bypassing protection on ${{ inputs.ref}} branch for admin users
-      if: always()
+      if: always() && inputs.admin-bypass == 'true'
       uses: greenbone/actions/admin-bypass@v3
       with:
         allow: "false"
