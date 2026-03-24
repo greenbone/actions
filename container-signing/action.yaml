@@ -18,6 +18,9 @@ inputs:
   skip-installation-on:
     description: Skip installation on selected runner. Default is self-hosted-generic.
     default: "self-hosted-generic"
+  cosign-release:
+    description: Cosign version to install. Default is v2.5.2.
+    default: "v2.5.2"
 
 branding:
   icon: "package"
@@ -29,6 +32,8 @@ runs:
     - name: Install cosign
       if: ${{ !startsWith(runner.name, inputs.skip-installation-on) }}
       uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
+      with:
+        cosign-release: ${{ inputs.cosign-release }}
 
     - name: Sign container image (public/private keypair)
       if: ${{ inputs.cosign-key-password && inputs.cosign-key }}
