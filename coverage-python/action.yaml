@@ -72,7 +72,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
     - name: Upload coverage to codecov.io
       if: ${{ inputs.codecov-upload == 'true' }}
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         token: ${{ inputs.token }}
         fail_ci_if_error: true
