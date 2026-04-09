@@ -6,6 +6,9 @@ inputs:
   python-version:
     description: "Python version that should be installed"
     default: "3.10"
+  package-manager:
+    description: "Package manager to use, either 'poetry' or 'uv'. Default is 'poetry'."
+    default: "poetry"
   test-command:
     description: "Command to run the tests"
     required: true
@@ -14,6 +17,8 @@ inputs:
     description: "Upload token for codecov.io. Required for private repositories."
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
+  uv-version:
+    description: "Use a specific uv version. By default the latest release is used."
   cache:
     description: "Cache dependencies by setting it to 'true'."
   cache-dependency-path:
@@ -38,6 +43,7 @@ runs:
   using: "composite"
   steps:
     - name: Install poetry
+      if: ${{ inputs.package-manager == 'poetry' }}
       uses: greenbone/actions/poetry@v3
       with:
         python-version: ${{ inputs.python-version }}
@@ -47,17 +53,26 @@ runs:
         cache-poetry-installation: ${{ inputs.cache-poetry-installation }}
         install-dependencies: ${{ inputs.install-dependencies }}
         working-directory: ${{ inputs.working-directory }}
-    - run: poetry run coverage run ${{ inputs.test-command }}
+    - name: Install uv
+      if: ${{ inputs.package-manager == 'uv' }}
+      uses: greenbone/actions/uv@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+        uv-version: ${{ inputs.uv-version }}
+        enable-cache: ${{ inputs.cache }}
+        cache-dependency-glob: ${{ inputs.cache-dependency-path }}
+        working-directory: ${{ inputs.working-directory }}
+    - name: Run unit tests with coverage
+      run: ${{ inputs.package-manager }} run coverage run ${{ inputs.test-command }}
       shell: bash
-      name: Run unit tests with coverage
       working-directory: ${{ inputs.working-directory }}
-    - run: poetry run coverage xml
+    - name: Create coverage XML report
+      run: ${{ inputs.package-manager }} run coverage xml
       shell: bash
-      name: Create coverage XML report
       working-directory: ${{ inputs.working-directory }}
-    - uses: codecov/codecov-action@v5
+    - name: Upload coverage to codecov.io
       if: ${{ inputs.codecov-upload == 'true' }}
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ inputs.token }}
         fail_ci_if_error: true
-      name: Upload coverage to codecov.io
