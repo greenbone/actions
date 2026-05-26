@@ -1,63 +1,35 @@
 name: 'Agents Production Deployment'
-description: 'Promote staging agent image to enterprise feed in GHCR'
+description: 'Promote staging image to GHCR production tags'
 
 inputs:
   image_repository:
-    description: 'Full image repository path (e.g., greenbone/scan-agent-app)'
     required: true
   staging_version:
-    description: 'Version tag from staging to promote'
+    required: true
+  github_token:
     required: true
   dry_run:
-    description: 'Dry run mode - verify only, do not push to production'
     required: false
-    default: 'true'
-  github_token:
-    description: 'GitHub token for GHCR access'
-    required: true
+    default: 'false'
+    deprecationMessage: 'dry_run is deprecated and ignored. This action always publishes.'
 
 runs:
-  using: "composite"
+  using: composite
   steps:
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v4
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ inputs.github_token }}
-
-    - name: Verify and pull staging image
-      shell: bash
+    - shell: bash
       run: |
-        STAGING_IMAGE="ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}-staging"
-        if ! docker manifest inspect "$STAGING_IMAGE" > /dev/null 2>&1; then
-          echo "Error: Staging image not found: $STAGING_IMAGE"
-          exit 1
-        fi
-        echo "Staging image verified: $STAGING_IMAGE"
-        if [ "${{ inputs.dry_run }}" = "true" ]; then
-          echo "DRY RUN MODE - Skipping pull"
-        else
-          docker pull $STAGING_IMAGE
-        fi
-        echo "STAGING_IMAGE=$STAGING_IMAGE" >> $GITHUB_ENV
+        set -euo pipefail
 
-    - name: Tag and push to GHCR production
-      if: inputs.dry_run != 'true'
-      shell: bash
-      run: |
-        docker tag $STAGING_IMAGE ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}
-        docker tag $STAGING_IMAGE ghcr.io/${{ inputs.image_repository }}:enterprise
-        docker tag $STAGING_IMAGE ghcr.io/${{ inputs.image_repository }}:latest
-        docker push ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}
-        docker push ghcr.io/${{ inputs.image_repository }}:enterprise
-        docker push ghcr.io/${{ inputs.image_repository }}:latest
+        sudo apt-get update
+        sudo apt-get install -y skopeo
 
-    - name: Dry run summary for GHCR
-      if: inputs.dry_run == 'true'
-      shell: bash
-      run: |
-        echo "DRY RUN - Would push to GHCR:"
-        echo "  - ghcr.io/${{ inputs.image_repository }}:${{ inputs.staging_version }}"
-        echo "  - ghcr.io/${{ inputs.image_repository }}:enterprise"
-        echo "  - ghcr.io/${{ inputs.image_repository }}:latest"
+        IMAGE="ghcr.io/${{ inputs.image_repository }}"
+        SOURCE="docker://${IMAGE}:${{ inputs.staging_version }}-staging"
+        AUTH="${{ github.actor }}:${{ inputs.github_token }}"
+
+        skopeo inspect --creds "$AUTH" "$SOURCE" >/dev/null
+
+        for TAG in "${{ inputs.staging_version }}" enterprise latest; do
+          skopeo copy --all --src-creds "$AUTH" --dest-creds "$AUTH" \
+            "$SOURCE" "docker://${IMAGE}:$TAG"
+        done
