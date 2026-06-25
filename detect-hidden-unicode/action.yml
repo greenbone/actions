@@ -42,7 +42,7 @@ runs:
 
     # According to this comment on SO: https://stackoverflow.com/questions/74265821/get-modified-files-in-github-actions
     # We need a fetch-depth of 2 for our git diff(inside the detect-hidden-unicode python script) to work correctly
-    - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         fetch-depth: 2
 
