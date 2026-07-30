@@ -44,19 +44,23 @@ runs:
         known_hosts: ${{ inputs.known-hosts }}
     - name: Run bash cmd on remote host
       if: ${{ inputs.cmd }}
+      env:
+        CMD_OUTPUT: ${{ inputs.cmd-output }}
       run: |
-        if [ -z "${{ inputs.cmd-output }}" ]; then
+        if [ -z "$CMD_OUTPUT" ]; then
           echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash
         else
-          echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash > ${{ inputs.cmd-output }}
+          echo '${{ inputs.cmd }}' | ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' /bin/bash > "$CMD_OUTPUT"
         fi
       shell: bash
     - name: Run bash cmd on remote host
       if: ${{ inputs.file }}
+      env:
+        CMD_OUTPUT: ${{ inputs.cmd-output }}
       run: |
-        if [ -z "${{ inputs.cmd-output }}" ]; then
+        if [ -z "$CMD_OUTPUT" ]; then
           ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }}
         else
-          ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }} > ${{ inputs.cmd-output }}
+          ssh ${{ inputs.ssh-user }}@${{ inputs.ssh-remote-host }} -i '${{ inputs.ssh-tmp }}/key.ssh' 'bash -s' < ${{ inputs.file }} > "$CMD_OUTPUT"
         fi
       shell: bash
