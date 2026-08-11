@@ -25,6 +25,7 @@ jobs:
 
 ## Action Configuration
 
-| Input        | Description                                       |                                |
-| ------------ | ------------------------------------------------- | ------------------------------ |
-| rust-version | The rust version to setup, for example `nightly`. | Optional (default is `stable`) |
+| Input        | Description                                       |                                        |
+| ------------ | ------------------------------------------------- | -------------------------------------- |
+| rust-version | The rust version to setup, for example `nightly`. | Optional (default is `stable`)         |
+| components   | Additional components to install.                 | Optional (default is `rustfmt clippy`) |
