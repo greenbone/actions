@@ -32,8 +32,11 @@ runs:
     - name: Print Rust compiler version
       run: rustc --version
       shell: bash
-    - name: Ensure linting and formatting tools are installed
-      run: rustup component add "$INPUTS_COMPONENTS"
+    - name: Install additional Rust components
+      run: |
+        set -euo pipefail
+        read -r -a components <<< "$INPUTS_COMPONENTS"
+        rustup component add -- "${components[@]}"
       env:
         INPUTS_COMPONENTS: ${{ inputs.components }}
       shell: bash
