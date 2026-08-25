@@ -1,0 +1,45 @@
+name: "Enable auto-merge"
+author: "Björn Ricks <bjoern.ricks@greenbone.net>"
+description: "An action that enables auto-merge for a pull request"
+
+inputs:
+  github-token:
+    description: "GitHub Token for authentication"
+    default: ${{ github.token }}
+  pr-url:
+    description: "The URL of the pull request to enable auto-merge for"
+    default: ${{ github.event.pull_request.html_url }}
+  mode:
+    description: "Select merge mode. Options are merge, squash, and rebase. Default is rebase"
+    default: "rebase"
+
+branding:
+  icon: "package"
+  color: "green"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Enable auto-merge"
+      run: |
+        MERGE_METHOD="$(gh pr view "$PR_URL" --json autoMergeRequest --jq '.autoMergeRequest.mergeMethod // ""')"
+
+        if [ -n "$MERGE_METHOD" ]; then
+          echo "Auto-merge is already enabled with method: $MERGE_METHOD"
+          exit 0
+        fi
+
+        case "$MODE" in
+          merge|squash|rebase)
+            gh pr merge --auto --"$MODE" "$PR_URL"
+            ;;
+          *)
+            echo "Unsupported merge mode: $MODE" >&2
+            exit 1
+            ;;
+        esac
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        MODE: ${{ inputs.mode }}
+        PR_URL: ${{ inputs.pr-url }}
