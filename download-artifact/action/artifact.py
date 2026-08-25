@@ -47,6 +47,10 @@ def created_at(run: WorkflowRun) -> datetime:
     return run.created_at
 
 
+def artifact_created_at(artifact: Artifact) -> datetime:
+    return artifact.created_at
+
+
 def parse_list(value: str) -> List[str]:
     """
     Parse a csv line into a list of strings.
@@ -211,8 +215,8 @@ class DownloadArtifacts:
         if not runs:
             return None, None
 
-        # ensure that newest run is run[0]
         runs = sorted(runs, key=created_at, reverse=True)
+        matching_artifacts: list[tuple[WorkflowRun, Artifact]] = []
 
         for run in runs:
             artifacts = [
@@ -223,9 +227,13 @@ class DownloadArtifacts:
             ]
 
             if not self.name:
-                return run, artifacts
+                artifacts = [
+                    artifact for artifact in artifacts if not artifact.expired
+                ]
+                if artifacts:
+                    return run, artifacts
+                continue
 
-            # Find artifact with matching name
             for artifact in artifacts:
                 if self.name != artifact.name:
                     Console.log(
@@ -234,18 +242,23 @@ class DownloadArtifacts:
                     )
                     continue
 
-                return run, [artifact]
+                if artifact.expired:
+                    Console.log(
+                        f"Skipping expired artifact '{artifact.name}' with ID "
+                        f"{artifact.id}."
+                    )
+                    continue
 
-            # Search artifact in older runs, if allowed
-            if not self.search_older_runs:
-                return None, None
+                matching_artifacts.append((run, artifact))
 
-            Console.log(
-                f"Artifact '{self.name}' not found in workflow run with ID "
-                f"{run.id}. Searching older runs."
-            )
+        if not matching_artifacts:
+            return None, None
 
-        return None, None
+        run, artifact = max(
+            matching_artifacts,
+            key=lambda candidate: artifact_created_at(candidate[1]),
+        )
+        return run, [artifact]
 
     def adjust_permissions(self, file_path: Path) -> None:
         try:
