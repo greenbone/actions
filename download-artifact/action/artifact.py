@@ -215,10 +215,8 @@ class DownloadArtifacts:
         if not runs:
             return None, None
 
-        runs = sorted(runs, key=created_at, reverse=True)
         matching_artifacts: list[tuple[WorkflowRun, Artifact]] = []
-
-        for run in runs:
+        for run in sorted(runs, key=created_at, reverse=True):
             artifacts = [
                 artifact
                 async for artifact in self.api.artifacts.get_workflow_run_artifacts(
@@ -226,16 +224,9 @@ class DownloadArtifacts:
                 )
             ]
 
-            if not self.name:
-                artifacts = [
-                    artifact for artifact in artifacts if not artifact.expired
-                ]
-                if artifacts:
-                    return run, artifacts
-                continue
-
+            run_artifacts = []
             for artifact in artifacts:
-                if self.name != artifact.name:
+                if self.name and self.name != artifact.name:
                     Console.log(
                         f"Skipping artifact '{artifact.name} with ID {artifact.id}' "
                         f"because it does not match {self.name}."
@@ -249,7 +240,18 @@ class DownloadArtifacts:
                     )
                     continue
 
-                matching_artifacts.append((run, artifact))
+                run_artifacts.append(artifact)
+
+            if run_artifacts:
+                if not self.name or not self.search_older_runs:
+                    return run, run_artifacts
+
+                matching_artifacts.extend(
+                    (run, artifact) for artifact in run_artifacts
+                )
+
+            if not self.search_older_runs:
+                return None, None
 
         if not matching_artifacts:
             return None, None

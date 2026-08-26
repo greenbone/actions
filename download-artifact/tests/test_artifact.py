@@ -60,6 +60,7 @@ class DownloadArtifactsTestCase(unittest.IsolatedAsyncioTestCase):
         runs: Iterable[SimpleNamespace],
         artifacts: Dict[int, Iterable[SimpleNamespace]],
         name: str | None = "release-artifact",
+        search_older_runs: bool = False,
     ) -> DownloadArtifacts:
         downloader = object.__new__(DownloadArtifacts)
         downloader.repository = "example/repository"
@@ -68,6 +69,7 @@ class DownloadArtifactsTestCase(unittest.IsolatedAsyncioTestCase):
         downloader.workflow_status = "success"
         downloader.workflow_events = ["schedule"]
         downloader.name = name
+        downloader.search_older_runs = search_older_runs
         downloader.is_debug = False
         downloader.api = SimpleNamespace(
             workflows=Workflows(runs), artifacts=Artifacts(artifacts)
@@ -92,7 +94,7 @@ class DownloadArtifactsTestCase(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(run.id, new_run.id)
         self.assertEqual([artifact.id for artifact in artifacts], [20])
 
-    async def test_uses_artifact_timestamp_when_runs_are_unordered(
+    async def test_selects_newest_run_when_runs_are_unordered(
         self,
     ) -> None:
         older_artifact_run = workflow_run(1, 25)
@@ -107,6 +109,7 @@ class DownloadArtifactsTestCase(unittest.IsolatedAsyncioTestCase):
                     artifact(20, "release-artifact", 25),
                 ],
             },
+            search_older_runs=True,
         )
 
         run, artifacts = await downloader.get_newest_workflow_run()
@@ -126,12 +129,31 @@ class DownloadArtifactsTestCase(unittest.IsolatedAsyncioTestCase):
                 new_run.id: [artifact(20, "expired", 25, expired=True)],
             },
             name=None,
+            search_older_runs=True,
         )
 
         run, artifacts = await downloader.get_newest_workflow_run()
 
         self.assertEqual(run.id, old_run.id)
         self.assertEqual([artifact.id for artifact in artifacts], [10])
+
+    async def test_does_not_search_older_runs_by_default(self) -> None:
+        old_run = workflow_run(1, 24)
+        new_run = workflow_run(2, 25)
+        downloader = self.downloader(
+            [old_run, new_run],
+            {
+                old_run.id: [artifact(10, "release-artifact", 24)],
+                new_run.id: [
+                    artifact(20, "release-artifact", 25, expired=True),
+                ],
+            },
+        )
+
+        run, artifacts = await downloader.get_newest_workflow_run()
+
+        self.assertIsNone(run)
+        self.assertIsNone(artifacts)
 
 
 if __name__ == "__main__":
