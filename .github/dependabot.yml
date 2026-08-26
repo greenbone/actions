@@ -39,6 +39,18 @@ updates:
           - "*"
 
   - package-ecosystem: "github-actions"
+    directory: "/auto-merge"
+    schedule:
+      interval: "weekly"
+      time: "04:00"
+    commit-message:
+      prefix: "Deps"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
     directory: "/awx-run"
     schedule:
       interval: "weekly"
