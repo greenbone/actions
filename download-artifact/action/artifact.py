@@ -47,6 +47,10 @@ def created_at(run: WorkflowRun) -> datetime:
     return run.created_at
 
 
+def artifact_created_at(artifact: Artifact) -> datetime:
+    return artifact.created_at
+
+
 def parse_list(value: str) -> List[str]:
     """
     Parse a csv line into a list of strings.
@@ -211,10 +215,8 @@ class DownloadArtifacts:
         if not runs:
             return None, None
 
-        # ensure that newest run is run[0]
-        runs = sorted(runs, key=created_at, reverse=True)
-
-        for run in runs:
+        matching_artifacts: list[tuple[WorkflowRun, Artifact]] = []
+        for run in sorted(runs, key=created_at, reverse=True):
             artifacts = [
                 artifact
                 async for artifact in self.api.artifacts.get_workflow_run_artifacts(
@@ -222,30 +224,43 @@ class DownloadArtifacts:
                 )
             ]
 
-            if not self.name:
-                return run, artifacts
-
-            # Find artifact with matching name
+            run_artifacts = []
             for artifact in artifacts:
-                if self.name != artifact.name:
+                if self.name and self.name != artifact.name:
                     Console.log(
                         f"Skipping artifact '{artifact.name} with ID {artifact.id}' "
                         f"because it does not match {self.name}."
                     )
                     continue
 
-                return run, [artifact]
+                if artifact.expired:
+                    Console.log(
+                        f"Skipping expired artifact '{artifact.name}' with ID "
+                        f"{artifact.id}."
+                    )
+                    continue
 
-            # Search artifact in older runs, if allowed
+                run_artifacts.append(artifact)
+
+            if run_artifacts:
+                if not self.name or not self.search_older_runs:
+                    return run, run_artifacts
+
+                matching_artifacts.extend(
+                    (run, artifact) for artifact in run_artifacts
+                )
+
             if not self.search_older_runs:
                 return None, None
 
-            Console.log(
-                f"Artifact '{self.name}' not found in workflow run with ID "
-                f"{run.id}. Searching older runs."
-            )
+        if not matching_artifacts:
+            return None, None
 
-        return None, None
+        run, artifact = max(
+            matching_artifacts,
+            key=lambda candidate: artifact_created_at(candidate[1]),
+        )
+        return run, [artifact]
 
     def adjust_permissions(self, file_path: Path) -> None:
         try:
