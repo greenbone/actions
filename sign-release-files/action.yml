@@ -96,13 +96,11 @@ runs:
         gpg --pinentry-mode loopback --passphrase ${{ inputs.gpg-passphrase }} --import tmp.file
         rm tmp.file
       shell: bash
-      if: ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
     # Signing
     - name: Sign files for released version
       run: |
         echo "Signing release files"
         pontos-release sign ${{ env.ARGS }} --repository ${{ inputs.repository }} --signing-key ${{ inputs.gpg-fingerprint }} --passphrase ${{ inputs.gpg-passphrase }} --versioning-scheme ${{ inputs.versioning-scheme }} --git-tag-prefix ${{ inputs.git-tag-prefix }}
       shell: bash
-      if: ${{ inputs.sign-release-files == 'true' }} && ${{ inputs.gpg-key }} && ${{ inputs.gpg-fingerprint }} && ${{ inputs.gpg-passphrase }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
