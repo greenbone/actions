@@ -2,12 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 import unittest
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from typing import Dict, Iterable
+from unittest.mock import patch
 
-from action.artifact import DownloadArtifacts
+import httpx
+
+from action.artifact import DownloadArtifacts, workflow_run_page_item
 
 
 def timestamp(day: int) -> datetime:
@@ -52,6 +56,79 @@ class Artifacts:
         del repository
         for stored_artifact in self.artifacts[run_id]:
             yield stored_artifact
+
+
+class WorkflowRunPageItemTestCase(unittest.TestCase):
+    def test_includes_only_pagination_diagnostic_fields(self) -> None:
+        item = workflow_run_page_item(
+            {
+                "id": 42,
+                "created_at": "2026-08-28T08:30:35Z",
+                "event": "schedule",
+                "status": "completed",
+                "html_url": "https://example.invalid/runs/42",
+                "unrelated": "not logged",
+            }
+        )
+
+        self.assertEqual(
+            item,
+            {
+                "id": 42,
+                "created_at": "2026-08-28T08:30:35Z",
+                "event": "schedule",
+                "status": "completed",
+                "url": "https://example.invalid/runs/42",
+            },
+        )
+
+
+class WorkflowRunPageDiagnosticsTestCase(unittest.IsolatedAsyncioTestCase):
+    async def test_logs_pagination_response_without_unrelated_fields(
+        self,
+    ) -> None:
+        response = SimpleNamespace(
+            request=SimpleNamespace(
+                url=httpx.URL(
+                    "https://api.github.com/repos/example/repository/"
+                    "actions/workflows/publish.yml/runs?page=2"
+                )
+            ),
+            status_code=200,
+            headers={"x-github-request-id": "request-id"},
+            links={"next": {"url": "https://example.invalid/runs?page=3"}},
+            json=lambda: {
+                "workflow_runs": [
+                    {
+                        "id": 42,
+                        "created_at": "2026-08-28T08:30:35Z",
+                        "event": "schedule",
+                        "status": "completed",
+                        "html_url": "https://example.invalid/runs/42",
+                        "unrelated": "not logged",
+                    }
+                ]
+            },
+        )
+
+        async def get(*args, **kwargs):
+            del args, kwargs
+            return response
+
+        downloader = object.__new__(DownloadArtifacts)
+        downloader.api = SimpleNamespace(_client=SimpleNamespace(get=get))
+        downloader._enable_workflow_run_page_diagnostics()
+
+        with patch("action.artifact.Console.debug") as debug:
+            await downloader.api._client.get("/unused")
+
+        payload = json.loads(
+            debug.call_args.args[0].removeprefix("workflow-runs-page ")
+        )
+        self.assertEqual(payload["request_id"], "request-id")
+        self.assertEqual(payload["run_count"], 1)
+        self.assertEqual(payload["first_run"]["id"], 42)
+        self.assertNotIn("unrelated", payload["first_run"])
 
 
 class DownloadArtifactsTestCase(unittest.IsolatedAsyncioTestCase):
