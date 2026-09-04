@@ -61,6 +61,19 @@ def workflow_run_page_item(run: dict) -> dict:
     }
 
 
+def workflow_run_request(request: httpx.Request) -> dict:
+    return {
+        "method": request.method,
+        "url": str(request.url),
+        "headers": {
+            name: value
+            for name, value in request.headers.items()
+            if name.lower() != "authorization"
+        },
+        "content": request.content.decode(errors="replace"),
+    }
+
+
 def parse_list(value: str) -> List[str]:
     """
     Parse a csv line into a list of strings.
@@ -209,6 +222,12 @@ class DownloadArtifacts:
                     "workflow-runs-page "
                     + json.dumps(
                         {
+                            "request": workflow_run_request(response.request),
+                            "response": {
+                                "status_code": response.status_code,
+                                "headers": dict(response.headers),
+                                "body": response.json(),
+                            },
                             "request_url": str(request_url),
                             "status_code": response.status_code,
                             "request_id": response.headers.get(

@@ -84,31 +84,36 @@ class WorkflowRunPageItemTestCase(unittest.TestCase):
 
 
 class WorkflowRunPageDiagnosticsTestCase(unittest.IsolatedAsyncioTestCase):
-    async def test_logs_pagination_response_without_unrelated_fields(
-        self,
-    ) -> None:
+    async def test_logs_full_pagination_request_and_response(self) -> None:
+        response_body = {
+            "workflow_runs": [
+                {
+                    "id": 42,
+                    "created_at": "2026-08-28T08:30:35Z",
+                    "event": "schedule",
+                    "status": "completed",
+                    "html_url": "https://example.invalid/runs/42",
+                    "unrelated": "logged in the full response",
+                }
+            ]
+        }
         response = SimpleNamespace(
             request=SimpleNamespace(
+                method="GET",
                 url=httpx.URL(
                     "https://api.github.com/repos/example/repository/"
                     "actions/workflows/publish.yml/runs?page=2"
-                )
+                ),
+                headers={
+                    "accept": "application/vnd.github+json",
+                    "authorization": "Bearer secret",
+                },
+                content=b"",
             ),
             status_code=200,
             headers={"x-github-request-id": "request-id"},
             links={"next": {"url": "https://example.invalid/runs?page=3"}},
-            json=lambda: {
-                "workflow_runs": [
-                    {
-                        "id": 42,
-                        "created_at": "2026-08-28T08:30:35Z",
-                        "event": "schedule",
-                        "status": "completed",
-                        "html_url": "https://example.invalid/runs/42",
-                        "unrelated": "not logged",
-                    }
-                ]
-            },
+            json=lambda: response_body,
         )
 
         async def get(*args, **kwargs):
@@ -117,15 +122,21 @@ class WorkflowRunPageDiagnosticsTestCase(unittest.IsolatedAsyncioTestCase):
 
         downloader = object.__new__(DownloadArtifacts)
         downloader.api = SimpleNamespace(_client=SimpleNamespace(get=get))
-        downloader._enable_workflow_run_page_diagnostics()
+        downloader._enable_workflow_run_page_diagnostics()  # pylint: disable=protected-access
 
         with patch("action.artifact.Console.debug") as debug:
-            await downloader.api._client.get("/unused")
+            await downloader.api._client.get(  # pylint: disable=protected-access
+                "/unused"
+            )
 
         payload = json.loads(
             debug.call_args.args[0].removeprefix("workflow-runs-page ")
         )
         self.assertEqual(payload["request_id"], "request-id")
+        self.assertEqual(payload["request"]["method"], "GET")
+        self.assertEqual(payload["request"]["content"], "")
+        self.assertNotIn("authorization", payload["request"]["headers"])
+        self.assertEqual(payload["response"]["body"], response_body)
         self.assertEqual(payload["run_count"], 1)
         self.assertEqual(payload["first_run"]["id"], 42)
         self.assertNotIn("unrelated", payload["first_run"])
