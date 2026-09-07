@@ -228,15 +228,15 @@ class DownloadArtifacts:
             for artifact in artifacts:
                 if self.name and self.name != artifact.name:
                     Console.log(
-                        f"Skipping artifact '{artifact.name} with ID {artifact.id}' "
-                        f"because it does not match {self.name}."
+                        f"Skipping artifact '{artifact.name} with ID {artifact.id}' from "
+                        f"run ID {run.id} because it does not match {self.name}."
                     )
                     continue
 
                 if artifact.expired:
                     Console.log(
                         f"Skipping expired artifact '{artifact.name}' with ID "
-                        f"{artifact.id}."
+                        f"{artifact.id} from run ID {run.id}."
                     )
                     continue
 
