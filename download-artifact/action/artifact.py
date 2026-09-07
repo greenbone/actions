@@ -228,7 +228,7 @@ class DownloadArtifacts:
             for artifact in artifacts:
                 if self.name and self.name != artifact.name:
                     Console.log(
-                        f"Skipping artifact '{artifact.name} with ID {artifact.id}' from "
+                        f"Skipping artifact '{artifact.name}' with ID {artifact.id} from "
                         f"run ID {run.id} because it does not match {self.name}."
                     )
                     continue
