@@ -51,6 +51,29 @@ def artifact_created_at(artifact: Artifact) -> datetime:
     return artifact.created_at
 
 
+def workflow_run_page_item(run: dict) -> dict:
+    return {
+        "id": run.get("id"),
+        "created_at": run.get("created_at"),
+        "event": run.get("event"),
+        "status": run.get("status"),
+        "url": run.get("html_url"),
+    }
+
+
+def workflow_run_request(request: httpx.Request) -> dict:
+    return {
+        "method": request.method,
+        "url": str(request.url),
+        "headers": {
+            name: value
+            for name, value in request.headers.items()
+            if name.lower() != "authorization"
+        },
+        "content": request.content.decode(errors="replace"),
+    }
+
+
 def parse_list(value: str) -> List[str]:
     """
     Parse a csv line into a list of strings.
@@ -170,6 +193,8 @@ class DownloadArtifacts:
         self.is_debug = env.is_debug
 
         self.api = GitHubAsyncRESTApi(token)
+        if self.is_debug:
+            self._enable_workflow_run_page_diagnostics()
 
         with Console.group("Settings"):
             Console.log(f"repository: {self.repository}")
@@ -183,6 +208,52 @@ class DownloadArtifacts:
             Console.log(f"search-older-runs: {self.search_older_runs}")
             Console.log(f"user: {self.user}")
             Console.log(f"group: {self.group}")
+
+    def _enable_workflow_run_page_diagnostics(self) -> None:
+        """Log GitHub workflow-run pagination responses in debug mode only."""
+        get = self.api._client.get  # pylint: disable=protected-access
+
+        async def debug_get(*args, **kwargs):
+            response = await get(*args, **kwargs)
+            request_url = response.request.url
+            if request_url.path.endswith("/runs"):
+                workflow_runs = response.json().get("workflow_runs", [])
+                Console.debug(
+                    "workflow-runs-page "
+                    + json.dumps(
+                        {
+                            "request": workflow_run_request(response.request),
+                            "response": {
+                                "status_code": response.status_code,
+                                "headers": dict(response.headers),
+                                "body": response.json(),
+                            },
+                            "request_url": str(request_url),
+                            "status_code": response.status_code,
+                            "request_id": response.headers.get(
+                                "x-github-request-id"
+                            ),
+                            "next_url": response.links.get("next", {}).get(
+                                "url"
+                            ),
+                            "run_count": len(workflow_runs),
+                            "first_run": (
+                                workflow_run_page_item(workflow_runs[0])
+                                if workflow_runs
+                                else None
+                            ),
+                            "last_run": (
+                                workflow_run_page_item(workflow_runs[-1])
+                                if workflow_runs
+                                else None
+                            ),
+                        },
+                        default=str,
+                    )
+                )
+            return response
+
+        self.api._client.get = debug_get  # pylint: disable=protected-access
 
     async def get_newest_workflow_run(
         self,
@@ -207,9 +278,21 @@ class DownloadArtifacts:
             raise DownloadArtifactsError(f"Could not find workflow. {e}") from e
 
         if self.is_debug:
-            urls = "\n".join([run.html_url for run in runs])
             Console.debug(
-                f"Workflow runs for events {self.workflow_events}:\n{urls}"
+                "workflow-run-candidates "
+                + json.dumps(
+                    [
+                        {
+                            "id": run.id,
+                            "created_at": run.created_at,
+                            "event": run.event.value,
+                            "status": run.status.value,
+                            "url": run.html_url,
+                        }
+                        for run in sorted(runs, key=created_at, reverse=True)
+                    ],
+                    default=str,
+                )
             )
 
         if not runs:
@@ -223,6 +306,25 @@ class DownloadArtifacts:
                     self.repository, run.id
                 )
             ]
+            if self.is_debug:
+                Console.debug(
+                    "workflow-run-artifacts "
+                    + json.dumps(
+                        {
+                            "run_id": run.id,
+                            "artifacts": [
+                                {
+                                    "id": artifact.id,
+                                    "name": artifact.name,
+                                    "created_at": artifact.created_at,
+                                    "expired": artifact.expired,
+                                }
+                                for artifact in artifacts
+                            ],
+                        },
+                        default=str,
+                    )
+                )
 
             run_artifacts = []
             for artifact in artifacts:
