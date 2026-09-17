@@ -117,10 +117,15 @@ runs:
     - name: Get urls
       id: urls
       shell: bash
+      env:
+        IMAGE_URL: ${{ inputs.image-url }}
+        REGISTRY: ${{ inputs.registry }}
       run: |
         {
           echo 'urls<<EOF'
-          printf '%s\n' '${{ inputs.image-url }}' | sed '/^[[:space:]]*$/d; s#^#${{ inputs.registry }}/#'
+          while IFS= read -r image; do
+            [[ "$image" =~ ^[[:space:]]*$ ]] || printf '%s/%s\n' "$REGISTRY" "$image"
+          done <<< "$IMAGE_URL"
           echo 'EOF'
         } >> "$GITHUB_OUTPUT"
 
