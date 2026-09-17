@@ -25,7 +25,7 @@ inputs:
     description: "Image labels."
     required: true
   image-url:
-    description: "Image url/name without registry. Default is github.repository."
+    description: "One or more image URLs or names without the registry, separated by newlines. Defaults to github.repository."
     default: "${{ github.repository }}"
   image-tags:
     description: "Image tags."
@@ -45,19 +45,6 @@ inputs:
   registry-password:
     description: "Login registry password."
     required: true
-  scout-command:
-    description: "Comma separated list to run several commands. Options are quickview, compare, cves, recommendations, sbom, environment. Default is cves,sbom."
-    default: "cves,sbom"
-  scout-user:
-    description: "Dockerhub user for docker scout. Will be skipped if empty. Default is empty."
-  scout-password:
-    description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty."
-  scout-keep-previous-comments:
-    description: "Keep but hide previous comment. If not set, keep and update one single comment per job. Options are true/false. Default is false."
-    default: false
-  sarif-retention-days:
-    description: "Days to store the sarif artifact. Default is 1."
-    default: 1
   qemu:
     description: "Install local QEMU static binaries. Options are true/false. Default is false."
     default: "false"
@@ -67,6 +54,24 @@ inputs:
   buildx-container:
     description: "Use a buildx container to build images. Options are true/false. Default is false."
     default: "false"
+  scout-command:
+    description: "Comma separated list to run several commands. Options are quickview, compare, cves, recommendations, sbom, environment. Default is cves,sbom."
+    default: "cves,sbom"
+    deprecationMessage: "This functionality is deprecated and has been removed."
+  scout-user:
+    description: "Dockerhub user for docker scout. Will be skipped if empty. Default is empty."
+    deprecationMessage: "This functionality is deprecated and has been removed."
+  scout-password:
+    description: "Dockerhub user password for docker scout. Will be skipped if empty. Default is empty."
+    deprecationMessage: "This functionality is deprecated and has been removed."
+  scout-keep-previous-comments:
+    description: "Keep but hide previous comment. If not set, keep and update one single comment per job. Options are true/false. Default is false."
+    default: false
+    deprecationMessage: "This functionality is deprecated and has been removed."
+  sarif-retention-days:
+    description: "Days to store the sarif artifact. Default is 1."
+    default: 1
+    deprecationMessage: "This functionality is deprecated and has been removed."
 
 outputs:
   annotations:
@@ -92,13 +97,6 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Get image name
-      id: image
-      shell: bash
-      run: |
-        name="$(echo '${{ inputs.image-url }}' | awk -F'/' '{print $NF}')"
-        echo "name=$name" >> "$GITHUB_OUTPUT"
-
     - name: Set up QEMU
       if: ${{ inputs.qemu == 'true' }}
       uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a # v4.3.0
@@ -116,27 +114,36 @@ runs:
         username: ${{ inputs.registry-username }}
         password: ${{ inputs.registry-password }}
 
+    - name: Get urls
+      id: urls
+      shell: bash
+      run: |
+        {
+          echo 'urls<<EOF'
+          printf '%s\n' '${{ inputs.image-url }}' | sed '/^[[:space:]]*$/d; s#^#${{ inputs.registry }}/#'
+          echo 'EOF'
+        } >> "$GITHUB_OUTPUT"
+
     - name: Setup container meta information
       id: meta
       uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
       with:
-        images: "${{ inputs.registry}}/${{ inputs.image-url }}"
+        images: ${{ steps.urls.outputs.urls }}
         labels: ${{ inputs.image-labels }}
         tags: ${{ inputs.image-tags }}
         flavor: ${{ inputs.image-flavor }}
       env:
         DOCKER_METADATA_ANNOTATIONS_LEVELS: ${{ inputs.meta-annotations-levels }}
 
-    - name: Get tag names
+    - name: Get tags
       id: tags
       shell: bash
       run: |
-        set +e ; IFS=$'\n' read -r -d '' -a tags <<< "$(printf '%s\n' '${{ steps.meta.outputs.tags }}' | sort -u)" ; set -e
-        echo 'tags<<EOF' >> $GITHUB_OUTPUT
-        for tag in "${tags[@]}"; do
-          echo "$tag" | cut -d ':' -f 2 >> $GITHUB_OUTPUT
-        done
-        echo 'EOF' >> $GITHUB_OUTPUT
+        {
+          echo 'tags<<EOF'
+          printf '%s\n' '${{ steps.meta.outputs.tags }}' | cut -d ':' -f 2 | sort -u
+          echo 'EOF'
+        } >> "$GITHUB_OUTPUT"
 
     - name: Build and push container image
       id: build-and-push
@@ -162,23 +169,3 @@ runs:
         cosign-tlog-upload: ${{ inputs.cosign-tlog-upload }}
         image-tags: ${{ steps.meta.outputs.tags }}
         image-digest: ${{ steps.build-and-push.outputs.digest }}
-
-    ### The sbom action causes too many problems on our self-hosted runners ###
-    #- name: Container sbom
-    #  if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password }}
-    #  uses: docker/scout-action@6ac950eb733f8b2811f25c05d97bfb3d181b8026 # v1.15.1
-    #  with:
-    #    command: ${{ inputs.scout-command }}
-    #    image: ${{ steps.meta.outputs.tags }}
-    #    dockerhub-user: ${{ inputs.scout-user }}
-    #    dockerhub-password: ${{ inputs.scout-password }}
-    #    sarif-file: /tmp/${{ steps.image.outputs.name }}.sarif
-    #    keep-previous-comments: ${{ inputs.scout-keep-previous-comments }}
-
-    #- name: Upload sbom sarif file
-    #  if: ${{ github.event_name == 'pull_request' && inputs.scout-user && inputs.scout-password && contains(inputs.scout-command, 'sbom') }}
-    #  uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-    #  with:
-    #    name: ${{ steps.image.outputs.name }}.sarif
-    #    path: /tmp/${{ steps.image.outputs.name }}.sarif
-    #    retention-days: ${{ inputs.sarif-retention-days }}
