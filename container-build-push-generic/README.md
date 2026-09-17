@@ -104,14 +104,9 @@ jobs:
 | cosign-key-password          | Cosign key password. Will be skipped if empty. Default is empty.                                                                            | Optional |
 | cosign-tlog-upload           | Turn on or turn off the cosign tlog upload function. Options are true/false. Default is true.                                               | Optional |
 | image-flavor                 | Global behavior for tags. Default is empty.                                                                                                 | Optional |
-| image-url                    | Image url/name without registry. Default is github.repository.                                                                              | Optional |
+| image-url                    | One or more image URLs or names without the registry, separated by newlines. Defaults to github.repository.                                 | Optional |
 | image-platforms              | Image platforms to build for. Default is "linux/amd64".                                                                                     | Optional |
 | meta-annotations-levels      | Comma separated list. Options are manifest, index, manifest-descriptor, index-descriptor. Default is manifest,manifest-descriptor.          | Optional |
-| scout-command                | Comma separated list of several commands. Options are quickview, compare, cves, recommendations, sbom, environment. Default is cves,sbom.   | Optional |
-| scout-user                   | Dockerhub user for docker scout. Will be skipped if empty. Default is empty.                                                                | Optional |
-| scout-password               | Dockerhub user password for docker scout. Will be skipped if empty. Default is empty.                                                       | Optional |
-| scout-keep-previous-comments | Keep but hide previous comment. If not set, keep and update one single comment per job. Options are true/false. Default is false.           | Optional |
-| sarif-retention-days         | Days to store the sarif artifact. Default is 1.                                                                                             | Optional |
 | qemu                         | Install local QEMU static binaries. Options are true/false. Default is false.                                                               | Optional |
 | qemu-platforms               | Comma separated list of platforms to install. Options are amd64, arm64, arm, riscv64, s390x, 386. Default is arm64 (amd64 is default arch). | Optional |
 | buildx-container             | Use a buildx container to build images. Options are true/false. Default is false.                                                           | Optional |
