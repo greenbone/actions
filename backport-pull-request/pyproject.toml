@@ -1,26 +1,41 @@
-[tool.poetry]
+[project]
 name = "backport-pull-request-action"
 version = "1.0.0"
 description = "A GitHub Action to backport Pull Requests"
-authors = ["Björn Ricks <bjoern.ricks@greenbone.net>"]
-license = "GPLv3+"
-packages = [
-    { include = "action" },
+authors = [{ name = "Björn Ricks", email = "bjoern.ricks@greenbone.net" }]
+requires-python = ">=3.10,<4"
+license = "GPL-3.0-or-later"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = ["tomli>=1.0", "pontos>=23.2.2"]
+
+[project.scripts]
+backport-pull-request = "action.backport:main"
+
+[dependency-groups]
+dev = [
+    "autohooks>=21.7.0",
+    "autohooks-plugin-pylint>=21.6.0",
+    "autohooks-plugin-black>=21.12.0",
+    "autohooks-plugin-isort>=22.8.0",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-tomli = ">=1.0"
-pontos = ">=23.2.2"
+[tool.uv]
+default-groups = "all"
 
-[tool.poetry.group.dev.dependencies]
-autohooks = ">=21.7.0"
-autohooks-plugin-pylint = ">=21.6.0"
-autohooks-plugin-black = ">=21.12.0"
-autohooks-plugin-isort = ">=22.8.0"
+[tool.uv.build-backend]
+module-name = ["action"]
+module-root = ""
 
-[tool.poetry.scripts]
-backport-pull-request = 'action.backport:main'
+[build-system]
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"
 
 [tool.black]
 line-length = 80
@@ -41,7 +56,3 @@ exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 80
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
