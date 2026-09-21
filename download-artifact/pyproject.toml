@@ -13,7 +13,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = ["pontos>=23.3.0"]
+dependencies = [
+    "httpx2>=2.13.0",
+    "pontos>=23.3.0",
+]
 
 [project.scripts]
 download-artifact = "action.artifact:main"

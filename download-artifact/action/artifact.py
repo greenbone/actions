@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import NoReturn
 from zipfile import ZipFile
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.api import GitHubAsyncRESTApi
@@ -207,7 +207,7 @@ class DownloadArtifacts:
                 if not self.workflow_events
                 or is_event(run, self.workflow_events)
             ]
-        except httpx.HTTPStatusError as e:
+        except HTTPStatusError as e:
             if self.allow_not_found and e.response.status_code == 404:
                 return None, None
 
@@ -331,7 +331,7 @@ class DownloadArtifacts:
                         async for content, _ in download:
                             f.write(content)
                             print(".", end="")
-                except httpx.HTTPStatusError as e:
+                except HTTPStatusError as e:
                     raise DownloadArtifactsError(
                         f"HTTP Error {e}: Failed to download '{artifact.name}' with ID "
                         f"{artifact.id}"
@@ -390,7 +390,7 @@ class DownloadArtifacts:
                     asyncio.create_task(self.download_artifact(artifact))
                     for artifact in artifacts
                 ]
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 raise DownloadArtifactsError(
                     f"Could not find workflow run artifacts. {e}"
                 ) from e
