@@ -24,7 +24,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import NoReturn, Self
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.git import ConfigScope, Git, GitError
 from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
@@ -160,7 +160,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
                 title=title,
                 body=body,
             )
-        except httpx.HTTPStatusError as e:
+        except HTTPStatusError as e:
             Console.log(f"Error response was {e.response.json()}")
             raise BackportError(
                 f"Could not create pull request. Error was {e}"
