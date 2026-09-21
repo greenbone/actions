@@ -8,13 +8,13 @@ Module to parse command-line arguments
 """
 
 from argparse import ArgumentParser, Namespace
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Optional, Sequence
 
 import shtab
 
 
-def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
+def parse_args(args: Sequence[str] | None = None) -> Namespace:
     """
     Parses command-line arguments for managing GitHub release assets.
 
