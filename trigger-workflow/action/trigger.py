@@ -29,7 +29,9 @@ def is_newer_run(run: WorkflowRun, date: datetime) -> bool:
     return run.created_at > date
 
 
-def parse_int(value: str) -> int | None:
+def parse_int(value: str | None) -> int | None:
+    if value is None:
+        return None
     try:
         return int(value)
     except (ValueError, TypeError):
@@ -88,7 +90,7 @@ class Trigger:
             raise TriggerError("Missing repository.")
 
         self.timeout = parse_int(timeout)
-        self.interval = parse_int(interval)
+        self.interval = parse_int(interval) or WAIT_FOR_COMPLETION_INTERVAL
 
         self.inputs = None if not inputs else json.loads(inputs)
 
@@ -185,7 +187,7 @@ class Trigger:
             if run.status == WorkflowRunStatus.COMPLETED:
                 break
 
-            if date_now() > self.timeout_date:
+            if self.timeout_date and date_now() > self.timeout_date:
                 raise TriggerError(f"Workflow run {run.id} run timed out.")
 
             await asyncio.sleep(self.interval)
