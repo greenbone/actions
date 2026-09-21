@@ -49,11 +49,8 @@ inputs:
   python-version:
     description: "Python version to use for running the action. Default is 3.11 ."
     default: "3.11"
-  poetry-version:
-    description: "Use a specific poetry version. By default the latest release is used."
-  cache-poetry-installation:
-    description: "Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache."
-    default: "true"
+  uv-version:
+    description: "Use a specific uv version. By default the latest release is used."
 
 outputs:
   output:
@@ -64,9 +61,9 @@ runs:
   using: "composite"
   steps:
     - name: Setup
-      uses: greenbone/actions/pipx@v3
+      uses: greenbone/actions/uv@v3
       with:
-        install: ${{ github.action_path }}
+        uv-version: ${{ inputs.uv-version }}
 
     - name: Run oci-info
       working-directory: ${{ github.action_path }}
@@ -152,5 +149,5 @@ runs:
         fi
 
         # We need a clear exit code
-        output="$(oci-info "${cmd[@]}")"
+        output="$(uv run oci-info "${cmd[@]}")"
         echo "output<<EOF"$'\n'"$output"$'\n'EOF >> $GITHUB_OUTPUT
