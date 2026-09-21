@@ -1,49 +1,48 @@
-[tool.poetry]
+[project]
 name = "download-artifact-action"
 version = "1.0.0"
 description = "A GitHub Action to download artifacts of a workflow run"
-authors = ["Björn Ricks <bjoern.ricks@greenbone.net>"]
-license = "GPLv3+"
-packages = [
-    { include = "action" },
+authors = [{ name = "Björn Ricks", email = "bjoern.ricks@greenbone.net" }]
+requires-python = ">=3.10,<4"
+license = "GPL-3.0-or-later"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "httpx2>=2.13.0",
+    "pontos>=23.3.0",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pontos = ">=23.3.0"
+[project.scripts]
+download-artifact = "action.artifact:main"
 
-[tool.poetry.group.dev.dependencies]
-autohooks-plugin-pylint = ">=22.8.0"
-autohooks-plugin-isort = ">=22.8.0"
-autohooks-plugin-black = ">=22.8.0"
+[dependency-groups]
+dev = ["autohooks-plugin-ruff>=25.3.1"]
 
-[tool.poetry.scripts]
-download-artifact = 'action.artifact:main'
+[tool.uv]
+default-groups = "all"
+
+[tool.uv.build-backend]
+module-name = ["action"]
+module-root = ""
+namespace = true
+
+[tool.ruff]
+line-length = 80
+target-version = "py310"
+
+[tool.ruff.lint]
+extend-select = ["I", "PLE", "PLW"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 80
-target-version = ["py310", "py311", "py312", "py313", "py314"]
-exclude = '''
-/(
-    \.git
-  | \.venv
-  | \.github
-  | \.vscode
-  | _build
-  | build
-  | dist
-  | docs
-)/
-'''
-
-[tool.isort]
-profile = "black"
-line_length = 80
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"
 
 [tool.autohooks]
-mode = "poetry"
-pre-commit = ['autohooks.plugins.black', 'autohooks.plugins.isort', 'autohooks.plugins.pylint']
+mode = "uv"
+pre-commit = ['autohooks.plugins.ruff.check', 'autohooks.plugins.ruff.format']

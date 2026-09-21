@@ -23,13 +23,14 @@ import stat
 import sys
 import tempfile
 from argparse import ArgumentParser, Namespace
+from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Generator, Iterable, List, NoReturn, Optional, Union
+from typing import NoReturn
 from zipfile import ZipFile
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.api import GitHubAsyncRESTApi
@@ -51,7 +52,7 @@ def artifact_created_at(artifact: Artifact) -> datetime:
     return artifact.created_at
 
 
-def parse_list(value: str) -> List[str]:
+def parse_list(value: str) -> list[str]:
     """
     Parse a csv line into a list of strings.
 
@@ -62,7 +63,7 @@ def parse_list(value: str) -> List[str]:
     return [value for value in values if value]
 
 
-def parse_int(value: str) -> Optional[int]:
+def parse_int(value: str) -> int | None:
     try:
         return int(value)
     except (ValueError, TypeError):
@@ -87,7 +88,9 @@ def parse_arguments() -> Namespace:
     parser.add_argument("--token", required=True)
     parser.add_argument("--repository", nargs="?")
     parser.add_argument("--workflow", required=True)
-    parser.add_argument("--workflow-status", type=WorkflowRunStatus, choices=WorkflowRunStatus)
+    parser.add_argument(
+        "--workflow-status", type=WorkflowRunStatus, choices=WorkflowRunStatus
+    )
     parser.add_argument("--workflow-events", nargs="?")
     parser.add_argument("--branch", required=True)
     parser.add_argument("--name", nargs="?")
@@ -107,18 +110,18 @@ class DownloadArtifacts:
     def __init__(
         self,
         *,
-        token: Optional[str] = None,
-        workflow: Optional[str] = None,
-        workflow_events: Optional[str] = None,
-        workflow_status: Optional[WorkflowRunStatus] = None,
-        repository: Optional[str] = None,
-        branch: Optional[str] = None,
-        name: Optional[str] = None,
-        path: Optional[str] = None,
-        allow_not_found: Optional[str] = None,
-        search_older_runs: Optional[str] = None,
-        user: Union[str, int] = None,
-        group: Union[str, int] = None,
+        token: str | None = None,
+        workflow: str | None = None,
+        workflow_events: str | None = None,
+        workflow_status: WorkflowRunStatus | None = None,
+        repository: str | None = None,
+        branch: str | None = None,
+        name: str | None = None,
+        path: str | None = None,
+        allow_not_found: str | None = None,
+        search_older_runs: str | None = None,
+        user: str | int | None = None,
+        group: str | int | None = None,
     ) -> None:
         env = GitHubEnvironment()
 
@@ -136,7 +139,9 @@ class DownloadArtifacts:
         else:
             self.workflow_events = parse_list(workflow_events)
 
-        self.workflow_status = workflow_status or ActionIO.input("workflow-status")
+        self.workflow_status = workflow_status or ActionIO.input(
+            "workflow-status"
+        )
         if not self.workflow_status:
             self.workflow_status = WorkflowRunStatus.SUCCESS
 
@@ -164,7 +169,9 @@ class DownloadArtifacts:
         allow_not_found = allow_not_found or ActionIO.input("allow-not-found")
         self.allow_not_found = allow_not_found == "true"
 
-        search_older_runs = search_older_runs or ActionIO.input("search-older-runs")
+        search_older_runs = search_older_runs or ActionIO.input(
+            "search-older-runs"
+        )
         self.search_older_runs = search_older_runs == "true"
 
         self.is_debug = env.is_debug
@@ -186,7 +193,7 @@ class DownloadArtifacts:
 
     async def get_newest_workflow_run(
         self,
-    ) -> tuple[Optional[WorkflowRun], Optional[Iterable[Artifact]]]:
+    ) -> tuple[WorkflowRun | None, Iterable[Artifact] | None]:
         try:
             runs = [
                 run
@@ -200,7 +207,7 @@ class DownloadArtifacts:
                 if not self.workflow_events
                 or is_event(run, self.workflow_events)
             ]
-        except httpx.HTTPStatusError as e:
+        except HTTPStatusError as e:
             if self.allow_not_found and e.response.status_code == 404:
                 return None, None
 
@@ -299,7 +306,7 @@ class DownloadArtifacts:
                     f"'{self.group}'. Error was {e}."
                 )
 
-    async def download_artifact(self, artifact: Artifact) -> Optional[Artifact]:
+    async def download_artifact(self, artifact: Artifact) -> Artifact | None:
         with temp_directory() as temp_dir:
             temp_file = temp_dir / f"{artifact.name}.zip"
 
@@ -324,7 +331,7 @@ class DownloadArtifacts:
                         async for content, _ in download:
                             f.write(content)
                             print(".", end="")
-                except httpx.HTTPStatusError as e:
+                except HTTPStatusError as e:
                     raise DownloadArtifactsError(
                         f"HTTP Error {e}: Failed to download '{artifact.name}' with ID "
                         f"{artifact.id}"
@@ -383,7 +390,7 @@ class DownloadArtifacts:
                     asyncio.create_task(self.download_artifact(artifact))
                     for artifact in artifacts
                 ]
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 raise DownloadArtifactsError(
                     f"Could not find workflow run artifacts. {e}"
                 ) from e

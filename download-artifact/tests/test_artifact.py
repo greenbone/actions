@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import unittest
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from types import SimpleNamespace
-from typing import Dict, Iterable
 
 from action.artifact import DownloadArtifacts
 
@@ -45,7 +45,7 @@ class Workflows:
 
 
 class Artifacts:
-    def __init__(self, artifacts: Dict[int, Iterable[SimpleNamespace]]) -> None:
+    def __init__(self, artifacts: dict[int, Iterable[SimpleNamespace]]) -> None:
         self.artifacts = artifacts
 
     async def get_workflow_run_artifacts(self, repository: str, run_id: int):
@@ -58,7 +58,7 @@ class DownloadArtifactsTestCase(unittest.IsolatedAsyncioTestCase):
     def downloader(
         self,
         runs: Iterable[SimpleNamespace],
-        artifacts: Dict[int, Iterable[SimpleNamespace]],
+        artifacts: dict[int, Iterable[SimpleNamespace]],
         name: str | None = "release-artifact",
         search_older_runs: bool = False,
     ) -> DownloadArtifacts:
