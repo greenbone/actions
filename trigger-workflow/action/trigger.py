@@ -19,8 +19,9 @@ import asyncio
 import json
 import sys
 from argparse import ArgumentParser, Namespace
+from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, NoReturn, Optional
+from typing import NoReturn
 
 import httpx
 from pontos.github.actions.core import Console
@@ -41,7 +42,7 @@ def is_newer_run(run: WorkflowRun, date: datetime) -> bool:
     return run.created_at > date
 
 
-def parse_int(value: str) -> Optional[int]:
+def parse_int(value: str) -> int | None:
     try:
         return int(value)
     except (ValueError, TypeError):
@@ -80,9 +81,9 @@ class Trigger:
         workflow: str,
         ref: str,
         repository: str,
-        timeout: Optional[str] = None,
-        interval: Optional[str] = None,
-        inputs: Optional[str] = None,
+        timeout: str | None = None,
+        interval: str | None = None,
+        inputs: str | None = None,
     ) -> None:
         if not token:
             raise TriggerError("Missing token.")
@@ -125,7 +126,7 @@ class Trigger:
             if is_workflow_dispatch(run)
         ]
 
-    async def get_new_workflow_run(self) -> Optional[WorkflowRun]:
+    async def get_new_workflow_run(self) -> WorkflowRun | None:
         runs = [
             run
             async for run in self.api.workflows.get_workflow_runs(
