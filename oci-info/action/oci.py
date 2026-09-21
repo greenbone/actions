@@ -11,6 +11,7 @@ from typing import Any
 
 import httpx
 from pydantic import ValidationError
+
 from .oci_model import OciAnnotations, OciImageTags, OciIndex
 
 
