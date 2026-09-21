@@ -4,7 +4,7 @@ version = "1.0.0"
 description = "A GitHub Action to trigger a workflow run"
 authors = [{ name = "Björn Ricks", email = "bjoern.ricks@greenbone.net" }]
 requires-python = ">=3.10,<4"
-license = "GPLv3+"
+license = "GPL-3.0-or-later"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -19,11 +19,7 @@ dependencies = ["pontos>=22.12.3"]
 trigger-workflow = "action.trigger:main"
 
 [dependency-groups]
-dev = [
-    "autohooks-plugin-pylint>=22.8.0",
-    "autohooks-plugin-isort>=22.8.0",
-    "autohooks-plugin-black>=22.8.0",
-]
+dev = ["autohooks-plugin-ruff>=25.3.1"]
 
 [tool.uv]
 default-groups = "all"
@@ -37,30 +33,13 @@ namespace = true
 requires = ["uv_build>=0.12.11,<0.13.0"]
 build-backend = "uv_build"
 
-[tool.black]
+[tool.ruff]
 line-length = 80
-target-version = ["py310", "py311", "py312", "py313", "py314"]
-exclude = '''
-/(
-    \.git
-  | \.venv
-  | \.github
-  | \.vscode
-  | _build
-  | build
-  | dist
-  | docs
-)/
-'''
+target-version = "py310"
 
-[tool.isort]
-profile = "black"
-line_length = 80
+[tool.ruff.lint]
+extend-select = ["I", "PLE", "PLW"]
 
 [tool.autohooks]
 mode = "uv"
-pre-commit = [
-    'autohooks.plugins.black',
-    'autohooks.plugins.isort',
-    'autohooks.plugins.pylint',
-]
+pre-commit = ['autohooks.plugins.ruff.check', 'autohooks.plugins.ruff.format']
