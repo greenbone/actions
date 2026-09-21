@@ -24,7 +24,7 @@ from json import JSONDecodeError
 from pathlib import Path
 from typing import NoReturn
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.changelog.conventional_commits import ConventionalCommits
 from pontos.github.actions import Console, GitHubEvent
 from pontos.github.api import GitHubAsyncRESTApi
@@ -137,7 +137,7 @@ class Commits:
                         cc_report_comment,
                         "\n".join(comment_lines),
                     )
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 try:
                     json = e.response.json()
                     message = json.get("message")
