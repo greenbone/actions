@@ -20,7 +20,11 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Programming Language :: Python :: 3",
 ]
-dependencies = ["shtab>=1.6.5", "pydantic>=2.0.0", "httpx>=0.22.0"]
+dependencies = [
+    "shtab>=1.6.5",
+    "pydantic>=2.0.0",
+    "httpx2>=2.13.0",
+]
 
 [project.scripts]
 oci-info = "action.main:main"
