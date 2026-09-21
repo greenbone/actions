@@ -7,12 +7,12 @@ Module to parse command-line arguments.
 """
 
 from argparse import ArgumentParser, Namespace
-from typing import Optional, Sequence
+from collections.abc import Sequence
 
 import shtab
 
 
-def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
+def parse_args(args: Sequence[str] | None = None) -> Namespace:
     """
     Parse command-line arguments.
 
@@ -62,7 +62,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> Namespace:
     )
 
     # list_tags_parser
-    list_tags_parser = subparsers.add_parser(
+    _list_tags_parser = subparsers.add_parser(
         "list-tags",
         help="List tags of an repository in an OCI compliant registry",
     )

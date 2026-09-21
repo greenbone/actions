@@ -7,16 +7,16 @@ This module provides models representing various components
 of the Open Container Initiative specifications.
 """
 
+from collections.abc import Callable
 from datetime import datetime
-from typing import Callable, Optional, Type, TypeVar
+from typing import TypeVar
 
 from pydantic import BaseModel, Field
-
 
 _T = TypeVar("_T", bound=BaseModel)
 
 
-def exclude_undefined_keys(cls: Type[_T]) -> Callable[..., _T]:
+def exclude_undefined_keys(cls: type[_T]) -> Callable[..., _T]:
     """
     A decorator to exclude undefined keys from keyword arguments
     passed to the constructor of a Pydantic model.
@@ -61,31 +61,31 @@ class OciAnnotations(BaseModel):
     created: datetime = Field(..., alias="org.opencontainers.image.created")
     url: str = Field(..., alias="org.opencontainers.image.url")
     source: str = Field(..., alias="org.opencontainers.image.source")
-    authors: Optional[str] = Field(
+    authors: str | None = Field(
         default=None, alias="org.opencontainers.image.authors"
     )
-    documentation: Optional[str] = Field(
+    documentation: str | None = Field(
         default=None, alias="org.opencontainers.image.documentation"
     )
-    version: Optional[str] = Field(
+    version: str | None = Field(
         default=None, alias="org.opencontainers.image.version"
     )
-    revision: Optional[str] = Field(
+    revision: str | None = Field(
         default=None, alias="org.opencontainers.image.revision"
     )
-    vendor: Optional[str] = Field(
+    vendor: str | None = Field(
         default=None, alias="org.opencontainers.image.vendor"
     )
-    licenses: Optional[str] = Field(
+    licenses: str | None = Field(
         default=None, alias="org.opencontainers.image.licenses"
     )
-    ref_name: Optional[str] = Field(
+    ref_name: str | None = Field(
         default=None, alias="org.opencontainers.image.ref_name"
     )
-    title: Optional[str] = Field(
+    title: str | None = Field(
         default=None, alias="org.opencontainers.image.title"
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         default=None, alias="org.opencontainers.image.description"
     )
 
@@ -136,8 +136,8 @@ class OciManifest(BaseModel):
     mediaType: str
     digest: str
     size: int
-    annotations: Optional[dict[str, str]] = None
-    platform: Optional[OciPlatform] = None
+    annotations: dict[str, str] | None = None
+    platform: OciPlatform | None = None
 
 
 class OciIndex(BaseModel):
@@ -152,4 +152,4 @@ class OciIndex(BaseModel):
 
     schemaVersion: int
     mediaType: str
-    manifests: Optional[list[OciManifest]] = None
+    manifests: list[OciManifest] | None = None
