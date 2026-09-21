@@ -20,7 +20,10 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Programming Language :: Python :: 3",
 ]
-dependencies = ["pontos>=22.10.0"]
+dependencies = [
+    "httpx2>=2.13.0",
+    "pontos>=22.10.0",
+]
 
 [project.scripts]
 release-assets = "action.main:main"
