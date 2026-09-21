@@ -27,7 +27,6 @@ release-assets = "action.main:main"
 
 [dependency-groups]
 dev = [
-  "autohooks-plugin-black>=23.10.0",
   "autohooks-plugin-ruff>=23.10.0",
   "autohooks-plugin-mypy>=23.10.0",
   "coverage>=7.2.7",
@@ -44,27 +43,11 @@ module-root = ""
 requires = ["uv_build>=0.12.11,<0.13.0"]
 build-backend = "uv_build"
 
-[tool.black]
-line-length = 80
-target-version = ["py310", "py311", "py312", "py313", "py314"]
-exclude = '''
-/(
-    \.git
-  | \.venv
-  | \.github
-  | \.vscode
-  | _build
-  | build
-  | dist
-  | docs
-)/
-'''
-
 [tool.autohooks]
 mode = "uv"
 pre-commit = [
-  "autohooks.plugins.black",
-  "autohooks.plugins.ruff",
+  "autohooks.plugins.ruff.check",
+  "autohooks.plugins.ruff.format",
   "autohooks.plugins.mypy",
 ]
 
@@ -74,6 +57,8 @@ version-module-file = "action/__version__.py"
 [tool.ruff]
 line-length = 80
 target-version = "py310"
+
+[tool.ruff.lint]
 extend-select = ["I", "PLE", "PLW"]
 
 [tool.mypy]
