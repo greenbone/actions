@@ -1,28 +1,41 @@
-[tool.poetry]
+[project]
 name = "download-artifact-action"
 version = "1.0.0"
 description = "A GitHub Action to download artifacts of a workflow run"
-authors = ["Björn Ricks <bjoern.ricks@greenbone.net>"]
-license = "GPLv3+"
-packages = [
-    { include = "action" },
+authors = [{ name = "Björn Ricks", email = "bjoern.ricks@greenbone.net" }]
+requires-python = ">=3.10,<4"
+license = "GPL-3.0-or-later"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = ["pontos>=23.3.0"]
+
+[project.scripts]
+download-artifact = "action.artifact:main"
+
+[dependency-groups]
+dev = [
+    "autohooks-plugin-pylint>=22.8.0",
+    "autohooks-plugin-isort>=22.8.0",
+    "autohooks-plugin-black>=22.8.0",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pontos = ">=23.3.0"
+[tool.uv]
+default-groups = "all"
 
-[tool.poetry.group.dev.dependencies]
-autohooks-plugin-pylint = ">=22.8.0"
-autohooks-plugin-isort = ">=22.8.0"
-autohooks-plugin-black = ">=22.8.0"
-
-[tool.poetry.scripts]
-download-artifact = 'action.artifact:main'
+[tool.uv.build-backend]
+module-name = ["action"]
+module-root = ""
+namespace = true
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"
 
 [tool.black]
 line-length = 80
@@ -46,4 +59,8 @@ line_length = 80
 
 [tool.autohooks]
 mode = "poetry"
-pre-commit = ['autohooks.plugins.black', 'autohooks.plugins.isort', 'autohooks.plugins.pylint']
+pre-commit = [
+    'autohooks.plugins.black',
+    'autohooks.plugins.isort',
+    'autohooks.plugins.pylint',
+]
