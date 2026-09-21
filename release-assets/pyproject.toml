@@ -1,15 +1,14 @@
-[tool.poetry]
+[project]
 name = "release-assets"
 version = "0.1.0"
 description = "Manage release assets"
-authors = ["Greenbone <info@greenbone.net>"]
-license = "AGPL-3.0-or-later"
+authors = [{ name = "Greenbone", email = "info@greenbone.net" }]
+requires-python = ">=3.10,<4"
 readme = "README.md"
-
+license = "AGPL-3.0-or-later"
 classifiers = [
-  # Full list: https://pypi.org/pypi?%3Aaction=list_classifiers
   "Development Status :: 4 - Beta",
-  "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)", # pylint: disable=line-too-long
+  "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
   "Environment :: Console",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3.10",
@@ -19,21 +18,31 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python :: 3",
+]
+dependencies = ["pontos>=22.10.0"]
+
+[project.scripts]
+release-assets = "action.main:main"
+
+[dependency-groups]
+dev = [
+  "autohooks-plugin-black>=23.10.0",
+  "autohooks-plugin-ruff>=23.10.0",
+  "autohooks-plugin-mypy>=23.10.0",
+  "coverage>=7.2.7",
 ]
 
-packages = [
-  { include = "action" },
-]
+[tool.uv]
+default-groups = "all"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pontos = ">=22.10.0"
+[tool.uv.build-backend]
+module-name = ["action"]
+module-root = ""
 
-[tool.poetry.group.dev.dependencies]
-autohooks-plugin-black = ">=23.10.0"
-autohooks-plugin-ruff = ">=23.10.0"
-autohooks-plugin-mypy = ">=23.10.0"
-coverage = ">=7.2.7"
+[build-system]
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"
 
 [tool.black]
 line-length = 80
@@ -52,7 +61,7 @@ exclude = '''
 '''
 
 [tool.autohooks]
-mode = "poetry"
+mode = "uv"
 pre-commit = [
   "autohooks.plugins.black",
   "autohooks.plugins.ruff",
@@ -67,9 +76,6 @@ line-length = 80
 target-version = "py310"
 extend-select = ["I", "PLE", "PLW"]
 
-[tool.poetry.scripts]
-release-assets = 'action.main:main'
-
 [tool.mypy]
 files = "action"
 ignore_missing_imports = true
@@ -79,7 +85,3 @@ explicit_package_bases = true
 branch = true
 omit = ["tests/*", "*/__init__.py"]
 source = ["action"]
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
