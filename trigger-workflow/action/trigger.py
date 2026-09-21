@@ -10,7 +10,7 @@ from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
 from typing import NoReturn
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.api import JSON, GitHubAsyncRESTApi
@@ -167,7 +167,7 @@ class Trigger:
                 run = await self.get_new_workflow_run()
                 if run:
                     break
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 raise TriggerError(
                     "Could not determine workflow run. Response was: "
                     f"{e.response.status_code}\n{json_dump(e.response.json())}."
@@ -194,7 +194,7 @@ class Trigger:
                 run = await self.api.workflows.get_workflow_run(
                     self.repository, run.id
                 )
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 raise TriggerError(
                     "Could not get workflow run information. Response was: "
                     f"{e.response.status_code}\n{json_dump(e.response.json())}."
@@ -217,7 +217,7 @@ class Trigger:
             await self.api.workflows.create_workflow_dispatch(
                 self.repository, self.workflow, ref=self.ref, inputs=self.inputs
             )
-        except httpx.HTTPStatusError as e:
+        except HTTPStatusError as e:
             raise TriggerError(
                 "Could not start workflow. Response was: "
                 f"{e.response.status_code}\n{json_dump(e.response.json())}."

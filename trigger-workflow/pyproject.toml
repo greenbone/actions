@@ -13,7 +13,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = ["pontos>=22.12.3"]
+dependencies = [
+    "httpx2>=2.13.0",
+    "pontos>=22.12.3",
+]
 
 [project.scripts]
 trigger-workflow = "action.trigger:main"
