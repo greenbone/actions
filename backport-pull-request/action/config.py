@@ -15,9 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional
+from typing import Any
 
 import tomli
 
@@ -26,7 +27,7 @@ import tomli
 class BackportConfig:
     label: str
     destination: str
-    source: Optional[str] = None
+    source: str | None = None
 
 
 class VerificationIssue:
@@ -41,7 +42,7 @@ class Config:
     def __init__(self, config_path: Path) -> None:
         self._config_path = config_path
 
-    def _load_backports(self) -> Dict[str, Any]:
+    def _load_backports(self) -> dict[str, Any]:
         content = self._config_path.read_text(encoding="utf-8")
         data = tomli.loads(content)
         return data.get("backport")
