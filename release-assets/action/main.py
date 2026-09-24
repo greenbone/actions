@@ -11,7 +11,7 @@ import sys
 from argparse import Namespace
 from enum import IntEnum, auto
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.github.api import GitHubAsyncRESTApi
 
 from action.args import parse_args
@@ -61,7 +61,7 @@ async def upload(arg: Namespace):
                 arg.repository, arg.tag, arg.files
             ):
                 print(f"Uploaded file: {uploaded_file}")
-        except httpx.HTTPStatusError as e:
+        except HTTPStatusError as e:
             print(f"Failed uploading asset {e}.")
             return ReleaseAssetReturnValue.UPLOAD_ASSET_ERROR
     return ReleaseAssetReturnValue.SUCCESS
