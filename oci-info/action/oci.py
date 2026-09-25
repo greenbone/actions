@@ -9,8 +9,9 @@ Module for interacting with OCI (Open Container Initiative) registries.
 from enum import Enum
 from typing import Any
 
-import httpx
+import httpx2
 from pydantic import ValidationError
+
 from .oci_model import OciAnnotations, OciImageTags, OciIndex
 
 
@@ -49,7 +50,7 @@ class OciManifestsError(OciError):
     """OciManifestsError exception"""
 
 
-class Oci(httpx.Client):
+class Oci(httpx2.Client):
     """Class for interacting with OCI (Open Container Initiative) registries."""
 
     def __init__(
@@ -93,7 +94,7 @@ class Oci(httpx.Client):
         return res.json()
 
     def _set_auth_token(self, repository) -> None:
-        res = httpx.get(
+        res = httpx2.get(
             f"https://{self.reg_auth_domain}/token?service={self.reg_auth_service}"
             f"&scope=repository:{self.namespace}/{repository}:pull",
             auth=self.user_auth,  # type: ignore
