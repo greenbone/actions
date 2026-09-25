@@ -22,9 +22,9 @@ import sys
 from argparse import ArgumentParser, Namespace
 from json import JSONDecodeError
 from pathlib import Path
-from typing import NoReturn, Optional
+from typing import NoReturn
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.changelog.conventional_commits import ConventionalCommits
 from pontos.github.actions import Console, GitHubEvent
 from pontos.github.api import GitHubAsyncRESTApi
@@ -58,8 +58,8 @@ class Commits:
         base_ref: str,
         head_ref: str,
         working_directory: Path,
-        event_path: Optional[Path] = None,
-        pull_request: Optional[str] = None,
+        event_path: Path | None = None,
+        pull_request: str | None = None,
     ) -> None:
         self.repository = repository
         self.token = token
@@ -109,7 +109,7 @@ class Commits:
             comment_lines.append("")
             # pylint: disable=line-too-long
             comment_lines.append(
-                ":point_right: [Learn more](https://github.com/greenbone/.github/blob/main/conventional-commits/README.md) "  # noqa: E501
+                ":point_right: [Learn more](https://github.com/greenbone/.github/blob/main/conventional-commits/README.md) "
                 "about the conventional commits usage at [Greenbone](https://github.com/greenbone/)."
             )
 
@@ -137,7 +137,7 @@ class Commits:
                         cc_report_comment,
                         "\n".join(comment_lines),
                     )
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 try:
                     json = e.response.json()
                     message = json.get("message")
