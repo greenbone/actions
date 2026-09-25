@@ -1,28 +1,16 @@
-# Copyright (C) 2022 Greenbone AG
+# SPDX-FileCopyrightText: 2022 Greenbone AG
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
 import json
 import sys
 from argparse import ArgumentParser, Namespace
+from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, NoReturn, Optional
+from typing import NoReturn
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.api import JSON, GitHubAsyncRESTApi
@@ -41,7 +29,9 @@ def is_newer_run(run: WorkflowRun, date: datetime) -> bool:
     return run.created_at > date
 
 
-def parse_int(value: str) -> Optional[int]:
+def parse_int(value: str | None) -> int | None:
+    if value is None:
+        return None
     try:
         return int(value)
     except (ValueError, TypeError):
@@ -80,9 +70,9 @@ class Trigger:
         workflow: str,
         ref: str,
         repository: str,
-        timeout: Optional[str] = None,
-        interval: Optional[str] = None,
-        inputs: Optional[str] = None,
+        timeout: str | None = None,
+        interval: str | None = None,
+        inputs: str | None = None,
     ) -> None:
         if not token:
             raise TriggerError("Missing token.")
@@ -100,7 +90,7 @@ class Trigger:
             raise TriggerError("Missing repository.")
 
         self.timeout = parse_int(timeout)
-        self.interval = parse_int(interval)
+        self.interval = parse_int(interval) or WAIT_FOR_COMPLETION_INTERVAL
 
         self.inputs = None if not inputs else json.loads(inputs)
 
@@ -125,7 +115,7 @@ class Trigger:
             if is_workflow_dispatch(run)
         ]
 
-    async def get_new_workflow_run(self) -> Optional[WorkflowRun]:
+    async def get_new_workflow_run(self) -> WorkflowRun | None:
         runs = [
             run
             async for run in self.api.workflows.get_workflow_runs(
@@ -179,7 +169,7 @@ class Trigger:
                 run = await self.get_new_workflow_run()
                 if run:
                     break
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 raise TriggerError(
                     "Could not determine workflow run. Response was: "
                     f"{e.response.status_code}\n{json_dump(e.response.json())}."
@@ -197,7 +187,7 @@ class Trigger:
             if run.status == WorkflowRunStatus.COMPLETED:
                 break
 
-            if date_now() > self.timeout_date:
+            if self.timeout_date and date_now() > self.timeout_date:
                 raise TriggerError(f"Workflow run {run.id} run timed out.")
 
             await asyncio.sleep(self.interval)
@@ -206,7 +196,7 @@ class Trigger:
                 run = await self.api.workflows.get_workflow_run(
                     self.repository, run.id
                 )
-            except httpx.HTTPStatusError as e:
+            except HTTPStatusError as e:
                 raise TriggerError(
                     "Could not get workflow run information. Response was: "
                     f"{e.response.status_code}\n{json_dump(e.response.json())}."
@@ -229,7 +219,7 @@ class Trigger:
             await self.api.workflows.create_workflow_dispatch(
                 self.repository, self.workflow, ref=self.ref, inputs=self.inputs
             )
-        except httpx.HTTPStatusError as e:
+        except HTTPStatusError as e:
             raise TriggerError(
                 "Could not start workflow. Response was: "
                 f"{e.response.status_code}\n{json_dump(e.response.json())}."
