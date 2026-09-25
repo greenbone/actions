@@ -19,10 +19,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Setup project
-        uses: greenbone/actions/poetry@main
+      - name: Set up uv
+        uses: greenbone/actions/uv@main
         with:
           working-directory: backport-pull-request
+          python-version: "3.10"
       - name: Run unit tests
-        run: poetry run python -m unittest
+        run: uv run --locked python -m unittest
         working-directory: backport-pull-request

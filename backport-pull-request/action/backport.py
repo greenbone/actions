@@ -19,11 +19,12 @@ import asyncio
 import sys
 import tempfile
 from argparse import ArgumentParser, Namespace
+from contextlib import AbstractAsyncContextManager
 from pathlib import Path
 from types import TracebackType
-from typing import AsyncContextManager, NoReturn, Optional
+from typing import NoReturn, Self
 
-import httpx
+from httpx2 import HTTPStatusError
 from pontos.git import ConfigScope, Git, GitError
 from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
@@ -48,13 +49,13 @@ def parse_arguments() -> Namespace:
     return parser.parse_args()
 
 
-class Backport(AsyncContextManager):
+class Backport(AbstractAsyncContextManager):
     def __init__(
         self,
         *,
         token: str,
-        username: Optional[str] = None,
-        config_file: Optional[str] = None,
+        username: str | None = None,
+        config_file: str | None = None,
     ) -> None:
         self.env = GitHubEnvironment()
 
@@ -125,7 +126,7 @@ To backport it manually, run these commands in your terminal:
 
 ```bash
 git checkout -b {new_branch} {destination_branch}
-git cherry-pick {' '.join(commits)}
+git cherry-pick {" ".join(commits)}
 ```
 
 Afterwards fix the conflicts, push the changes via
@@ -159,7 +160,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
                 title=title,
                 body=body,
             )
-        except httpx.HTTPStatusError as e:
+        except HTTPStatusError as e:
             Console.log(f"Error response was {e.response.json()}")
             raise BackportError(
                 f"Could not create pull request. Error was {e}"
@@ -277,7 +278,7 @@ and create a new pull request where the base is `{destination_branch}` and compa
                 except BackportError as e:
                     has_error = True
                     Console.error(str(e))
-                except Exception as e:  # pylint: disable=broad-except
+                except Exception as e:  # pylint: disable=broad-except  # noqa: BLE001
                     has_error = True
                     Console.error(
                         f"Failed backporting PR {pr_number}. Error was {e}"
@@ -291,15 +292,16 @@ and create a new pull request where the base is `{destination_branch}` and compa
 
         return 0
 
-    async def __aenter__(self) -> "Backport":
+    async def __aenter__(self) -> Self:
         await self.api.__aenter__()
         return self
 
     async def __aexit__(
         self,
-        __exc_type: Optional[type[BaseException]],
-        __exc_value: Optional[BaseException],
-        __traceback: Optional[TracebackType],
+        __exc_type: type[BaseException] | None,
+        /,
+        __exc_value: BaseException | None,
+        __traceback: TracebackType | None,
     ) -> None:
         await self.api.__aexit__(__exc_type, __exc_value, __traceback)
 
