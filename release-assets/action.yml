@@ -31,6 +31,7 @@ runs:
       uses: greenbone/actions/uv@v3
       with:
         python-version: ${{ inputs.python-version }}
+        uv-version: ${{ inputs.uv-version }}
         install: ${{ github.action_path }}
 
     - name: Run Release Asset
