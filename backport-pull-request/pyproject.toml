@@ -13,11 +13,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = [
-    "tomli>=1.0",
-    "pontos>=23.2.2",
-    "httpx2>=2.13.0",
-]
+dependencies = ["tomli>=1.0", "pontos>=26.9.1"]
 
 [project.scripts]
 backport-pull-request = "action.backport:main"
