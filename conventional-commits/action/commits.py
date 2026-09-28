@@ -24,10 +24,9 @@ from json import JSONDecodeError
 from pathlib import Path
 from typing import NoReturn
 
-from httpx2 import HTTPStatusError
 from pontos.changelog.conventional_commits import ConventionalCommits
 from pontos.github.actions import Console, GitHubEvent
-from pontos.github.api import GitHubAsyncRESTApi
+from pontos.github.api import GitHubAsyncRESTApi, HTTPStatusError
 
 CONVENTIONAL_COMMIT_REPORT_LINE = "<!-- conventional commit report -->"
 
