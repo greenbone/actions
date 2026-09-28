@@ -11,8 +11,7 @@ import sys
 from argparse import Namespace
 from enum import IntEnum, auto
 
-from httpx2 import HTTPStatusError
-from pontos.github.api import GitHubAsyncRESTApi
+from pontos.github.api import GitHubAsyncRESTApi, HTTPStatusError
 
 from action.args import parse_args
 
