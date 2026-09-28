@@ -30,10 +30,9 @@ from pathlib import Path
 from typing import NoReturn
 from zipfile import ZipFile
 
-from httpx2 import HTTPStatusError
 from pontos.github.actions.core import ActionIO, Console
 from pontos.github.actions.env import GitHubEnvironment
-from pontos.github.api import GitHubAsyncRESTApi
+from pontos.github.api import GitHubAsyncRESTApi, HTTPStatusError
 from pontos.github.models import Artifact, WorkflowRun
 
 WORKFLOW_RUN_QUERY_ATTEMPTS = 3
