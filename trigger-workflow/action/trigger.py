@@ -10,10 +10,9 @@ from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
 from typing import NoReturn
 
-from httpx2 import HTTPStatusError
 from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
-from pontos.github.api import JSON, GitHubAsyncRESTApi
+from pontos.github.api import JSON, GitHubAsyncRESTApi, HTTPStatusError
 from pontos.github.models import Event, WorkflowRun, WorkflowRunStatus
 
 WAIT_FOR_COMPLETION_TIMEOUT = 60 * 60 * 60  # one hour
