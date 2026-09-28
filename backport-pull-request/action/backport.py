@@ -24,12 +24,11 @@ from pathlib import Path
 from types import TracebackType
 from typing import NoReturn, Self
 
-from httpx2 import HTTPStatusError
 from pontos.git import ConfigScope, Git, GitError
 from pontos.github.actions.core import Console
 from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.actions.event import GitHubEvent
-from pontos.github.api import GitHubAsyncRESTApi
+from pontos.github.api import GitHubAsyncRESTApi, HTTPStatusError
 from pontos.github.models import PullRequest
 
 from action.config import Config

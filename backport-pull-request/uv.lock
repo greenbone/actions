@@ -54,7 +54,6 @@ name = "backport-pull-request-action"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "httpx2" },
     { name = "pontos" },
     { name = "tomli" },
 ]
@@ -67,8 +66,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx2", specifier = ">=2.13.0" },
-    { name = "pontos", specifier = ">=23.2.2" },
+    { name = "pontos", specifier = ">=26.9.1" },
     { name = "tomli", specifier = ">=1.0" },
 ]
 
@@ -76,15 +74,6 @@ requires-dist = [
 dev = [
     { name = "autohooks", specifier = ">=21.7.0" },
     { name = "autohooks-plugin-ruff", specifier = ">=21.6.0" },
-]
-
-[[package]]
-name = "certifi"
-version = "2026.7.22"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a3/c2/24167ea9858356b47a87a50d39908bfdb72ceeefe0041586e704e5376b3a/certifi-2026.7.22.tar.gz", hash = "sha256:741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55", size = 138112, upload-time = "2026-07-22T03:35:12.644Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl", hash = "sha256:62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775", size = 136983, upload-time = "2026-07-22T03:35:11.276Z" },
 ]
 
 [[package]]
@@ -152,19 +141,6 @@ wheels = [
 ]
 
 [[package]]
-name = "httpcore"
-version = "1.0.9"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "certifi" },
-    { name = "h11" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/06/94/82699a10bca87a5556c9c59b5963f2d039dbd239f25bc2a63907a05a14cb/httpcore-1.0.9.tar.gz", hash = "sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8", size = 85484, upload-time = "2025-04-24T22:06:22.219Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55", size = 78784, upload-time = "2025-04-24T22:06:20.566Z" },
-]
-
-[[package]]
 name = "httpcore2"
 version = "2.13.0"
 source = { registry = "https://pypi.org/simple" }
@@ -175,26 +151,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/15/8c/e925b1c92018abb3a1863ce1549d76d2381e334d21d65d4ac8f65dabd78a/httpcore2-2.13.0.tar.gz", hash = "sha256:2adc8be4fb285fbcd6d894298db3b52c177e74b6674eda3a76bd36be3292a3db", size = 67740, upload-time = "2026-09-14T14:18:04.717Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7e/0d/117a771a2bb91df334b66bf4da14cd02f21aefbcfe53180f336ce55e8f90/httpcore2-2.13.0-py3-none-any.whl", hash = "sha256:35ae5be347aa40467b4a5dc032ac67ebb6d27189fc97e8cebcf99616f6a1bb9e", size = 83162, upload-time = "2026-09-14T14:18:02.529Z" },
-]
-
-[[package]]
-name = "httpx"
-version = "0.28.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "certifi" },
-    { name = "httpcore" },
-    { name = "idna" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/df/48c586a5fe32a0f01324ee087459e112ebb7224f646c0b5023f5e79e9956/httpx-0.28.1.tar.gz", hash = "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc", size = 141406, upload-time = "2024-12-06T15:37:23.222Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl", hash = "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad", size = 73517, upload-time = "2024-12-06T15:37:21.509Z" },
-]
-
-[package.optional-dependencies]
-http2 = [
-    { name = "h2" },
 ]
 
 [[package]]
@@ -212,6 +168,11 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b9/a0/e9deef4654132857b5a5dbe4eddd0ac59c2814500e11f2f5044cd81103ee/httpx2-2.13.0.tar.gz", hash = "sha256:81bd07dc67a3701729ef1f777a3c00c915d4539604fdb5afd327f8682f6b7b44", size = 100290, upload-time = "2026-09-14T14:18:05.486Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fe/d1/a0c72b0e006df654709fbc366cc5bcb53e5aee13e1e3395152c6dd293376/httpx2-2.13.0-py3-none-any.whl", hash = "sha256:fc12720cedf72faa26cca6b4ca394e05c894e7d7933fc45cafe767960804e49a", size = 95565, upload-time = "2026-09-14T14:18:03.553Z" },
+]
+
+[package.optional-dependencies]
+http2 = [
+    { name = "h2" },
 ]
 
 [[package]]
@@ -427,11 +388,11 @@ wheels = [
 
 [[package]]
 name = "pontos"
-version = "26.8.4"
+version = "26.9.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorful" },
-    { name = "httpx", extra = ["http2"] },
+    { name = "httpx2", extra = ["http2"] },
     { name = "lxml" },
     { name = "packaging" },
     { name = "python-dateutil" },
@@ -441,9 +402,9 @@ dependencies = [
     { name = "tomlkit" },
     { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0b/13/55708982f665a4ae70433e7aca03549a57105627935cd05b58dee09e07a3/pontos-26.8.4.tar.gz", hash = "sha256:c26e26c27a6bf4251f58f4495ea076b6f24d683d3929c8615cbfdc585fcba115", size = 475668, upload-time = "2026-08-27T06:52:58.021Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/16/3a6d28b649722b3185cac09bf10f5109b3e85fc996dec0f5c33bbde62247/pontos-26.9.1.tar.gz", hash = "sha256:c6237b9bb6f079814b295aeee832a6c77c68cacff00607a52fee9bb7555a63a7", size = 478070, upload-time = "2026-09-28T07:43:57.193Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/8c/8d56cecf14f3c2f05343ea6b62f7324576e506b8f71381d4428185b427eb/pontos-26.8.4-py3-none-any.whl", hash = "sha256:70ba8eabbbcf2e1632533b6c89c0bcc8acdb55439404a6b11c4b4a576281e488", size = 253071, upload-time = "2026-08-27T06:52:56.12Z" },
+    { url = "https://files.pythonhosted.org/packages/c4/1f/a05e22f9ee7884a37bee6b95112af85c4d76ddc80efd765faaa7e0b15d27/pontos-26.9.1-py3-none-any.whl", hash = "sha256:4ce0aa49c992cd43e73ded6f711d73d44f0326222c082e00a32f9189f62f221a", size = 254625, upload-time = "2026-09-28T07:43:55.358Z" },
 ]
 
 [[package]]
