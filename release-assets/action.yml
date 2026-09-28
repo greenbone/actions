@@ -21,12 +21,14 @@ inputs:
   python-version:
     description: " Python version to use for running the action. Default is 3.12."
     default: "3.12"
+  uv-version:
+    description: "Use a specific uv version. By default the latest release is used."
 
 runs:
   using: "composite"
   steps:
     - name: Setup
-      uses: greenbone/actions/pipx@v3
+      uses: greenbone/actions/uv@v3
       with:
         python-version: ${{ inputs.python-version }}
         install: ${{ github.action_path }}
