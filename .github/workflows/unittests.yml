@@ -20,9 +20,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup project
-        uses: greenbone/actions/poetry@main
+        uses: greenbone/actions/uv@main
         with:
           working-directory: backport-pull-request
       - name: Run unit tests
-        run: poetry run python -m unittest
+        run: uv run python -m unittest
         working-directory: backport-pull-request
