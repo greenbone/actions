@@ -36,4 +36,6 @@ jobs:
 | repository                | Repository name. Default is ${{ github.repository }}                                                           | Optional |
 | files                     | Comma seprated list of asset file paths.                                                                       | Required |
 | tag                       | The release tag to manage assets on.                                                                           | Required |
-| python-version            | Python version to use for running the action. Default is 3.11 .                                                | Optional |
+| python-version            | Python version to use for running the action. Default is 3.12 .                                                | Optional |
+| uv-version                | Use a specific uv version. By default the latest release is used.                                              | Optional |
+
