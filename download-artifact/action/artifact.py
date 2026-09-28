@@ -50,7 +50,7 @@ def created_at(run: WorkflowRun) -> datetime:
 
 
 def artifact_created_at(artifact: Artifact) -> datetime:
-    return artifact.created_at
+    return artifact.created_at  # type: ignore
 
 
 def parse_list(value: str) -> list[str]:
@@ -64,7 +64,9 @@ def parse_list(value: str) -> list[str]:
     return [value for value in values if value]
 
 
-def parse_int(value: str) -> int | None:
+def parse_int(value: int | str | None) -> int | None:
+    if value is None:
+        return None
     try:
         return int(value)
     except (ValueError, TypeError):
@@ -148,15 +150,19 @@ class DownloadArtifacts:
         if not self.workflow_status:
             self.workflow_status = "success"
 
-        self.branch = branch or ActionIO.input("branch")
-        if not self.branch:
+        branch = branch or ActionIO.input("branch")
+        if not branch:
             raise DownloadArtifactsError("Missing branch.")
 
-        self.repository = (
+        self.branch = branch
+
+        repository = (
             repository or ActionIO.input("repository") or env.repository
         )
-        if not self.repository:
+        if not repository:
             raise DownloadArtifactsError("Missing repository.")
+
+        self.repository = repository
 
         self.name = name or ActionIO.input("name")
 
@@ -300,7 +306,7 @@ class DownloadArtifacts:
 
     async def get_newest_workflow_run(
         self,
-    ) -> tuple[Optional[WorkflowRun], Optional[Iterable[Artifact]]]:
+    ) -> tuple[WorkflowRun | None, Iterable[Artifact] | None]:
         for attempt in range(1, WORKFLOW_RUN_QUERY_ATTEMPTS + 1):
             try:
                 run, artifacts = await self._get_newest_workflow_run()
@@ -451,7 +457,7 @@ class DownloadArtifacts:
             try:
                 tasks = [
                     asyncio.create_task(self.download_artifact(artifact))
-                    for artifact in artifacts
+                    for artifact in artifacts  # type: ignore
                 ]
             except HTTPStatusError as e:
                 raise DownloadArtifactsError(
