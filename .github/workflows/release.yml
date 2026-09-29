@@ -23,11 +23,16 @@ concurrency:
 jobs:
   release:
     name: Actions
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     environment:
       name: release
       url: https://github.com/greenbone/actions/releases
     steps:
+      - name: Selecting the Release type
+        id: release-type
+        uses: greenbone/actions/release-type@main
+        with:
+          release-type-input: ${{ inputs.release-type }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
           token: ${{ secrets.GREENBONE_BOT_TOKEN }}
@@ -37,6 +42,23 @@ jobs:
         run: |
           git config --global user.name "${{ secrets.GREENBONE_BOT }}"
           git config --global user.email "${{ secrets.GREENBONE_BOT_MAIL }}"
+      - name: Determine release version
+        id: release-version
+        uses: greenbone/actions/release-version@v3
+        with:
+          release-type: ${{ steps.release-type.outputs.release-type }}
+          release-version: ${{ inputs.release-version }}
+          versioning-scheme: "semver"
+      - name: Install git-cliff
+        uses: greenbone/actions/uv@main
+        with:
+          install: git-cliff
+      - name: Determine changelog
+        env:
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git-cliff -v --strip header -o /tmp/changelog.md --unreleased --tag v${{ steps.release-version.outputs.release-version }} ${{ steps.release-version.outputs.last-release-version }}..HEAD
       - name: Release with release action
         id: release
         uses: greenbone/actions/release@main
@@ -47,8 +69,8 @@ jobs:
           gpg-key: ${{ secrets.GPG_KEY }}
           gpg-fingerprint: ${{ secrets.GPG_FINGERPRINT }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          release-type: ${{ inputs.release-type }}
-          release-version: ${{ inputs.release-version }}
+          release-version: ${{ steps.release-version.outputs.release-version }}
+          changelog: /tmp/changelog.md
           versioning-scheme: "semver"
           update-project: false
           ref: main
