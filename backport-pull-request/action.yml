@@ -13,7 +13,7 @@ inputs:
     default: ${{ github.actor }}
   python-version:
     description: "Python version to use for running the action"
-    default: "3.10"
+    default: "3.11"
   uv-version:
     description: "Use a specific uv version. By default the latest release is used."
 
