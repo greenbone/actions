@@ -47,7 +47,9 @@ runs:
           LGPL-3.0-only,
           LGPL-3.0,
           LGPL-3.0-or-later,
+          LicenseRef-scancode-google-patent-license-golang,
           MIT,
+          MIT-0,
           MIT-CMU,
           MPL-1.1,
           MPL-2.0,
@@ -62,6 +64,8 @@ runs:
           ZPL-2.1
 
 # Only single licenses are allowed in this list.
-# A combination of licenses like `License-A AND License-B`
-# is not supported. See:
-# https://github.com/actions/dependency-review-action/issues/792
+# The action evaluates license combinations such as
+# `License-A AND License-B` against these individual entries.
+# Combination expressions in the allowlist are silently dropped. See:
+# https://github.com/actions/dependency-review-action/releases/tag/v4.7.0
+# https://github.com/actions/dependency-review-action/releases/tag/v4.7.1
