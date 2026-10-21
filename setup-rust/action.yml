@@ -11,6 +11,10 @@ inputs:
     description: "Additional Rust components to install (default: rustfmt clippy)"
     required: false
     default: "rustfmt clippy"
+  cache-key:
+    description: "Custom cache key. If empty, uses the runner OS and Cargo.lock hash."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -23,7 +27,7 @@ runs:
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
           target/
-        key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ inputs.cache-key || format('cargo-{0}-{1}', runner.os, hashFiles('**/Cargo.lock')) }}
     - name: Set up Rust
       run: rustup update "$INPUTS_RUST_VERSION" && rustup default "$INPUTS_RUST_VERSION" || rustup default "$INPUTS_RUST_VERSION"
       shell: bash
