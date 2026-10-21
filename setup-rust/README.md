@@ -14,13 +14,13 @@ on:
 
 jobs:
   build:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Setup Rust
-      uses: greenbone/actions/setup-rust@v3
-    - name: Build
-      run: |
-        cargo build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rust
+        uses: greenbone/actions/setup-rust@v3
+      - name: Build
+        run: |
+          cargo build
 ```
 
 ## Action Configuration
