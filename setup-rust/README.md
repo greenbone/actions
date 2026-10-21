@@ -29,3 +29,7 @@ jobs:
 | ------------ | ------------------------------------------------- | -------------------------------------- |
 | rust-version | The rust version to setup, for example `nightly`. | Optional (default is `stable`)         |
 | components   | Additional components to install.                 | Optional (default is `rustfmt clippy`) |
+| cache-key    | Custom cache key, for example `cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}-arm64`. | Optional (default is `cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}`) |
+
+
+
