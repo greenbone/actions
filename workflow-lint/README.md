@@ -105,3 +105,42 @@ platforms, optional integrations and tampered downloads rejected before extracti
 Set `TMPDIR` to an executable filesystem if the default temporary directory is
 mounted `noexec`. The focused CI workflow runs these tests without rolling this
 action out to other CI workflows or repositories.
+
+## Reporting
+
+Diagnostics are annotated using the unmodified upstream
+[v1.7.12 problem matcher](https://github.com/rhysd/actionlint/blob/v1.7.12/.github/actionlint-matcher.json),
+vendored as `actionlint-matcher.json`. Update it alongside the pinned binary.
+The matcher is removed on exit. A job summary is written by default using Python
+3 (required on the runner; available on GitHub-hosted Ubuntu). Lint runs once;
+its exact exit status is preserved even if reporting fails. Download/integrity
+failures stop before lint and remain visible in the step log.
+
+PR comments are **opt-in**. Set `pr-comment: 'true'`, pass `github-token`, and grant
+`pull-requests: write` to the calling job. The token is not needed for annotations
+or summaries. Example additions to the caller:
+
+```yaml
+permissions:
+  contents: read
+  pull-requests: write
+# ... in the workflow-lint action step:
+with:
+  pr-comment: 'true'
+  github-token: ${{ github.token }}
+```
+
+A unique hidden marker scoped to workflow name and job, plus the authenticated
+token owner's login, identifies the action's comment. Reruns update that comment,
+never an unrelated last comment from the same bot. A clean run marks an existing
+comment resolved; it does not create a new success comment. Use a separate job
+for independent reports (matrix entries in the same job share a comment).
+Non-PR events do not comment; fork PRs and missing tokens skip with a warning.
+Read-only or unavailable API access warns without changing lint's status. Keep
+using `pull_request`; elevated `pull_request_target` is not needed.
+
+Workflow text is HTML-escaped in summaries/comments and bounded to 48,000 escaped
+characters, with a link to the run in comments. Full diagnostics remain in the
+log. Runner command parsing is suspended while replaying untrusted diagnostics;
+the registered matcher still processes them. Comment reporting uses only Python's
+standard library and GitHub's API, with no additional wrapper action.

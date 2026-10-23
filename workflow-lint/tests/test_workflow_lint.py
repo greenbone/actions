@@ -72,6 +72,50 @@ class WorkflowLintTests(unittest.TestCase):
         self.assertIn("OK", result.stdout)
         self.assertNotIn("::warning::", result.stdout)
 
+    def test_summary_and_command_injection_guard(self):
+        summary = self.root / "summary.md"
+        self.env["GITHUB_STEP_SUMMARY"] = str(summary)
+        self.stub("tar", """cat > "$4/actionlint" <<'SH'
+#!/bin/sh
+echo '::error::injected'
+echo called >> "$TEST_MARKER"
+echo '</pre>@someone'
+exit 42
+SH
+chmod +x "$4/actionlint"
+""")
+        result = self.run_action()
+        self.assertEqual(result.returncode, 42)
+        self.assertIn("exited 42", summary.read_text())
+        self.assertEqual(self.marker.read_text(), "called\n")
+        self.assertIn("&lt;/pre&gt;&#64;someone", summary.read_text())
+        lines = result.stdout.splitlines()
+        stop = next(line for line in lines if line.startswith("::stop-commands::"))
+        token = stop.split("::")[-1]
+        self.assertLess(lines.index(stop), lines.index("::error::injected"))
+        self.assertGreater(lines.index(f"::{token}::"), lines.index("::error::injected"))
+        self.assertIn("::add-matcher::", result.stdout)
+        self.assertIn("::remove-matcher owner=actionlint::", result.stdout)
+
+    def test_reporting_failure_does_not_mask_exit(self):
+        self.stub("python3", "exit 99")
+        self.assertEqual(self.run_action().returncode, 0)
+        self.stub("tar", """printf '#!/bin/sh\\nexit 42\\n' > "$4/actionlint"
+chmod +x "$4/actionlint"
+""")
+        self.assertEqual(self.run_action().returncode, 42)
+
+    def test_missing_comment_token_still_summarizes_and_lints(self):
+        event = self.root / "event.json"
+        event.write_text('{"pull_request":{"number":1,"head":{"repo":{"full_name":"owner/repo"}}}}')
+        summary = self.root / "summary.md"
+        self.env.update(PR_COMMENT="true", GH_TOKEN="", GITHUB_EVENT_PATH=str(event),
+                        GITHUB_STEP_SUMMARY=str(summary), GITHUB_REPOSITORY="owner/repo")
+        result = self.run_action()
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("comment skipped", result.stdout)
+        self.assertIn("Passed", summary.read_text())
+
     def test_invalid_workflow(self):
         self.workflow.write_text(VALID.replace("echo hello", "echo '${{ nonexistent.value }}'"))
         result = self.run_action()

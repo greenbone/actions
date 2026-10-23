@@ -7,6 +7,12 @@ inputs:
   pyflakes:
     description: pyflakes executable on PATH or absolute path; empty disables integration
     default: pyflakes
+  pr-comment:
+    description: Maintain a dedicated PR comment (requires pull-requests write; skips forks)
+    default: 'false'
+  github-token:
+    description: Optional token for PR comments; not needed for lint or summaries
+    default: ''
 runs:
   using: composite
   steps:
@@ -15,5 +21,7 @@ runs:
       env:
         ACTION_PATH: ${{ github.action_path }}
         SHELLCHECK: ${{ inputs.shellcheck }}
+        PR_COMMENT: ${{ inputs.pr-comment }}
+        GH_TOKEN: ${{ inputs.github-token }}
         PYFLAKES: ${{ inputs.pyflakes }}
       run: bash "$ACTION_PATH/run.sh"
