@@ -1,0 +1,19 @@
+name: Workflow Lint
+description: Validate checked-out GitHub workflows with pinned, checksum-verified actionlint
+inputs:
+  shellcheck:
+    description: ShellCheck executable on PATH or absolute path; empty disables integration
+    default: shellcheck
+  pyflakes:
+    description: pyflakes executable on PATH or absolute path; empty disables integration
+    default: pyflakes
+runs:
+  using: composite
+  steps:
+    - name: Verify and run actionlint
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        SHELLCHECK: ${{ inputs.shellcheck }}
+        PYFLAKES: ${{ inputs.pyflakes }}
+      run: bash "$ACTION_PATH/run.sh"
