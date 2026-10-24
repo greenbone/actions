@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import sys
 import subprocess
@@ -34,7 +35,22 @@ def plain(value, limit=300):
     value = " ".join(value.split())
     if len(value) > limit:
         value = value[:limit] + "…"
+    return escape(value)
+
+
+def escape(value):
     return "".join(c if c.isalnum() or c == " " else f"&#{ord(c)};" for c in value)
+
+
+def message_text(value):
+    # actionlint quotes identifiers/values as Go strings; ShellCheck uses SC codes.
+    # Only style those conventions, not arbitrary prose or Markdown from the input.
+    value = " ".join(value.split())
+    if len(value) > 300:
+        value = value[:300] + "…"
+    parts = re.split(r'("(?:[^"\\]|\\.)*"|\bSC[0-9]+\b)', value)
+    return "".join(f"<code>{escape(part)}</code>" if index % 2
+                   else escape(part) for index, part in enumerate(parts))
 
 
 def run_url():
@@ -60,7 +76,7 @@ def report_body(output, status, revision=None):
     footer = f"\n[Full workflow run]({run})\n" if run else "\nFull diagnostics are in the workflow log.\n"
     shown = 0
     for path, entries in groups.items():
-        section = f"<details>\n<summary>{plain(path, 500)} — {len(entries)} findings</summary>\n\n"
+        section = f"<details>\n<summary><code>{plain(path, 500)}</code> — {len(entries)} findings</summary>\n\n"
         section += "| Location | Rule | Finding |\n| --- | --- | --- |\n"
         # Reserve room for a complete section ending and truncation/run notice.
         if len(body) + len(section) > 47000:
@@ -68,14 +84,14 @@ def report_body(output, status, revision=None):
         body += section
         group_start = shown
         for finding in entries:
-            location = f'{finding["line"]}:{finding["column"]}'
+            location = f'<code>{finding["line"]}:{finding["column"]}</code>'
             if revision and os.environ.get("GITHUB_REPOSITORY"):
                 url = (os.environ.get("GITHUB_SERVER_URL", "https://github.com") + "/" +
                        quote(os.environ["GITHUB_REPOSITORY"], safe="/") + "/blob/" +
                        quote(revision, safe="") + "/" + quote(path, safe="/") +
                        f'#L{finding["line"]}')
                 location = f"[{location}]({url})"
-            row = f'| {location} | {plain(finding["kind"], 80)} | {plain(finding["message"])} |\n'
+            row = f'| {location} | <code>{plain(finding["kind"], 80)}</code> | {message_text(finding["message"])} |\n'
             if len(body) + len(row) > 47000:
                 break
             body += row

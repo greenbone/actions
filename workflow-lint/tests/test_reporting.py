@@ -95,7 +95,7 @@ class ReportingTests(unittest.TestCase):
         self.assertIn("Workflow lint: 3 findings across 2 files", body)
         self.assertEqual(body.count("<details>"), 2)
         self.assertIn("| Location | Rule | Finding |", body)
-        self.assertIn("[12:3](https://github.com/owner/repo/blob/abc123/.github/workflows/a.yml#L12)", body)
+        self.assertIn("[<code>12:3</code>](https://github.com/owner/repo/blob/abc123/.github/workflows/a.yml#L12)", body)
         self.assertIn("a%20%23%5B%5D%28%29.yml#L25", body)
         self.assertNotIn("SOURCE MUST NOT APPEAR", body)
         self.assertIn("[Full workflow run](https://github.com/owner/repo/actions/runs/123)", body)
@@ -118,6 +118,24 @@ class ReportingTests(unittest.TestCase):
         self.assertEqual(body.count("<details>"), body.count("</details>"))
         self.assertIn("Full workflow run", body)
 
+    def test_code_formatting_preserves_prose_and_escaping(self):
+        finding = self.finding()
+        finding["message"] = 'property "nvd_api_key" is unknown; SC2086: Double quote'
+        body = report.report_body(json.dumps([finding]), 1)
+        self.assertIn('<code>expression</code>', body)
+        self.assertIn('<summary><code>' + report.plain(finding["filepath"]) + '</code>', body)
+        self.assertIn('property <code>&#34;nvd&#95;api&#95;key&#34;</code> is unknown', body)
+        self.assertIn('<code>SC2086</code>&#58; Double quote', body)
+        hostile = '"</code>`|[x](url)&"'
+        self.assertEqual(report.message_text(hostile), '<code>' + report.plain(hostile) + '</code>')
+        escaped = r'label "a\"b" is unknown'
+        self.assertEqual(report.message_text(escaped),
+                         'label <code>' + report.plain(r'"a\"b"') + '</code> is unknown')
+        self.assertEqual(report.message_text("can't parse `input`"), report.plain("can't parse `input`"))
+        # A quoted token cut by the existing message limit stays safe, plain text.
+        truncated = 'property "' + 'x' * 400
+        self.assertEqual(report.message_text(truncated), report.plain(truncated))
+
     def test_execution_errors_are_not_misreported_as_clean(self):
         for output in ("[]", "null", "not json", '[{"line": "bad"}]'):
             body = report.report_body(output, 42)
@@ -126,13 +144,13 @@ class ReportingTests(unittest.TestCase):
             self.assertIn("execution diagnostics", body)
         self.assertIn("findings unavailable", report.report_body("not json", 42))
 
-    def test_messages_are_short_and_locations_without_revision_are_plain(self):
+    def test_messages_are_short_and_locations_without_revision_are_unlinked(self):
         finding = self.finding()
         finding["message"] = "x" * 1000
         body = report.report_body(json.dumps([finding]), 1)
         self.assertIn("x" * 300 + "&#8230;", body)
         self.assertNotIn("x" * 301, body)
-        self.assertIn("| 12:3 |", body)
+        self.assertIn("| <code>12:3</code> |", body)
 
     def test_diagnostic_replay_matches_upstream_annotation_pattern(self):
         import re
