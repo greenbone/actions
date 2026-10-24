@@ -3,6 +3,7 @@ import contextlib
 import hashlib
 import importlib.util
 import io
+import json
 import os
 from pathlib import Path
 import unittest
@@ -38,7 +39,7 @@ class ReportingTests(unittest.TestCase):
         return {"id": number, "user": {"login": author}, "body": body}
 
     def publish(self, status=1):
-        report.publish_comment(report.report_body("diagnostic", status), status, self.event, self.api)
+        report.publish_comment(report.report_body("[]", status), status, self.event, self.api)
 
     def test_create_ignores_other_authors_and_unrelated_bot_comments(self):
         self.comments = [self.comment(1, "someone", self.marker + "\nforged"),
@@ -82,14 +83,66 @@ class ReportingTests(unittest.TestCase):
             report.publish_comment("text", 1, self.event, forbidden)
             report.publish_comment("text", 1, {}, forbidden)
 
+    def finding(self, **overrides):
+        return dict(filepath=".github/workflows/a.yml", line=12, column=3,
+                    kind="expression", message="Unknown property", **overrides)
+
+    def test_grouped_counts_links_and_no_source_dump(self):
+        first = self.finding()
+        first["snippet"] = "SOURCE MUST NOT APPEAR"
+        second = dict(first, filepath=".github/workflows/a #[]().yml", line=25)
+        body = report.report_body(json.dumps([first, first, second]), 1, "abc123")
+        self.assertIn("Workflow lint: 3 findings across 2 files", body)
+        self.assertEqual(body.count("<details>"), 2)
+        self.assertIn("| Location | Rule | Finding |", body)
+        self.assertIn("[12:3](https://github.com/owner/repo/blob/abc123/.github/workflows/a.yml#L12)", body)
+        self.assertIn("a%20%23%5B%5D%28%29.yml#L25", body)
+        self.assertNotIn("SOURCE MUST NOT APPEAR", body)
+        self.assertIn("[Full workflow run](https://github.com/owner/repo/actions/runs/123)", body)
+
     def test_untrusted_output_is_escaped_and_bounded(self):
-        body = report.report_body('</pre><script>x</script>\n```\n@someone\n::error::oops', 1)
+        finding = self.finding()
+        finding.update(message='</details><script>x</script> `code` @someone | [link](url)\nnewline',
+                       filepath='@bad/<details>|[file].yml', kind='evil|`<script>')
+        body = report.report_body(json.dumps([finding]), 1, "abc123")
         self.assertNotIn("<script>", body)
         self.assertNotIn("@someone", body)
-        self.assertIn("&lt;/pre&gt;", body)
-        body = report.report_body("<&" * 60000, 1)
-        self.assertLess(len(body), 50000)
+        self.assertNotIn("`code`", body)
+        self.assertIn("&#60;&#47;details&#62;", body)
+        self.assertEqual(body.count("<details>"), body.count("</details>"))
+        finding["message"] = "<&" * 60000
+        body = report.report_body(json.dumps([finding] * 1000), 1, "abc123")
+        self.assertLess(len(body), 48000)
+        self.assertIn("1000 findings across 1 files", body)
         self.assertIn("Truncated", body)
+        self.assertEqual(body.count("<details>"), body.count("</details>"))
+        self.assertIn("Full workflow run", body)
+
+    def test_execution_errors_are_not_misreported_as_clean(self):
+        for output in ("[]", "null", "not json", '[{"line": "bad"}]'):
+            body = report.report_body(output, 42)
+            self.assertIn("exited 42", body)
+            self.assertNotIn("Passed", body)
+            self.assertIn("execution diagnostics", body)
+        self.assertIn("findings unavailable", report.report_body("not json", 42))
+
+    def test_messages_are_short_and_locations_without_revision_are_plain(self):
+        finding = self.finding()
+        finding["message"] = "x" * 1000
+        body = report.report_body(json.dumps([finding]), 1)
+        self.assertIn("x" * 300 + "&#8230;", body)
+        self.assertNotIn("x" * 301, body)
+        self.assertIn("| 12:3 |", body)
+
+    def test_diagnostic_replay_matches_upstream_annotation_pattern(self):
+        import re
+        matcher = json.loads((Path(report.__file__).parent / "actionlint-matcher.json").read_text())
+        pattern = matcher["problemMatcher"][0]["pattern"][0]["regexp"]
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            report.print_diagnostics(json.dumps([self.finding()]))
+        match = re.match(pattern, output.getvalue().strip())
+        self.assertIsNotNone(match)
+        self.assertEqual(match.groups(), (".github/workflows/a.yml", "12", "3", "Unknown property", "expression"))
 
 
 if __name__ == "__main__":

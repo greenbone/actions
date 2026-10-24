@@ -88,7 +88,8 @@ chmod +x "$4/actionlint"
         self.assertEqual(result.returncode, 42)
         self.assertIn("exited 42", summary.read_text())
         self.assertEqual(self.marker.read_text(), "called\n")
-        self.assertIn("&lt;/pre&gt;&#64;someone", summary.read_text())
+        self.assertNotIn("</pre>@someone", summary.read_text())
+        self.assertIn("findings unavailable", summary.read_text())
         lines = result.stdout.splitlines()
         stop = next(line for line in lines if line.startswith("::stop-commands::"))
         token = stop.split("::")[-1]
@@ -118,7 +119,17 @@ chmod +x "$4/actionlint"
 
     def test_invalid_workflow(self):
         self.workflow.write_text(VALID.replace("echo hello", "echo '${{ nonexistent.value }}'"))
+        subprocess.run(["git", "add", "."], cwd=self.repo, check=True)
+        subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.com",
+                        "commit", "-qm", "fixture"], cwd=self.repo, check=True)
+        revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        self.env.update(GITHUB_REPOSITORY="owner/repo", GITHUB_SHA="not-the-checkout")
+        summary = self.root / "summary.md"
+        self.env["GITHUB_STEP_SUMMARY"] = str(summary)
         result = self.run_action()
+        self.assertIn("Workflow lint: 1 findings across 1 files", summary.read_text())
+        self.assertIn(f"/blob/{revision}/.github/workflows/fixture.yml#L7", summary.read_text())
+        self.assertNotIn("not-the-checkout", summary.read_text())
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("nonexistent", result.stdout + result.stderr)
         self.assertIn("fixture.yml", result.stdout + result.stderr)

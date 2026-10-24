@@ -27,11 +27,12 @@ done
 cd "$GITHUB_WORKSPACE"
 echo "::add-matcher::$ACTION_PATH/actionlint-matcher.json"
 status=0
-"$tmp/actionlint" -no-color -shellcheck "$SHELLCHECK" -pyflakes "$PYFLAKES" > "$tmp/diagnostics" 2>&1 || status=$?
+"$tmp/actionlint" -no-color -format '{{json .}}' -shellcheck "$SHELLCHECK" -pyflakes "$PYFLAKES" > "$tmp/diagnostics" 2> "$tmp/stderr" || status=$?
 # Disable command parsing for untrusted diagnostics; matchers still see lines.
 stop_token=$(cat /proc/sys/kernel/random/uuid)
 echo "::stop-commands::$stop_token"
-cat "$tmp/diagnostics"
+python3 "$ACTION_PATH/report.py" "$tmp/diagnostics" --diagnostics || cat "$tmp/diagnostics"
+cat "$tmp/stderr"
 echo "::$stop_token::"
 python3 "$ACTION_PATH/report.py" "$tmp/diagnostics" "$status" || echo '::warning::Workflow lint reporting failed'
 exit "$status"

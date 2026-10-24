@@ -139,8 +139,16 @@ Non-PR events do not comment; fork PRs and missing tokens skip with a warning.
 Read-only or unavailable API access warns without changing lint's status. Keep
 using `pull_request`; elevated `pull_request_target` is not needed.
 
-Workflow text is HTML-escaped in summaries/comments and bounded to 48,000 escaped
-characters, with a link to the run in comments. Full diagnostics remain in the
-log. Runner command parsing is suspended while replaying untrusted diagnostics;
+Summaries and comments show total finding/file counts, collapsible sections per
+file, and tables of location, rule, and short explanation (up to 300 characters).
+Locations link to the actual checked-out Git commit when available, with
+URL-encoded paths. They do not dump source excerpts. The same single lint run
+provides structured JSON for reporting and matcher-compatible diagnostic lines
+for annotations; full messages and execution errors remain in the log.
+
+Untrusted text is entity-escaped for HTML, Markdown, tables, and mentions.
+Reports are bounded below 48,000 characters, retaining accurate total counts,
+complete sections, a truncation notice when needed, and a full run link.
+Runner command parsing is suspended while replaying untrusted diagnostics;
 the registered matcher still processes them. Comment reporting uses only Python's
 standard library and GitHub's API, with no additional wrapper action.
