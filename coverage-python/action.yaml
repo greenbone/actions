@@ -5,7 +5,7 @@ description: "An action to upload coverage to codecov.io for Python package by u
 inputs:
   python-version:
     description: "Python version that should be installed"
-    default: "3.10"
+    default: "3.15"
   package-manager:
     description: "Package manager to use, either 'poetry' or 'uv'. Default is 'poetry'."
     default: "poetry"
