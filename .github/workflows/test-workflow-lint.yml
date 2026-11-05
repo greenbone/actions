@@ -1,0 +1,23 @@
+name: Test workflow lint
+
+on:
+  push:
+    branches: [main]
+    paths: ['workflow-lint/**', '.github/workflows/test-workflow-lint.yml']
+  pull_request:
+    paths: ['workflow-lint/**', '.github/workflows/test-workflow-lint.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check shell syntax
+        run: bash -n workflow-lint/run.sh
+      - name: Verify behavior and download integrity
+        run: python3 -m unittest discover -s workflow-lint/tests -v

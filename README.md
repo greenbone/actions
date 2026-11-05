@@ -65,6 +65,7 @@ We offer several actions for linting, formatting, building and testing packages/
 
 ### Other useful actions
 
+* [Validate GitHub workflows with checksum-verified actionlint](workflow-lint)
 * [Release a project in C, GoLang, JavaScript or Python](https://github.com/greenbone/actions/tree/v2/release)
 * [Create and upload signatures for GitHub release files](https://github.com/greenbone/actions/tree/v2/sign-release-files)
 * [Report usage of conventional commits in a Pull Request](https://github.com/greenbone/actions/tree/v2/conventional-commits)
