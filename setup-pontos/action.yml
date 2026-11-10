@@ -39,7 +39,6 @@ runs:
       with:
         python-version: ${{ steps.pontos.outputs.installed == 'false' && inputs.python-version || '' }}
         install: ${{  steps.pontos.outputs.installed == 'false' && 'pontos' || '' }}
-        cache: "true"
     - name: Print pontos version
       run: |
         pontos --version

@@ -2,6 +2,12 @@
 
 A GitHub action for using pipx
 
+Applications are installed without restoring cached virtual environments. pipx
+application environments depend on shared libraries and runner-specific Python
+installations, so restoring only the application environment can leave it broken.
+The deprecated `cache` input is accepted but ignored, including `cache: "true"`.
+The `cache-hit` output is retained and always returns `false`.
+
 ## Examples
 
 ```yaml
@@ -47,7 +53,7 @@ jobs:
 | install         | Python application to install.                                                                                                                                         | Required |
 | install-version | Use a specific version of the application to install. For example '1.2.3'.                                                                                             | Optional |
 | include-deps    | Enable dependency installations for pipx applications. Disabled by default. 'true' to enable.                                                                          | Optional |
-| cache           | Enable caching for the installed application. | Optional. Disabled by default. `true` to enable.                                                                       | Optional |
+| cache           | Deprecated. Accepted but ignored; application virtual environments are not cached. | Optional |
 
 ## Outputs
 
@@ -57,4 +63,4 @@ jobs:
 | bin             | Path to the bin directory where all applications can be run from.  |
 | venvs           | Path to the directory where the virtual environments are stored.   |
 | shared          | Path where shared python packages like pip or wheel are installed. |
-| cache-hit       | 'true' if the cache has been hit.                                  |
+| cache-hit       | Deprecated. Always `false`.                                  |

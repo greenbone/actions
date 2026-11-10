@@ -69,3 +69,29 @@ jobs:
       - name: Run mypy
         run: |
           mypy --version
+
+  test-pipx-without-venv-cache:
+    runs-on: ubuntu-latest
+    name: Test Pipx Without Venv Cache (${{ matrix.cache }})
+    strategy:
+      matrix:
+        cache: ["false", "true"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install latest mypy
+        id: pipx
+        uses: ./pipx
+        with:
+          python-version: "3.10"
+          install: mypy
+          # Exercise compatibility with callers still passing the deprecated input.
+          cache: ${{ matrix.cache }}
+      - name: Verify application and shared pip
+        env:
+          PIPX_VENVS: ${{ steps.pipx.outputs.venvs }}
+          CACHE_HIT: ${{ steps.pipx.outputs.cache-hit }}
+        run: |
+          test "$CACHE_HIT" = "false"
+          mypy --version
+          "$PIPX_VENVS/mypy/bin/python" -m pip --version
