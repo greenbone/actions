@@ -25,7 +25,7 @@ on:
 
 |Input Variable|Description|Default value|
 |--------------|-----------|-|
-| python-version | Python version that should be installed and used. | Optional (default: "3.11") |
+| python-version | Python version that should be installed and used. | Optional (default: "3.14") |
 | github-token | GH Token for writing/editing a comment to/in a PR | |
 | pr-comment | Write a summary of the scan as comment to the PR | true |
 | filter | The regex filter being applied to the file selection | "^.*.(?<!png)(?<!jpg)(?<!jpeg)(?<!gif)(?<!tiff)(?<!tif)(?<!bmp)(?<!psd)(?<!heic)(?<!heif)(?<!svg)$" |

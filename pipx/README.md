@@ -19,7 +19,7 @@ jobs:
           install: poetry
 ```
 
-Install a specific Python application version on Python 3.11
+Install a specific Python application version on Python 3.14
 
 ```yaml
 name: Install Python application
@@ -29,11 +29,11 @@ on:
 
 jobs:
   pipx:
-    name: Install poetry 1.5.0 on Python 3.11
+    name: Install poetry 1.5.0 on Python 3.14
     steps:
       - uses: greenbone/actions/pipx@v3
         with:
-          python-version: "3.11"
+          python-version: "3.14"
           install: poetry
           install-version: "1.5.0"
 ```

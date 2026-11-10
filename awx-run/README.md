@@ -41,5 +41,5 @@ jobs:
 | workflow-timeout               | Timeout to wait for an workflow finish in seconds. If not workflow-node is set. Default: is 3600 .                            | Optional |
 | workflow-node-wait-retries     | Retries to check if a workflow node still running. Default: is 240 .                                                          | Optional |
 | workflow-node-wait-retry-delay | Delay between workflow node wait retries. Default: is 30 .                                                                    | Optional |
-| python-version                 | Python version to use for running the action. Default is 3.11 .                                                               | Optional |
+| python-version                 | Python version to use for running the action. Default is 3.14 .                                                               | Optional |
 | skip-installation-on           | Skip installation on selected runner. Default is self-hosted-generic.                                                         | Optional |

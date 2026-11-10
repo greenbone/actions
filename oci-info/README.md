@@ -46,7 +46,7 @@ jobs:
 | compare-reg-auth-service  | Compare registry authentication service. Default is registry.docker.io .                                       | Optional |
 | compare-user              | User for the compare registry login.                                                                           | Optional |
 | compare-password          | Password for the compare registry login.                                                                       | Optional |
-| python-version            | Python version to use for running the action. Default is 3.11 .                                                | Optional |
+| python-version            | Python version to use for running the action. Default is 3.14 .                                                | Optional |
 | poetry-version            | Use a specific poetry version. By default the `latest` release is used.                                        | Optional |
 | cache-poetry-installation | Cache poetry and its dependencies. Default is 'true'. Set to an other string then 'true' to disable the cache. | Optional |
 

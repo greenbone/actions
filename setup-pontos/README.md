@@ -23,7 +23,7 @@ jobs:
 
 | Input Variable  | Description                                   |                                 |
 | --------------- | --------------------------------------------- | ------------------------------- |
-| python-version  | Python version to use for running the action. | Optional (default is `3.11`)    |
+| python-version  | Python version to use for running the action. | Optional (default is `3.14`)    |
 | virtualenv-path |                                               | Deprecated and will be ignored. |
 | cache-key       |                                               | Deprecated and will be ignored. |
 

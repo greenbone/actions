@@ -44,8 +44,8 @@ inputs:
     description: "Delay between workflow node wait retries. Default: is 30 ."
     default: "30"
   python-version:
-    description: "Python version to use for running the action. Default is 3.11 ."
-    default: "3.11"
+    description: "Python version to use for running the action. Default is 3.14 ."
+    default: "3.14"
   skip-installation-on:
     description: Skip installation on selected runner. Default is self-hosted-generic.
     default: "self-hosted-generic"

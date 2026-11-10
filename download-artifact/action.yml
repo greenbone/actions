@@ -46,7 +46,7 @@ inputs:
   python-version:
     description: "Python version to use for running the action"
     required: false
-    default: "3.11"
+    default: "3.14"
   uv-version:
     description: "Use a specific uv version. By default the latest release is used."
 outputs:
