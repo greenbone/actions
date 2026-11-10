@@ -31,7 +31,7 @@ inputs:
     description: "Deprecated by release-type."
   python-version:
     description: "Python version used  to create the release. (Only important for python projects)"
-    default: "3.11"
+    default: "3.14"
   ref:
     description: "This branch's/tag's HEAD will be candidate of the next release. Default: main branch"
     default: "main"

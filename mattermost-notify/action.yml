@@ -92,7 +92,7 @@ runs:
       uses: greenbone/actions/pipx@v3
       id: pipx
       with:
-        python-version: "3.11"
+        python-version: "3.14"
         install: mattermost-notify
         install-version: "26.1.2"
 

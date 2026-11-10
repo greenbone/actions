@@ -7,7 +7,7 @@ description: |
 inputs:
   python-version:
     description: "Python version that should be installed and used."
-    default: "3.11"
+    default: "3.14"
   git-tag-prefix:
     description: "Set git tag prefix to the passed input. Default: 'v'"
     default: "v"
