@@ -5,7 +5,7 @@ description: "An action to check version information via pontos"
 inputs:
   python-version:
     description: "Python version that should be installed"
-    default: "3.10"
+    default: "3.11"
   working-directory:
     description: "A working directory where to check the versioning"
     default: ${{ github.workspace }}

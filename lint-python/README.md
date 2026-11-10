@@ -25,7 +25,7 @@ jobs:
 |Input Variable|Description| |
 |--------------|-----------|-|
 | packages | Python packages to lint | Required |
-| python-version | Python version to use for running the action. | Optional (default is `3.10`) |
+| python-version | Python version to use for running the action. | Optional (default is `3.11`) |
 | package-manager | Package manager to use, either `poetry` or `uv`. | Optional (default is `poetry`) |
 | poetry-version | Use a specific poetry version. By default the latest release is used. | Optional (default `latest` poetry version) |
 | uv-version | Use a specific uv version. By default the latest release is used. | Optional (default `latest` uv version) |

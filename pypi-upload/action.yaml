@@ -5,7 +5,7 @@ description: "Action to build and upload a release via uv to PyPI"
 inputs:
   python-version:
     description: "Python version to use for this action"
-    default: "3.10"
+    default: "3.11"
   pypi-token:
     description: "Token for uploading the build to PyPI"
     required: false

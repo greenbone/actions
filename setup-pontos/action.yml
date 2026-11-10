@@ -9,7 +9,7 @@ inputs:
     default: "pontos-venv"
   python-version:
     description: "Python version that should be installed and used."
-    default: "3.10"
+    default: "3.11"
   virtualenv-path:
     description: "Path to the created virtual environment"
     deprecationMessage: "virtualenv-path is deprecated and will be ignored."

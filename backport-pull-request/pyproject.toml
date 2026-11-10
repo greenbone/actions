@@ -3,15 +3,15 @@ name = "backport-pull-request-action"
 version = "1.0.0"
 description = "A GitHub Action to backport Pull Requests"
 authors = [{ name = "Björn Ricks", email = "bjoern.ricks@greenbone.net" }]
-requires-python = ">=3.10,<4"
+requires-python = ">=3.11,<4"
 license = "GPL-3.0-or-later"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 dependencies = ["tomli>=1.0", "pontos>=26.9.1"]
 
@@ -34,7 +34,7 @@ build-backend = "uv_build"
 
 [tool.ruff]
 line-length = 80
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 extend-select = ["I", "PLE", "PLW"]

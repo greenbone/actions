@@ -23,5 +23,5 @@ jobs:
 
 |Input Variable|Description| |
 |--------------|-----------|-|
-| python-version | Python version to use for running the action. | Optional (default is `3.10`) |
+| python-version | Python version to use for running the action. | Optional (default is `3.11`) |
 | working-directory | "A working directory where to check the versioning | Optional (default is `${{ github.workspace }}`) |

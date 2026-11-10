@@ -11,7 +11,7 @@ inputs:
     default: ""
   python-version:
     description: "Python version that should be installed"
-    default: "3.10"
+    default: "3.11"
   poetry-version:
     description: "Use a specific poetry version. By default the latest release is used."
   install-dependencies:

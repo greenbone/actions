@@ -8,7 +8,7 @@ inputs:
     required: true
   python-version:
     description: "Python version that should be installed"
-    default: "3.10"
+    default: "3.11"
   package-manager:
     description: "Package manager to use, either 'poetry' or 'uv'. Default is 'poetry'."
     default: "poetry"
