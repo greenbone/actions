@@ -8,6 +8,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -19,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install poetry
         uses: ./poetry
         with:
@@ -31,6 +36,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install poetry
         uses: ./coverage-python
         with:
@@ -43,6 +50,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install poetry
         uses: ./lint-python
         with:
@@ -55,6 +64,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Setup Pyhton
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v2.2.3
         id: python
@@ -69,3 +80,15 @@ jobs:
       - name: Run mypy
         run: |
           mypy --version
+
+  all-python-ci-jobs-passed:
+    name: All Python CI jobs passed
+    needs: [install-poetry, test-coverage, test-linting, test-pipx]
+    if: ${{ always() }}
+    permissions: {}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all CI jobs to succeed
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: jq -e 'all(.[]; .result == "success")' <<<"$NEEDS"

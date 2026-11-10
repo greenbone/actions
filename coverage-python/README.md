@@ -24,7 +24,7 @@ jobs:
 
 | Input                     | Description                                                                                                                  |                                                 |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| python-version            | Python version that should be installed                                                                                      | Optional (default: "3.10")                      |
+| python-version            | Python version that should be installed                                                                                      | Optional (default: "3.15")                      |
 | package-manager           | Package Manager to user. Either `uv` or `poetry`                                                                             | Optional (default: `poetry`)                    |
 | test-command              | Command to run the unit tests                                                                                                | Optional (default: `"-m unittest"`)             |
 | poetry-version            | Use a specific poetry version. By default the latest release is used.                                                        | Optional (default: `latest`)                    |

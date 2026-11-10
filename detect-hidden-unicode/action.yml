@@ -4,7 +4,7 @@ description: "Detects hidden unicode in newly committed config files."
 inputs:
   python-version:
     description: "Python version to use for running the action"
-    default: "3.10"
+    default: "3.11"
   github-token:
     description: "GH Token for writing/editing a comment to/in a PR"
     required: true

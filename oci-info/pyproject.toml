@@ -3,7 +3,7 @@ name = "oci-info"
 version = "0.1.0"
 description = "Request oci manifest's"
 authors = [{ name = "Greenbone", email = "info@greenbone.net" }]
-requires-python = ">=3.10,<4"
+requires-python = ">=3.11,<4"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
 classifiers = [
@@ -11,11 +11,11 @@ classifiers = [
   "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
   "Environment :: Console",
   "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Programming Language :: Python :: 3",
@@ -61,7 +61,7 @@ version-module-file = "action/__version__.py"
 
 [tool.ruff]
 line-length = 80
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 extend-select = ["I", "PLE", "PLW"]

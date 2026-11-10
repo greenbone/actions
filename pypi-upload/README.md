@@ -53,5 +53,5 @@ jobs:
 | Input          | Description                           |                                                                                                                                                                        |
 | -------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | pypi-token     | Token for uploading the build to PyPI | Optional. If not provided [trusted publisher](https://docs.pypi.org/trusted-publishers/) will be used. **MUST** be provided as a secret to be not visible in the logs. |
-| python-version | Python version to use for this action | Optional (default: "3.10")                                                                                                                                             |
+| python-version | Python version to use for this action | Optional (default: "3.11")                                                                                                                                             |
 | ref            | The branch, tag or SHA to checkout.   | Optional (default depends on the [event](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows))                                            |
