@@ -75,7 +75,7 @@ jobs:
         uses: ./pipx
         with:
           install: mypy
-          install-version: "1.0.0"
+          install-version: "1.18.2"
           python-path: ${{ steps.python.outputs.python-path }}
       - name: Run mypy
         run: |
