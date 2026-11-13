@@ -3,6 +3,11 @@ description: "Scans your pull requests for dependency changes"
 branding:
   icon: "umbrella"
   color: "green"
+inputs:
+  allow-dependencies-licenses:
+    description: "Comma-separated package URLs to exclude from license checks"
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -15,6 +20,7 @@ runs:
         comment-summary-in-pr: true
         vulnerability-check: true
         license-check: true
+        allow-dependencies-licenses: ${{ inputs.allow-dependencies-licenses }}
         allow-licenses: |
           0BSD,
           AGPL-3.0-or-later,
