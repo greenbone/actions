@@ -25,3 +25,15 @@ jobs:
       - name: 'Dependency Review'
         uses: greenbone/actions/dependency-review@v3
 ```
+
+To exempt a specific dependency from the license check, pass its package URL.
+The action still checks it for vulnerabilities. For example:
+
+```yaml
+      - name: 'Dependency Review'
+        uses: greenbone/actions/dependency-review@v3
+        with:
+          allow-dependencies-licenses: pkg:golang/github.com/opencontainers/image-spec@1.1.1
+```
+
+The allowed-license list remains in this action.
