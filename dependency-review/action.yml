@@ -19,6 +19,7 @@ runs:
           0BSD,
           AGPL-3.0-or-later,
           Apache-2.0,
+          Apache-2.0 WITH LLVM-exception,
           BlueOak-1.0.0,
           BSD-2-Clause,
           BSD-3-Clause-Clear,
@@ -63,9 +64,9 @@ runs:
           Zlib,
           ZPL-2.1
 
-# Only single licenses are allowed in this list.
+# Single licenses, optionally with a WITH exception, are allowed in this list.
 # The action evaluates license combinations such as
 # `License-A AND License-B` against these individual entries.
-# Combination expressions in the allowlist are silently dropped. See:
+# AND/OR expressions in the allowlist are silently dropped. See:
 # https://github.com/actions/dependency-review-action/releases/tag/v4.7.0
 # https://github.com/actions/dependency-review-action/releases/tag/v4.7.1
