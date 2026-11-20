@@ -35,8 +35,6 @@ from pontos.github.actions.env import GitHubEnvironment
 from pontos.github.api import GitHubAsyncRESTApi, HTTPStatusError
 from pontos.github.models import Artifact, WorkflowRun
 
-WORKFLOW_RUN_QUERY_ATTEMPTS = 3
-
 
 def is_event(run: WorkflowRun, events: Iterable[str]) -> bool:
     """
@@ -104,10 +102,6 @@ def parse_arguments() -> Namespace:
 
 
 class DownloadArtifactsError(Exception):
-    pass
-
-
-class SuspiciousWorkflowRunsError(Exception):
     pass
 
 
@@ -200,31 +194,7 @@ class DownloadArtifacts:
             Console.log(f"user: {self.user}")
             Console.log(f"group: {self.group}")
 
-    def _validate_workflow_runs(self, runs: Iterable[WorkflowRun]) -> None:
-        run_ids = [run.id for run in runs]
-        if len(run_ids) != len(set(run_ids)):
-            raise SuspiciousWorkflowRunsError(
-                "GitHub returned duplicate workflow-run IDs."
-            )
-
-        if self.workflow_status == "success":
-            non_successful = [
-                run.id
-                for run in runs
-                if getattr(
-                    getattr(run, "conclusion", None),
-                    "value",
-                    getattr(run, "conclusion", None),
-                )
-                not in (None, "success")
-            ]
-            if non_successful:
-                raise SuspiciousWorkflowRunsError(
-                    "GitHub returned non-successful workflow runs for a "
-                    f"success query: {non_successful}."
-                )
-
-    async def _get_newest_workflow_run(
+    async def get_newest_workflow_run(
         self,
     ) -> tuple[WorkflowRun | None, Iterable[Artifact] | None]:
         try:
@@ -254,8 +224,6 @@ class DownloadArtifacts:
 
         if not runs:
             return None, None
-
-        self._validate_workflow_runs(runs)
 
         matching_artifacts: list[tuple[WorkflowRun, Artifact]] = []
         for run in sorted(runs, key=created_at, reverse=True):
@@ -303,40 +271,6 @@ class DownloadArtifacts:
             key=lambda candidate: artifact_created_at(candidate[1]),
         )
         return run, [artifact]
-
-    async def get_newest_workflow_run(
-        self,
-    ) -> tuple[WorkflowRun | None, Iterable[Artifact] | None]:
-        for attempt in range(1, WORKFLOW_RUN_QUERY_ATTEMPTS + 1):
-            try:
-                run, artifacts = await self._get_newest_workflow_run()
-            except SuspiciousWorkflowRunsError as error:
-                if attempt == WORKFLOW_RUN_QUERY_ATTEMPTS:
-                    raise DownloadArtifactsError(
-                        "GitHub workflow-runs response remained invalid after "
-                        f"{attempt} attempts: {error}"
-                    ) from error
-                Console.warning(
-                    f"GitHub workflow-runs response is invalid ({error}). "
-                    f"Retrying ({attempt}/{WORKFLOW_RUN_QUERY_ATTEMPTS})..."
-                )
-                await asyncio.sleep(attempt)
-                continue
-
-            if (
-                run
-                or self.allow_not_found
-                or attempt == WORKFLOW_RUN_QUERY_ATTEMPTS
-            ):
-                return run, artifacts
-
-            Console.warning(
-                "No usable artifact was found in the workflow-runs response. "
-                f"Retrying ({attempt}/{WORKFLOW_RUN_QUERY_ATTEMPTS})..."
-            )
-            await asyncio.sleep(attempt)
-
-        return None, None
 
     def adjust_permissions(self, file_path: Path) -> None:
         try:
