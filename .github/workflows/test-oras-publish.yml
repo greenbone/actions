@@ -1,0 +1,25 @@
+name: Test ORAS publish
+
+on:
+  pull_request:
+    paths:
+      - 'oras-publish/**'
+      - '.github/workflows/test-oras-publish.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'oras-publish/**'
+      - '.github/workflows/test-oras-publish.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check shell script
+        run: shellcheck oras-publish/publish.sh
+      - name: Test publishing behavior
+        run: python3 -B -m unittest discover -s oras-publish/tests -v

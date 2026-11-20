@@ -1,0 +1,127 @@
+name: ORAS publish
+description: Publish an artifact to an OCI registry, optionally signing it with Cosign.
+
+inputs:
+  artifact-file:
+    description: File to upload, relative to artifact-folder or an absolute path.
+    required: true
+  artifact-url:
+    description: Destination registry/repository:tag (without a URL scheme).
+    required: true
+  artifact-folder:
+    description: Directory containing the artifact. Defaults to the workspace.
+    default: '.'
+  artifact-type:
+    description: OCI artifact type. If empty, use the ORAS default.
+  media-type:
+    description: Media type of the uploaded file.
+    default: application/octet-stream
+  annotations:
+    description: Manifest annotations, one key=value per line. Blank lines are ignored.
+  annotation-file:
+    description: Optional ORAS JSON annotation file, relative to artifact-folder or absolute.
+  export-manifest:
+    description: Optional output path for the OCI manifest, relative to artifact-folder or absolute.
+  registry-user:
+    description: Registry username.
+    required: true
+  registry-token:
+    description: Registry password or access token.
+    required: true
+  prevent-overwrite:
+    description: Fail if the destination tag exists. Use registry immutability for atomic protection against concurrent writers.
+    default: 'false'
+  oras-version:
+    description: ORAS version to install.
+    default: '1.3.1'
+  oras-sha256:
+    description: SHA-256 of the Linux amd64 ORAS archive. Update together with oras-version.
+    default: 'd52c4af76ce6a3ceb8579e51fb751a43ac051cca67f965f973a0b0e897a2bb86'
+  sign:
+    description: Sign the published digest with Cosign. Without cosign-key, use keyless signing.
+    default: 'false'
+  cosign-key:
+    description: Optional Cosign private key. Used only when sign is true.
+  cosign-password:
+    description: Password for the Cosign private key; may be empty.
+  cosign-tlog-upload:
+    description: Upload the signature to the transparency log.
+    default: 'true'
+  cosign-version:
+    description: Cosign version to install when signing.
+    default: 'v2.5.2'
+
+outputs:
+  digest:
+    description: Published OCI manifest digest.
+    value: ${{ steps.publish.outputs.digest }}
+  reference:
+    description: Immutable registry/repository@digest reference.
+    value: ${{ steps.publish.outputs.reference }}
+
+branding:
+  icon: package
+  color: green
+
+runs:
+  using: composite
+  steps:
+    - name: Set up ORAS
+      shell: bash
+      env:
+        ORAS_VERSION: ${{ inputs.oras-version }}
+        ORAS_SHA256: ${{ inputs.oras-sha256 }}
+      run: |
+        set -euo pipefail
+
+        if [[ $RUNNER_OS != Linux || $RUNNER_ARCH != X64 ]]; then
+          echo 'ORAS installation requires a Linux amd64 runner' >&2
+          exit 1
+        fi
+
+        [[ $ORAS_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+        [[ $ORAS_SHA256 =~ ^[0-9a-fA-F]{64}$ ]]
+
+        download_dir=$(mktemp -d "$RUNNER_TEMP/oras-download.XXXXXX")
+        trap 'rm -rf -- "$download_dir"' EXIT
+        archive="oras_${ORAS_VERSION}_linux_amd64.tar.gz"
+
+        curl --fail --silent --show-error --location --retry 3 \
+          "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/${archive}" \
+          --output "$download_dir/$archive"
+
+        printf '%s  %s\n' "$ORAS_SHA256" "$download_dir/$archive" | sha256sum --check
+        tar -xzf "$download_dir/$archive" -C "$download_dir" oras
+
+        install_dir=$(mktemp -d "$RUNNER_TEMP/oras-bin.XXXXXX")
+        install -m 0755 "$download_dir/oras" "$install_dir/oras"
+        "$install_dir/oras" version
+        printf '%s\n' "$install_dir" >> "$GITHUB_PATH"
+
+    - name: Set up Cosign
+      if: inputs.sign == 'true'
+      uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
+      with:
+        cosign-release: ${{ inputs.cosign-version }}
+
+    - name: Publish artifact
+      id: publish
+      shell: bash
+      working-directory: ${{ inputs.artifact-folder }}
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        ARTIFACT_FILE: ${{ inputs.artifact-file }}
+        ARTIFACT_URL: ${{ inputs.artifact-url }}
+        ARTIFACT_TYPE: ${{ inputs.artifact-type }}
+        MEDIA_TYPE: ${{ inputs.media-type }}
+        ANNOTATIONS: ${{ inputs.annotations }}
+        ANNOTATION_FILE: ${{ inputs.annotation-file }}
+        EXPORT_MANIFEST: ${{ inputs.export-manifest }}
+        REGISTRY_USER: ${{ inputs.registry-user }}
+        REGISTRY_TOKEN: ${{ inputs.registry-token }}
+        PREVENT_OVERWRITE: ${{ inputs.prevent-overwrite }}
+        SIGN: ${{ inputs.sign }}
+        COSIGN_KEY: ${{ inputs.cosign-key }}
+        COSIGN_PASSWORD: ${{ inputs.cosign-password }}
+        COSIGN_TLOG_UPLOAD: ${{ inputs.cosign-tlog-upload }}
+      run: bash "$ACTION_PATH/publish.sh"
