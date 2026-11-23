@@ -25,22 +25,25 @@ runs:
   steps:
     - name: Set up Python and pontos
       uses: greenbone/actions/setup-pontos@v3
-    - name: allow/not allow bypass?
+    - name: Configure admin bypass
       run: |
-        if [[ "${{inputs.allow}}" == "true" ]];
-        then
-          echo "ALLOW_OPT=--allow" >> $GITHUB_ENV
-        elif [[ "${{inputs.allow}}" == "false" ]];
-        then
-          echo "ALLOW_OPT=--no-allow" >> $GITHUB_ENV
+        if [[ "$ALLOW" == "true" ]]; then
+          allow_opt=--allow
         else
-          echo "ALLOW_OPT=--no-allow" >> $GITHUB_ENV
+          allow_opt=--no-allow
         fi
-      shell: bash
-      # in case of blubber input let the branch be unlocked!
-    - name: Prepare release and store the version
-      run: |
-        pontos-github-script pontos.github.scripts.enforce-admins ${{ inputs.repository }} ${{ inputs.branch }} ${{ env.ALLOW_OPT }}
+        if [[ ! "$REPOSITORY" =~ ^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$ ]] || [[ "$REPOSITORY" == -* || "$REPOSITORY" == */-* ]]; then
+          echo "::error::Invalid repository"
+          exit 1
+        fi
+        if [[ "$BRANCH" == -* ]] || ! git check-ref-format --branch "$BRANCH" >/dev/null; then
+          echo "::error::Invalid branch"
+          exit 1
+        fi
+        pontos-github-script pontos.github.scripts.enforce-admins "$REPOSITORY" "$BRANCH" "$allow_opt"
       shell: bash
       env:
+        ALLOW: ${{ inputs.allow }}
+        REPOSITORY: ${{ inputs.repository }}
+        BRANCH: ${{ inputs.branch }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
