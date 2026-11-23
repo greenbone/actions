@@ -35,7 +35,7 @@ runs:
         python -m coverxygen --src-dir ${{ github.workspace }} \
         --xml-dir build/doc/generated/xml/ --output lcov.info
     - name: Upload documentation coverage to codecov
-      uses: codecov/codecov-action@v7
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
       with:
         files: lcov.info
         token: ${{ inputs.token }}
