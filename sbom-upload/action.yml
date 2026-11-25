@@ -24,7 +24,8 @@ runs:
         token: ${{ inputs.token }}
     - name: Generate SBOM
       run: |
-        curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/download/v1.1.2/sbom-tool-linux-x64
+        curl -fsSL -o "$RUNNER_TEMP/sbom-tool" https://github.com/microsoft/sbom-tool/releases/download/v1.1.2/sbom-tool-linux-x64
+        echo '80512bf4071c223c3220a02d39f396c91799df3fefbab20aa8cd564f43093c31  '"$RUNNER_TEMP/sbom-tool" | sha256sum -c -
         chmod +x $RUNNER_TEMP/sbom-tool
         $RUNNER_TEMP/sbom-tool generate -b . -bc . -pn ${{ github.repository }} -pv 1.0.0 -ps "Greenbone AG" -nsb https://greenbone.net -V Verbose
       shell: bash
