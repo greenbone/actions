@@ -251,23 +251,25 @@ def print_marker(pr_comment: list[str], pr_comment_level: str, hide_scan_details
     detected_markers += 1
     return detected_markers
 
-def shrink_pr_comment(pr_comment: list[str]):
-    """
-    Shrink the pr_comment, will only be evoked
-    if pr_comment_level = "WARNING" and zero markes have been found
-    """
+def shrink_pr_comment(pr_comment: list[str], section_start: int):
+    """Remove the current file's scan section from a WARNING-level comment."""
 
-    ## Delete until last '## Scan:' or '# Scan:' section
-    while True:
-       curElement = pr_comment.pop()
-       if "## Scan:" in curElement or len(pr_comment) == 1:
-          break
+    del pr_comment[section_start:]
 
-def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, file_path: str) -> int:
+def scan_file(
+    pr_comment: list[str],
+    pr_comment_level: str,
+    hide_scan_details: bool,
+    file_path: str,
+    section_start: Optional[int] = None,
+) -> int:
     """
     Go through each line and character of the file from file_path
     and scan for hidden unicode characters
     """
+
+    if section_start is None:
+        section_start = len(pr_comment)
 
     start_time = time.perf_counter()
     detected_markers = 0
@@ -298,7 +300,7 @@ def scan_file(pr_comment: list[str], pr_comment_level: str, hide_scan_details: b
     print_and_store(f"Scan took {elapsed_time:.2f} seconds", pr_comment)
 
     if detected_markers == 0 and pr_comment_level == "WARNING":
-       shrink_pr_comment(pr_comment)
+       shrink_pr_comment(pr_comment, section_start)
 
     return detected_markers
 
@@ -317,8 +319,9 @@ def scan_multiple_changed_files(pr_comment: list[str], pr_comment_level: str, hi
     print_and_store("", pr_comment)
     for cur_file in changed_files:
        cur_file = cur_file.strip()
+       section_start = len(pr_comment)
        print_and_store(f"## Scanning the following file for hidden unicode: '{cur_file}'", pr_comment)
-       detected_markers += scan_file(pr_comment, pr_comment_level, hide_scan_details, cur_file)
+       detected_markers += scan_file(pr_comment, pr_comment_level, hide_scan_details, cur_file, section_start)
 
     return detected_markers
 
@@ -329,8 +332,9 @@ def scan_single_changed_file(pr_comment: list[str], pr_comment_level: str, hide_
     """
 
     stripped_file = changed_file.strip()
+    section_start = len(pr_comment)
     print_and_store(f"# Scan: '{stripped_file}'", pr_comment)
-    return scan_file(pr_comment, pr_comment_level, hide_scan_details, stripped_file)
+    return scan_file(pr_comment, pr_comment_level, hide_scan_details, stripped_file, section_start)
 
 def scan_changed_files(pr_comment: list[str], pr_comment_level: str, hide_scan_details: bool, changed_files: list[str]):
     """ Decides if the scan for multiple or a single file is evoked """

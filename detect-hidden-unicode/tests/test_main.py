@@ -49,6 +49,20 @@ class ScanSingleChangedFileTestCase(unittest.TestCase):
 
        self.assertEqual(detected_markers, 12)
 
+class ScanMultipleChangedFilesCommentTestCase(unittest.TestCase):
+   def test_keeps_detected_markers_after_clean_file(self):
+       pr_comment = []
+       detected_markers = scan_multiple_changed_files(
+           pr_comment,
+           "WARNING",
+           True,
+           ["tests/12_basic_example", "tests/__init__.py"],
+       )
+
+       self.assertEqual(detected_markers, 12)
+       self.assertIn("12 hidden markers detected in tests/12_basic_example", pr_comment)
+       self.assertNotIn("Nothing detected in tests/__init__.py", pr_comment)
+
 class ScanChangedFilesTestCase(unittest.TestCase):
     def test_ChangedFilesTestCase(self):
         detected_markers = scan_changed_files([], "WARNING", True, ["tests/509_pillar-security_example", "tests/12_basic_example" ])
