@@ -24,5 +24,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Set up uv
+        uses: ./uv
+        with:
+          python-version: "3.14"
+          working-directory: conventional-commits
       - name: Run tests
-        run: python3 -m unittest discover -s conventional-commits/tests -v
+        working-directory: conventional-commits
+        run: uv run --locked --no-dev python -m unittest discover -s tests -v

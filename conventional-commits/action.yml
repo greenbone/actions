@@ -3,8 +3,8 @@ description: "A GitHub Action to check for conventional commits. It looks for co
 author: "Björn Ricks"
 inputs:
   token:
-    description: "GitHub Token for authentication"
-    default: ${{ github.token }}
+    description: "Deprecated and unused; retained for compatibility."
+    required: false
   python-version:
     description: "Python version to use for running the action"
     required: false
@@ -76,17 +76,11 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       env:
-        TOKEN: ${{ inputs.token }}
         BASE_REF: ${{ inputs.base-ref }}
         HEAD_REF: ${{ inputs.head-ref }}
-        EVENT_PATH: ${{ github.event_path }}
-        REPOSITORY: ${{ github.repository }}
         WORKSPACE: ${{ github.workspace }}
       run: |
         uv run conventional-commits \
-          --token "$TOKEN" \
           --base-ref "$BASE_REF" \
           --head-ref "$HEAD_REF" \
-          --event-path "$EVENT_PATH" \
-          --repository "$REPOSITORY" \
           --working-directory "$WORKSPACE"

@@ -2,171 +2,68 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-
-import asyncio
 import os
 import sys
 from argparse import ArgumentParser, Namespace
-from json import JSONDecodeError
 from pathlib import Path
 from typing import NoReturn
 
 from pontos.changelog.conventional_commits import ConventionalCommits
-from pontos.github.actions import Console, GitHubEvent
-from pontos.github.api import GitHubAsyncRESTApi, HTTPStatusError
-
-CONVENTIONAL_COMMIT_REPORT_LINE = "<!-- conventional commit report -->"
 
 
 def parse_arguments() -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument("--token", required=True)
     parser.add_argument("--base-ref", required=True)
     parser.add_argument("--head-ref", required=True)
-    parser.add_argument("--repository", required=True)
     parser.add_argument("--working-directory", type=Path, required=True)
-    pr_group = parser.add_mutually_exclusive_group(required=True)
-    pr_group.add_argument("--event-path", type=Path)
-    pr_group.add_argument("--pull-request")
     return parser.parse_args()
 
 
-class CommitsError(Exception):
-    pass
+def run(base_ref: str, head_ref: str, working_directory: Path) -> int:
+    working_directory = working_directory.resolve()
+    os.chdir(working_directory)
+    config_file = working_directory / "changelog.toml"
+    collector = ConventionalCommits(
+        config=config_file if config_file.exists() else None,
+    )
+    commit_dict = collector.get_commits(from_ref=base_ref, to_ref=head_ref)
 
+    lines = ["## Conventional Commits Report"]
+    if commit_dict:
+        lines.extend(["", "| Type | Number |", "|------|-------:|"])
 
-class Commits:
-    def __init__(
-        self,
-        *,
-        repository: str,
-        token: str,
-        base_ref: str,
-        head_ref: str,
-        working_directory: Path,
-        event_path: Path | None = None,
-        pull_request: str | None = None,
-    ) -> None:
-        self.repository = repository
-        self.token = token
-        self.base_ref = base_ref
-        self.head_ref = head_ref
-        self.working_directory = working_directory
-        self.api = GitHubAsyncRESTApi(token)
-        if pull_request:
-            self.pull_request = pull_request
-        else:
-            event = GitHubEvent(event_path)
-            self.pull_request = event.pull_request.number
+    has_cc = False
+    for key, commits in commit_dict.items():
+        count = len(commits)
+        has_cc = has_cc or bool(count)
+        lines.append(f"| {key} | {count} |")
 
-            if os.environ.get("RUNNER_DEBUG") == "1":
-                Console.debug(event)
-
-    async def run(self) -> int:
-        os.chdir(self.working_directory)
-
-        config_file = (self.working_directory / "changelog.toml").absolute()
-        collector = ConventionalCommits(
-            config=config_file if config_file.exists() else None,
-        )
-        commit_dict = collector.get_commits(
-            from_ref=self.base_ref, to_ref=self.head_ref
+    if has_cc:
+        lines.extend(["", ":rocket: Conventional commits found."])
+    else:
+        lines.extend(
+            [
+                "",
+                ":cry: No conventional commits found.",
+                "",
+                (
+                    ":point_right: [Learn more](https://github.com/greenbone/.github/"
+                    "blob/main/conventional-commits/README.md) about the conventional "
+                    "commits usage at [Greenbone](https://github.com/greenbone/)."
+                ),
+            ]
         )
 
-        comment_lines = [
-            CONVENTIONAL_COMMIT_REPORT_LINE,
-            "## Conventional Commits Report",
-        ]
-        if commit_dict:
-            comment_lines.append("| Type | Number |")
-            comment_lines.append("|------|-------:|")
-
-        has_cc = False
-        for key, commits in commit_dict.items():
-            length = len(commits)
-            has_cc = has_cc or bool(length)
-            comment_lines.append(f"| {key} | {len(commits)} ")
-
-        if has_cc:
-            comment_lines.append("")
-            comment_lines.append(":rocket: Conventional commits found.")
-        else:
-            comment_lines.append(":cry: No conventional commits found.")
-            comment_lines.append("")
-            # pylint: disable=line-too-long
-            comment_lines.append(
-                ":point_right: [Learn more](https://github.com/greenbone/.github/blob/main/conventional-commits/README.md) "
-                "about the conventional commits usage at [Greenbone](https://github.com/greenbone/)."
-            )
-
-        cc_report_comment = None
-
-        async with self.api as api:
-            async for comment in api.pull_requests.comments(
-                self.repository, self.pull_request
-            ):
-                if comment.body and comment.body.startswith(
-                    CONVENTIONAL_COMMIT_REPORT_LINE
-                ):
-                    cc_report_comment = comment.id
-
-            try:
-                if cc_report_comment is None:
-                    await api.pull_requests.add_comment(
-                        self.repository,
-                        self.pull_request,
-                        "\n".join(comment_lines),
-                    )
-                else:
-                    await api.pull_requests.update_comment(
-                        self.repository,
-                        cc_report_comment,
-                        "\n".join(comment_lines),
-                    )
-            except HTTPStatusError as e:
-                try:
-                    json = e.response.json()
-                    message = json.get("message")
-                    # some response have links to the docs
-                    doc_url = json.get("documentation_url", "")
-                except JSONDecodeError:
-                    message = None
-
-                if message:
-                    raise CommitsError(
-                        "Could not create Pull Request comment. A HTTP "
-                        f"{e.response.status_code} error occurred while doing "
-                        f"a {e.request.method} request to {e.request.url}. "
-                        f"Error was '{message}'. {doc_url}"
-                    ) from e
-                else:
-                    raise CommitsError(
-                        "Could not create Pull Request comment. A HTTP "
-                        f"{e.response.status_code} error occurred while doing a "
-                        f"{e.request.method} request to {e.request.url}."
-                    ) from e
-
-        return 0 if has_cc else 1
+    with Path(os.environ["GITHUB_STEP_SUMMARY"]).open(
+        "a", encoding="utf-8"
+    ) as summary:
+        summary.write("\n".join(lines) + "\n")
+    return 0 if has_cc else 1
 
 
 def main() -> NoReturn:
     args = parse_arguments()
-    try:
-        asyncio.run(
-            Commits(
-                repository=args.repository,
-                token=args.token,
-                base_ref=args.base_ref,
-                head_ref=args.head_ref,
-                event_path=args.event_path,
-                pull_request=args.pull_request,
-                working_directory=args.working_directory,
-            ).run()
-        )
-        sys.exit(0)
-    except CommitsError as e:
-        Console.error(f"❌ {e}")
-        sys.exit(1)
+    sys.exit(run(args.base_ref, args.head_ref, args.working_directory))
 
 
 if __name__ == "__main__":
