@@ -22,17 +22,28 @@ runs:
   using: "composite"
   steps:
     - name: Refs
+      env:
+        REF: ${{ github.ref }}
+        REF_NAME: ${{ github.ref_name }}
+        HEAD_REF: ${{ github.head_ref }}
+        BASE_REF: ${{ github.base_ref }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+        PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       run: |
-        echo "::debug::ref: ${{ github.ref }}"
-        echo "::debug::ref_name: ${{ github.ref_name }}"
-        echo "::debug::head_ref: ${{ github.head_ref }}"
-        echo "::debug::base_ref: ${{ github.base_ref }}"
-        echo "::debug::pr number: ${{ github.event.pull_request.number }}"
-        echo "::debug::merge_commit_sha: ${{ github.event.pull_request.merge_commit_sha }}"
-        echo "::debug::PR head ref ${{ github.event.pull_request.head.ref }}"
-        echo "::debug::PR head sha ${{ github.event.pull_request.head.sha }}"
-        echo "::debug::PR base ref ${{ github.event.pull_request.base.ref }}"
-        echo "::debug::PR base sha ${{ github.event.pull_request.base.sha }}"
+        printf '::debug::ref: %s\n' "$REF"
+        printf '::debug::ref_name: %s\n' "$REF_NAME"
+        printf '::debug::head_ref: %s\n' "$HEAD_REF"
+        printf '::debug::base_ref: %s\n' "$BASE_REF"
+        printf '::debug::pr number: %s\n' "$PR_NUMBER"
+        printf '::debug::merge_commit_sha: %s\n' "$MERGE_COMMIT_SHA"
+        printf '::debug::PR head ref %s\n' "$PR_HEAD_REF"
+        printf '::debug::PR head sha %s\n' "$PR_HEAD_SHA"
+        printf '::debug::PR base ref %s\n' "$PR_BASE_REF"
+        printf '::debug::PR base sha %s\n' "$PR_BASE_SHA"
       shell: bash
     - name: Checkout repository
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -40,10 +51,20 @@ runs:
         # fetch all commits of the base-ref. without all commits it's not possible to find the common ancestor
         fetch-depth: 0
         ref: ${{ inputs.base-ref }}
+        persist-credentials: false
     - name: Fetch commits
       # fetch commits from head ref
+      env:
+        HEAD_REF: ${{ inputs.head-ref }}
+        FETCH_TOKEN: ${{ github.token }}
+        SERVER_URL: ${{ github.server_url }}
       run: |
-        git fetch origin ${{ inputs.head-ref }}
+        auth="$(printf 'x-access-token:%s' "$FETCH_TOKEN" | base64 | tr -d '\n')"
+        printf '::add-mask::%s\n' "$auth"
+        GIT_CONFIG_COUNT=1 \
+        GIT_CONFIG_KEY_0="http.${SERVER_URL}/.extraheader" \
+        GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $auth" \
+          git fetch -- origin "$HEAD_REF"
       shell: bash
     - name: Set up Python and Poetry
       uses: greenbone/actions/uv@v3
@@ -54,11 +75,18 @@ runs:
     - name: Run conventional commits
       shell: bash
       working-directory: ${{ github.action_path }}
+      env:
+        TOKEN: ${{ inputs.token }}
+        BASE_REF: ${{ inputs.base-ref }}
+        HEAD_REF: ${{ inputs.head-ref }}
+        EVENT_PATH: ${{ github.event_path }}
+        REPOSITORY: ${{ github.repository }}
+        WORKSPACE: ${{ github.workspace }}
       run: |
         uv run conventional-commits \
-          --token ${{ inputs.token }} \
-          --base-ref ${{ inputs.base-ref }} \
-          --head-ref ${{ inputs.head-ref }} \
-          --event-path ${{ github.event_path }} \
-          --repository ${{ github.repository }} \
-          --working-directory ${{ github.workspace }}
+          --token "$TOKEN" \
+          --base-ref "$BASE_REF" \
+          --head-ref "$HEAD_REF" \
+          --event-path "$EVENT_PATH" \
+          --repository "$REPOSITORY" \
+          --working-directory "$WORKSPACE"
