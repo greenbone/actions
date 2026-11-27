@@ -7,7 +7,6 @@ import textwrap
 import unittest
 from pathlib import Path
 
-
 ACTION = Path(__file__).resolve().parents[1] / "action.yml"
 
 
@@ -24,7 +23,9 @@ def get_step(name):
 
 
 def get_script(step):
-    match = re.search(r"^      run: \|\n((?:^        .*\n)+)", step, re.MULTILINE)
+    match = re.search(
+        r"^      run: \|\n((?:^        .*\n)+)", step, re.MULTILINE
+    )
     if not match:
         raise ValueError("Missing action script")
     return textwrap.dedent(match.group(1))
@@ -51,22 +52,21 @@ class ActionShellTest(unittest.TestCase):
                 "SERVER_URL": "github.server_url",
             },
             "Run conventional commits": {
-                "TOKEN": "inputs.token",
                 "BASE_REF": "inputs.base-ref",
                 "HEAD_REF": "inputs.head-ref",
-                "EVENT_PATH": "github.event_path",
-                "REPOSITORY": "github.repository",
                 "WORKSPACE": "github.workspace",
             },
         }
         for name, bindings in expected.items():
             with self.subTest(step=name):
                 step = get_step(name)
-                actual = dict(re.findall(
-                    r"^        (\w+): \$\{\{\s*(.*?)\s*\}\}$",
-                    step,
-                    re.MULTILINE,
-                ))
+                actual = dict(
+                    re.findall(
+                        r"^        (\w+): \$\{\{\s*(.*?)\s*\}\}$",
+                        step,
+                        re.MULTILINE,
+                    )
+                )
                 self.assertEqual(actual, bindings)
 
     def test_untrusted_values_are_not_executed_or_split(self):
@@ -82,7 +82,7 @@ class ActionShellTest(unittest.TestCase):
                     'if [[ "$0" == */git ]]; then\n'
                     '  printf "%s\\0" "$GIT_CONFIG_COUNT" "$GIT_CONFIG_KEY_0" '
                     '"$GIT_CONFIG_VALUE_0" > "$CONFIG_FILE"\n'
-                    'fi\n',
+                    "fi\n",
                     encoding="utf-8",
                 )
                 executable.chmod(0o755)
@@ -103,18 +103,19 @@ class ActionShellTest(unittest.TestCase):
                 "MERGE_COMMIT_SHA": "sha",
                 "PR_HEAD_SHA": "sha",
                 "PR_BASE_SHA": "sha",
-                "TOKEN": payload,
-                "EVENT_PATH": "path with spaces",
-                "REPOSITORY": "owner/repo",
                 "WORKSPACE": "workspace with spaces",
             }
             expected_args = {
                 "Fetch commits": ["fetch", "--", "origin", payload],
                 "Run conventional commits": [
-                    "run", "conventional-commits", "--token", payload,
-                    "--base-ref", payload, "--head-ref", payload,
-                    "--event-path", "path with spaces", "--repository", "owner/repo",
-                    "--working-directory", "workspace with spaces",
+                    "run",
+                    "conventional-commits",
+                    "--base-ref",
+                    payload,
+                    "--head-ref",
+                    payload,
+                    "--working-directory",
+                    "workspace with spaces",
                 ],
             }
             for name in ("Refs", "Fetch commits", "Run conventional commits"):
@@ -129,21 +130,42 @@ class ActionShellTest(unittest.TestCase):
                         check=False,
                     )
                     self.assertEqual(result.returncode, 0, result.stderr)
-                    self.assertFalse(marker.exists(), f"{name} executed the payload")
+                    self.assertFalse(
+                        marker.exists(), f"{name} executed the payload"
+                    )
                     if name in expected_args:
-                        args = args_file.read_bytes().decode().rstrip("\0").split("\0")
+                        args = (
+                            args_file.read_bytes()
+                            .decode()
+                            .rstrip("\0")
+                            .split("\0")
+                        )
                         self.assertEqual(args, expected_args[name])
                     if name == "Fetch commits":
-                        auth = base64.b64encode(b"x-access-token:test-token").decode()
-                        config = (directory / "config").read_bytes().decode().split("\0")
+                        auth = base64.b64encode(
+                            b"x-access-token:test-token"
+                        ).decode()
+                        config = (
+                            (directory / "config")
+                            .read_bytes()
+                            .decode()
+                            .split("\0")
+                        )
                         self.assertEqual(
                             config,
-                            ["1", "http.https://github.example/.extraheader",
-                             f"AUTHORIZATION: basic {auth}", ""],
+                            [
+                                "1",
+                                "http.https://github.example/.extraheader",
+                                f"AUTHORIZATION: basic {auth}",
+                                "",
+                            ],
                         )
 
     def test_checkout_does_not_persist_credentials(self):
-        self.assertIn("        persist-credentials: false\n", get_step("Checkout repository"))
+        self.assertIn(
+            "        persist-credentials: false\n",
+            get_step("Checkout repository"),
+        )
 
 
 if __name__ == "__main__":
